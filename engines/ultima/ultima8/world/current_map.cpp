@@ -1276,10 +1276,10 @@ void CurrentMap::save(Common::WriteStream *ws) {
 	}
 }
 
-bool CurrentMap::load(IDataSource *ids, uint32 version) {
+bool CurrentMap::load(Common::ReadStream *rs, uint32 version) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; ++i) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS / 32; ++j) {
-			_fast[i][j] = ids->readUint32LE();
+			_fast[i][j] = rs->readUint32LE();
 		}
 	}
 

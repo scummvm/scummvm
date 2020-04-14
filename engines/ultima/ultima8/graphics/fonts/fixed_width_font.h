@@ -29,7 +29,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 class Texture;
-class IDataSource;
 
 struct FixedWidthFont {
 	int     _width;

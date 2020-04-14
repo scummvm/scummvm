@@ -190,19 +190,19 @@ void BarkGump::saveData(Common::WriteStream *ws) {
 	ws->write(_barked.c_str(), _barked.size());
 }
 
-bool BarkGump::loadData(IDataSource *ids, uint32 version) {
-	if (!ItemRelativeGump::loadData(ids, version)) return false;
+bool BarkGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!ItemRelativeGump::loadData(rs, version)) return false;
 
-	_counter = static_cast<int32>(ids->readUint32LE());
-	_textWidget = ids->readUint16LE();
-	_speechShapeNum = ids->readUint32LE();
-	_speechLength = ids->readUint32LE();
-	_totalTextHeight = ids->readUint32LE();
+	_counter = static_cast<int32>(rs->readUint32LE());
+	_textWidget = rs->readUint16LE();
+	_speechShapeNum = rs->readUint32LE();
+	_speechLength = rs->readUint32LE();
+	_totalTextHeight = rs->readUint32LE();
 
-	uint32 slen = ids->readUint32LE();
+	uint32 slen = rs->readUint32LE();
 	if (slen > 0) {
 		char *buf = new char[slen + 1];
-		ids->read(buf, slen);
+		rs->read(buf, slen);
 		buf[slen] = 0;
 		_barked = buf;
 		delete[] buf;

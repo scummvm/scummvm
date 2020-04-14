@@ -37,7 +37,7 @@ public:
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	SpeechFlex(IDataSource *ds);
+	SpeechFlex(Common::SeekableReadStream *rs);
 	~SpeechFlex(void) override;
 
 	int getIndexForPhrase(const Std::string &phrase,

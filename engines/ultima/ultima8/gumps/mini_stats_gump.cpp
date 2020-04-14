@@ -130,8 +130,8 @@ void MiniStatsGump::saveData(Common::WriteStream *ws) {
 	Gump::saveData(ws);
 }
 
-bool MiniStatsGump::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version)) return false;
+bool MiniStatsGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Gump::loadData(rs, version)) return false;
 
 	return true;
 }

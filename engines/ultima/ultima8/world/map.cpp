@@ -61,8 +61,8 @@ void Map::clear() {
 	_dynamicItems.clear();
 }
 
-void Map::loadNonFixed(IDataSource *ds) {
-	loadFixedFormatObjects(_dynamicItems, ds, 0);
+void Map::loadNonFixed(Common::SeekableReadStream *rs) {
+	loadFixedFormatObjects(_dynamicItems, rs, 0);
 }
 
 
@@ -86,8 +86,8 @@ void Map::addMapFix(uint32 shape, uint32 frame, int32 x, int32 y, int32 z) {
 }
 
 
-void Map::loadFixed(IDataSource *ds) {
-	loadFixedFormatObjects(_fixedItems, ds, Item::EXT_FIXED);
+void Map::loadFixed(Common::SeekableReadStream *rs) {
+	loadFixedFormatObjects(_fixedItems, rs, Item::EXT_FIXED);
 
 	// U8 hack for missing ground tiles on map 25. See docs/u8bugs.txt
 	if (GAME_IS_U8 && _mapNum == 25) {
@@ -198,10 +198,11 @@ void Map::unloadFixed() {
 	_fixedItems.clear();
 }
 
-void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
+void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
+								 Common::SeekableReadStream *rs,
                                  uint32 extendedflags) {
-	if (!ds) return;
-	uint32 size = ds->size();
+	if (!rs) return;
+	uint32 size = rs->size();
 	if (size == 0) return;
 
 	uint32 itemcount = size / 16;
@@ -211,22 +212,22 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
 
 	for (uint32 i = 0; i < itemcount; ++i) {
 		// These are ALL unsigned on disk
-		int32 x = static_cast<int32>(ds->readUint16LE());
-		int32 y = static_cast<int32>(ds->readUint16LE());
-		int32 z = static_cast<int32>(ds->readByte());
+		int32 x = static_cast<int32>(rs->readUint16LE());
+		int32 y = static_cast<int32>(rs->readUint16LE());
+		int32 z = static_cast<int32>(rs->readByte());
 
 		if (GAME_IS_CRUSADER) {
 			x *= 2;
 			y *= 2;
 		}
 
-		uint32 shape = ds->readUint16LE();
-		uint32 frame = ds->readByte();
-		uint16 flags = ds->readUint16LE();
-		uint16 quality = ds->readUint16LE();
-		uint16 npcNum = static_cast<uint16>(ds->readByte());
-		uint16 mapNum = static_cast<uint16>(ds->readByte());
-		uint16 next = ds->readUint16LE(); // do we need next for anything?
+		uint32 shape = rs->readUint16LE();
+		uint32 frame = rs->readByte();
+		uint16 flags = rs->readUint16LE();
+		uint16 quality = rs->readUint16LE();
+		uint16 npcNum = static_cast<uint16>(rs->readByte());
+		uint16 mapNum = static_cast<uint16>(rs->readByte());
+		uint16 next = rs->readUint16LE(); // do we need next for anything?
 
 		// find container this item belongs to, if any.
 		// the x coordinate stores the container-depth of this item,
@@ -288,11 +289,11 @@ void Map::save(Common::WriteStream *ws) {
 }
 
 
-bool Map::load(IDataSource *ids, uint32 version) {
-	uint32 itemcount = ids->readUint32LE();
+bool Map::load(Common::ReadStream *rs, uint32 version) {
+	uint32 itemcount = rs->readUint32LE();
 
 	for (unsigned int i = 0; i < itemcount; ++i) {
-		Object *obj = ObjectManager::get_instance()->loadObject(ids, version);
+		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
 		Item *item = p_dynamic_cast<Item *>(obj);
 		if (!item) return false;
 		_dynamicItems.push_back(item);

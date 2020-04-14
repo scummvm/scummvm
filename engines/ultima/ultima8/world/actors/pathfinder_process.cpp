@@ -262,21 +262,21 @@ void PathfinderProcess::saveData(Common::WriteStream *ws) {
 	}
 }
 
-bool PathfinderProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool PathfinderProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_targetItem = ids->readUint16LE();
-	_targetX = ids->readUint16LE();
-	_targetY = ids->readUint16LE();
-	_targetZ = ids->readUint16LE();
-	_hitMode = (ids->readByte() != 0);
-	_currentStep = ids->readUint16LE();
+	_targetItem = rs->readUint16LE();
+	_targetX = rs->readUint16LE();
+	_targetY = rs->readUint16LE();
+	_targetZ = rs->readUint16LE();
+	_hitMode = (rs->readByte() != 0);
+	_currentStep = rs->readUint16LE();
 
-	unsigned int pathsize = ids->readUint16LE();
+	unsigned int pathsize = rs->readUint16LE();
 	_path.resize(pathsize);
 	for (unsigned int i = 0; i < pathsize; ++i) {
-		_path[i]._action = static_cast<Animation::Sequence>(ids->readUint16LE());
-		_path[i]._direction = ids->readUint16LE();
+		_path[i]._action = static_cast<Animation::Sequence>(rs->readUint16LE());
+		_path[i]._direction = rs->readUint16LE();
 	}
 
 	return true;

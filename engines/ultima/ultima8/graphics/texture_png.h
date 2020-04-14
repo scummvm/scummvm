@@ -32,7 +32,7 @@ struct TexturePNG : public Texture {
 	TexturePNG() : Texture() {}
 
 	// False on Error
-	bool Read(IDataSource *ds) override;
+	bool Read(Common::SeekableReadStream *rs) override;
 };
 
 } // End of namespace Ultima8

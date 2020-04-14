@@ -32,7 +32,6 @@ struct SKFEvent;
 class RawArchive;
 class RenderSurface;
 class RenderedText;
-class IDataSource;
 struct Palette;
 
 class SKFPlayer {
@@ -51,7 +50,7 @@ public:
 
 private:
 
-	void parseEventList(IDataSource *eventlist);
+	void parseEventList(Common::ReadStream *rs);
 
 	int _width, _height;
 	RawArchive *_skf;

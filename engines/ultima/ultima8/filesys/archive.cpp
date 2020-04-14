@@ -49,8 +49,8 @@ Archive::Archive(ArchiveFile *af) : _count(0) {
 	addSource(af);
 }
 
-Archive::Archive(IDataSource *ids) : _count(0) {
-	addSource(ids);
+Archive::Archive(Common::SeekableReadStream *rs) : _count(0) {
+	addSource(rs);
 }
 
 bool Archive::addSource(ArchiveFile *af) {
@@ -62,15 +62,15 @@ bool Archive::addSource(ArchiveFile *af) {
 	return true;
 }
 
-bool Archive::addSource(IDataSource *ids) {
+bool Archive::addSource(Common::SeekableReadStream *rs) {
 	ArchiveFile *s = nullptr;
 
-	if (!ids) return false;
+	if (!rs) return false;
 
-	if (FlexFile::isFlexFile(ids)) {
-		s = new FlexFile(ids);
-	} else if (U8SaveFile::isU8SaveFile(ids)) {
-		s = new U8SaveFile(ids);
+	if (FlexFile::isFlexFile(rs)) {
+		s = new FlexFile(rs);
+	} else if (U8SaveFile::isU8SaveFile(rs)) {
+		s = new U8SaveFile(rs);
 	}
 
 	if (!s) return false;

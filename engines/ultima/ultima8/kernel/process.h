@@ -31,8 +31,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 class Debugger;
-class IDataSource;
-class ODataSource;
 
 class Process {
 	friend class Kernel;
@@ -118,7 +116,7 @@ public:
 	void save(Common::WriteStream *ods);
 
 	//! load Process data
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 
 protected:
 	//! save the Process data

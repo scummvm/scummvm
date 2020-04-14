@@ -82,10 +82,10 @@ void InverterProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(static_cast<uint16>(_targetState));
 }
 
-bool InverterProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool InverterProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_targetState = ids->readUint16LE();
+	_targetState = rs->readUint16LE();
 
 	_inverter = this; //static
 	return true;

@@ -83,7 +83,7 @@ public:
 
 	void terminate() override;   // Terminate NOW!
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 private:
 	void saveData(Common::WriteStream *ws) override;
 

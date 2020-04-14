@@ -45,7 +45,7 @@ public:
 		int         *_transitions[128];
 	};
 
-	MusicFlex(IDataSource *ds);
+	MusicFlex(Common::SeekableReadStream *rs);
 	~MusicFlex() override;
 
 	//! Get an xmidi
@@ -55,7 +55,7 @@ public:
 	const SongInfo *getSongInfo(uint32 index) const;
 
 	//! Get the Adlib Timbres (index 259)
-	IDataSource *getAdlibTimbres();
+	Common::SeekableReadStream *getAdlibTimbres();
 
 	void cache(uint32 index) override;
 	void uncache(uint32 index) override;

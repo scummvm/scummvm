@@ -114,7 +114,7 @@ void BookGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 
-bool BookGump::loadData(IDataSource *ids, uint32 version) {
+bool BookGump::loadData(Common::ReadStream *rs, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 
 	return false;

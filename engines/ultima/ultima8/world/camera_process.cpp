@@ -287,22 +287,22 @@ void CameraProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(static_cast<uint32>(_eqY));
 }
 
-bool CameraProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool CameraProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_sx = static_cast<int32>(ids->readUint32LE());
-	_sy = static_cast<int32>(ids->readUint32LE());
-	_sz = static_cast<int32>(ids->readUint32LE());
-	_ex = static_cast<int32>(ids->readUint32LE());
-	_ey = static_cast<int32>(ids->readUint32LE());
-	_ez = static_cast<int32>(ids->readUint32LE());
-	_time = static_cast<int32>(ids->readUint32LE());
-	_elapsed = static_cast<int32>(ids->readUint32LE());
-	_itemNum = ids->readUint16LE();
-	_lastFrameNum = ids->readUint32LE();
-	_earthquake = static_cast<int32>(ids->readUint32LE()); //static
-	_eqX = static_cast<int32>(ids->readUint32LE()); //static
-	_eqY = static_cast<int32>(ids->readUint32LE()); //static
+	_sx = static_cast<int32>(rs->readUint32LE());
+	_sy = static_cast<int32>(rs->readUint32LE());
+	_sz = static_cast<int32>(rs->readUint32LE());
+	_ex = static_cast<int32>(rs->readUint32LE());
+	_ey = static_cast<int32>(rs->readUint32LE());
+	_ez = static_cast<int32>(rs->readUint32LE());
+	_time = static_cast<int32>(rs->readUint32LE());
+	_elapsed = static_cast<int32>(rs->readUint32LE());
+	_itemNum = rs->readUint16LE();
+	_lastFrameNum = rs->readUint32LE();
+	_earthquake = static_cast<int32>(rs->readUint32LE()); //static
+	_eqX = static_cast<int32>(rs->readUint32LE()); //static
+	_eqY = static_cast<int32>(rs->readUint32LE()); //static
 
 	_camera = this; //static
 

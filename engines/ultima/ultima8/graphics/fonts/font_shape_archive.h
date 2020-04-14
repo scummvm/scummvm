@@ -41,9 +41,9 @@ public:
 	FontShapeArchive(ArchiveFile *af, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(af, id_, pal_, format_) { }
-	FontShapeArchive(IDataSource *ds, uint16 id_, Palette *pal_ = 0,
+	FontShapeArchive(Common::SeekableReadStream *rs, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(ds, id_, pal_, format_) { }
+		: ShapeArchive(rs, id_, pal_, format_) { }
  
 	~FontShapeArchive() override { }
 

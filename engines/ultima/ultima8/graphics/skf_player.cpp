@@ -71,7 +71,7 @@ SKFPlayer::SKFPlayer(RawArchive *movie, int width, int height, bool introMusicHa
 	  _timer(0), _frameRate(15), _fadeColour(0), _fadeLevel(0), _buffer(nullptr),
 	  _subs(nullptr), _introMusicHack(introMusicHack), _lastUpdate(0),
 	  _subtitleY(0) {
-	IDataSource *eventlist = _skf->get_datasource(0);
+	Common::ReadStream *eventlist = _skf->get_datasource(0);
 	if (!eventlist) {
 		perr << "No eventlist found in SKF" << Std::endl;
 		return;
@@ -92,7 +92,7 @@ SKFPlayer::~SKFPlayer() {
 	delete _subs;
 }
 
-void SKFPlayer::parseEventList(IDataSource *eventlist) {
+void SKFPlayer::parseEventList(Common::ReadStream *eventlist) {
 	uint16 frame = eventlist->readUint16LE();
 	while (frame != 0xFFFF) {
 		SKFEvent *ev = new SKFEvent;

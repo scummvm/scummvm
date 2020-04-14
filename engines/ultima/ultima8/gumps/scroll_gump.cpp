@@ -102,7 +102,7 @@ void ScrollGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 
-bool ScrollGump::loadData(IDataSource *ids, uint32 version) {
+bool ScrollGump::loadData(Common::ReadStream *rs, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 
 	return false;

@@ -826,12 +826,12 @@ void AvatarMoverProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(static_cast<uint8>(_lastHeadShakeAnim));
 }
 
-bool AvatarMoverProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool AvatarMoverProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_lastAttack = ids->readUint32LE();
-	_idleTime = ids->readUint32LE();
-	_lastHeadShakeAnim = static_cast<Animation::Sequence>(ids->readUint16LE());
+	_lastAttack = rs->readUint32LE();
+	_idleTime = rs->readUint32LE();
+	_lastHeadShakeAnim = static_cast<Animation::Sequence>(rs->readUint16LE());
 
 	return true;
 }

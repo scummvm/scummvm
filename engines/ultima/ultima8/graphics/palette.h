@@ -26,8 +26,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-
 enum PalTransforms {
 	// Normal untransformed palette
 	Transform_None      = 0,
@@ -57,8 +55,8 @@ enum PalTransforms {
 };
 
 struct Palette {
-	void load(IDataSource &ds, IDataSource &xformds);
-	void load(IDataSource &ds);
+	void load(Common::ReadStream &rs, Common::ReadStream &xformrs);
+	void load(Common::ReadStream &rs);
 
 	// 256 rgb entries
 	uint8 _palette[768];

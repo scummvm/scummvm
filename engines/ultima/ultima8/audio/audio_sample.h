@@ -26,8 +26,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-
 class AudioSample {
 protected:
 	uint32  _sampleRate;

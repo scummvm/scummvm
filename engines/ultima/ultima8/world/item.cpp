@@ -1779,29 +1779,29 @@ void Item::saveData(Common::WriteStream *ws) {
 		ws->writeUint16LE(_parent);
 }
 
-bool Item::loadData(IDataSource *ids, uint32 version) {
-	if (!Object::loadData(ids, version)) return false;
+bool Item::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Object::loadData(rs, version)) return false;
 
-	_extendedFlags = ids->readUint16LE();
-	_flags = ids->readUint16LE();
-	_shape = ids->readUint16LE();
-	_frame = ids->readUint16LE();
-	_x = ids->readUint16LE();
-	_y = ids->readUint16LE();
-	_z = ids->readUint16LE();
+	_extendedFlags = rs->readUint16LE();
+	_flags = rs->readUint16LE();
+	_shape = rs->readUint16LE();
+	_frame = rs->readUint16LE();
+	_x = rs->readUint16LE();
+	_y = rs->readUint16LE();
+	_z = rs->readUint16LE();
 
-	_quality = ids->readUint16LE();
-	_npcNum = ids->readUint16LE();
-	_mapNum = ids->readUint16LE();
+	_quality = rs->readUint16LE();
+	_npcNum = rs->readUint16LE();
+	_mapNum = rs->readUint16LE();
 	if (getObjId() != 0xFFFF) {
-		_gump = ids->readUint16LE();
-		_gravityPid = ids->readUint16LE();
+		_gump = rs->readUint16LE();
+		_gravityPid = rs->readUint16LE();
 	} else {
 		_gump = _gravityPid = 0;
 	}
 
 	if ((_flags & FLG_ETHEREAL) && (_flags & (FLG_CONTAINED | FLG_EQUIPPED)))
-		_parent = ids->readUint16LE();
+		_parent = rs->readUint16LE();
 	else
 		_parent = 0;
 

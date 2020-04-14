@@ -415,10 +415,10 @@ void PaperdollGump::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_statButtonId);
 }
 
-bool PaperdollGump::loadData(IDataSource *ids, uint32 version) {
-	if (!ContainerGump::loadData(ids, version)) return false;
+bool PaperdollGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!ContainerGump::loadData(rs, version)) return false;
 
-	_statButtonId = ids->readUint16LE();
+	_statButtonId = rs->readUint16LE();
 
 	return true;
 }

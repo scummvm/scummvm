@@ -111,18 +111,18 @@ void PaletteFaderProcess::saveData(Common::WriteStream *ws) {
 		ws->writeUint16LE(_newMatrix[i]);
 }
 
-bool PaletteFaderProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool PaletteFaderProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_priority = static_cast<int>(ids->readUint32LE());
-	_counter = static_cast<int>(ids->readUint32LE());
-	_maxCounter = static_cast<int>(ids->readUint32LE());
+	_priority = static_cast<int>(rs->readUint32LE());
+	_counter = static_cast<int>(rs->readUint32LE());
+	_maxCounter = static_cast<int>(rs->readUint32LE());
 
 	unsigned int i;
 	for (i = 0; i < 12; ++i)
-		_oldMatrix[i] = ids->readUint16LE();
+		_oldMatrix[i] = rs->readUint16LE();
 	for (i = 0; i < 12; ++i)
-		_newMatrix[i] = ids->readUint16LE();
+		_newMatrix[i] = rs->readUint16LE();
 
 	_fader = this; //static
 	return true;

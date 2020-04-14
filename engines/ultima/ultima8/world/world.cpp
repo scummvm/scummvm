@@ -169,7 +169,7 @@ bool World::switchMap(uint32 newmap) {
 	Kernel::get_instance()->killProcessesNotOfType(0, 1, true);
 
 	pout << "Loading Fixed items in map " << newmap << Std::endl;
-	IDataSource *items = GameData::get_instance()->getFixed()
+	Common::SeekableReadStream *items = GameData::get_instance()->getFixed()
 	                     ->get_datasource(newmap);
 	_maps[newmap]->loadFixed(items);
 	delete items;
@@ -185,8 +185,8 @@ bool World::switchMap(uint32 newmap) {
 	return true;
 }
 
-void World::loadNonFixed(IDataSource *ds) {
-	FlexFile *f = new FlexFile(ds);
+void World::loadNonFixed(Common::SeekableReadStream *rs) {
+	FlexFile *f = new FlexFile(rs);
 
 	pout << "Loading NonFixed items" << Std::endl;
 
@@ -197,7 +197,7 @@ void World::loadNonFixed(IDataSource *ds) {
 			assert(_maps.size() > i);
 			assert(_maps[i] != nullptr);
 
-			IDataSource *items = f->getDataSource(i);
+			Common::SeekableReadStream *items = f->getDataSource(i);
 
 			_maps[i]->loadNonFixed(items);
 
@@ -209,12 +209,12 @@ void World::loadNonFixed(IDataSource *ds) {
 	delete f;
 }
 
-void World::loadItemCachNPCData(IDataSource *itemcach, IDataSource *npcdata) {
+void World::loadItemCachNPCData(Common::SeekableReadStream *itemcach, Common::SeekableReadStream *npcdata) {
 	FlexFile *itemcachflex = new FlexFile(itemcach);
 	FlexFile *npcdataflex = new FlexFile(npcdata);
 
-	IDataSource *itemds = itemcachflex->getDataSource(0);
-	IDataSource *npcds = npcdataflex->getDataSource(0);
+	Common::SeekableReadStream *itemds = itemcachflex->getDataSource(0);
+	Common::SeekableReadStream *npcds = npcdataflex->getDataSource(0);
 
 	delete itemcachflex;
 	delete npcdataflex;
@@ -360,15 +360,15 @@ void World::save(Common::WriteStream *ws) {
 }
 
 // load items
-bool World::load(IDataSource *ids, uint32 version) {
-	uint16 curmapnum = ids->readUint32LE();
+bool World::load(Common::ReadStream *rs, uint32 version) {
+	uint16 curmapnum = rs->readUint32LE();
 	_currentMap->setMap(_maps[curmapnum]);
 
-	_currentMap->_eggHatcher = ids->readUint16LE();
+	_currentMap->_eggHatcher = rs->readUint16LE();
 
-	uint32 etherealcount = ids->readUint32LE();
+	uint32 etherealcount = rs->readUint32LE();
 	for (unsigned int i = 0; i < etherealcount; ++i) {
-		_ethereal.push_front(ids->readUint16LE());
+		_ethereal.push_front(rs->readUint16LE());
 	}
 
 	return true;
@@ -382,12 +382,12 @@ void World::saveMaps(Common::WriteStream *ws) {
 }
 
 
-bool World::loadMaps(IDataSource *ids, uint32 version) {
-	uint32 mapcount = ids->readUint32LE();
+bool World::loadMaps(Common::ReadStream *rs, uint32 version) {
+	uint32 mapcount = rs->readUint32LE();
 
 	// Map objects have already been created by reset()
 	for (unsigned int i = 0; i < mapcount; ++i) {
-		bool res = _maps[i]->load(ids, version);
+		bool res = _maps[i]->load(rs, version);
 		if (!res) return false;
 	}
 

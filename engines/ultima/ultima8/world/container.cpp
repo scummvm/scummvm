@@ -314,14 +314,14 @@ void Container::saveData(Common::WriteStream *ws) {
 	}
 }
 
-bool Container::loadData(IDataSource *ids, uint32 version) {
-	if (!Item::loadData(ids, version)) return false;
+bool Container::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Item::loadData(rs, version)) return false;
 
-	uint32 contentcount = ids->readUint32LE();
+	uint32 contentcount = rs->readUint32LE();
 
 	// read _contents
 	for (unsigned int i = 0; i < contentcount; ++i) {
-		Object *obj = ObjectManager::get_instance()->loadObject(ids, version);
+		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
 		Item *item = p_dynamic_cast<Item *>(obj);
 		if (!item) return false;
 

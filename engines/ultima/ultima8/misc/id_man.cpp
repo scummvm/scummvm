@@ -197,12 +197,12 @@ void idMan::save(Common::WriteStream *ws) {
 	ws->writeUint16LE(0); // terminator
 }
 
-bool idMan::load(IDataSource *ds, uint32 version) {
-	_begin = ds->readUint16LE();
-	_end = ds->readUint16LE();
-	_maxEnd = ds->readUint16LE();
-	_startCount = ds->readUint16LE();
-	uint16 realusedcount = ds->readUint16LE();
+bool idMan::load(Common::ReadStream *rs, uint32 version) {
+	_begin = rs->readUint16LE();
+	_end = rs->readUint16LE();
+	_maxEnd = rs->readUint16LE();
+	_startCount = rs->readUint16LE();
+	uint16 realusedcount = rs->readUint16LE();
 
 	_ids.resize(_end + 1);
 
@@ -211,10 +211,10 @@ bool idMan::load(IDataSource *ds, uint32 version) {
 	}
 	_first = _last = 0;
 
-	uint16 cur = ds->readUint16LE();
+	uint16 cur = rs->readUint16LE();
 	while (cur) {
 		clearID(cur);
-		cur = ds->readUint16LE();
+		cur = rs->readUint16LE();
 	}
 
 	_usedCount = realusedcount;

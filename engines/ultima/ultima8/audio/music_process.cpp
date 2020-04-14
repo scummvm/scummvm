@@ -235,14 +235,14 @@ void MusicProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(static_cast<uint32>(_trackState._queued));
 }
 
-bool MusicProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool MusicProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_trackState._wanted = static_cast<int32>(ids->readUint32LE());
+	_trackState._wanted = static_cast<int32>(rs->readUint32LE());
 
 	if (version >= 4) {
-		_trackState._lastRequest = static_cast<int32>(ids->readUint32LE());
-		_trackState._queued = static_cast<int32>(ids->readUint32LE());
+		_trackState._lastRequest = static_cast<int32>(rs->readUint32LE());
+		_trackState._queued = static_cast<int32>(rs->readUint32LE());
 	} else {
 		_trackState._lastRequest = _trackState._wanted;
 		_trackState._queued = 0;

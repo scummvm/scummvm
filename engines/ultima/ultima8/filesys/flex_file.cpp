@@ -31,25 +31,25 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(FlexFile, ArchiveFile)
 
 
 
-FlexFile::FlexFile(IDataSource *ds_) : _ds(ds_), _count(0) {
-	_valid = isFlexFile(_ds);
+FlexFile::FlexFile(Common::SeekableReadStream *rs_) : _rs(rs_), _count(0) {
+	_valid = isFlexFile(_rs);
 
 	if (_valid) {
-		_ds->seek(0x54);
-		_count = _ds->readUint32LE();
+		_rs->seek(0x54);
+		_count = _rs->readUint32LE();
 	}
 }
 
 FlexFile::~FlexFile() {
-	delete _ds;
+	delete _rs;
 }
 
 //static
-bool FlexFile::isFlexFile(IDataSource *_ds) {
-	_ds->seek(0);
+bool FlexFile::isFlexFile(Common::SeekableReadStream *_rs) {
+	_rs->seek(0);
 	int i;
 	char buf[0x52];
-	_ds->read(buf, 0x52);
+	_rs->read(buf, 0x52);
 
 	for (i = 0; i < 0x52; ++i) {
 		if (buf[i] == 0x1A) break;
@@ -65,8 +65,8 @@ bool FlexFile::isFlexFile(IDataSource *_ds) {
 }
 
 uint32 FlexFile::getOffset(uint32 index) {
-	_ds->seek(0x80 + 8 * index);
-	return _ds->readUint32LE();
+	_rs->seek(0x80 + 8 * index);
+	return _rs->readUint32LE();
 }
 
 uint8 *FlexFile::getObject(uint32 index, uint32 *sizep) {
@@ -80,8 +80,8 @@ uint8 *FlexFile::getObject(uint32 index, uint32 *sizep) {
 	uint8 *object = new uint8[size];
 	uint32 offset = getOffset(index);
 
-	_ds->seek(offset);
-	_ds->read(object, size);
+	_rs->seek(offset);
+	_rs->read(object, size);
 
 	if (sizep) *sizep = size;
 
@@ -91,8 +91,8 @@ uint8 *FlexFile::getObject(uint32 index, uint32 *sizep) {
 uint32 FlexFile::getSize(uint32 index) const {
 	if (index >= _count) return 0;
 
-	_ds->seek(0x84 + 8 * index);
-	uint32 length = _ds->readUint32LE();
+	_rs->seek(0x84 + 8 * index);
+	uint32 length = _rs->readUint32LE();
 
 	return length;
 }

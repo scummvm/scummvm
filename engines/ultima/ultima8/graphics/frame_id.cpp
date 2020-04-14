@@ -35,10 +35,10 @@ void FrameID::save(Common::WriteStream *ws) {
 	ws->writeUint32LE(_frameNum);
 }
 
-bool FrameID::load(IDataSource *ids) {
-	_flexId = ids->readUint16LE();
-	_shapeNum = ids->readUint32LE();
-	_frameNum = ids->readUint32LE();
+bool FrameID::load(Common::ReadStream *rs) {
+	_flexId = rs->readUint16LE();
+	_shapeNum = rs->readUint32LE();
+	_frameNum = rs->readUint32LE();
 	return true;
 }
 

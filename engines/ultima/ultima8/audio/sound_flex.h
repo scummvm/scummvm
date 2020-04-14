@@ -35,7 +35,7 @@ class SoundFlex : protected Archive {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	SoundFlex(IDataSource *ds);
+	SoundFlex(Common::SeekableReadStream *rs);
 	~SoundFlex() override;
 
 	//! Get an audiosample

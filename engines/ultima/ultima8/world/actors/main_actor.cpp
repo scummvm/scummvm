@@ -407,18 +407,18 @@ void MainActor::saveData(Common::WriteStream *ws) {
 
 }
 
-bool MainActor::loadData(IDataSource *ids, uint32 version) {
-	if (!Actor::loadData(ids, version)) return false;
+bool MainActor::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Actor::loadData(rs, version)) return false;
 
-	_justTeleported = (ids->readByte() != 0);
-	_accumStr = static_cast<int32>(ids->readUint32LE());
-	_accumDex = static_cast<int32>(ids->readUint32LE());
-	_accumInt = static_cast<int32>(ids->readUint32LE());
+	_justTeleported = (rs->readByte() != 0);
+	_accumStr = static_cast<int32>(rs->readUint32LE());
+	_accumDex = static_cast<int32>(rs->readUint32LE());
+	_accumInt = static_cast<int32>(rs->readUint32LE());
 
-	uint8 namelength = ids->readByte();
+	uint8 namelength = rs->readByte();
 	_name.resize(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
-		_name[i] = ids->readByte();
+		_name[i] = rs->readByte();
 
 	return true;
 }

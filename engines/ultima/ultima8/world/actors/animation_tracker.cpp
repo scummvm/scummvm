@@ -606,17 +606,17 @@ void AnimationTracker::save(Common::WriteStream *ws) {
 	ws->writeUint16LE(_hitObject);
 }
 
-bool AnimationTracker::load(IDataSource *ids, uint32 version) {
-	_startFrame = ids->readUint32LE();
-	_endFrame = ids->readUint32LE();
-	_firstFrame = (ids->readByte() != 0);
-	_currentFrame = ids->readUint32LE();
+bool AnimationTracker::load(Common::ReadStream *rs, uint32 version) {
+	_startFrame = rs->readUint32LE();
+	_endFrame = rs->readUint32LE();
+	_firstFrame = (rs->readByte() != 0);
+	_currentFrame = rs->readUint32LE();
 
-	_actor = ids->readUint16LE();
-	_dir = ids->readByte();
+	_actor = rs->readUint16LE();
+	_dir = rs->readByte();
 
-	uint32 shapenum = ids->readUint32LE();
-	uint32 action = ids->readUint32LE();
+	uint32 shapenum = rs->readUint32LE();
+	uint32 action = rs->readUint32LE();
 	if (shapenum == 0) {
 		_animAction = nullptr;
 	} else {
@@ -625,20 +625,20 @@ bool AnimationTracker::load(IDataSource *ids, uint32 version) {
 		assert(_animAction);
 	}
 
-	_prevX = ids->readUint32LE();
-	_prevY = ids->readUint32LE();
-	_prevZ = ids->readUint32LE();
-	_x = ids->readUint32LE();
-	_y = ids->readUint32LE();
-	_z = ids->readUint32LE();
+	_prevX = rs->readUint32LE();
+	_prevY = rs->readUint32LE();
+	_prevZ = rs->readUint32LE();
+	_x = rs->readUint32LE();
+	_y = rs->readUint32LE();
+	_z = rs->readUint32LE();
 
-	_mode = static_cast<Mode>(ids->readUint16LE());
+	_mode = static_cast<Mode>(rs->readUint16LE());
 	if (_mode == TargetMode) {
-		_targetDx = ids->readUint32LE();
-		_targetDy = ids->readUint32LE();
+		_targetDx = rs->readUint32LE();
+		_targetDy = rs->readUint32LE();
 		if (version >= 5) {
-			_targetDz = ids->readUint32LE();
-			_targetOffGroundLeft = ids->readUint32LE();
+			_targetDz = rs->readUint32LE();
+			_targetOffGroundLeft = rs->readUint32LE();
 		} else {
 			// Versions before 5 stored the only _x,_y adjustment
 			// to be made per frame. This is less accurate and ignores _z.
@@ -659,14 +659,14 @@ bool AnimationTracker::load(IDataSource *ids, uint32 version) {
 		}
 	}
 
-	_firstStep = (ids->readByte() != 0);
-	_flipped = (ids->readByte() != 0);
-	_shapeFrame = ids->readUint32LE();
+	_firstStep = (rs->readByte() != 0);
+	_flipped = (rs->readByte() != 0);
+	_shapeFrame = rs->readUint32LE();
 
-	_done = (ids->readByte() != 0);
-	_blocked = (ids->readByte() != 0);
-	_unsupported = (ids->readByte() != 0);
-	_hitObject = ids->readUint16LE();
+	_done = (rs->readByte() != 0);
+	_blocked = (rs->readByte() != 0);
+	_unsupported = (rs->readByte() != 0);
+	_hitObject = rs->readUint16LE();
 
 	return true;
 }

@@ -34,8 +34,6 @@ class Item;
 class UCList;
 class TeleportEgg;
 class EggHatcherProcess;
-class IDataSource;
-class ODataSource;
 
 #define MAP_NUM_CHUNKS  64
 
@@ -201,7 +199,7 @@ public:
 	void setWholeMapFast();
 
 	void save(Common::WriteStream *ws);
-	bool load(IDataSource *ids, uint32 version);
+	bool load(Common::ReadStream *rs, uint32 version);
 
 	INTRINSIC(I_canExistAt);
 

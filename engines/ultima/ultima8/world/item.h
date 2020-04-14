@@ -36,7 +36,6 @@ class Container;
 class ShapeInfo;
 class Shape;
 class Gump;
-class ODataSource;
 class GravityProcess;
 
 class Item : public Object {
@@ -438,7 +437,7 @@ public:
 	//! dump some info about this item to pout
 	void dumpInfo() const override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 
 	// Intrinsics
 	INTRINSIC(I_touch);

@@ -225,10 +225,10 @@ void GrantPeaceProcess::saveData(Common::WriteStream *ws) {
 	ws->writeByte(ht);
 }
 
-bool GrantPeaceProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool GrantPeaceProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_haveTarget = (ids->readByte() != 0);
+	_haveTarget = (rs->readByte() != 0);
 
 	return true;
 }

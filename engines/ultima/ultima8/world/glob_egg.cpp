@@ -83,8 +83,8 @@ void GlobEgg::saveData(Common::WriteStream *ws) {
 	Item::saveData(ws);
 }
 
-bool GlobEgg::loadData(IDataSource *ids, uint32 version) {
-	if (!Item::loadData(ids, version)) return false;
+bool GlobEgg::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Item::loadData(rs, version)) return false;
 
 	return true;
 }

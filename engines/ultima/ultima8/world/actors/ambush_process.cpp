@@ -80,10 +80,10 @@ void AmbushProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(_delayCount);
 }
 
-bool AmbushProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool AmbushProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_delayCount = ids->readUint32LE();
+	_delayCount = rs->readUint32LE();
 
 	return true;
 }

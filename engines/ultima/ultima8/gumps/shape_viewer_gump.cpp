@@ -244,7 +244,7 @@ void ShapeViewerGump::U8ShapeViewer() {
 	_flex.second = gamedata->getFonts();
 	_flexes.push_back(_flex);
 	FileSystem *filesys = FileSystem::get_instance();
-	IDataSource *eintro = filesys->ReadFile("@game/static/eintro.skf");
+	Common::SeekableReadStream *eintro = filesys->ReadFile("@game/static/eintro.skf");
 	if (eintro) {
 		ShapeArchive *eintroshapes = new ShapeArchive(eintro, GameData::OTHER,
 		        PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game),
@@ -255,7 +255,7 @@ void ShapeViewerGump::U8ShapeViewer() {
 		// !! memory leak
 	}
 
-	IDataSource *endgame = filesys->ReadFile("@game/static/endgame.skf");
+	Common::SeekableReadStream *endgame = filesys->ReadFile("@game/static/endgame.skf");
 	if (endgame) {
 		ShapeArchive *endgameshapes = new ShapeArchive(endgame, GameData::OTHER,
 		        PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game),
@@ -274,7 +274,7 @@ void ShapeViewerGump::U8ShapeViewer() {
 	gump->InitGump(0);
 }
 
-bool ShapeViewerGump::loadData(IDataSource *ids) {
+bool ShapeViewerGump::loadData(Common::ReadStream *rs) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 	return false;
 }

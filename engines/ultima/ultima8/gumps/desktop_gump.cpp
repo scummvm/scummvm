@@ -115,7 +115,7 @@ void DesktopGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save DesktopGump");
 }
 
-bool DesktopGump::loadData(IDataSource *ids, uint32 version) {
+bool DesktopGump::loadData(Common::ReadStream *rs, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to save DesktopGump");
 
 	return false;

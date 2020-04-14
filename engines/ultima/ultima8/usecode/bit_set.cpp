@@ -120,10 +120,10 @@ void BitSet::save(Common::WriteStream *ws) {
 	ws->write(_data, _bytes);
 }
 
-bool BitSet::load(IDataSource *ids, uint32 version) {
-	uint32 s = ids->readUint32LE();
+bool BitSet::load(Common::ReadStream *rs, uint32 version) {
+	uint32 s = rs->readUint32LE();
 	setSize(s);
-	ids->read(_data, _bytes);
+	rs->read(_data, _bytes);
 
 	return true;
 }

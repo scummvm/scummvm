@@ -337,12 +337,12 @@ void CombatProcess::saveData(Common::WriteStream *ws) {
 	ws->writeByte(static_cast<uint8>(_combatMode));
 }
 
-bool CombatProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool CombatProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_target = ids->readUint16LE();
-	_fixedTarget = ids->readUint16LE();
-	_combatMode = static_cast<CombatMode>(ids->readByte());
+	_target = rs->readUint16LE();
+	_fixedTarget = rs->readUint16LE();
+	_combatMode = static_cast<CombatMode>(rs->readByte());
 
 	return true;
 }

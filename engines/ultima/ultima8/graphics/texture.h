@@ -82,8 +82,6 @@ enum TextureFormat {
 };
 
 
-class IDataSource;
-
 //
 // Basic 32 Bit Texture
 //
@@ -132,14 +130,14 @@ public:
 	}
 
 	// Create a texture from a Data Source (filename is use to help detection of type)
-	static Texture *Create(IDataSource *ds, const char *filename = NULL);
+	static Texture *Create(Common::SeekableReadStream *rs, const char *filename = NULL);
 
 	// Loads the data from the passed surfcae
 	void loadSurface(const Graphics::Surface *surf);
 protected:
 
 	// Read from a File. No filetype supported by this class
-	virtual bool Read(IDataSource * /*ds*/) {
+	virtual bool Read(Common::SeekableReadStream *rs) {
 		return false;
 	}
 };

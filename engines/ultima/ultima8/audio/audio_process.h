@@ -116,7 +116,7 @@ public:
 	//! stop all samples except speech
 	void stopAllExceptSpeech();
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 
 private:
 	void saveData(Common::WriteStream *ws) override;

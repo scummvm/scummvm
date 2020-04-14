@@ -35,8 +35,8 @@ void UCStack::save(Common::WriteStream *ws) {
 	ws->write(_bufPtr, stacksize());
 }
 
-bool UCStack::load(IDataSource *ids, uint32 version) {
-	_size = ids->readUint32LE();
+bool UCStack::load(Common::ReadStream *rs, uint32 version) {
+	_size = rs->readUint32LE();
 #ifdef USE_DYNAMIC_UCSTACK
 	if (_buf) delete[] _buf;
 	_buf = new uint8[_size];
@@ -47,10 +47,10 @@ bool UCStack::load(IDataSource *ids, uint32 version) {
 	}
 	_buf = _bufArray;
 #endif
-	uint32 sp = ids->readUint32LE();
+	uint32 sp = rs->readUint32LE();
 	_bufPtr = _buf + sp;
 
-	ids->read(_bufPtr, _size - sp);
+	rs->read(_bufPtr, _size - sp);
 
 	return true;
 }

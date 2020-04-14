@@ -40,22 +40,22 @@ FixedWidthFont *FixedWidthFont::Create(const Std::string &iniroot) {
 		return nullptr;
 	}
 
-	IDataSource *ds = filesys->ReadFile(filename);
+	Common::SeekableReadStream *rs = filesys->ReadFile(filename);
 
-	if (!ds) {
+	if (!rs) {
 		perr << "Error: Unable to open file " << filename << Std::endl;
 		return nullptr;
 	}
 
-	Texture *fonttex = Texture::Create(ds, filename.c_str());
+	Texture *fonttex = Texture::Create(rs, filename.c_str());
 
 	if (!fonttex) {
 		perr << "Error: Unable to read texture " << filename << Std::endl;
-		// FIXME: This leaks ds
+		// FIXME: This leaks rs
 		return nullptr;
 	}
 
-	delete ds;
+	delete rs;
 
 	FixedWidthFont *fwf = new FixedWidthFont;
 

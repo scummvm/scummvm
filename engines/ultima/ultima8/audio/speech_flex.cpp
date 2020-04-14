@@ -31,7 +31,7 @@ namespace Ultima8 {
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(SpeechFlex, SoundFlex)
 
-SpeechFlex::SpeechFlex(IDataSource *ds) : SoundFlex(ds) {
+SpeechFlex::SpeechFlex(Common::SeekableReadStream *rs) : SoundFlex(rs) {
 	uint32 size = getRawSize(0);
 	const uint8 *buf = getRawObject(0);
 

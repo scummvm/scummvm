@@ -28,8 +28,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-
 struct GlobItem {
 	int x;
 	int y;
@@ -45,7 +43,7 @@ public:
 	MapGlob();
 	~MapGlob();
 
-	void read(IDataSource *ds);
+	void read(Common::SeekableReadStream *rs);
 
 private:
 	Std::vector<GlobItem> _contents;

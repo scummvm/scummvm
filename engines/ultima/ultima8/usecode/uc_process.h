@@ -30,9 +30,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 class Usecode;
-class IDataSource;
-class ODataSource;
-
 
 // probably won't inherit from Process directly in the future
 class UCProcess : public Process {
@@ -60,7 +57,7 @@ public:
 	//! dump some info about this process to pout
 	void dumpInfo() const override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
 	void saveData(Common::WriteStream *ws) override;
 

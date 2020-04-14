@@ -81,8 +81,8 @@ void DestroyItemProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 }
 
-bool DestroyItemProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool DestroyItemProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	return true;
 }

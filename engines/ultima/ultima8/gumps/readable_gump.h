@@ -51,7 +51,7 @@ public:
 	INTRINSIC(I_readGrave);
 	INTRINSIC(I_readPlaque);
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

@@ -29,7 +29,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 class IDataSource;
-class ODataSource;
 
 //! GameInfo contains detailed information about the game
 struct GameInfo {

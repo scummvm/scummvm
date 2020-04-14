@@ -87,11 +87,11 @@ void SchedulerProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_nextActor);
 }
 
-bool SchedulerProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool SchedulerProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_lastRun = ids->readUint32LE();
-	_nextActor = ids->readUint16LE();
+	_lastRun = rs->readUint32LE();
+	_nextActor = rs->readUint16LE();
 
 	return true;
 }

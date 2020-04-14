@@ -62,7 +62,7 @@ protected:
 	int _textDelay;
 
 public:
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

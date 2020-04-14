@@ -51,10 +51,10 @@ void DelayProcess::dumpInfo() const {
 }
 
 
-bool DelayProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool DelayProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_count = static_cast<int>(ids->readUint32LE());
+	_count = static_cast<int>(rs->readUint32LE());
 
 	return true;
 }

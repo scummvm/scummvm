@@ -123,11 +123,11 @@ void UCList::save(Common::WriteStream *ws) {
 }
 
 
-bool UCList::load(IDataSource *ids, uint32 version) {
-	_elementSize = ids->readUint32LE();
-	_size = ids->readUint32LE();
+bool UCList::load(Common::ReadStream *rs, uint32 version) {
+	_elementSize = rs->readUint32LE();
+	_size = rs->readUint32LE();
 	_elements.resize(_size * _elementSize);
-	ids->read(&(_elements[0]), _size * _elementSize);
+	rs->read(&(_elements[0]), _size * _elementSize);
 
 	return true;
 }

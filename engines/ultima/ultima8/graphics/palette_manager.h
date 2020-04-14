@@ -29,7 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
 class RenderSurface;
 
 class PaletteManager {
@@ -47,8 +46,8 @@ public:
 		Pal_JPFontStart = 16
 	};
 
-	void load(PalIndex index, IDataSource &ds, IDataSource &xformds);
-	void load(PalIndex index, IDataSource &ds);
+	void load(PalIndex index, Common::ReadStream &rs, Common::ReadStream &xformrs);
+	void load(PalIndex index, Common::ReadStream &rs);
 	Palette *getPalette(PalIndex index);
 
 	void duplicate(PalIndex src, PalIndex dest);

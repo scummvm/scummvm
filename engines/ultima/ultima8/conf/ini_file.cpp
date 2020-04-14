@@ -293,7 +293,7 @@ void INIFile::write() {
 	if (!_isFile || _readOnly)
 		return;
 
-	ODataSource *f = FileSystem::get_instance()->WriteFile(_filename, true);
+	Common::WriteStream *f = FileSystem::get_instance()->WriteFile(_filename, true);
 	if (!f) return;
 
 	Std::string s = dump();

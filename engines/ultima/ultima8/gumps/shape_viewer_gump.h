@@ -51,7 +51,7 @@ public:
 
 	static void U8ShapeViewer();
 
-	bool loadData(IDataSource *ids);
+	bool loadData(Common::ReadStream *rs);
 protected:
 	void saveData(Common::WriteStream *ws) override;
 

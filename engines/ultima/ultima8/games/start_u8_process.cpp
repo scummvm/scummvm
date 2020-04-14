@@ -117,8 +117,8 @@ void StartU8Process::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 }
 
-bool StartU8Process::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool StartU8Process::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	return true;
 }

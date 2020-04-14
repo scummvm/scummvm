@@ -215,16 +215,16 @@ void FireballProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_age);
 }
 
-bool FireballProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool FireballProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_xSpeed = static_cast<int>(ids->readUint32LE());
-	_ySpeed = static_cast<int>(ids->readUint32LE());
-	_target = ids->readUint16LE();
-	_tail[0] = ids->readUint16LE();
-	_tail[1] = ids->readUint16LE();
-	_tail[2] = ids->readUint16LE();
-	_age = ids->readUint16LE();
+	_xSpeed = static_cast<int>(rs->readUint32LE());
+	_ySpeed = static_cast<int>(rs->readUint32LE());
+	_target = rs->readUint16LE();
+	_tail[0] = rs->readUint16LE();
+	_tail[1] = rs->readUint16LE();
+	_tail[2] = rs->readUint16LE();
+	_age = rs->readUint16LE();
 
 	return true;
 }

@@ -355,13 +355,13 @@ void GravityProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(static_cast<uint32>(_zSpeed));
 }
 
-bool GravityProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool GravityProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_gravity = static_cast<int>(ids->readUint32LE());
-	_xSpeed = static_cast<int>(ids->readUint32LE());
-	_ySpeed = static_cast<int>(ids->readUint32LE());
-	_zSpeed = static_cast<int>(ids->readUint32LE());
+	_gravity = static_cast<int>(rs->readUint32LE());
+	_xSpeed = static_cast<int>(rs->readUint32LE());
+	_ySpeed = static_cast<int>(rs->readUint32LE());
+	_zSpeed = static_cast<int>(rs->readUint32LE());
 
 	return true;
 }

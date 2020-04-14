@@ -32,10 +32,8 @@ namespace Ultima8 {
 class Debugger;
 class Process;
 class idMan;
-class IDataSource;
-class ODataSource;
 
-typedef Process *(*ProcessLoadFunc)(IDataSource *, uint32 version);
+typedef Process *(*ProcessLoadFunc)(Common::ReadStream *rs, uint32 version);
 typedef Std::list<Process *>::const_iterator ProcessIter;
 typedef Std::list<Process *>::iterator ProcessIterator;
 
@@ -99,7 +97,7 @@ public:
 	void processTypes();
 
 	void save(Common::WriteStream *ws);
-	bool load(IDataSource *ids, uint32 version);
+	bool load(Common::ReadStream *rs, uint32 version);
 
 	void pause() {
 		_paused++;
@@ -130,7 +128,7 @@ public:
 	INTRINSIC(I_getNumProcesses);
 	INTRINSIC(I_resetRef);
 private:
-	Process *loadProcess(IDataSource *ids, uint32 version);
+	Process *loadProcess(Common::ReadStream *rs, uint32 version);
 
 	Std::list<Process *> _processes;
 	idMan   *_pIDs;

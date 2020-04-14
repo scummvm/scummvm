@@ -121,11 +121,11 @@ void HealProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_hungerCounter);
 }
 
-bool HealProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool HealProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_healCounter = ids->readUint16LE();
-	_hungerCounter = ids->readUint16LE();
+	_healCounter = rs->readUint16LE();
+	_hungerCounter = rs->readUint16LE();
 
 	return true;
 }

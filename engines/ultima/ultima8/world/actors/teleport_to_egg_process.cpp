@@ -60,11 +60,11 @@ void TeleportToEggProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(static_cast<uint32>(_teleportId));
 }
 
-bool TeleportToEggProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool TeleportToEggProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_mapNum = static_cast<int>(ids->readUint32LE());
-	_teleportId = static_cast<int>(ids->readUint32LE());
+	_mapNum = static_cast<int>(rs->readUint32LE());
+	_teleportId = static_cast<int>(rs->readUint32LE());
 	return true;
 }
 

@@ -59,9 +59,9 @@ ObjectManager *ObjectManager::_objectManager = nullptr;
 // every object separately
 template<class T>
 struct ObjectLoader {
-	static Object *load(IDataSource *ids, uint32 version) {
+	static Object *load(Common::ReadStream *rs, uint32 version) {
 		T *p = new T();
-		bool ok = p->loadData(ids, version);
+		bool ok = p->loadData(rs, version);
 		if (!ok) {
 			delete p;
 			p = nullptr;
@@ -236,22 +236,22 @@ void ObjectManager::save(Common::WriteStream *ws) {
 }
 
 
-bool ObjectManager::load(IDataSource *ids, uint32 version) {
-	if (!_objIDs->load(ids, version)) return false;
-	if (!_actorIDs->load(ids, version)) return false;
+bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
+	if (!_objIDs->load(rs, version)) return false;
+	if (!_actorIDs->load(rs, version)) return false;
 
 	do {
 		// peek ahead for terminator
-		uint16 classlen = ids->readUint16LE();
+		uint16 classlen = rs->readUint16LE();
 		if (classlen == 0) break;
 		char *buf = new char[classlen + 1];
-		ids->read(buf, classlen);
+		rs->read(buf, classlen);
 		buf[classlen] = 0;
 
 		Std::string classname = buf;
 		delete[] buf;
 
-		Object *obj = loadObject(ids, classname, version);
+		Object *obj = loadObject(rs, classname, version);
 		if (!obj) return false;
 
 		// top level gumps have to be added to the correct core gump
@@ -290,19 +290,19 @@ bool ObjectManager::load(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-Object *ObjectManager::loadObject(IDataSource *ids, uint32 version) {
-	uint16 classlen = ids->readUint16LE();
+Object *ObjectManager::loadObject(Common::ReadStream *rs, uint32 version) {
+	uint16 classlen = rs->readUint16LE();
 	char *buf = new char[classlen + 1];
-	ids->read(buf, classlen);
+	rs->read(buf, classlen);
 	buf[classlen] = 0;
 
 	Std::string classname = buf;
 	delete[] buf;
 
-	return loadObject(ids, classname, version);
+	return loadObject(rs, classname, version);
 }
 
-Object *ObjectManager::loadObject(IDataSource *ids, Std::string classname,
+Object *ObjectManager::loadObject(Common::ReadStream *rs, Std::string classname,
                                   uint32 version) {
 	Std::map<Common::String, ObjectLoadFunc>::iterator iter;
 	iter = _objectLoaders.find(classname);
@@ -312,7 +312,7 @@ Object *ObjectManager::loadObject(IDataSource *ids, Std::string classname,
 		return nullptr;
 	}
 
-	Object *obj = (*(iter->_value))(ids, version);
+	Object *obj = (*(iter->_value))(rs, version);
 
 	if (!obj) {
 		perr << "Error loading object of type " << classname << Std::endl;

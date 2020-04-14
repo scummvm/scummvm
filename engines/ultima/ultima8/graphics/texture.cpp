@@ -46,7 +46,7 @@ Texture::~Texture() {
 #define TRY_TYPE(TextureType)               \
 	tex = new TextureType();                    \
 	/* If read failed, delete the texture. */   \
-	if (!tex->Read(ds)) {                       \
+	if (!tex->Read(rs)) {                       \
 		delete tex;                             \
 		tex = nullptr;                          \
 	}                                           \
@@ -65,7 +65,7 @@ void Texture::create(uint16 width, uint16 height, TextureFormat textureFormat) {
 // Create a texture from a Data Source
 // (filename is used to help detection of type)
 //
-Texture *Texture::Create(IDataSource *ds, const char *filename) {
+Texture *Texture::Create(Common::SeekableReadStream *rs, const char *filename) {
 	Texture *tex;
 
 	if (filename) {

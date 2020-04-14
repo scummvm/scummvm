@@ -330,15 +330,15 @@ void Kernel::save(Common::WriteStream *ws) {
 	}
 }
 
-bool Kernel::load(IDataSource *ids, uint32 version) {
-	_frameNum = ids->readUint32LE();
+bool Kernel::load(Common::ReadStream *rs, uint32 version) {
+	_frameNum = rs->readUint32LE();
 
-	if (!_pIDs->load(ids, version)) return false;
+	if (!_pIDs->load(rs, version)) return false;
 
-	const uint32 pcount = ids->readUint32LE();
+	const uint32 pcount = rs->readUint32LE();
 
 	for (unsigned int i = 0; i < pcount; ++i) {
-		Process *p = loadProcess(ids, version);
+		Process *p = loadProcess(rs, version);
 		if (!p) return false;
 		_processes.push_back(p);
 	}
@@ -346,10 +346,10 @@ bool Kernel::load(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-Process *Kernel::loadProcess(IDataSource *ids, uint32 version) {
-	const uint16 classlen = ids->readUint16LE();
+Process *Kernel::loadProcess(Common::ReadStream *rs, uint32 version) {
+	const uint16 classlen = rs->readUint16LE();
 	char *buf = new char[classlen + 1];
-	ids->read(buf, classlen);
+	rs->read(buf, classlen);
 	buf[classlen] = 0;
 
 	Std::string classname = buf;
@@ -366,7 +366,7 @@ Process *Kernel::loadProcess(IDataSource *ids, uint32 version) {
 
 	_loading = true;
 
-	Process *p = (*(iter->_value))(ids, version);
+	Process *p = (*(iter->_value))(rs, version);
 
 	_loading = false;
 

@@ -25,6 +25,7 @@
 #define ULTIMA8_ULTIMA8
 
 #include "common/scummsys.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/archive.h"
 #include "common/error.h"
@@ -70,8 +71,6 @@ class ObjectManager;
 class FontManager;
 class Mouse;
 class AvatarMoverProcess;
-class IDataSource;
-class ODataSource;
 class Texture;
 class AudioMixer;
 
@@ -149,7 +148,7 @@ private:
 	void save(Common::WriteStream *ws);
 
 	//! load CoreApp/Ultima8Engine data
-	bool load(IDataSource *ids, uint32 version);
+	bool load(Common::ReadStream *rs, uint32 version);
 
 	//! reset engine (including World, UCMachine, a.o.)
 	void resetEngine();

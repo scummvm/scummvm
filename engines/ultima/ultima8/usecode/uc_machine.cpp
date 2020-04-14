@@ -2258,20 +2258,20 @@ void UCMachine::saveLists(Common::WriteStream *ws) {
 	}
 }
 
-bool UCMachine::loadGlobals(IDataSource *ids, uint32 version) {
-	return _globals->load(ids, version);
+bool UCMachine::loadGlobals(Common::ReadStream *rs, uint32 version) {
+	return _globals->load(rs, version);
 }
 
-bool UCMachine::loadStrings(IDataSource *ids, uint32 version) {
-	if (!_stringIDs->load(ids, version)) return false;
+bool UCMachine::loadStrings(Common::ReadStream *rs, uint32 version) {
+	if (!_stringIDs->load(rs, version)) return false;
 
-	uint32 stringcount = ids->readUint32LE();
+	uint32 stringcount = rs->readUint32LE();
 	for (unsigned int i = 0; i < stringcount; ++i) {
-		uint16 sid = ids->readUint16LE();
-		uint32 len = ids->readUint32LE();
+		uint16 sid = rs->readUint16LE();
+		uint32 len = rs->readUint32LE();
 		if (len) {
 			char *buf = new char[len + 1];
-			ids->read(buf, len);
+			rs->read(buf, len);
 			buf[len] = 0;
 			_stringHeap[sid] = buf;
 			delete[] buf;
@@ -2283,14 +2283,14 @@ bool UCMachine::loadStrings(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-bool UCMachine::loadLists(IDataSource *ids, uint32 version) {
-	if (!_listIDs->load(ids, version)) return false;
+bool UCMachine::loadLists(Common::ReadStream *rs, uint32 version) {
+	if (!_listIDs->load(rs, version)) return false;
 
-	uint32 listcount = ids->readUint32LE();
+	uint32 listcount = rs->readUint32LE();
 	for (unsigned int i = 0; i < listcount; ++i) {
-		uint16 lid = ids->readUint16LE();
+		uint16 lid = rs->readUint16LE();
 		UCList *l = new UCList(2); // the "2" will be ignored by load()
-		bool ret = l->load(ids, version);
+		bool ret = l->load(rs, version);
 		if (!ret) return false;
 
 		_listHeap[lid] = l;

@@ -46,7 +46,7 @@ public:
 
 	static void verifyQuit();
 
-	bool loadData(IDataSource *ids);
+	bool loadData(Common::ReadStream *rs);
 protected:
 	void saveData(Common::WriteStream *ws) override;
 	ObjId _yesWidget, _noWidget;

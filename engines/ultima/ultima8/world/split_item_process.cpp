@@ -96,10 +96,10 @@ void SplitItemProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_target);
 }
 
-bool SplitItemProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool SplitItemProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_target = ids->readUint16LE();
+	_target = rs->readUint16LE();
 
 	return true;
 }

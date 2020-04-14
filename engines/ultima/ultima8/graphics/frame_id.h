@@ -28,9 +28,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-class ODataSource;
-
 struct FrameID {
 	uint16 _flexId;
 	uint32 _shapeNum;
@@ -42,7 +39,7 @@ struct FrameID {
 	}
 
 	void save(Common::WriteStream *ws);
-	bool load(IDataSource *ids);
+	bool load(Common::ReadStream *rs);
 };
 
 } // End of namespace Ultima8

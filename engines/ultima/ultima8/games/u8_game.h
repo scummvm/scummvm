@@ -28,8 +28,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-
 class U8Game: public Game {
 public:
 	U8Game();
@@ -53,7 +51,7 @@ public:
 	void playQuotes() override;
 
 protected:
-	Std::string getCreditText(IDataSource *ids);
+	Std::string getCreditText(Common::SeekableReadStream *rs);
 };
 
 } // End of namespace Ultima8

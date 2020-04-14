@@ -44,6 +44,7 @@
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/games/start_u8_process.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -71,14 +72,14 @@ U8Game::~U8Game() {
 bool U8Game::loadFiles() {
 	// Load palette
 	pout << "Load Palette" << Std::endl;
-	IDataSource *pf = FileSystem::get_instance()->ReadFile("@game/static/u8pal.pal");
+	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile("@game/static/u8pal.pal");
 	if (!pf) {
 		perr << "Unabl-e to load static/u8pal.pal." << Std::endl;
 		return false;
 	}
 	pf->seek(4); // seek past header
 
-	IBufferDataSource xfds(U8XFormPal, 1024);
+	Common::MemoryReadStream xfds(U8XFormPal, 1024);
 	PaletteManager::get_instance()->load(PaletteManager::Pal_Game, *pf, xfds);
 	delete pf;
 
@@ -102,26 +103,26 @@ bool U8Game::startGame() {
 	// reserve ObjId 666 for the Guardian Bark hack
 	objman->reserveObjId(666);
 
-	IDataSource *saveds = FileSystem::get_instance()->ReadFile("@game/savegame/u8save.000");
-	if (!saveds) {
+	Common::SeekableReadStream *savers = FileSystem::get_instance()->ReadFile("@game/savegame/u8save.000");
+	if (!savers) {
 		perr << "Unable to load savegame/u8save.000." << Std::endl;
 		return false;
 	}
-	U8SaveFile *u8save = new U8SaveFile(saveds);
+	U8SaveFile *u8save = new U8SaveFile(savers);
 
-	IDataSource *nfd = u8save->getDataSource("NONFIXED.DAT");
+	Common::SeekableReadStream *nfd = u8save->getDataSource("NONFIXED.DAT");
 	if (!nfd) {
 		perr << "Unable to load savegame/u8save.000/NONFIXED.DAT." << Std::endl;
 		return false;
 	}
 	World::get_instance()->loadNonFixed(nfd); // deletes nfd
 
-	IDataSource *icd = u8save->getDataSource("ITEMCACH.DAT");
+	Common::SeekableReadStream *icd = u8save->getDataSource("ITEMCACH.DAT");
 	if (!icd) {
 		perr << "Unable to load savegame/u8save.000/ITEMCACH.DAT." << Std::endl;
 		return false;
 	}
-	IDataSource *npcd = u8save->getDataSource("NPCDATA.DAT");
+	Common::SeekableReadStream *npcd = u8save->getDataSource("NPCDATA.DAT");
 	if (!npcd) {
 		perr << "Unable to load savegame/u8save.000/NPCDATA.DAT." << Std::endl;
 		return false;
@@ -167,7 +168,7 @@ ProcId U8Game::playIntroMovie(bool fade) {
 	filename += "intro.skf";
 
 	FileSystem *filesys = FileSystem::get_instance();
-	IDataSource *skf = filesys->ReadFile(filename);
+	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
 	if (!skf) {
 		pout << "U8Game::playIntro: movie not found." << Std::endl;
 		return 0;
@@ -180,7 +181,7 @@ ProcId U8Game::playIntroMovie(bool fade) {
 ProcId U8Game::playEndgameMovie(bool fade) {
 	Std::string filename = "@game/static/endgame.skf";
 	FileSystem *filesys = FileSystem::get_instance();
-	IDataSource *skf = filesys->ReadFile(filename);
+	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
 	if (!skf) {
 		pout << "U8Game::playEndgame: movie not found." << Std::endl;
 		return 0;
@@ -201,14 +202,14 @@ void U8Game::playCredits() {
 	filename += langletter;
 	filename += "credits.dat";
 
-	IDataSource *ids = FileSystem::get_instance()->ReadFile(filename);
-	if (!ids) {
+	Common::SeekableReadStream *rs = FileSystem::get_instance()->ReadFile(filename);
+	if (!rs) {
 		perr << "U8Game::playCredits: error opening credits file: "
 		     << filename << Std::endl;
 		return;
 	}
-	Std::string text = getCreditText(ids);
-	delete ids;
+	Std::string text = getCreditText(rs);
+	delete rs;
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	if (musicproc) musicproc->playMusic(51); // CONSTANT!
@@ -222,14 +223,14 @@ void U8Game::playCredits() {
 void U8Game::playQuotes() {
 	Std::string filename = "@game/static/quotes.dat";
 
-	IDataSource *ids = FileSystem::get_instance()->ReadFile(filename);
-	if (!ids) {
+	Common::SeekableReadStream *rs = FileSystem::get_instance()->ReadFile(filename);
+	if (!rs) {
 		perr << "U8Game::playCredits: error opening credits file: "
 		     << filename << Std::endl;
 		return;
 	}
-	Std::string text = getCreditText(ids);
-	delete ids;
+	Std::string text = getCreditText(rs);
+	delete rs;
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	if (musicproc) musicproc->playMusic(113); // CONSTANT!
@@ -279,12 +280,12 @@ void U8Game::writeSaveInfo(Common::WriteStream *ws) {
 	}
 }
 
-Std::string U8Game::getCreditText(IDataSource *ids) {
+Std::string U8Game::getCreditText(Common::SeekableReadStream *rs) {
 	Std::string text;
-	unsigned int size = ids->size();
+	unsigned int size = rs->size();
 	text.resize(size);
 	for (unsigned int i = 0; i < size; ++i) {
-		uint8 c = ids->readByte();
+		uint8 c = rs->readByte();
 		int x;
 		switch (i) {
 		case 0:

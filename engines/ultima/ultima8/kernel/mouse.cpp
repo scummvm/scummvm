@@ -53,7 +53,7 @@ Mouse::Mouse() : _flashingCursorTime(0), _mouseOverGump(0), _defaultMouse(nullpt
 
 void Mouse::setup() {
 	FileSystem *filesys = FileSystem::get_instance();
-	IDataSource *dm = filesys->ReadFile("@data/mouse.tga");
+	Common::SeekableReadStream *dm = filesys->ReadFile("@data/mouse.tga");
 	_defaultMouse = dm ? Texture::Create(dm, "@data/mouse.tga") : 0;
 
 	if (!_defaultMouse)

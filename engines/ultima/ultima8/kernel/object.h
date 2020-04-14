@@ -30,8 +30,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 class Usecode;
-class ODataSource;
-class IDataSource;
 
 class Object {
 public:
@@ -72,7 +70,7 @@ public:
 	ProcId callUsecode(uint16 classid, uint16 offset,
 	                   const uint8 *args = 0, int argsize = 0);
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 
 protected:
 	//! write the Object savegame header (mainly consisting of the classname)

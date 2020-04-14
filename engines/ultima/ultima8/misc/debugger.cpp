@@ -796,12 +796,12 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	sprintf(buf, "%02d", World::get_instance()->getCurrentMap()->getNum());
 	filename += buf;
 	filename += ".png";
-	ODataSource *ds = FileSystem::get_instance()->WriteFile(filename);
+	Common::WriteStream *ws = FileSystem::get_instance()->WriteFile(filename);
 	Std::string pngcomment = "Map ";
 	pngcomment += buf;
 	pngcomment += ", dumped by Pentagram.";
 
-	PNGWriter *pngw = new PNGWriter(ds);
+	PNGWriter *pngw = new PNGWriter(ws);
 	pngw->init(awidth, aheight, pngcomment);
 
 	// Now render the map
@@ -843,7 +843,7 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	pngw->finish();
 	delete pngw;
 
-	delete ds;
+	delete ws;
 
 	delete g;
 	delete s;
@@ -1431,7 +1431,7 @@ bool Debugger::cmdPlayMovie(int argc, const char **argv) {
 
 	Std::string filename = Common::String::format("@game/static/%s.skf", argv[1]);
 	FileSystem *filesys = FileSystem::get_instance();
-	IDataSource *skf = filesys->ReadFile(filename);
+	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
 	if (!skf) {
 		debugPrintf("movie not found.\n");
 		return true;

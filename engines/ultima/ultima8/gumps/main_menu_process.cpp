@@ -60,8 +60,8 @@ void MainMenuProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 }
 
-bool MainMenuProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool MainMenuProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	return true;
 }

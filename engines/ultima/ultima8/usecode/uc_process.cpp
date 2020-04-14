@@ -176,21 +176,21 @@ void UCProcess::saveData(Common::WriteStream *ws) {
 	_stack.save(ws);
 }
 
-bool UCProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool UCProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_bp = ids->readUint16LE();
-	_classId = ids->readUint16LE();
-	_ip = ids->readUint16LE();
-	_temp32 = ids->readUint32LE();
-	uint32 freecount = ids->readUint32LE();
+	_bp = rs->readUint16LE();
+	_classId = rs->readUint16LE();
+	_ip = rs->readUint16LE();
+	_temp32 = rs->readUint32LE();
+	uint32 freecount = rs->readUint32LE();
 	for (unsigned int i = 0; i < freecount; ++i) {
 		Std::pair<uint16, int> p;
-		p.first = ids->readUint16LE();
-		p.second = static_cast<int>(ids->readUint32LE());
+		p.first = rs->readUint16LE();
+		p.second = static_cast<int>(rs->readUint32LE());
 		_freeOnTerminate.push_back(p);
 	}
-	_stack.load(ids, version);
+	_stack.load(rs, version);
 
 	return true;
 }

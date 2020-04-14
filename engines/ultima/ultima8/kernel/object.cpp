@@ -91,8 +91,8 @@ void Object::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_objId);
 }
 
-bool Object::loadData(IDataSource *ids, uint32 version) {
-	_objId = ids->readUint16LE();
+bool Object::loadData(Common::ReadStream *rs, uint32 version) {
+	_objId = rs->readUint16LE();
 
 	return true;
 }

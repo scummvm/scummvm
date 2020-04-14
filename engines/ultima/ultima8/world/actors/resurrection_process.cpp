@@ -85,8 +85,8 @@ void ResurrectionProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 }
 
-bool ResurrectionProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool ResurrectionProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	return true;
 }

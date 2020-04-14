@@ -827,40 +827,40 @@ void Gump::saveData(Common::WriteStream *ws) {
 	}
 }
 
-bool Gump::loadData(IDataSource *ids, uint32 version) {
-	if (!Object::loadData(ids, version)) return false;
+bool Gump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Object::loadData(rs, version)) return false;
 
-	_owner = ids->readUint16LE();
-	_x = static_cast<int32>(ids->readUint32LE());
-	_y = static_cast<int32>(ids->readUint32LE());
+	_owner = rs->readUint16LE();
+	_x = static_cast<int32>(rs->readUint32LE());
+	_y = static_cast<int32>(rs->readUint32LE());
 
-	int dx = static_cast<int32>(ids->readUint32LE());
-	int dy = static_cast<int32>(ids->readUint32LE());
-	int dw = static_cast<int32>(ids->readUint32LE());
-	int dh = static_cast<int32>(ids->readUint32LE());
+	int dx = static_cast<int32>(rs->readUint32LE());
+	int dy = static_cast<int32>(rs->readUint32LE());
+	int dw = static_cast<int32>(rs->readUint32LE());
+	int dh = static_cast<int32>(rs->readUint32LE());
 	_dims.Set(dx, dy, dw, dh);
 
-	_flags = ids->readUint32LE();
-	_layer = static_cast<int32>(ids->readUint32LE());
-	_index = static_cast<int32>(ids->readUint32LE());
+	_flags = rs->readUint32LE();
+	_layer = static_cast<int32>(rs->readUint32LE());
+	_index = static_cast<int32>(rs->readUint32LE());
 
 	_shape = nullptr;
-	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(ids->readUint16LE());
-	uint32 shapenum = ids->readUint32LE();
+	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(rs->readUint16LE());
+	uint32 shapenum = rs->readUint32LE();
 	if (flex) {
 		_shape = flex->getShape(shapenum);
 	}
 
-	_frameNum = ids->readUint32LE();
-	uint16 focusid = ids->readUint16LE();
+	_frameNum = rs->readUint32LE();
+	uint16 focusid = rs->readUint16LE();
 	_focusChild = nullptr;
-	_notifier = ids->readUint16LE();
-	_processResult = ids->readUint32LE();
+	_notifier = rs->readUint16LE();
+	_processResult = rs->readUint32LE();
 
 	// read children
-	uint32 childcount = ids->readUint32LE();
+	uint32 childcount = rs->readUint32LE();
 	for (unsigned int i = 0; i < childcount; ++i) {
-		Object *obj = ObjectManager::get_instance()->loadObject(ids, version);
+		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
 		Gump *child = p_dynamic_cast<Gump *>(obj);
 		if (!child) return false;
 

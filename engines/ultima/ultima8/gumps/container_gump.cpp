@@ -543,13 +543,13 @@ void ContainerGump::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(static_cast<uint32>(_itemArea.h));
 }
 
-bool ContainerGump::loadData(IDataSource *ids, uint32 version) {
-	if (!ItemRelativeGump::loadData(ids, version)) return false;
+bool ContainerGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!ItemRelativeGump::loadData(rs, version)) return false;
 
-	int32 iax = static_cast<int32>(ids->readUint32LE());
-	int32 iay = static_cast<int32>(ids->readUint32LE());
-	int32 iaw = static_cast<int32>(ids->readUint32LE());
-	int32 iah = static_cast<int32>(ids->readUint32LE());
+	int32 iax = static_cast<int32>(rs->readUint32LE());
+	int32 iay = static_cast<int32>(rs->readUint32LE());
+	int32 iaw = static_cast<int32>(rs->readUint32LE());
+	int32 iah = static_cast<int32>(rs->readUint32LE());
 	_itemArea.Set(iax, iay, iaw, iah);
 
 	return true;

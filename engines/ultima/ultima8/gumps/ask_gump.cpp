@@ -123,11 +123,11 @@ void AskGump::saveData(Common::WriteStream *ws) {
 	_answers->save(ws);
 }
 
-bool AskGump::loadData(IDataSource *ids, uint32 version) {
-	if (!ItemRelativeGump::loadData(ids, version)) return false;
+bool AskGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!ItemRelativeGump::loadData(rs, version)) return false;
 
 	_answers = new UCList(2);
-	_answers->load(ids, version);
+	_answers->load(rs, version);
 
 	// HACK ALERT
 	int px = 0, py = 0;

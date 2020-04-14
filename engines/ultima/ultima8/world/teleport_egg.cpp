@@ -57,8 +57,8 @@ void TeleportEgg::saveData(Common::WriteStream *ws) {
 	Egg::saveData(ws);
 }
 
-bool TeleportEgg::loadData(IDataSource *ids, uint32 version) {
-	if (!Egg::loadData(ids, version)) return false;
+bool TeleportEgg::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Egg::loadData(rs, version)) return false;
 
 	return true;
 }

@@ -581,7 +581,7 @@ void GameMapGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save GameMapGump");
 }
 
-bool GameMapGump::loadData(IDataSource *ids, uint32 version) {
+bool GameMapGump::loadData(Common::ReadStream *rs, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to load GameMapGump");
 
 	return false;

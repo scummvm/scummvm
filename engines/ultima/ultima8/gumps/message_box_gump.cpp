@@ -171,7 +171,7 @@ void MessageBoxGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 }
 
-bool MessageBoxGump::loadData(IDataSource *ids, uint32 version) {
+bool MessageBoxGump::loadData(Common::ReadStream *rs, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 
 	return false;

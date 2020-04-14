@@ -175,8 +175,8 @@ void ItemRelativeGump::saveData(Common::WriteStream *ws) {
 	Gump::saveData(ws);
 }
 
-bool ItemRelativeGump::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version)) return false;
+bool ItemRelativeGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Gump::loadData(rs, version)) return false;
 
 	return true;
 }

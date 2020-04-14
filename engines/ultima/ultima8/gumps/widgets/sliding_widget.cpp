@@ -63,8 +63,8 @@ void SlidingWidget::saveData(Common::WriteStream *ws) {
 	Gump::saveData(ws);
 }
 
-bool SlidingWidget::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version)) return false;
+bool SlidingWidget::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Gump::loadData(rs, version)) return false;
 
 	return true;
 }

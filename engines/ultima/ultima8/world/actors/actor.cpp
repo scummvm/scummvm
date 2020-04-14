@@ -1090,22 +1090,22 @@ void Actor::saveData(Common::WriteStream *ws) {
 	ws->writeByte(_unk0C);
 }
 
-bool Actor::loadData(IDataSource *ids, uint32 version) {
-	if (!Container::loadData(ids, version)) return false;
+bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Container::loadData(rs, version)) return false;
 
-	_strength = static_cast<int16>(ids->readUint16LE());
-	_dexterity = static_cast<int16>(ids->readUint16LE());
-	_intelligence = static_cast<int16>(ids->readUint16LE());
-	_hitPoints = ids->readUint16LE();
-	_mana = static_cast<int16>(ids->readUint16LE());
-	_alignment = ids->readUint16LE();
-	_enemyAlignment = ids->readUint16LE();
-	_lastAnim = static_cast<Animation::Sequence>(ids->readUint16LE());
-	_animFrame = ids->readUint16LE();
-	_direction = ids->readUint16LE();
-	_fallStart = ids->readUint32LE();
-	_actorFlags = ids->readUint32LE();
-	_unk0C = ids->readByte();
+	_strength = static_cast<int16>(rs->readUint16LE());
+	_dexterity = static_cast<int16>(rs->readUint16LE());
+	_intelligence = static_cast<int16>(rs->readUint16LE());
+	_hitPoints = rs->readUint16LE();
+	_mana = static_cast<int16>(rs->readUint16LE());
+	_alignment = rs->readUint16LE();
+	_enemyAlignment = rs->readUint16LE();
+	_lastAnim = static_cast<Animation::Sequence>(rs->readUint16LE());
+	_animFrame = rs->readUint16LE();
+	_direction = rs->readUint16LE();
+	_fallStart = rs->readUint32LE();
+	_actorFlags = rs->readUint32LE();
+	_unk0C = rs->readByte();
 
 	return true;
 }

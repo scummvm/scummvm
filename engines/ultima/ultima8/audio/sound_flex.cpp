@@ -32,7 +32,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(SoundFlex, Archive)
 
 
-SoundFlex::SoundFlex(IDataSource *ds) : Archive(ds), _samples(nullptr) {
+SoundFlex::SoundFlex(Common::SeekableReadStream *rs) : Archive(rs), _samples(nullptr) {
 }
 
 SoundFlex::~SoundFlex() {

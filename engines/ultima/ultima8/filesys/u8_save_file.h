@@ -30,15 +30,13 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-
 class U8SaveFile : public NamedArchiveFile {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! create U8SaveFile from datasource; U8SaveFile takes ownership of ds
 	//! and deletes it when destructed
-	explicit U8SaveFile(IDataSource *ds);
+	explicit U8SaveFile(Common::SeekableReadStream *rs);
 	~U8SaveFile() override;
 
 	bool exists(const Std::string &name) override;
@@ -51,10 +49,10 @@ public:
 		return _count;
 	}
 
-	static bool isU8SaveFile(IDataSource *ds);
+	static bool isU8SaveFile(Common::SeekableReadStream *rs);
 
 protected:
-	IDataSource *_ds;
+	Common::SeekableReadStream *_rs;
 	uint32 _count;
 
 	Std::map<Common::String, uint32> _indices;

@@ -42,14 +42,14 @@ MainShapeArchive::~MainShapeArchive() {
 	}
 }
 
-void MainShapeArchive::loadTypeFlags(IDataSource *ds) {
+void MainShapeArchive::loadTypeFlags(Common::SeekableReadStream *rs) {
 	if (_typeFlags) {
 		delete _typeFlags;
 		_typeFlags = nullptr;
 	}
 
 	_typeFlags = new TypeFlags;
-	_typeFlags->load(ds);
+	_typeFlags->load(rs);
 }
 
 ShapeInfo *MainShapeArchive::getShapeInfo(uint32 shapenum) {
@@ -58,14 +58,14 @@ ShapeInfo *MainShapeArchive::getShapeInfo(uint32 shapenum) {
 	return _typeFlags->getShapeInfo(shapenum);
 }
 
-void MainShapeArchive::loadAnimDat(IDataSource *ds) {
+void MainShapeArchive::loadAnimDat(Common::SeekableReadStream *rs) {
 	if (_animDat) {
 		delete _animDat;
 		_animDat = nullptr;
 	}
 
 	_animDat = new AnimDat;
-	_animDat->load(ds);
+	_animDat->load(rs);
 }
 
 ActorAnim *MainShapeArchive::getAnim(uint32 shape) const {

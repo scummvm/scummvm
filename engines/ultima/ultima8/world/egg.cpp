@@ -66,10 +66,10 @@ void Egg::saveData(Common::WriteStream *ws) {
 	ws->writeByte(h);
 }
 
-bool Egg::loadData(IDataSource *ids, uint32 version) {
-	if (!Item::loadData(ids, version)) return false;
+bool Egg::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Item::loadData(rs, version)) return false;
 
-	_hatched = (ids->readByte() != 0);
+	_hatched = (rs->readByte() != 0);
 
 	return true;
 }

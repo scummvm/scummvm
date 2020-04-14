@@ -69,8 +69,8 @@ void ClearFeignDeathProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 }
 
-bool ClearFeignDeathProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool ClearFeignDeathProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	return true;
 }

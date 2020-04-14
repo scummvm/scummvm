@@ -165,11 +165,11 @@ void QuickAvatarMoverProcess::saveData(Common::WriteStream *ws) {
 	// don't save more information. We plan to terminate upon load
 }
 
-bool QuickAvatarMoverProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool QuickAvatarMoverProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	// small safety precaution
-	_dir = ids->readUint32LE();
+	_dir = rs->readUint32LE();
 	if (_dir < 6)
 		_amp[_dir] = 0;
 	else

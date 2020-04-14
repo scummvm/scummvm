@@ -34,8 +34,6 @@ class Debugger;
 class Process;
 class UCProcess;
 class ConvertUsecode;
-class IDataSource;
-class ODataSource;
 class BitSet;
 class UCList;
 class idMan;
@@ -80,9 +78,9 @@ public:
 	void saveStrings(Common::WriteStream *ws);
 	void saveLists(Common::WriteStream *ws);
 
-	bool loadGlobals(IDataSource *ids, uint32 version);
-	bool loadStrings(IDataSource *ids, uint32 version);
-	bool loadLists(IDataSource *ids, uint32 version);
+	bool loadGlobals(Common::ReadStream *rs, uint32 version);
+	bool loadStrings(Common::ReadStream *rs, uint32 version);
+	bool loadLists(Common::ReadStream *rs, uint32 version);
 
 	INTRINSIC(I_true);
 	INTRINSIC(I_dummyProcess);

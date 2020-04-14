@@ -36,15 +36,15 @@ GumpShapeArchive::~GumpShapeArchive() {
 		delete _gumpItemArea[i];
 }
 
-void GumpShapeArchive::loadGumpage(IDataSource *ds) {
-	unsigned int total = ds->size() / 8;
+void GumpShapeArchive::loadGumpage(Common::SeekableReadStream *rs) {
+	unsigned int total = rs->size() / 8;
 	_gumpItemArea.resize(total + 1);
 	for (unsigned int i = 1; i <= total; ++i) {
 		int x, y, w, h;
-		x = static_cast<int16>(ds->readUint16LE());
-		y = static_cast<int16>(ds->readUint16LE());
-		w = static_cast<int16>(ds->readUint16LE()) - x;
-		h = static_cast<int16>(ds->readUint16LE()) - y;
+		x = static_cast<int16>(rs->readUint16LE());
+		y = static_cast<int16>(rs->readUint16LE());
+		w = static_cast<int16>(rs->readUint16LE()) - x;
+		h = static_cast<int16>(rs->readUint16LE()) - y;
 		_gumpItemArea[i] = new Rect(x, y, w, h);
 	}
 }

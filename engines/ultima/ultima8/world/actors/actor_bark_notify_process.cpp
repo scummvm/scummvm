@@ -80,8 +80,8 @@ void ActorBarkNotifyProcess::saveData(Common::WriteStream *ws) {
 	GumpNotifyProcess::saveData(ws);
 }
 
-bool ActorBarkNotifyProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!GumpNotifyProcess::loadData(ids, version)) return false;
+bool ActorBarkNotifyProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!GumpNotifyProcess::loadData(rs, version)) return false;
 
 	return true;
 }

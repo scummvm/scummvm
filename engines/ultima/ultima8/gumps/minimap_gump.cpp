@@ -199,8 +199,8 @@ void MiniMapGump::saveData(Common::WriteStream *ws) {
 	Gump::saveData(ws);
 }
 
-bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version))
+bool MiniMapGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Gump::loadData(rs, version))
 		return false;
 
 	_lastMapNum = 0;

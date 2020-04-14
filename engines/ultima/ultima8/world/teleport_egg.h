@@ -43,7 +43,7 @@ public:
 		return (_quality & 0xFF);
 	}
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 
 	uint16 hatch() override;
 protected:

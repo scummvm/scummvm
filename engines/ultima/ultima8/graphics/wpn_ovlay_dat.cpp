@@ -68,10 +68,10 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 	_overlay.resize(overlaydat->getCount());
 
 	for (unsigned int action = 0; action < _overlay.size(); action++) {
-		IDataSource *ds = overlaydat->get_datasource(action);
+		Common::SeekableReadStream *rs = overlaydat->get_datasource(action);
 		_overlay[action] = nullptr;
 
-		if (ds && ds->size()) {
+		if (rs && rs->size()) {
 			// get Avatar's animation
 			AnimAction *anim = msf->getAnim(1, action);
 			if (!anim) {
@@ -85,7 +85,7 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 			unsigned int animlength = anim->_size;
 			unsigned int dircount = anim->_dirCount;
 
-			unsigned int typecount = ds->size() / (4 * dircount * animlength);
+			unsigned int typecount = rs->size() / (4 * dircount * animlength);
 			awo->_overlay.resize(typecount);
 
 			for (unsigned int type = 0; type < typecount; type++) {
@@ -97,10 +97,10 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 					for (unsigned int frame = 0; frame < animlength; frame++) {
 						unsigned int offset = type * 8 * animlength
 						                      + dir * animlength + frame;
-						ds->seek(4 * offset);
-						f._xOff = ds->readSByte();
-						f._yOff = ds->readSByte();
-						f._frame = ds->readUint16LE();
+						rs->seek(4 * offset);
+						f._xOff = rs->readSByte();
+						f._yOff = rs->readSByte();
+						f._frame = rs->readUint16LE();
 
 						awo->_overlay[type]._frames[dir][frame] = f;
 					}
@@ -108,8 +108,7 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 			}
 		}
 
-
-		delete ds;
+		delete rs;
 	}
 }
 

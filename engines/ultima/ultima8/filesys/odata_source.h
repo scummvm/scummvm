@@ -61,44 +61,6 @@ public:
 };
 
 
-class OFileDataSource : public ODataSource {
-private:
-	Common::WriteStream *_out;
-
-public:
-	OFileDataSource(Common::WriteStream *data_stream) : _out(data_stream) {
-	}
-
-	~OFileDataSource() override {
-		FORGET_OBJECT(_out);
-	}
-
-	uint32 write(const void *b, uint32 len) override {
-		return _out->write(b, len);
-	}
-
-	bool seek(int32 pos, int whence = SEEK_SET) override {
-		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
-		assert(ws);
-		return ws->seek(pos, whence);
-	}
-
-	int32 size() const override {
-		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
-		assert(ws);
-		return ws->size();
-	}
-
-	int32 pos() const override {
-		return _out->pos();
-	}
-
-	Common::WriteStream *GetRawStream() override {
-		return _out;
-	}
-};
-
-
 class OAutoBufferDataSource: public ODataSource {
 protected:
 	uint8 *_buf;

@@ -127,20 +127,20 @@ void SpriteProcess::saveData(Common::WriteStream *ws) {
 	ws->writeByte(_initialized ? 1 : 0);
 }
 
-bool SpriteProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool SpriteProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_shape = static_cast<int>(ids->readUint32LE());
-	_frame = static_cast<int>(ids->readUint32LE());
-	_firstFrame = static_cast<int>(ids->readUint32LE());
-	_lastFrame = static_cast<int>(ids->readUint32LE());
-	_repeats = static_cast<int>(ids->readUint32LE());
-	_delay = static_cast<int>(ids->readUint32LE());
-	_x = static_cast<int>(ids->readUint32LE());
-	_y = static_cast<int>(ids->readUint32LE());
-	_z = static_cast<int>(ids->readUint32LE());
-	_delayCounter = static_cast<int>(ids->readUint32LE());
-	_initialized = (ids->readByte() != 0);
+	_shape = static_cast<int>(rs->readUint32LE());
+	_frame = static_cast<int>(rs->readUint32LE());
+	_firstFrame = static_cast<int>(rs->readUint32LE());
+	_lastFrame = static_cast<int>(rs->readUint32LE());
+	_repeats = static_cast<int>(rs->readUint32LE());
+	_delay = static_cast<int>(rs->readUint32LE());
+	_x = static_cast<int>(rs->readUint32LE());
+	_y = static_cast<int>(rs->readUint32LE());
+	_z = static_cast<int>(rs->readUint32LE());
+	_delayCounter = static_cast<int>(rs->readUint32LE());
+	_initialized = (rs->readByte() != 0);
 
 	return true;
 }

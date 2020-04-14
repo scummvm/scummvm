@@ -64,8 +64,6 @@ namespace Ultima8 {
 
 class Map;
 class CurrentMap;
-class IDataSource;
-class ODataSource;
 class Actor;
 class MainActor;
 class Flex;
@@ -90,10 +88,10 @@ public:
 	void initMaps();
 
 	//! load U8's nonfixed.dat into the Maps
-	void loadNonFixed(IDataSource *ds); // delete ds afterwards
+	void loadNonFixed(Common::SeekableReadStream *rs); // delete ds afterwards
 
 	//! load U8's itemcach.dat, npcdata.dat into the world
-	void loadItemCachNPCData(IDataSource *itemcach, IDataSource *npcdata);
+	void loadItemCachNPCData(Common::SeekableReadStream *itemcach, Common::SeekableReadStream *npcdata);
 
 	//! get the CurrentMap
 	CurrentMap *getCurrentMap() const {
@@ -132,13 +130,13 @@ public:
 	void saveMaps(Common::WriteStream *ws);
 
 	//! load Maps
-	bool loadMaps(IDataSource *ids, uint32 version);
+	bool loadMaps(Common::ReadStream *rs, uint32 version);
 
 	//! save the rest of the World data (ethereal items, current map number).
 	void save(Common::WriteStream *ws);
 
 	//! load World data
-	bool load(IDataSource *ids, uint32 version);
+	bool load(Common::ReadStream *rs, uint32 version);
 
 private:
 	static World *_world;

@@ -178,18 +178,18 @@ void AudioProcess::saveData(Common::WriteStream *ws) {
 	}
 }
 
-bool AudioProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool AudioProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	uint32 count = ids->readByte();
+	uint32 count = rs->readByte();
 
 	while (count--) {
-		int16 sfxNum = ids->readUint16LE();
-		int16 priority = ids->readUint16LE();
-		int16 objId = ids->readUint16LE();
-		int16 loops = ids->readUint16LE();
-		uint32 pitchShift = ids->readUint32LE();
-		uint16 volume = ids->readUint16LE();
+		int16 sfxNum = rs->readUint16LE();
+		int16 priority = rs->readUint16LE();
+		int16 objId = rs->readUint16LE();
+		int16 loops = rs->readUint16LE();
+		uint32 pitchShift = rs->readUint32LE();
+		uint16 volume = rs->readUint16LE();
 
 		if (sfxNum != -1) { // SFX
 			int16 lVol = 0;
@@ -200,10 +200,10 @@ bool AudioProcess::loadData(IDataSource *ids, uint32 version) {
 			}
 			playSFX(sfxNum, priority, objId, loops, false, pitchShift, volume, lVol, rVol);
 		} else {                // Speech
-			uint32 slen = ids->readUint32LE();
+			uint32 slen = rs->readUint32LE();
 
 			char *buf = new char[slen + 1];
-			ids->read(buf, slen);
+			rs->read(buf, slen);
 			buf[slen] = 0;
 			Std::string text = buf;
 			delete[] buf;

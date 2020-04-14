@@ -113,7 +113,7 @@ void TargetGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 
-bool TargetGump::loadData(IDataSource *ids, uint32 versin) {
+bool TargetGump::loadData(Common::ReadStream *rs, uint32 versin) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 	return false;
 }

@@ -145,16 +145,16 @@ void Process::saveData(Common::WriteStream *ws) {
 		ws->writeUint16LE(_waiting[i]);
 }
 
-bool Process::loadData(IDataSource *ids, uint32 version) {
-	_pid = ids->readUint16LE();
-	_flags = ids->readUint32LE();
-	_itemNum = ids->readUint16LE();
-	_type = ids->readUint16LE();
-	_result = ids->readUint32LE();
-	uint32 waitcount = ids->readUint32LE();
+bool Process::loadData(Common::ReadStream *rs, uint32 version) {
+	_pid = rs->readUint16LE();
+	_flags = rs->readUint32LE();
+	_itemNum = rs->readUint16LE();
+	_type = rs->readUint16LE();
+	_result = rs->readUint32LE();
+	uint32 waitcount = rs->readUint32LE();
 	_waiting.resize(waitcount);
 	for (unsigned int i = 0; i < waitcount; ++i)
-		_waiting[i] = ids->readUint16LE();
+		_waiting[i] = rs->readUint16LE();
 
 	return true;
 }

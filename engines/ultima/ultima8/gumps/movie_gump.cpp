@@ -112,7 +112,7 @@ ProcId MovieGump::U8MovieViewer(RawArchive *movie, bool fade, bool introMusicHac
 	}
 }
 
-bool MovieGump::loadData(IDataSource *ids) {
+bool MovieGump::loadData(Common::ReadStream *rs) {
 	return false;
 }
 

@@ -78,19 +78,19 @@ void CreateItemProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(static_cast<uint32>(_z));
 }
 
-bool CreateItemProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool CreateItemProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_shape = ids->readUint32LE();
-	_frame = ids->readUint32LE();
-	_quality = ids->readUint16LE();
-	_flags = ids->readUint16LE();
-	_npcNum = ids->readUint16LE();
-	_mapNum = ids->readUint16LE();
-	_extendedFlags = ids->readUint32LE();
-	_x = static_cast<int32>(ids->readUint32LE());
-	_y = static_cast<int32>(ids->readUint32LE());
-	_z = static_cast<int32>(ids->readUint32LE());
+	_shape = rs->readUint32LE();
+	_frame = rs->readUint32LE();
+	_quality = rs->readUint16LE();
+	_flags = rs->readUint16LE();
+	_npcNum = rs->readUint16LE();
+	_mapNum = rs->readUint16LE();
+	_extendedFlags = rs->readUint32LE();
+	_x = static_cast<int32>(rs->readUint32LE());
+	_y = static_cast<int32>(rs->readUint32LE());
+	_z = static_cast<int32>(rs->readUint32LE());
 	return true;
 }
 

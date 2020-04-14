@@ -141,7 +141,7 @@ void QuitGump::verifyQuit() {
 	gump->setRelativePosition(CENTER);
 }
 
-bool QuitGump::loadData(IDataSource *ids) {
+bool QuitGump::loadData(Common::ReadStream *rs) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 	return true;
 }

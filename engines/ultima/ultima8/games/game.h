@@ -29,8 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class ODataSource;
-
 class Game {
 public:
 	Game();

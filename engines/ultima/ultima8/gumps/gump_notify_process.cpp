@@ -80,10 +80,10 @@ void GumpNotifyProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_gump);
 }
 
-bool GumpNotifyProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool GumpNotifyProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_gump = ids->readUint16LE();
+	_gump = rs->readUint16LE();
 
 	return true;
 }

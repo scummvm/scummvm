@@ -119,9 +119,9 @@ using Std::string;
 // every process
 template<class T>
 struct ProcessLoader {
-	static Process *load(IDataSource *ids, uint32 version) {
+	static Process *load(Common::ReadStream *rs, uint32 version) {
 		T *p = new T();
-		bool ok = p->loadData(ids, version);
+		bool ok = p->loadData(rs, version);
 		if (!ok) {
 			delete p;
 			p = nullptr;
@@ -1397,31 +1397,31 @@ void Ultima8Engine::save(Common::WriteStream *ws) {
 	ws->writeByte(c);
 }
 
-bool Ultima8Engine::load(IDataSource *ids, uint32 version) {
-	_avatarInStasis = (ids->readByte() != 0);
+bool Ultima8Engine::load(Common::ReadStream *rs, uint32 version) {
+	_avatarInStasis = (rs->readByte() != 0);
 
 	// no gump should be moused over after load
 	_mouse->resetMouseOverGump();
 
-	int32 absoluteTime = static_cast<int32>(ids->readUint32LE());
+	int32 absoluteTime = static_cast<int32>(rs->readUint32LE());
 	_timeOffset = absoluteTime - Kernel::get_instance()->getFrameNum();
 
-	uint16 amppid = ids->readUint16LE();
+	uint16 amppid = rs->readUint16LE();
 	_avatarMoverProcess = p_dynamic_cast<AvatarMoverProcess *>(Kernel::get_instance()->getProcess(amppid));
 
 	int16 matrix[12];
 	for (int i = 0; i < 12; i++)
-		matrix[i] = ids->readUint16LE();
+		matrix[i] = rs->readUint16LE();
 
 	PaletteManager::get_instance()->transformPalette(PaletteManager::Pal_Game, matrix);
 	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
-	pal->_transform = static_cast<PalTransforms>(ids->readUint16LE());
+	pal->_transform = static_cast<PalTransforms>(rs->readUint16LE());
 
-	_inversion = ids->readUint16LE();
+	_inversion = rs->readUint16LE();
 
-	_saveCount = ids->readUint32LE();
+	_saveCount = rs->readUint32LE();
 
-	_hasCheated = (ids->readByte() != 0);
+	_hasCheated = (rs->readByte() != 0);
 
 	return true;
 }

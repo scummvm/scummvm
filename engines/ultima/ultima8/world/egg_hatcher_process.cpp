@@ -101,8 +101,8 @@ void EggHatcherProcess::saveData(Common::WriteStream *ws) {
 }
 
 
-bool EggHatcherProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool EggHatcherProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	// the _eggs will be re-added to the EggHatcherProcess when they're
 	// re-added to the CurrentMap

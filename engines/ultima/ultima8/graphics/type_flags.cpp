@@ -50,7 +50,7 @@ ShapeInfo *TypeFlags::getShapeInfo(uint32 shapenum) {
 }
 
 
-void TypeFlags::load(IDataSource *ds) {
+void TypeFlags::load(Common::SeekableReadStream *rs) {
 	// TODO: detect U8/crusader format somehow?!
 	// (Or probably pass it as parameter)
 	// The 'parsing' below is only for U8
@@ -60,7 +60,7 @@ void TypeFlags::load(IDataSource *ds) {
 		blocksize = 9;
 	}
 
-	uint32 size = ds->size();
+	uint32 size = rs->size();
 	uint32 count = size / blocksize;
 
 	_shapeInfo.clear();
@@ -68,7 +68,7 @@ void TypeFlags::load(IDataSource *ds) {
 
 	for (uint32 i = 0; i < count; ++i) {
 		uint8 data[9];
-		ds->read(data, blocksize);
+		rs->read(data, blocksize);
 
 		ShapeInfo si;
 		si._flags = 0;

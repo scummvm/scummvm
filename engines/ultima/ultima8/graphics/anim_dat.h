@@ -28,7 +28,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
 struct AnimAction;
 class ActorAnim;
 
@@ -37,7 +36,7 @@ public:
 	AnimDat();
 	~AnimDat();
 
-	void load(IDataSource *ds);
+	void load(Common::SeekableReadStream *rs);
 
 	ActorAnim *getAnim(uint32 shape) const;
 	AnimAction *getAnim(uint32 shape, uint32 action) const;

@@ -43,9 +43,9 @@ public:
 	ShapeArchive(ArchiveFile *af, uint16 id, Palette *pal = 0,
 	             const ConvertShapeFormat *format = 0)
 		: Archive(af), _id(id), _format(format), _palette(pal) { }
-	ShapeArchive(IDataSource *ds, uint16 id, Palette *pal = 0,
+	ShapeArchive(Common::SeekableReadStream *rs, uint16 id, Palette *pal = 0,
 	             const ConvertShapeFormat *format = 0)
-		: Archive(ds), _id(id), _format(format), _palette(pal) { }
+		: Archive(rs), _id(id), _format(format), _palette(pal) { }
 
 	~ShapeArchive() override;
 

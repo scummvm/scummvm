@@ -24,6 +24,7 @@
 
 #include "ultima/ultima8/audio/music_flex.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -31,7 +32,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex, Archive)
 
 
-MusicFlex::MusicFlex(IDataSource *ds) : Archive(ds), _songs(nullptr) {
+MusicFlex::MusicFlex(Common::SeekableReadStream *rs) : Archive(rs), _songs(nullptr) {
 	Std::memset(_info, 0, sizeof(SongInfo *) * 128);
 	loadSongInfo();
 }
@@ -85,10 +86,10 @@ bool MusicFlex::isCached(uint32 index) const {
 	return (_songs[index] != nullptr);
 }
 
-IDataSource *MusicFlex::getAdlibTimbres() {
+Common::SeekableReadStream *MusicFlex::getAdlibTimbres() {
 	uint32 size;
 	const uint8 *data = getRawObject(259, &size);
-	return new IBufferDataSource(data, size, false, true);
+	return new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
 }
 
 void MusicFlex::loadSongInfo() {

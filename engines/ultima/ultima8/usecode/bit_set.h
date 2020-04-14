@@ -26,9 +26,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-class ODataSource;
-
 class BitSet {
 public:
 	BitSet();
@@ -52,7 +49,7 @@ public:
 	void setBits(unsigned int pos, unsigned int n, uint32 bits);
 
 	void save(Common::WriteStream *ws);
-	bool load(IDataSource *ids, uint32 version);
+	bool load(Common::ReadStream *rs, uint32 version);
 
 private:
 	unsigned int _size;

@@ -221,27 +221,27 @@ void ButtonWidget::saveData(Common::WriteStream *ws) {
 	ws->writeByte(m);
 }
 
-bool ButtonWidget::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version)) return false;
+bool ButtonWidget::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Gump::loadData(rs, version)) return false;
 
 	_shapeUp = nullptr;
-	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(ids->readUint16LE());
-	uint32 shapenum = ids->readUint32LE();
+	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(rs->readUint16LE());
+	uint32 shapenum = rs->readUint32LE();
 	if (flex) {
 		_shapeUp = flex->getShape(shapenum);
 	}
-	_frameNumUp = ids->readUint32LE();
+	_frameNumUp = rs->readUint32LE();
 
 	_shapeDown = nullptr;
-	flex = GameData::get_instance()->getShapeFlex(ids->readUint16LE());
-	shapenum = ids->readUint32LE();
+	flex = GameData::get_instance()->getShapeFlex(rs->readUint16LE());
+	shapenum = rs->readUint32LE();
 	if (flex) {
 		_shapeDown = flex->getShape(shapenum);
 	}
-	_frameNumDown = ids->readUint32LE();
-	_textWidget = ids->readUint16LE();
-	_mouseOverBlendCol = ids->readUint32LE();
-	_mouseOver = (ids->readByte() != 0);
+	_frameNumDown = rs->readUint32LE();
+	_textWidget = rs->readUint16LE();
+	_mouseOverBlendCol = rs->readUint32LE();
+	_mouseOver = (rs->readByte() != 0);
 
 	// HACK ALERT
 	if (_textWidget != 0) {

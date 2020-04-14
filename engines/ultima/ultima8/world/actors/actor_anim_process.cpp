@@ -653,22 +653,22 @@ void ActorAnimProcess::saveData(Common::WriteStream *ws) {
 		ws->writeByte(0);
 }
 
-bool ActorAnimProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool ActorAnimProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_firstFrame = (ids->readByte() != 0);
-	_animAborted = (ids->readByte() != 0);
-	_attackedSomething = (ids->readByte() != 0);
-	_dir = ids->readByte();
-	_action = static_cast<Animation::Sequence>(ids->readUint16LE());
-	_steps = ids->readUint16LE();
-	_repeatCounter = ids->readUint16LE();
-	_currentStep = ids->readUint16LE();
+	_firstFrame = (rs->readByte() != 0);
+	_animAborted = (rs->readByte() != 0);
+	_attackedSomething = (rs->readByte() != 0);
+	_dir = rs->readByte();
+	_action = static_cast<Animation::Sequence>(rs->readUint16LE());
+	_steps = rs->readUint16LE();
+	_repeatCounter = rs->readUint16LE();
+	_currentStep = rs->readUint16LE();
 
 	assert(_tracker == nullptr);
-	if (ids->readByte() != 0) {
+	if (rs->readByte() != 0) {
 		_tracker = new AnimationTracker();
-		if (!_tracker->load(ids, version))
+		if (!_tracker->load(rs, version))
 			return false;
 	}
 

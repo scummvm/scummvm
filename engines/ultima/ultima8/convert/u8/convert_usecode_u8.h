@@ -40,18 +40,18 @@ public:
 	{
 		uint32 _maxOffset;
 	};
-	uint32 readUint32LE(IDataSource *) { return 0; }
+	uint32 readUint32LE(Common::SeekableReadStream *) { return 0; }
 	uint32 _curOffset;
 
 	virtual const char* const *intrinsics()=0;
 	virtual const char* const *event_names()=0;
-	virtual void readheader(IDataSource *ucfile, UsecodeHeader &uch, uint32 &curOffset)=0;
-	virtual void readevents(IDataSource *ucfile, const UsecodeHeader &uch)=0;
-	virtual void readOp(TempOp &op, IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)=0;
-	virtual Node *readOp(IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)=0;
-	void readOpGeneric(TempOp &, IDataSource *, uint32 &, Std::vector<DebugSymbol> &,
+	virtual void readheader(Common::SeekableReadStream *ucfile, UsecodeHeader &uch, uint32 &curOffset)=0;
+	virtual void readevents(Common::SeekableReadStream *ucfile, const UsecodeHeader &uch)=0;
+	virtual void readOp(TempOp &op, Common::SeekableReadStream *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)=0;
+	virtual Node *readOp(Common::SeekableReadStream *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)=0;
+	void readOpGeneric(TempOp &, Common::SeekableReadStream *, uint32 &, Std::vector<DebugSymbol> &,
 		bool &, const bool ) { }
-	Node *readOpGeneric(IDataSource *, uint32 &, Std::vector<DebugSymbol> &,
+	Node *readOpGeneric(Common::SeekableReadStream *, uint32 &, Std::vector<DebugSymbol> &,
 		bool &, const bool ) { return nullptr; }
 };
 
@@ -67,8 +67,8 @@ class ConvertUsecodeU8 : public ConvertUsecode {
 public:
 	const char* const *intrinsics() override  { return _intrinsics;  };
 	const char* const *event_names() override { return _event_names; };
-	void readheader(IDataSource *ucfile, UsecodeHeader &uch, uint32 &curOffset_) override;
-	void readevents(IDataSource *ucfile, const UsecodeHeader &/*uch*/) override
+	void readheader(Common::SeekableReadStream *ucfile, UsecodeHeader &uch, uint32 &curOffset_) override;
+	void readevents(Common::SeekableReadStream *ucfile, const UsecodeHeader &/*uch*/) override
 	{
 #ifndef INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD
 		EventMap.clear();
@@ -83,9 +83,9 @@ public:
 #endif
 	}
 
-	void readOp(TempOp &op, IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done) override
+	void readOp(TempOp &op, Common::SeekableReadStream *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done) override
 	{ readOpGeneric(op, ucfile, dbg_symbol_offset, debugSymbols, done, false); };
-	Node *readOp(IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done) override
+	Node *readOp(Common::SeekableReadStream *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done) override
 	{ return readOpGeneric(ucfile, dbg_symbol_offset, debugSymbols, done, false); };
 
 	
@@ -409,7 +409,7 @@ const char * const ConvertUsecodeU8::_event_names[] = {
 	0
 };
 
-void ConvertUsecodeU8::readheader(IDataSource *ucfile, UsecodeHeader &uch, uint32 &curOffset_) {
+void ConvertUsecodeU8::readheader(Common::SeekableReadStream *ucfile, UsecodeHeader &uch, uint32 &curOffset_) {
 	#ifdef DISASM_DEBUG
 	perr << Std::setfill('0') << Std::hex;
 	perr << "unknown1: " << Std::setw(4) << readUint32LE(ucfile) << endl; // unknown

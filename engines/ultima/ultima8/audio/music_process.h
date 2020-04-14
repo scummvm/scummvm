@@ -113,7 +113,7 @@ public:
 
 	void run() override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 };
 
 } // End of namespace Ultima8

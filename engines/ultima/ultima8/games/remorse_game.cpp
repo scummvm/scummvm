@@ -34,6 +34,7 @@
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -54,13 +55,13 @@ RemorseGame::~RemorseGame() {
 bool RemorseGame::loadFiles() {
 	// Load palette
 	pout << "Load Palette" << Std::endl;
-	IDataSource *pf = FileSystem::get_instance()->ReadFile("@game/static/gamepal.pal");
+	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile("@game/static/gamepal.pal");
 	if (!pf) {
 		perr << "Unable to load static/gamepal.pal." << Std::endl;
 		return false;
 	}
 
-	IBufferDataSource xfds(U8XFormPal, 1024);
+	Common::MemoryReadStream xfds(U8XFormPal, 1024);
 	PaletteManager::get_instance()->load(PaletteManager::Pal_Game, *pf, xfds);
 	delete pf;
 

@@ -81,8 +81,8 @@ void AvatarGravityProcess::saveData(Common::WriteStream *ws) {
 	GravityProcess::saveData(ws);
 }
 
-bool AvatarGravityProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!GravityProcess::loadData(ids, version)) return false;
+bool AvatarGravityProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!GravityProcess::loadData(rs, version)) return false;
 
 	return true;
 }

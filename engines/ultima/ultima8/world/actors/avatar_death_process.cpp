@@ -85,8 +85,8 @@ void AvatarDeathProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 }
 
-bool AvatarDeathProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool AvatarDeathProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	return true;
 }

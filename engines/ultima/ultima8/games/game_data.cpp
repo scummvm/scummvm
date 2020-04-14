@@ -226,7 +226,7 @@ FrameID GameData::translate(FrameID f) {
 void GameData::loadU8Data() {
 	FileSystem *filesystem = FileSystem::get_instance();
 
-	IDataSource *fd = filesystem->ReadFile("@game/static/fixed.dat");
+	Common::SeekableReadStream *fd = filesystem->ReadFile("@game/static/fixed.dat");
 	if (!fd)
 		error("Unable to load static/fixed.dat");;
 
@@ -241,7 +241,7 @@ void GameData::loadU8Data() {
 	filename += "usecode.flx";
 
 
-	IDataSource *uds = filesystem->ReadFile(filename);
+	Common::SeekableReadStream *uds = filesystem->ReadFile(filename);
 	if (!uds)
 		error("Unable to load %s", filename.c_str());
 
@@ -249,7 +249,7 @@ void GameData::loadU8Data() {
 
 	// Load main shapes
 	pout << "Load Shapes" << Std::endl;
-	IDataSource *sf = filesystem->ReadFile("@game/static/u8shapes.flx");
+	Common::SeekableReadStream *sf = filesystem->ReadFile("@game/static/u8shapes.flx");
 	if (!sf) sf = filesystem->ReadFile("@game/static/u8shapes.cmp");
 
 	if (!sf)
@@ -266,7 +266,7 @@ void GameData::loadU8Data() {
 	config->readConfigFile("@data/u8.ini", "game", true);
 
 	// Load typeflags
-	IDataSource *tfs = filesystem->ReadFile("@game/static/typeflag.dat");
+	Common::SeekableReadStream *tfs = filesystem->ReadFile("@game/static/typeflag.dat");
 	if (!tfs)
 		error("Unable to load static/typeflag.dat");
 
@@ -274,7 +274,7 @@ void GameData::loadU8Data() {
 	delete tfs;
 
 	// Load animdat
-	IDataSource *af = filesystem->ReadFile("@game/static/anim.dat");
+	Common::SeekableReadStream *af = filesystem->ReadFile("@game/static/anim.dat");
 	if (!af)
 		error("Unable to load static/anim.dat");
 
@@ -282,7 +282,7 @@ void GameData::loadU8Data() {
 	delete af;
 
 	// Load weapon overlay data
-	IDataSource *wod = filesystem->ReadFile("@game/static/wpnovlay.dat");
+	Common::SeekableReadStream *wod = filesystem->ReadFile("@game/static/wpnovlay.dat");
 	if (!wod)
 		error("Unable to load static/wpnovlay.dat");
 
@@ -292,7 +292,7 @@ void GameData::loadU8Data() {
 	delete overlayflex;
 
 	// Load _globs
-	IDataSource *gds = filesystem->ReadFile("@game/static/glob.flx");
+	Common::SeekableReadStream *gds = filesystem->ReadFile("@game/static/glob.flx");
 	if (!gds)
 		error("Unable to load static/glob.flx");
 
@@ -301,20 +301,20 @@ void GameData::loadU8Data() {
 	_globs.resize(globflex->getCount());
 	for (unsigned int i = 0; i < globflex->getCount(); ++i) {
 		MapGlob *glob = 0;
-		IDataSource *globds = globflex->get_datasource(i);
+		Common::SeekableReadStream *globrs = globflex->get_datasource(i);
 
-		if (globds && globds->size()) {
+		if (globrs && globrs->size()) {
 			glob = new MapGlob();
-			glob->read(globds);
+			glob->read(globrs);
 		}
-		delete globds;
+		delete globrs;
 
 		_globs[i] = glob;
 	}
 	delete globflex;
 
 	// Load fonts
-	IDataSource *fds = filesystem->ReadFile("@game/static/u8fonts.flx");
+	Common::SeekableReadStream *fds = filesystem->ReadFile("@game/static/u8fonts.flx");
 	if (!fds)
 		error("Unable to load static/u8fonts.flx");
 
@@ -331,14 +331,14 @@ void GameData::loadU8Data() {
 	_mouse->setPalette(PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 	delete msds;
 
-	IDataSource *gumpds = filesystem->ReadFile("@game/static/u8gumps.flx");
+	Common::SeekableReadStream *gumpds = filesystem->ReadFile("@game/static/u8gumps.flx");
 	if (!gumpds)
 		error("Unable to load static/u8gumps.flx");
 
 	_gumps = new GumpShapeArchive(gumpds, GUMPS,
 	                             PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 
-	IDataSource *gumpageds = filesystem->ReadFile("@game/static/gumpage.dat");
+	Common::SeekableReadStream *gumpageds = filesystem->ReadFile("@game/static/gumpage.dat");
 	if (!gumpageds)
 		error("Unable to load static/gumpage.dat");
 
@@ -346,13 +346,13 @@ void GameData::loadU8Data() {
 	delete gumpageds;
 
 
-	IDataSource *mf = filesystem->ReadFile("@game/sound/music.flx");
+	Common::SeekableReadStream *mf = filesystem->ReadFile("@game/sound/music.flx");
 	if (!mf)
 		error("Unable to load sound/music.flx");
 
 	_music = new MusicFlex(mf);
 
-	IDataSource *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
+	Common::SeekableReadStream *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
 	if (!sndflx)
 		error("Unable to load sound/sound.flx");
 
@@ -461,7 +461,7 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
 		return nullptr;
 	}
 
-	IDataSource *sflx = filesystem->ReadFile(u8_sound_ + langletter + num_flx);
+	Common::SeekableReadStream *sflx = filesystem->ReadFile(u8_sound_ + langletter + num_flx);
 	if (sflx) {
 		*s = new SpeechFlex(sflx);
 	}
@@ -475,7 +475,7 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
 void GameData::loadRemorseData() {
 	FileSystem *filesystem = FileSystem::get_instance();
 
-	IDataSource *fd = filesystem->ReadFile("@game/static/_fixed.dat");
+	Common::SeekableReadStream *fd = filesystem->ReadFile("@game/static/_fixed.dat");
 	if (!fd)
 		error("Unable to load static/_fixed.dat");
 
@@ -490,7 +490,7 @@ void GameData::loadRemorseData() {
 	filename += "usecode.flx";
 
 
-	IDataSource *uds = filesystem->ReadFile(filename);
+	Common::SeekableReadStream *uds = filesystem->ReadFile(filename);
 	if (!uds)
 		error("Unable to load %s", filename.c_str());
 
@@ -498,7 +498,7 @@ void GameData::loadRemorseData() {
 
 	// Load main shapes
 	pout << "Load Shapes" << Std::endl;
-	IDataSource *sf = filesystem->ReadFile("@game/static/shapes.flx");
+	Common::SeekableReadStream *sf = filesystem->ReadFile("@game/static/shapes.flx");
 
 	if (!sf)
 		error("Unable to load static/shapes.flx");
@@ -517,7 +517,7 @@ void GameData::loadRemorseData() {
 	config->readConfigFile("@data/remorse.ini", "game", true);
 
 	// Load typeflags
-	IDataSource *tfs = filesystem->ReadFile("@game/static/typeflag.dat");
+	Common::SeekableReadStream *tfs = filesystem->ReadFile("@game/static/typeflag.dat");
 	if (!tfs)
 		error("Unable to load static/typeflag.dat");
 
@@ -525,7 +525,7 @@ void GameData::loadRemorseData() {
 	delete tfs;
 
 	// Load animdat
-	IDataSource *af = filesystem->ReadFile("@game/static/anim.dat");
+	Common::SeekableReadStream *af = filesystem->ReadFile("@game/static/anim.dat");
 	if (!af)
 		error("Unable to load static/anim.dat");
 
@@ -533,7 +533,7 @@ void GameData::loadRemorseData() {
 	delete af;
 
 	// Load weapon overlay data
-	IDataSource *wod = filesystem->ReadFile("@game/static/wpnovlay.dat");
+	Common::SeekableReadStream *wod = filesystem->ReadFile("@game/static/wpnovlay.dat");
 	if (!wod)
 		error("Unable to load static/wpnovlay.dat");
 
@@ -543,7 +543,7 @@ void GameData::loadRemorseData() {
 	delete overlayflex;
 
 	// Load globs
-	IDataSource *gds = filesystem->ReadFile("@game/static/glob.flx");
+	Common::SeekableReadStream *gds = filesystem->ReadFile("@game/static/glob.flx");
 	if (!gds)
 		error("Unable to load static/glob.flx");
 
@@ -552,20 +552,20 @@ void GameData::loadRemorseData() {
 	_globs.resize(globflex->getCount());
 	for (unsigned int i = 0; i < globflex->getCount(); ++i) {
 		MapGlob *glob = 0;
-		IDataSource *globds = globflex->get_datasource(i);
+		Common::SeekableReadStream *globrs = globflex->get_datasource(i);
 
-		if (globds && globds->size()) {
+		if (globrs && globrs->size()) {
 			glob = new MapGlob();
-			glob->read(globds);
+			glob->read(globrs);
 		}
-		delete globds;
+		delete globrs;
 
 		_globs[i] = glob;
 	}
 	delete globflex;
 
 	// Load fonts
-	IDataSource *fds = filesystem->ReadFile("@game/static/_fonts.flx");
+	Common::SeekableReadStream *fds = filesystem->ReadFile("@game/static/_fonts.flx");
 	if (!fds)
 		error("Unable to load static/_fonts.flx");
 
@@ -582,7 +582,7 @@ void GameData::loadRemorseData() {
 	_mouse->setPalette(PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 	delete msds;
 
-	IDataSource *gumpds = filesystem->ReadFile("@game/static/_gumps.flx");
+	Common::SeekableReadStream *gumpds = filesystem->ReadFile("@game/static/_gumps.flx");
 	if (!gumpds)
 		error("Unable to load static/_gumps.flx");
 
@@ -590,7 +590,7 @@ void GameData::loadRemorseData() {
 		PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 
 #if 0
-	IDataSource *gumpageds = filesystem->ReadFile("@game/static/gumpage.dat");
+	Common::SeekableReadStream *gumpageds = filesystem->ReadFile("@game/static/gumpage.dat");
 	if (!gumpageds)
 		error("Unable to load static/gumpage.dat");
 
@@ -598,22 +598,22 @@ void GameData::loadRemorseData() {
 	delete gumpageds;
 #endif
 
-	IDataSource *dummyds = filesystem->ReadFile("@data/empty.flx");
+	Common::SeekableReadStream *dummyrs = filesystem->ReadFile("@data/empty.flx");
 	_music = nullptr; //new MusicFlex(dummyds);
-	delete dummyds;
+	delete dummyrs;
 #if 0
-	IDataSource *mf = filesystem->ReadFile("@game/sound/_music.flx");
+	Common::SeekableReadStream *mf = filesystem->ReadFile("@game/sound/_music.flx");
 	if (!mf)
 		error("Unable to load sound/_music.flx");
 
 	_music = new MusicFlex(mf);
 #endif
 
-	dummyds = filesystem->ReadFile("@data/empty.flx");
-	_soundFlex = new SoundFlex(dummyds);
-	delete dummyds;
+	dummyrs = filesystem->ReadFile("@data/empty.flx");
+	_soundFlex = new SoundFlex(dummyrs);
+	delete dummyrs;
 #if 0
-	IDataSource *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
+	Common::SeekableReadStream *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
 	if (!sndflx)
 		error("Unable to load sound/sound.flx");
 

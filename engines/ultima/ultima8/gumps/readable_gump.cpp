@@ -126,7 +126,7 @@ void ReadableGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 }
 
-bool ReadableGump::loadData(IDataSource *ids, uint32 version) {
+bool ReadableGump::loadData(Common::ReadStream *rs, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 
 	return false;

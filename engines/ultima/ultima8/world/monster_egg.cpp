@@ -94,8 +94,8 @@ void MonsterEgg::saveData(Common::WriteStream *ws) {
 	Item::saveData(ws);
 }
 
-bool MonsterEgg::loadData(IDataSource *ids, uint32 version) {
-	if (!Item::loadData(ids, version)) return false;
+bool MonsterEgg::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Item::loadData(rs, version)) return false;
 
 	return true;
 }

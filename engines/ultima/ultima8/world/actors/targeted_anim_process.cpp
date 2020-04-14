@@ -62,12 +62,12 @@ void TargetedAnimProcess::saveData(Common::WriteStream *ws) {
 
 }
 
-bool TargetedAnimProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!ActorAnimProcess::loadData(ids, version)) return false;
+bool TargetedAnimProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!ActorAnimProcess::loadData(rs, version)) return false;
 
-	_x = ids->readUint32LE();
-	_y = ids->readUint32LE();
-	_z = ids->readUint32LE();
+	_x = rs->readUint32LE();
+	_y = rs->readUint32LE();
+	_z = rs->readUint32LE();
 
 	return true;
 }

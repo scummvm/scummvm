@@ -110,11 +110,11 @@ void LoiterProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(_count);
 }
 
-bool LoiterProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool LoiterProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	if (version >= 3)
-		_count = ids->readUint32LE();
+		_count = rs->readUint32LE();
 	else
 		_count = 0; // default to loitering indefinitely
 

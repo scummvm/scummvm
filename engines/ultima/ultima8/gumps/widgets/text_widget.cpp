@@ -229,22 +229,22 @@ void TextWidget::saveData(Common::WriteStream *ws) {
 	ws->write(_text.c_str(), _text.size());
 }
 
-bool TextWidget::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version)) return false;
+bool TextWidget::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Gump::loadData(rs, version)) return false;
 
-	_gameFont = (ids->readByte() != 0);
-	_fontNum = static_cast<int>(ids->readUint32LE());
-	_blendColour = ids->readUint32LE();
-	_currentStart = static_cast<int>(ids->readUint32LE());
-	_currentEnd = static_cast<int>(ids->readUint32LE());
-	_targetWidth = static_cast<int>(ids->readUint32LE());
-	_targetHeight = static_cast<int>(ids->readUint32LE());
-	_textAlign = static_cast<Font::TextAlign>(ids->readUint16LE());
+	_gameFont = (rs->readByte() != 0);
+	_fontNum = static_cast<int>(rs->readUint32LE());
+	_blendColour = rs->readUint32LE();
+	_currentStart = static_cast<int>(rs->readUint32LE());
+	_currentEnd = static_cast<int>(rs->readUint32LE());
+	_targetWidth = static_cast<int>(rs->readUint32LE());
+	_targetHeight = static_cast<int>(rs->readUint32LE());
+	_textAlign = static_cast<Font::TextAlign>(rs->readUint16LE());
 
-	uint32 slen = ids->readUint32LE();
+	uint32 slen = rs->readUint32LE();
 	if (slen > 0) {
 		char *buf = new char[slen + 1];
-		ids->read(buf, slen);
+		rs->read(buf, slen);
 		buf[slen] = 0;
 		_text = buf;
 		delete[] buf;
