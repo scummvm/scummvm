@@ -352,22 +352,6 @@ void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 	}
 }
 
-void OSystem_iOS7::logMessage(LogMessageType::Type type, const char *message) {
-	FILE *output = 0;
-
-	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
-		output = stdout;
-	else
-		output = stderr;
-
-	if (type == LogMessageType::kError) {
-		_lastErrorMessage = message;
-	}
-
-	fputs(message, output);
-	fflush(output);
-}
-
 bool iOS7_touchpadModeEnabled() {
 	OSystem_iOS7 *sys = (OSystem_iOS7 *) g_system;
 	return sys && sys->touchpadModeEnabled();
