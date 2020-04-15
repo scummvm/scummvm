@@ -48,7 +48,7 @@ POSIXSaveFileManager::POSIXSaveFileManager() {
 	const char *home = getenv("HOME");
 	if (home && *home && strlen(home) < MAXPATHLEN) {
 		savePath = home;
-		savePath += "/Documents/ScummVM Savegames";
+		savePath += "/Library/Application Support/ScummVM/Savegames";
 
 		ConfMan.registerDefault("savepath", savePath);
 	}
