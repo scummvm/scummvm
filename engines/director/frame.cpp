@@ -293,6 +293,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._startPoint.y = stream->readUint16();
 			sprite._startPoint.x = stream->readUint16();
 
+			sprite._currentPoint = sprite._startPoint;
+
 			sprite._height = stream->readUint16();
 			sprite._width = stream->readUint16();
 
@@ -701,10 +703,10 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	// for outlined shapes, line thickness of 1 means invisible.
 	lineSize -= 1;
 
-	Common::Rect shapeRect = Common::Rect(sp->_startPoint.x,
-		sp->_startPoint.y,
-		sp->_startPoint.x + sp->_width,
-		sp->_startPoint.y + sp->_height);
+	Common::Rect shapeRect = Common::Rect(sp->_currentPoint.x,
+		sp->_currentPoint.y,
+		sp->_currentPoint.x + sp->_width,
+		sp->_currentPoint.y + sp->_height);
 
 	Graphics::ManagedSurface tmpSurface;
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
@@ -794,8 +796,8 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	uint32 rectLeft = button->_initialRect.left;
 	uint32 rectTop = button->_initialRect.top;
 
-	int x = _sprites[spriteId]->_startPoint.x;
-	int y = _sprites[spriteId]->_startPoint.y;
+	int x = _sprites[spriteId]->_currentPoint.x;
+	int y = _sprites[spriteId]->_currentPoint.y;
 
 	if (_vm->getVersion() > 3) {
 		x += rectLeft;
@@ -857,8 +859,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	Score *score = _vm->getCurrentScore();
 	Sprite *sprite = _sprites[spriteId];
 
-	int x = sprite->_startPoint.x; // +rectLeft;
-	int y = sprite->_startPoint.y; // +rectTop;
+	int x = sprite->_currentPoint.x; // +rectLeft;
+	int y = sprite->_currentPoint.y; // +rectTop;
 	int height = textCast->_initialRect.height(); //_sprites[spriteId]->_height;
 	int width;
 
@@ -1048,8 +1050,8 @@ void Frame::renderBitmap(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	int32 rectLeft = bc->_initialRect.left;
 	int32 rectTop = bc->_initialRect.top;
 
-	int x = sprite->_startPoint.x - regX + rectLeft;
-	int y = sprite->_startPoint.y - regY + rectTop;
+	int x = sprite->_currentPoint.x - regX + rectLeft;
+	int y = sprite->_currentPoint.y - regY + rectTop;
 	int height = sprite->_height;
 	int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : sprite->_width;
 	Common::Rect drawRect(x, y, x + width, y + height);
