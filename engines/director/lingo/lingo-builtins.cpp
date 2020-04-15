@@ -1445,10 +1445,7 @@ void LB::b_move(int nargs) {
 void LB::b_moveableSprite(int nargs) {
 	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
-	// Will have no effect
 	frame->_sprites[g_lingo->_currentEntityId]->_moveable = true;
-
-	g_director->setDraggedSprite(frame->_sprites[g_lingo->_currentEntityId]->_castId);
 }
 
 void LB::b_pasteClipBoardInto(int nargs) {

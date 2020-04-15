@@ -677,6 +677,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheMoveableSprite:
 		sprite->_moveable = d.u.i;
+    if (!d.u.i)
+      sprite->_currentPoint = sprite->_startPoint;
 		break;
 	case kTheMovieRate:
 		sprite->_movieRate = d.u.i;
