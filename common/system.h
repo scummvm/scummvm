@@ -418,7 +418,12 @@ public:
 		* Supports for using the native system file browser dialog
 		* through the DialogManager.
 		*/
-		kFeatureSystemBrowserDialog
+		kFeatureSystemBrowserDialog,
+
+		/**
+		* For platforms that should not have a Quit button
+		*/
+		kFeatureNoQuit
 
 	};
 
