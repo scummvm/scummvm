@@ -236,6 +236,11 @@ private:
 	bool cmd3d(int argc, const char **argv);
 
 	/**
+	 * Teleports to the Abyss final altar
+	 */
+	bool cmdAbyss(int argc, const char **argv);
+
+	/**
 	 * Collision detection on/off
 	 */
 	bool cmdCollisions(int argc, const char **argv);

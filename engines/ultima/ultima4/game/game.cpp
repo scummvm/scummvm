@@ -600,25 +600,6 @@ bool GameController::keyPressed(int key) {
 
 	if ((g_context->_location->_context & CTX_DUNGEON) && strchr("abefjlotxy", key))
 		screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
-	else
-		switch (key) {
-		case 'c' + U4_ALT:
-			if (settings._debug && g_context->_location->_map->isWorldMap()) {
-				/* first teleport to the abyss */
-				g_context->_location->_coords.x = 0xe9;
-				g_context->_location->_coords.y = 0xe9;
-				setMap(mapMgr->get(MAP_ABYSS), 1, NULL);
-				/* then to the final altar */
-				g_context->_location->_coords.x = 7;
-				g_context->_location->_coords.y = 7;
-				g_context->_location->_coords.z = 7;
-			}
-			break;
-
-		default:
-			valid = false;
-			break;
-		}
 
 	if (valid && endTurn) {
 		if (eventHandler->getController() == g_game)

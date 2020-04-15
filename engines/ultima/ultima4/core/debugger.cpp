@@ -79,6 +79,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("yell", WRAP_METHOD(Debugger, cmdYell));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
+	registerCmd("abyss", WRAP_METHOD(Debugger, cmdAbyss));
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
 	registerCmd("companions", WRAP_METHOD(Debugger, cmdCompanions));
 	registerCmd("destroy", WRAP_METHOD(Debugger, cmdDestroy));
@@ -1071,6 +1072,23 @@ bool Debugger::cmd3d(int argc, const char **argv) {
 		print("Not here");
 	}
 
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdAbyss(int argc, const char **argv) {
+	// first teleport to the abyss
+	g_context->_location->_coords.x = 0xe9;
+	g_context->_location->_coords.y = 0xe9;
+	g_game->setMap(mapMgr->get(MAP_ABYSS), 1, NULL);
+
+	// then to the final altar
+	g_context->_location->_coords.x = 7;
+	g_context->_location->_coords.y = 7;
+	g_context->_location->_coords.z = 7;
+	g_ultima->_saveGame->_orientation = DIR_NORTH;
+	g_context->_party->lightTorch(100, false);
+
+	cmdIgnite(0, nullptr);
 	return isDebuggerActive();
 }
 
