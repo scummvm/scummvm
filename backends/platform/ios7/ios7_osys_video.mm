@@ -36,7 +36,7 @@
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
 	OSystem_iOS7::sharedInstance()->quit();
-	exit(1);
+	abort();
 }
 
 @end
