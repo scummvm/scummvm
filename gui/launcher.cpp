@@ -136,8 +136,8 @@ void LauncherDialog::build() {
 	// Show ScummVM version
 	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #endif
-
-	new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
+	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
+		new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
 	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
 	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
 	_startButton =

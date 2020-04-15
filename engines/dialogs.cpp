@@ -95,8 +95,8 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", _c("~R~eturn to Launcher", "lowres"), 0, kRTLCmd);
 	_rtlButton->setEnabled(_engine->hasFeature(Engine::kSupportsRTL));
 
-
-	new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), 0, kQuitCmd);
+	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
+		new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), 0, kQuitCmd);
 
 	_aboutDialog = new GUI::AboutDialog();
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
