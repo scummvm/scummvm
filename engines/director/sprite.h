@@ -83,6 +83,7 @@ public:
 
 	byte _thickness;
 	Common::Point _startPoint;
+	Common::Point _currentPoint;
 	uint16 _width;
 	uint16 _height;
 	// TODO: default constraint = 0, if turned on, sprite is constrainted to the bounding rect

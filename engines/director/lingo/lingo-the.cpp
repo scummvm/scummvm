@@ -550,10 +550,10 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_thickness & 0x3;
 		break;
 	case kTheLocH:
-		d.u.i = sprite->_startPoint.x;
+		d.u.i = sprite->_currentPoint.x;
 		break;
 	case kTheLocV:
-		d.u.i = sprite->_startPoint.y;
+		d.u.i = sprite->_currentPoint.y;
 		break;
 	case kTheMoveableSprite:
 		d.u.i = sprite->_moveable;
@@ -670,10 +670,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_thickness = d.u.i;
 		break;
 	case kTheLocH:
-		sprite->_startPoint.x = d.u.i;
+		sprite->_currentPoint.x = d.u.i;
 		break;
 	case kTheLocV:
-		sprite->_startPoint.y = d.u.i;
+		sprite->_currentPoint.y = d.u.i;
 		break;
 	case kTheMoveableSprite:
 		sprite->_moveable = d.u.i;
