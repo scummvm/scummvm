@@ -26,10 +26,6 @@
 #include "audio/mixer.h"
 #include "audio/midiplayer.h"
 
-namespace Audio {
-class PCSpeaker;
-}
-
 namespace Ultima {
 namespace Ultima8 {
 
@@ -41,7 +37,7 @@ public:
 	/**
 	 * Play the specified music
 	 */
-	void play(byte *data, size_t size);
+	void play(byte *data, size_t size, int seqNo);
 
 	/**
 	 * Sets whether the music should loop
@@ -49,8 +45,18 @@ public:
 	void setLooping(bool loop);
 
 	bool isFMSynth() const {
-		return false;
+		return _isFMSynth;
+	};
+
+	static void xmidiCallback(byte eventData, void *data);
+
+	byte getSequenceCallbackData(int seq) const {
+		assert(seq == 0 || seq == 1);
+		return _callbackData[seq];
 	}
+private:
+	bool _isFMSynth;
+	static byte _callbackData[2];
 };
 
 } // End of namespace Ultima8

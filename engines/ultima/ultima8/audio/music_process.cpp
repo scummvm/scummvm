@@ -117,19 +117,17 @@ void MusicProcess::playMusic_internal(int track) {
 
 	} else {
 		// We want to do a transition
-		// TODO: Properly handle transitions under ScummVM
-#ifdef TODO
 		const MusicFlex::SongInfo *info = GameData::get_instance()->getMusic()->getSongInfo(_currentTrack);
 
 		uint32 measure = _midiPlayer->getSequenceCallbackData(0);
 
 		// No transition info, or invalid measure, so fast change
-		if (!info || (measure >= (uint32)info->num_measures) ||
-		        !info->transitions[track] || !info->transitions[track][measure]) {
+		if (!info || (measure >= (uint32)info->_numMeasures) ||
+		        !info->_transitions[track] || !info->_transitions[track][measure]) {
 			_currentTrack = 0;
 			if (track == 0) {
 				_trackState._wanted = 0;
-				_state = MUSIC_PLAY_WANTED;
+				_state = PLAYBACK_PLAY_WANTED;
 			} else {
 				playMusic_internal(track);
 			}
@@ -137,35 +135,34 @@ void MusicProcess::playMusic_internal(int track) {
 		}
 
 		// Get transition info
-		int trans = info->transitions[track][measure];
+		int trans = info->_transitions[track][measure];
 		bool speed_hack = false;
 
 		if (trans < 0) {
 			trans = (-trans) - 1;
 			speed_hack = true;
 		} else {
-			_midiPlayer->finishSequence(0);
+			_midiPlayer->stop();
 			trans = trans - 1;
 		}
 
 		// Now get the transition midi
+		byte *data = nullptr;
+		uint32 size = 0;
 		int xmidi_index = _midiPlayer->isFMSynth() ? 260 : 258;
-		XMidiFile *xmidi = GameData::get_instance()->getMusic()->getXMidi(xmidi_index);
-		XMidiEventList *list;
+		data = GameData::get_instance()->getMusic()->getRawObject(xmidi_index, &size);
 
-		if (xmidi)
-			list = xmidi->GetEventList(trans);
-		else
-			list = 0;
+		//warning("Doing a MIDI transition! trans: %d xmidi: %d speedhack: %d", trans, xmidi_index, speed_hack);
 
-		if (list) {
-			_midiPlayer->startSequence(1, list, false, 255, _songBranches[track]);
-			if (speed_hack)
-				_midiPlayer->setSequenceSpeed(1, 200);
+		if (data) {
+			_midiPlayer->play(data, size, 1);
+			// TODO: Handle speed hack under scummvm
+			//if (speed_hack)
+			//	_midiPlayer->setSequenceSpeed(1, 200);
 		} else {
-			_midiPlayer->finishSequence(1);
+			_midiPlayer->stop();
 		}
-#endif
+
 		_trackState._wanted = track;
 		_state = PLAYBACK_TRANSITION;
 	}
@@ -210,7 +207,7 @@ void MusicProcess::run() {
 			if (_midiPlayer) {
 				// if there's a track queued, only play this one once
 				bool repeat = (_trackState._queued == 0);
-				_midiPlayer->play(data, size);
+				_midiPlayer->play(data, size, 0);
 				_midiPlayer->setLooping(repeat);
 			}
 
