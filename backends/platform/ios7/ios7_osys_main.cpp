@@ -415,7 +415,4 @@ void iOS7_main(int argc, char **argv) {
 		//*stderr = NULL;
 		fclose(newfp);
 	}
-
-	// prevents hanging on exit
-	exit(0);
 }
