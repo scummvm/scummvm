@@ -128,6 +128,7 @@ public:
 	// events.cpp
 	void processEvents();
 	void setDraggedSprite(uint16 id);
+	void releaseDraggedSprite();
 	uint32 getMacTicks();
 	void waitForClick();
 

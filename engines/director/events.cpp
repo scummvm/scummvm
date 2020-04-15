@@ -80,6 +80,19 @@ void DirectorEngine::processEvents() {
 			case Common::EVENT_MOUSEMOVE:
 				sc->_lastEventTime = g_director->getMacTicks();
 				sc->_lastRollTime =	 sc->_lastEventTime;
+
+				if (_draggingSprite) {
+					Sprite* draggedSprite = currentFrame->_sprites[_draggingSpriteId];
+					if (draggedSprite->_moveable) {
+						pos = g_system->getEventManager()->getMousePos();
+						Common::Point delta = pos - _draggingSpritePos;
+						draggedSprite->_currentPoint.x += delta.x;
+						draggedSprite->_currentPoint.y += delta.y;
+						_draggingSpritePos = pos;
+					} else {
+						releaseDraggedSprite();
+					}
+				}
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
@@ -97,9 +110,9 @@ void DirectorEngine::processEvents() {
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 				_lingo->processEvent(kEventMouseDown);
 
-				if (currentFrame->_sprites[spriteId]->_moveable) {
-					warning("Moveable");
-				}
+				if (currentFrame->_sprites[spriteId]->_moveable)
+					g_director->setDraggedSprite(spriteId);
+
 				break;
 
 			case Common::EVENT_LBUTTONUP:
@@ -110,6 +123,7 @@ void DirectorEngine::processEvents() {
 				debugC(3, kDebugEvents, "event: Button Up @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 
 				sc->_mouseIsDown = false;
+				releaseDraggedSprite();
 
 				_lingo->processEvent(kEventMouseUp);
 				sc->_currentMouseDownSpriteId = 0;
@@ -158,8 +172,11 @@ void DirectorEngine::setDraggedSprite(uint16 id) {
 	_draggingSprite = true;
 	_draggingSpriteId = id;
 	_draggingSpritePos = g_system->getEventManager()->getMousePos();
+}
 
-	warning("STUB: DirectorEngine::setDraggedSprite(%d)", id);
+void DirectorEngine::releaseDraggedSprite() {
+	_draggingSprite = false;
+	_draggingSpriteId = 0;
 }
 
 void DirectorEngine::waitForClick() {
