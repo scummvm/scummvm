@@ -170,6 +170,11 @@ private:
 	bool cmdOpenDoor(int argc, const char **argv);
 
 	/**
+	 * Specifies a particular party number
+	 */
+	bool cmdParty(int argc, const char **argv);
+
+	/**
 	 * Pass turn
 	 */
 	bool cmdPass(int argc, const char **argv);

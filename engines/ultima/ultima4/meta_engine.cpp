@@ -77,39 +77,68 @@ static const KeybindingRecord KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
+static const KeybindingRecord PARTY_KEYS[] = {
+	{ KEYBIND_PARTY0, "PARTY0", "Party - None", "party 0", "0", nullptr },
+	{ KEYBIND_PARTY1, "PARTY1", "Party - Character #1", "party 1", "1", nullptr },
+	{ KEYBIND_PARTY2, "PARTY2", "Party - Character #2", "party 2", "2", nullptr },
+	{ KEYBIND_PARTY3, "PARTY3", "Party - Character #3", "party 3", "3", nullptr },
+	{ KEYBIND_PARTY4, "PARTY4", "Party - Character #4", "party 4", "4", nullptr },
+	{ KEYBIND_PARTY5, "PARTY5", "Party - Character #5", "party 5", "5", nullptr },
+	{ KEYBIND_PARTY6, "PARTY6", "Party - Character #6", "party 6", "6", nullptr },
+	{ KEYBIND_PARTY7, "PARTY7", "Party - Character #7", "party 7", "7", nullptr },
+	{ KEYBIND_PARTY8, "PARTY8", "Party - Character #8", "party 8", "8", nullptr },
+
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+};
+
 static const KeybindingRecord CHEAT_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
+struct KeysRecord {
+	const char *_id;
+	const char *_desc;
+	const KeybindingRecord *_keys;
+};
+static const KeysRecord KEYS_RECORDS[3] = {
+	{ "ultima4", "Ultima IV", KEYS },
+	{ "ultima4_party", "Ultima IV - Party", PARTY_KEYS },
+	{ "ultima4_cheats", "Ultima IV - Cheats", CHEAT_KEYS },
+};
 
 Common::KeymapArray MetaEngine::initKeymaps() {
 	Common::KeymapArray keymapArray;
-
-	// Core keymaps
-	Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "ultima4", _("Ultima IV"));
-	keymapArray.push_back(keyMap);
-
+	Common::Keymap *keyMap;
 	Common::Action *act;
 
-	act = new Common::Action("LCLK", _("Interact via Left Click"));
-	act->setLeftClickEvent();
-	act->addDefaultInputMapping("MOUSE_LEFT");
-	act->addDefaultInputMapping("JOY_A");
-	keyMap->addAction(act);
+	for (int kCtr = 0; kCtr < 3; ++kCtr) {
+		// Core keymaps
+		keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame,
+			KEYS_RECORDS[kCtr]._id, _(KEYS_RECORDS[kCtr]._desc));
+		keymapArray.push_back(keyMap);
 
-	act = new Common::Action("RCLK", _("Interact via Right Click"));
-	act->setRightClickEvent();
-	act->addDefaultInputMapping("MOUSE_RIGHT");
-	act->addDefaultInputMapping("JOY_B");
-	keyMap->addAction(act);
+		if (kCtr == 0) {
+			act = new Common::Action("LCLK", _("Interact via Left Click"));
+			act->setLeftClickEvent();
+			act->addDefaultInputMapping("MOUSE_LEFT");
+			act->addDefaultInputMapping("JOY_A");
+			keyMap->addAction(act);
 
-	for (const KeybindingRecord *r = KEYS; r->_id; ++r) {
-		act = new Common::Action(r->_id, _(r->_desc));
-		act->setCustomEngineActionEvent(r->_action);
-		act->addDefaultInputMapping(r->_key);
-		if (r->_joy)
-			act->addDefaultInputMapping(r->_joy);
-		keyMap->addAction(act);
+			act = new Common::Action("RCLK", _("Interact via Right Click"));
+			act->setRightClickEvent();
+			act->addDefaultInputMapping("MOUSE_RIGHT");
+			act->addDefaultInputMapping("JOY_B");
+			keyMap->addAction(act);
+		}
+
+		for (const KeybindingRecord *r = KEYS_RECORDS[kCtr]._keys; r->_id; ++r) {
+			act = new Common::Action(r->_id, _(r->_desc));
+			act->setCustomEngineActionEvent(r->_action);
+			act->addDefaultInputMapping(r->_key);
+			if (r->_joy)
+				act->addDefaultInputMapping(r->_joy);
+			keyMap->addAction(act);
+		}
 	}
 
 	return keymapArray;
@@ -127,10 +156,8 @@ void MetaEngine::executeAction(KeybindingAction keyAction) {
 }
 
 Common::String MetaEngine::getMethod(KeybindingAction keyAction) {
-	const KeybindingRecord *KEY_ARRAYS[] = { KEYS, CHEAT_KEYS, nullptr };
-
-	for (const KeybindingRecord **arr = KEY_ARRAYS; *arr; ++arr) {
-		for (const KeybindingRecord *r = *arr; r->_id; ++r) {
+	for (int kCtr = 0; kCtr < 3; ++kCtr) {
+		for (const KeybindingRecord *r = KEYS_RECORDS[kCtr]._keys; r->_id; ++r) {
 			if (r->_action == keyAction)
 				return r->_method;
 		}

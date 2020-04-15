@@ -66,6 +66,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("musicToggle", WRAP_METHOD(Debugger, cmdMusicToggle));
 	registerCmd("open", WRAP_METHOD(Debugger, cmdOpenDoor));
 	registerCmd("order", WRAP_METHOD(Debugger, cmdNewOrder));
+	registerCmd("party", WRAP_METHOD(Debugger, cmdParty));
 	registerCmd("pass", WRAP_METHOD(Debugger, cmdPass));
 	registerCmd("peer", WRAP_METHOD(Debugger, cmdPeer));
 	registerCmd("quitAndSave", WRAP_METHOD(Debugger, cmdQuitAndSave));
@@ -130,7 +131,7 @@ void Debugger::printN(const char *fmt, ...) {
 		// relevant for showing the text in the debugger
 		Common::String s;
 		for (Common::String::iterator it = str.begin(); it != str.end(); ++it) {
-			if (*it <= ' ' && *it != '\n')
+			if (*it >= ' ' || *it == '\n')
 				s += *it;
 		}
 
@@ -143,9 +144,11 @@ void Debugger::printN(const char *fmt, ...) {
 bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 	bool result = Shared::Debugger::handleCommand(argc, argv, keepRunning);
 
-	if (result && !isActive()) {
-		if (!_dontEndTurn)
+	if (result) {
+		if (!isActive() && !_dontEndTurn)
 			g_game->finishTurn();
+		else if (_dontEndTurn && eventHandler->getController() == g_game)
+			g_context->_location->_turnCompleter->finishTurn();
 	}
 
 	_dontEndTurn = false;
@@ -773,6 +776,18 @@ bool Debugger::cmdOpenDoor(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
+bool Debugger::cmdParty(int argc, const char **argv) {
+	if (settings._enhancements && settings._enhancementsOptions._activePlayer) {
+		int player = (argc == 2) ? strToInt(argv[1]) - 1 : -1;
+		gameSetActivePlayer(player);
+	} else {
+		print("%cBad command!%c", FG_GREY, FG_WHITE);
+	}
+
+	dontEndTurn();
+	return isDebuggerActive();
+}
+
 bool Debugger::cmdPass(int argc, const char **argv) {
 	print("Pass");
 	return isDebuggerActive();
@@ -1069,8 +1084,6 @@ bool Debugger::cmdCollisions(int argc, const char **argv) {
 
 bool Debugger::cmdCompanions(int argc, const char **argv) {
 	for (int m = g_ultima->_saveGame->_members; m < 8; m++) {
-		debug("m = %d\n", m);
-		debug("n = %s\n", g_ultima->_saveGame->_players[m].name);
 		if (g_context->_party->canPersonJoin(g_ultima->_saveGame->_players[m].name, NULL)) {
 			g_context->_party->join(g_ultima->_saveGame->_players[m].name);
 		}
