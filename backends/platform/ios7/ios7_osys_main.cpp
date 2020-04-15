@@ -174,6 +174,7 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	case kFeatureVirtualKeyboard:
 	case kFeatureClipboardSupport:
 	case kFeatureOpenUrl:
+	case kFeatureNoQuit:
 		return true;
 
 	default:
