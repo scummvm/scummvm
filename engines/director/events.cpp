@@ -82,7 +82,7 @@ void DirectorEngine::processEvents() {
 				sc->_lastRollTime =	 sc->_lastEventTime;
 
 				if (_draggingSprite) {
-					Sprite* draggedSprite = currentFrame->_sprites[_draggingSpriteId];
+					Sprite *draggedSprite = currentFrame->_sprites[_draggingSpriteId];
 					if (draggedSprite->_moveable) {
 						pos = g_system->getEventManager()->getMousePos();
 						Common::Point delta = pos - _draggingSpritePos;
