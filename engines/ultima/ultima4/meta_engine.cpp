@@ -92,6 +92,24 @@ static const KeybindingRecord PARTY_KEYS[] = {
 };
 
 static const KeybindingRecord CHEAT_KEYS[] = {
+	{ KEYBIND_CHEAT_COLLISIONS, "CHEAT-COLLISIONS", "Toggle Collision Handling", "collisions", "A+c", nullptr },
+	{ KEYBIND_CHEAT_DESTROY, "CHEAT-DESTROY", "Destroy Object", "destroy", "A+d", nullptr },
+	{ KEYBIND_CHEAT_EQUIPMENT, "CHEAT-EQUIPMENT", "Full Equipment", "equipment", "A+e", nullptr },
+	{ KEYBIND_CHEAT_GOTO, "CHEAT-GOTO", "Goto location", "goto", "A+g", nullptr },
+	{ KEYBIND_CHEAT_HELP, "CHEAT-HELP", "Help - Teleport to Lord British", "goto", "A+h", nullptr },
+	{ KEYBIND_CHEAT_ITEMS, "CHEAT-ITEMS", "Give Items", "items", "A+i", nullptr },
+	{ KEYBIND_CHEAT_KARMA, "CHEAT-KARMA", "List Karma", "karma", "A+k", nullptr },
+	{ KEYBIND_CHEAT_LEAVE, "CHEAT-LEAVE", "Leave Location", "leave", "A+l", nullptr },
+	{ KEYBIND_CHEAT_MIXTURES, "CHEAT-MIXTURES", "Give Mixtures", "mixtures", "A+m", nullptr },
+	{ KEYBIND_CHEAT_PARTY, "CHEAT-PARTY", "Full Party", "companions", "A+p", nullptr },
+	{ KEYBIND_CHEAT_REAGENTS, "CHEAT-REAGENTS", "Give Reagents", "reagents", "A+r", nullptr },
+	{ KEYBIND_CHEAT_STATS, "CHEAT-STATS", "Full Stats", "fullstats", "A+s", nullptr },
+	{ KEYBIND_CHEAT_TRANSPORT, "CHEAT-TRANSPORT", "Create Transport", "transport", "A+t", nullptr },
+	{ KEYBIND_CHEAT_UP, "CHEAT-UP", "Up Level", "up", "A+UP", nullptr },
+	{ KEYBIND_CHEAT_DOWN, "CHEAT-DOWN", "Down Level", "down", "A+DOWN", nullptr },
+	{ KEYBIND_CHEAT_VIRTUE, "CHEAT-VIRTUE", "Grant Virtue", "virtue", "A+v", nullptr },
+	{ KEYBIND_CHEAT_WIND, "CHEAT-WIND", "Change Wind", "wind", "A+w", nullptr },
+
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 

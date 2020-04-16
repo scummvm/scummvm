@@ -92,6 +92,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("help", WRAP_METHOD(Debugger, cmdHelp));
 	registerCmd("items", WRAP_METHOD(Debugger, cmdItems));
 	registerCmd("karma", WRAP_METHOD(Debugger, cmdKarma));
+	registerCmd("leave", WRAP_METHOD(Debugger, cmdLeave));
 	registerCmd("location", WRAP_METHOD(Debugger, cmdLocation));
 	registerCmd("mixtures", WRAP_METHOD(Debugger, cmdMixtures));
 	registerCmd("moon", WRAP_METHOD(Debugger, cmdMoon));
@@ -218,7 +219,7 @@ bool Debugger::cmdAttack(int argc, const char **argv) {
 
 	printN("Attack: ");
 	if (g_context->_party->isFlying()) {
-		screenMessage("\n%cDrift only!%c\n", FG_GREY, FG_WHITE);
+		print("\n%cDrift only!%c", FG_GREY, FG_WHITE);
 		return isDebuggerActive();
 	}
 
@@ -300,7 +301,7 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 	if (spell == -1)
 		return isDebuggerActive();
 
-	screenMessage("%s!\n", spellGetName(spell)); //Prints spell name at prompt
+	print("%s!", spellGetName(spell)); //Prints spell name at prompt
 
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
 
@@ -317,7 +318,7 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 		break;
 
 	case Spell::PARAM_PHASE: {
-		screenMessage("To Phase: ");
+		printN("To Phase: ");
 #ifdef IOS
 		U4IOS::IOSConversationChoiceHelper choiceController;
 		choiceController.fullSizeChoicePanel();
@@ -615,7 +616,7 @@ bool Debugger::cmdIgnite(int argc, const char **argv) {
 }
 
 bool Debugger::cmdJimmy(int argc, const char **argv) {
-	screenMessage("Jimmy: ");
+	printN("Jimmy: ");
 	Direction dir = gameGetDirection();
 
 	if (dir == DIR_NONE)
@@ -1121,7 +1122,7 @@ bool Debugger::cmdDestroy(int argc, const char **argv) {
 		print("destroy <direction>");
 		return isDebuggerActive();
 	} else {
-		screenMessage("Destroy Object\nDir: ");
+		printN("Destroy Object\nDir: ");
 		dir = gameGetDirection();
 	}
 
@@ -1226,9 +1227,9 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 		print("teleport <destination name>");
 		return true;
 	} else {
-		screenMessage("Goto: ");
+		printN("Goto: ");
 		dest = gameGetInput(32);
-		screenMessage("\n");
+		print("");
 	}
 
 	dest.toLowercase();
@@ -1240,7 +1241,7 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 		destNameLower.toLowercase();
 
 		if (destNameLower.find(dest) != Common::String::npos) {
-			screenMessage("\n%s\n", mapMgr->get(destid)->getName().c_str());
+			print("\n%s", mapMgr->get(destid)->getName().c_str());
 			g_context->_location->_coords = g_context->_location->_map->_portals[p]->_coords;
 			found = true;
 			break;
@@ -1270,12 +1271,12 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 
 bool Debugger::cmdHelp(int argc, const char **argv) {
 	if (!isDebuggerActive()) {
-		screenMessage("Help!\n");
+		print("Help!");
 		screenPrompt();
 	}
 
-	/* Help! send me to Lord British (who conveniently is right around where you are)! */
-	g_game->setMap(mapMgr->get(100), 1, NULL);
+	// Help! send me to Lord British
+	g_game->setMap(mapMgr->get(100), 1, nullptr);
 	g_context->_location->_coords.x = 19;
 	g_context->_location->_coords.y = 8;
 	g_context->_location->_coords.z = 0;
@@ -1356,7 +1357,7 @@ bool Debugger::cmdMixtures(int argc, const char **argv) {
 	for (int i = 0; i < SPELL_MAX; i++)
 		g_ultima->_saveGame->_mixtures[i] = 99;
 
-	screenMessage("All mixtures given");
+	print("All mixtures given");
 	return isDebuggerActive();
 }
 
@@ -1382,7 +1383,7 @@ bool Debugger::cmdMoon(int argc, const char **argv) {
 
 bool Debugger::cmdOpacity(int argc, const char **argv) {
 	g_context->_opacity = !g_context->_opacity;
-	screenMessage("Opacity is %s", g_context->_opacity ? "on" : "off");
+	print("Opacity is %s", g_context->_opacity ? "on" : "off");
 	return isDebuggerActive();
 }
 
@@ -1420,8 +1421,8 @@ bool Debugger::cmdSummon(int argc, const char **argv) {
 		print("summon <creature name>");
 		return true;
 	} else {
-		screenMessage("Summon!\n");
-		screenMessage("What?\n");
+		print("Summon!");
+		print("What?");
 		creature = gameGetInput();
 	}
 
@@ -1485,13 +1486,13 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 	} else if (isDebuggerActive()) {
 		dir = DIR_NONE;
 	} else {
-		screenMessage("%s\n", tile->getName().c_str());
+		print("%s", tile->getName().c_str());
 
 		// Get the direction in which to create the transport
 		ReadDirController readDir;
 		eventHandler->pushController(&readDir);
 
-		screenMessage("Dir: ");
+		printN("Dir: ");
 		dir = readDir.waitFor();
 	}
 
@@ -1558,7 +1559,7 @@ bool Debugger::cmdVirtue(int argc, const char **argv) {
 			g_ultima->_saveGame->_karma[i] = 0;
 
 		g_context->_stats->update();
-		screenMessage("Full virtues");
+		print("Full virtues");
 	} else {
 		int virtue = strToInt(argv[1]);
 
