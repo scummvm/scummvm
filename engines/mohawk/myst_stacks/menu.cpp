@@ -285,7 +285,7 @@ void Menu::o_menuLoad(uint16 var, const ArgumentsArray &args) {
 		return;
 	}
 
-	_vm->runLoadDialog();
+	_vm->loadGameDialog();
 }
 
 void Menu::o_menuSave(uint16 var, const ArgumentsArray &args) {
@@ -293,7 +293,7 @@ void Menu::o_menuSave(uint16 var, const ArgumentsArray &args) {
 		return;
 	}
 
-	_vm->runSaveDialog();
+	_vm->saveGameDialog();
 }
 
 void Menu::o_menuNew(uint16 var, const ArgumentsArray &args) {

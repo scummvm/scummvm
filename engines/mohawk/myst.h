@@ -203,8 +203,6 @@ public:
 
 	void resumeFromMainMenu();
 
-	void runLoadDialog();
-	void runSaveDialog();
 	void runOptionsDialog();
 	void runCredits();
 
