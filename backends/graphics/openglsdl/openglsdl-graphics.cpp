@@ -32,7 +32,7 @@
 #include "common/translation.h"
 #endif
 
-OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint desktopHeight, SdlEventSource *eventSource, SdlWindow *window)
+OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window)
     : SdlGraphicsManager(eventSource, window), _lastRequestedHeight(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       _glContext(),
@@ -175,10 +175,12 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 		}
 	}
 
+	Common::Rect desktopRes = _window->getDesktopResolution();
+
 	// In case SDL is fine with every mode we will force the desktop mode.
 	// TODO? We could also try to add some default resolutions here.
-	if (_fullscreenVideoModes.empty() && desktopWidth && desktopHeight) {
-		_fullscreenVideoModes.push_back(VideoMode(desktopWidth, desktopHeight));
+	if (_fullscreenVideoModes.empty() && !desktopRes.isEmpty()) {
+		_fullscreenVideoModes.push_back(VideoMode(desktopRes.width(), desktopRes.height()));
 	}
 
 	// Get information about display sizes from the previous runs.
@@ -187,8 +189,8 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 		_desiredFullscreenHeight = ConfMan.getInt("last_fullscreen_mode_height", Common::ConfigManager::kApplicationDomain);
 	} else {
 		// Use the desktop resolutions when no previous default has been setup.
-		_desiredFullscreenWidth  = desktopWidth;
-		_desiredFullscreenHeight = desktopHeight;
+		_desiredFullscreenWidth  = desktopRes.width();
+		_desiredFullscreenHeight = desktopRes.height();
 	}
 }
 
