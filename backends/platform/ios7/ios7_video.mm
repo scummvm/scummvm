@@ -192,22 +192,9 @@ uint getSizeNextPOT(uint size) {
 - (void)createOverlaySurface {
 	uint overlayWidth = (uint) MAX(_renderBufferWidth, _renderBufferHeight);
 	uint overlayHeight = (uint) MIN(_renderBufferWidth, _renderBufferHeight);
-
-	if (iOS7_isBigDevice()) {
-		// On really big displays, like the iPad Pro, we scale the interface down
-		// so that the controls are not too small..
-		while (overlayHeight > 1024) {
-			overlayWidth /= 2;
-			overlayHeight /= 2;
-		}
-	}
-	else {
-		// On small devices, we force the user interface to use the small theme
-		while (overlayHeight > 480) {
-			overlayWidth /= 2;
-			overlayHeight /= 2;
-		}
-	}
+	float hdpi_scaler = [UIScreen mainScreen].scale;
+	overlayWidth = (uint)(overlayWidth / hdpi_scaler);
+	overlayHeight = (uint)(overlayHeight / hdpi_scaler);
 
 	_videoContext.overlayWidth = overlayWidth;
 	_videoContext.overlayHeight = overlayHeight;
