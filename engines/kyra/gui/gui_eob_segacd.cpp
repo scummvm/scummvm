@@ -425,19 +425,29 @@ void EoBEngine::makeNameShapes(int charId) {
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 30, 28, 0x600A, true);
 	_screen->sega_clearTextBuffer(0);
 
+	uint8 *in = _res->fileData("FACE", 0);
 	for (int i = first; i <= last; ++i) {
 		if (!_characters[i].flags)
 			continue;
-		_txt->printShadowedText(_characters[i].name, 0, i << 4, 0xFF, 0xCC);
+		if (_characters[i].portrait < 0) {
+			_screen->sega_getRenderer()->loadToVRAM(in + 27648 + (-_characters[i].portrait - 1) * 224, 224, 0x3F00 + i * 0xE0);
+			_screen->sega_getRenderer()->fillRectWithTiles(0, 0, i << 1, 7, 1, 0x61F8 + i * 7, true);
+		} else {
+			_txt->printShadowedText(_characters[i].name, 0, i << 4, 0xFF, 0xCC);
+		}
 	}
+	delete[] in;
 
 	_screen->sega_getRenderer()->render(_screen->_curPage);
+	_screen->sega_getRenderer()->render(0);
+	_screen->updateScreen();
+	_screen->sega_fadeToNeutral(0);
 
 	for (int i = first; i <= last; ++i) {
 		if (!_characters[i].flags)
 			continue;
 		delete[] _characters[i].nameShape;
-		_characters[i].nameShape = _screen->encodeShape(0, i << 4, (_screen->getTextWidth(_characters[i].name) + 8) >> 3, 13);
+		_characters[i].nameShape = _screen->encodeShape(0, i << 4, 8, 13);
 	}
 
 	_screen->clearPage(2);

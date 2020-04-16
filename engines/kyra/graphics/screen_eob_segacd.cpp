@@ -956,6 +956,8 @@ template<bool hflip> void SegaRenderer::renderLineFragment(uint8 *dst, uint8 *ma
 }
 #endif
 
+#undef mRenderLineFragment
+
 void SegaRenderer::checkUpdateDirtyRects(int addr, int len) {
 	//void *tbl[] = { _vram, _hScrollTable, , _planes[kPlaneA].nameTable, _planes[kPlaneB].nameTable, _planes[kWindowPlane].nameTable };
 	addDirtyRect(0, 0, _screenW, _screenH);
@@ -1269,8 +1271,6 @@ const uint8 *SegaCDFont::getGlyphData(uint16 c, uint8 &charWidth, uint8 &charHei
 
 	return res;
 }
-
-#undef mRenderLineFragment
 
 ScrollManager::ScrollManager(SegaRenderer *renderer) :_renderer(renderer) {
 	_vScrollTimers = new ScrollTimer[2];
