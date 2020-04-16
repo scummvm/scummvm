@@ -20,22 +20,23 @@
  *
  */
 
-#include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/game/death.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/game/game.h"
+#include "ultima/ultima4/game/player.h"
+#include "ultima/ultima4/game/portal.h"
+#include "ultima/ultima4/game/stats.h"
+#include "ultima/ultima4/controllers/wait_controller.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/city.h"
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/events/event.h"
-#include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/sound/music.h"
-#include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/game/stats.h"
+#include "ultima/ultima4/ultima4.h"
 #include "common/system.h"
 
 namespace Ultima {

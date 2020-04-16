@@ -108,7 +108,7 @@ static const KeybindingRecord CHEAT_KEYS[] = {
 	{ KEYBIND_CHEAT_UP, "CHEAT-UP", "Up Level", "up", "A+UP", nullptr },
 	{ KEYBIND_CHEAT_DOWN, "CHEAT-DOWN", "Down Level", "down", "A+DOWN", nullptr },
 	{ KEYBIND_CHEAT_VIRTUE, "CHEAT-VIRTUE", "Grant Virtue", "virtue", "A+v", nullptr },
-	{ KEYBIND_CHEAT_WIND, "CHEAT-WIND", "Change Wind", "wind", "A+w", nullptr },
+ 	{ KEYBIND_CHEAT_WIND, "CHEAT-WIND", "Change Wind", "wind", "A+w", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };

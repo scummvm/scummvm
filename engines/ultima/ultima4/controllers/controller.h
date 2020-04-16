@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_CONTROLLER_H
-#define ULTIMA4_CONTROLLER_H
+#ifndef ULTIMA4_CONTROLLERS_CONTROLLER_H
+#define ULTIMA4_CONTROLLERS_CONTROLLER_H
 
 #include "ultima/ultima4/meta_engine.h"
 
@@ -111,6 +111,13 @@ protected:
 
 private:
 	bool _exitWhenDone;
+};
+
+class TurnCompleter {
+public:
+	virtual ~TurnCompleter() {
+	}
+	virtual void finishTurn() = 0;
 };
 
 } // End of namespace Ultima4

@@ -20,48 +20,27 @@
  *
  */
 
-#include "ultima/ultima4/events/controller.h"
-#include "ultima/ultima4/events/event.h"
+#ifndef ULTIMA4_CONTROLLERS_READ_INT_CONTROLLER_H
+#define ULTIMA4_CONTROLLERS_READ_INT_CONTROLLER_H
+
+#include "ultima/ultima4/controllers/read_string_controller.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-Controller::Controller(int timerInterval) {
-	this->_timerInterval = timerInterval;
-}
+/**
+ * A controller to read a integer, terminated by the enter key.
+ * Non-numeric keys are ignored.
+ */
+class ReadIntController : public ReadStringController {
+public:
+	ReadIntController(int maxlen, int screenX, int screenY);
 
-Controller::~Controller() {
-}
-
-bool Controller::notifyKeyPressed(int key) {
-	bool processed = KeyHandler::globalHandler(key);
-	if (!processed)
-		processed = keyPressed(key);
-
-	return processed;
-}
-
-int Controller::getTimerInterval() {
-	return _timerInterval;
-}
-
-void Controller::timerFired() {
-}
-
-void Controller::timerCallback(void *data) {
-	Controller *controller = static_cast<Controller *>(data);
-	controller->timerFired();
-}
-
-void Controller_startWait() {
-	eventHandler->run();
-	eventHandler->setControllerDone(false);
-	eventHandler->popController();
-}
-
-void Controller_endWait() {
-	eventHandler->setControllerDone();
-}
+	static int get(int maxlen, int screenX, int screenY, EventHandler *eh = NULL);
+	int getInt() const;
+};
 
 } // End of namespace Ultima4
 } // End of namespace Ultima
+
+#endif

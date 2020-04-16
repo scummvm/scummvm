@@ -134,6 +134,17 @@ MODULE_OBJS := \
 	ultima1/widgets/urban_widget.o \
 	ultima1/widgets/wench.o \
 	ultima1/game.o \
+	ultima4/controllers/alpha_action_controller.o \
+	ultima4/controllers/controller.o \
+	ultima4/controllers/game_controller.o \
+	ultima4/controllers/key_handler_controller.o \
+	ultima4/controllers/read_choice_controller.o \
+	ultima4/controllers/read_dir_controller.o \
+	ultima4/controllers/read_int_controller.o \
+	ultima4/controllers/read_player_controller.o \
+	ultima4/controllers/read_string_controller.o \
+	ultima4/controllers/wait_controller.o \
+	ultima4/controllers/ztats_controller.o \
 	ultima4/conversation/conversation.o \
 	ultima4/conversation/dialogueloader.o \
 	ultima4/conversation/dialogueloader_hw.o \
@@ -148,7 +159,6 @@ MODULE_OBJS := \
 	ultima4/core/error.o \
 	ultima4/core/settings.o \
 	ultima4/core/utils.o \
-	ultima4/events/controller.o \
 	ultima4/events/event.o \
 	ultima4/events/event_scummvm.o \
 	ultima4/events/timed_event_mgr.o \

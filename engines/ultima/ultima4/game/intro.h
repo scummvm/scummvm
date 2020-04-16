@@ -23,12 +23,12 @@
 #ifndef ULTIMA4_INTRO_H
 #define ULTIMA4_INTRO_H
 
-#include "ultima/ultima4/events/controller.h"
-#include "ultima/ultima4/game/menu.h"
+#include "ultima/ultima4/controllers/controller.h"
 #include "ultima/ultima4/core/observer.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/gfx/imageview.h"
+#include "ultima/ultima4/game/menu.h"
 #include "ultima/ultima4/game/textview.h"
+#include "ultima/ultima4/gfx/imageview.h"
 #include "ultima/ultima4/map/tileview.h"
 
 namespace Ultima {

@@ -25,14 +25,14 @@
 
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/events/controller.h"
+#include "ultima/ultima4/controllers/controller.h"
+#include "ultima/ultima4/core/observer.h"
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/object.h"
-#include "ultima/ultima4/core/observer.h"
 #include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {

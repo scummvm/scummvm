@@ -23,6 +23,8 @@
 #include "ultima/ultima4/core/debugger_actions.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/controllers/read_choice_controller.h"
+#include "ultima/ultima4/controllers/read_int_controller.h"
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/player.h"

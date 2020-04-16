@@ -20,7 +20,16 @@
  *
  */
 
-#include "ultima/ultima4/ultima4.h"
+#include "ultima/ultima4/map/combat.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/mapmgr.h"
+#include "ultima/ultima4/map/movement.h"
+#include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/controllers/read_choice_controller.h"
+#include "ultima/ultima4/controllers/read_dir_controller.h"
+#include "ultima/ultima4/controllers/ztats_controller.h"
 #include "ultima/ultima4/core/debugger.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
@@ -38,14 +47,8 @@
 #include "ultima/ultima4/game/stats.h"
 #include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/map/combat.h"
-#include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/map/dungeon.h"
-#include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/map/mapmgr.h"
-#include "ultima/ultima4/map/movement.h"
-#include "ultima/ultima4/map/tileset.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/ultima4.h"
 #include "common/system.h"
 
 namespace Ultima {

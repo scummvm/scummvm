@@ -23,13 +23,15 @@
 #ifndef ULTIMA4_EVENT_H
 #define ULTIMA4_EVENT_H
 
+#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/timed_event_mgr.h"
+#include "ultima/ultima4/controllers/key_handler_controller.h"
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/shared/std/containers.h"
 #include "common/events.h"
 #include "common/list.h"
 #include "common/str.h"
-#include "ultima/ultima4/events/controller.h"
-#include "ultima/ultima4/events/timed_event_mgr.h"
-#include "ultima/ultima4/core/types.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -57,190 +59,6 @@ namespace Ultima4 {
 #define U4_LEFT_ALT     Common::KEYCODE_LALT
 #define U4_RIGHT_META   Common::KEYCODE_RMETA
 #define U4_LEFT_META    Common::KEYCODE_LMETA
-
-struct MouseArea;
-class EventHandler;
-class TextView;
-
-/**
- * A class for handling keystrokes.
- */
-class KeyHandler {
-public:
-	virtual ~KeyHandler() {}
-
-	/* Typedefs */
-	typedef bool (*Callback)(int, void *);
-
-	/** Additional information to be passed as data param for read buffer key handler */
-	typedef struct ReadBuffer {
-		int (*_handleBuffer)(Common::String *);
-		Common::String *_buffer;
-		int _bufferLen;
-		int _screenX, _screenY;
-	} ReadBuffer;
-
-	/** Additional information to be passed as data param for get choice key handler */
-	typedef struct GetChoice {
-		Common::String _choices;
-		int (*_handleChoice)(int);
-	} GetChoice;
-
-	/* Constructors */
-	KeyHandler(Callback func, void *data = NULL, bool asyncronous = true);
-
-	/* Static functions */
-	static int setKeyRepeat(int delay, int interval);
-
-	/**
-	 * Handles any and all keystrokes.
-	 * Generally used to exit the application, switch applications,
-	 * minimize, maximize, etc.
-	 */
-	static bool globalHandler(int key);
-
-	/* Static default key handler functions */
-	/**
-	 * A default key handler that should be valid everywhere
-	 */
-	static bool defaultHandler(int key, void *data);
-
-	/**
-	 * A key handler that ignores keypresses
-	 */
-	static bool ignoreKeys(int key, void *data);
-
-	/* Operators */
-	bool operator==(Callback cb) const;
-
-	/* Member functions */
-	/**
-	 * Handles a keypress.
-	 * First it makes sure the key combination is not ignored
-	 * by the current key handler. Then, it passes the keypress
-	 * through the global key handler. If the global handler
-	 * does not process the keystroke, then the key handler
-	 * handles it itself by calling its handler callback function.
-	 */
-	bool handle(int key);
-
-	/**
-	 * Returns true if the key or key combination is always ignored by xu4
-	 */
-	virtual bool isKeyIgnored(int key);
-
-protected:
-	Callback _handler;
-	bool _async;
-	void *_data;
-};
-
-/**
- * A controller that wraps a keyhander function.  Keyhandlers are
- * deprecated -- please use a controller instead.
- */
-class KeyHandlerController : public Controller {
-public:
-	KeyHandlerController(KeyHandler *handler);
-	~KeyHandlerController();
-
-	bool keyPressed(int key) override;
-	KeyHandler *getKeyHandler();
-
-private:
-	KeyHandler *_handler;
-};
-
-/**
- * A controller to read a Common::String, terminated by the enter key.
- */
-class ReadStringController : public WaitableController<Common::String> {
-public:
-	/**
-	 * @param maxlen the maximum length of the Common::String
-	 * @param screenX the screen column where to begin input
-	 * @param screenY the screen row where to begin input
-	 * @param accepted_chars a Common::String characters to be accepted for input
-	 */
-	ReadStringController(int maxlen, int screenX, int screenY, const Common::String &accepted_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 \n\r\010");
-	ReadStringController(int maxlen, TextView *view, const Common::String &accepted_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 \n\r\010");
-	bool keyPressed(int key) override;
-
-	static Common::String get(int maxlen, int screenX, int screenY, EventHandler *eh = NULL);
-	static Common::String get(int maxlen, TextView *view, EventHandler *eh = NULL);
-#ifdef IOS
-	void setValue(const Common::String &utf8StringValue) {
-		value = utf8StringValue;
-	}
-#endif
-
-protected:
-	int _maxLen, _screenX, _screenY;
-	TextView *_view;
-	Common::String _accepted;
-};
-
-/**
- * A controller to read a integer, terminated by the enter key.
- * Non-numeric keys are ignored.
- */
-class ReadIntController : public ReadStringController {
-public:
-	ReadIntController(int maxlen, int screenX, int screenY);
-
-	static int get(int maxlen, int screenX, int screenY, EventHandler *eh = NULL);
-	int getInt() const;
-};
-
-/**
- * A controller to read a single key from a provided list.
- */
-class ReadChoiceController : public WaitableController<int> {
-public:
-	ReadChoiceController(const Common::String &choices);
-	bool keyPressed(int key) override;
-
-	static char get(const Common::String &choices, EventHandler *eh = NULL);
-
-protected:
-	Common::String _choices;
-};
-
-/**
- * A controller to read a direction enter with the arrow keys.
- */
-class ReadDirController : public WaitableController<Direction> {
-public:
-	ReadDirController();
-
-	/**
-	 * Key was pressed
-	 */
-	bool keyPressed(int key) override;
-
-	/**
-	 * Handles keybinder actions
-	 */
-	void keybinder(KeybindingAction action) override;
-};
-
-/**
- * A controller to pause for a given length of time, ignoring all
- * keyboard input.
- */
-class WaitController : public Controller {
-public:
-	WaitController(unsigned int cycles);
-	bool keyPressed(int key) override;
-	void timerFired() override;
-
-	void wait();
-	void setCycles(int c);
-
-private:
-	unsigned int _cycles;
-	unsigned int _current;
-};
 
 #if defined(IOS)
 #ifndef __OBJC__

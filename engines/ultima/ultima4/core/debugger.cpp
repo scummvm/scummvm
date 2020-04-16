@@ -22,6 +22,10 @@
 
 #include "ultima/ultima4/core/debugger.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/controllers/alpha_action_controller.h"
+#include "ultima/ultima4/controllers/read_choice_controller.h"
+#include "ultima/ultima4/controllers/read_dir_controller.h"
+#include "ultima/ultima4/controllers/ztats_controller.h"
 #include "ultima/ultima4/game/armor.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"

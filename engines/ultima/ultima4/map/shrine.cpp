@@ -20,25 +20,28 @@
  *
  */
 
-#include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/events/event.h"
-#include "ultima/ultima4/game/game.h"
-#include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
+#include "ultima/ultima4/map/shrine.h"
+#include "ultima/ultima4/controllers/read_choice_controller.h"
+#include "ultima/ultima4/controllers/read_string_controller.h"
+#include "ultima/ultima4/controllers/wait_controller.h"
+#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/creature.h"
-#include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
+#include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/sound/music.h"
+#include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
 namespace Ultima4 {
