@@ -68,7 +68,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 99
+#define CURRENT_VER 100
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
@@ -1007,6 +1007,10 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(camera._dest.y, VER(8));
 	s.syncAsSint16LE(camera._cur.x, VER(8));
 	s.syncAsSint16LE(camera._cur.y, VER(8));
+	if (_game.platform == Common::kPlatformFMTowns)
+		// WORKAROUND: FM-TOWNS original _screenHeight is 240. if we use trim_fmtowns_to_200_pixels, it's reduced to 200
+		// camera's y is always half of the screen. in order to share save games between the two modes, we need to update the y
+		camera._cur.y = _screenHeight / 2;
 	s.syncAsSint16LE(camera._last.x, VER(8));
 	s.syncAsSint16LE(camera._last.y, VER(8));
 	s.syncAsSint16LE(camera._accel.x, VER(8));
@@ -1258,6 +1262,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 				while (s.syncAsUint16LE(idx), idx != 0xFFFF) {
 					assert(idx < _res->_types[type].size());
 					loadResource(s, type, idx);
+					applyWorkaroundIfNeeded(type, idx);
 				}
 			}
 		}
@@ -1413,6 +1418,25 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		_scummVars[98] = var98Backup;
 
 	s.syncBytes(_bitVars, _numBitVariables / 8);
+
+
+	// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
+	// if we trim to 200 pixels, we can show only 6 items
+	// therefore we need to make sure that the inventory is now display correctly, regardless of the mode that the game was saved with
+	if (s.isLoading() && _game.platform == Common::kPlatformFMTowns && _game.id == GID_ZAK) {
+		if (ConfMan.getBool("trim_fmtowns_to_200_pixels"))
+			_verbs[getVerbSlot(116, 0)].curRect.top = 208 - 18;		// make down arrow higher
+		else
+			_verbs[getVerbSlot(116, 0)].curRect.top = 208;			// return down arrow to its original location
+
+		if (ConfMan.getBool("trim_fmtowns_to_200_pixels"))
+			// VAR(102) to VAR(111) originally keep the 10 displayed inventory items; clean the last 4 ones
+			for (int v = 102 + 6; v <= 111; v++)
+				VAR(v) = 0;
+
+		// make sure the appropriate verbs and arrows are displayed
+		runInventoryScript(0);
+	}
 
 
 	//

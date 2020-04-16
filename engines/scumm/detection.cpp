@@ -168,13 +168,28 @@ static const ExtraGuiOption mmnesObjectLabelsOption = {
 	false
 };
 
+static const ExtraGuiOption fmtownsTrimTo200 = {
+	_s("Trim FM-TOWNS games to 200 pixels height"),
+	_s("Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 pixels height, allowing using 'aspect ratio correction'"),
+	"trim_fmtowns_to_200_pixels",
+	false
+};
+
+
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
+	// Query the GUI options
+	const Common::String guiOptionsString = ConfMan.get("guioptions", target);
+	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
+
 	if (target.empty() || ConfMan.get("gameid", target) == "comi") {
 		options.push_back(comiObjectLabelsOption);
 	}
 	if (target.empty() || Common::parsePlatform(ConfMan.get("platform", target)) == Common::kPlatformNES) {
 		options.push_back(mmnesObjectLabelsOption);
+	}
+	if (target.empty() || (ConfMan.get("platform", target) == "fmtowns" && guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))) {
+		options.push_back(fmtownsTrimTo200);
 	}
 	return options;
 }
