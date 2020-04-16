@@ -352,11 +352,11 @@ void ASpit::xarestoregame(const ArgumentArray &args) {
 	}
 
 	// Launch the load game dialog
-	_vm->runLoadDialog();
+	_vm->loadGameDialog();
 }
 
 void ASpit::xaSaveGame(const ArgumentArray &args) {
-	_vm->runSaveDialog();
+	_vm->saveGameDialog();
 }
 
 void ASpit::xaResumeGame(const ArgumentArray &args) {

@@ -292,12 +292,12 @@ void MohawkEngine_Riven::processInput() {
 				break;
 			case kRivenActionLoadGameState:
 				if (canLoadGameStateCurrently()) {
-					runLoadDialog();
+					loadGameDialog();
 				}
 				break;
 			case kRivenActionSaveGameState:
 				if (canSaveGameStateCurrently()) {
-					runSaveDialog();
+					saveGameDialog();
 				}
 				break;
 			default:
@@ -686,36 +686,6 @@ void MohawkEngine_Riven::startNewGame() {
 	setTotalPlayTime(0);
 }
 
-void MohawkEngine_Riven::runLoadDialog() {
-	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
-
-	pauseEngine(true);
-	int slot = slc.runModalWithCurrentTarget();
-	pauseEngine(false);
-
-	if (slot >= 0) {
-		loadGameStateAndDisplayError(slot);
-	}
-}
-
-void MohawkEngine_Riven::runSaveDialog() {
-	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
-
-	pauseEngine(true);
-	int slot = slc.runModalWithCurrentTarget();
-	pauseEngine(false);
-
-	if (slot >= 0) {
-		Common::String result(slc.getResultString());
-		if (result.empty()) {
-			// If the user was lazy and entered no save name, come up with a default name.
-			result = slc.createDefaultSaveDescription(slot);
-		}
-
-		saveGameStateAndDisplayError(slot, result);
-	}
-}
-
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
 	Common::Error loadError = _saveLoad->loadGame(slot);
 
@@ -726,17 +696,6 @@ Common::Error MohawkEngine_Riven::loadGameState(int slot) {
 	}
 
 	return loadError;
-}
-
-void MohawkEngine_Riven::loadGameStateAndDisplayError(int slot) {
-	assert(slot >= 0);
-
-	Common::Error loadError = loadGameState(slot);
-
-	if (loadError.getCode() != Common::kNoError) {
-		GUI::MessageDialog dialog(loadError.getDesc());
-		dialog.runModal();
-	}
 }
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
@@ -769,17 +728,6 @@ Common::Language MohawkEngine_Riven::getLanguage() const {
 	}
 
 	return language;
-}
-
-void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::String &desc) {
-	assert(slot >= 0 && !desc.empty());
-
-	Common::Error saveError = saveGameState(slot, desc);
-
-	if (saveError.getCode() != Common::kNoError) {
-		GUI::MessageDialog dialog(saveError.getDesc());
-		dialog.runModal();
-	}
 }
 
 bool MohawkEngine_Riven::canSaveAutosaveCurrently() {
@@ -815,7 +763,7 @@ bool MohawkEngine_Riven::canLoadGameStateCurrently() {
 		return false;
 	}
 
-	if (_scriptMan->hasQueuedScripts()) {
+	if (_scriptMan->hasQueuedScripts() && !isInMainMenu()) {
 		return false;
 	}
 
