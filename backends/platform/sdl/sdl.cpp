@@ -69,8 +69,6 @@
 OSystem_SDL::OSystem_SDL()
 	:
 #ifdef USE_OPENGL
-	_desktopWidth(0),
-	_desktopHeight(0),
 	_graphicsModes(),
 	_graphicsMode(0),
 	_firstGLMode(0),
@@ -214,25 +212,6 @@ void OSystem_SDL::initBackend() {
 		_eventManager = new DefaultEventManager(_eventSourceWrapper ? _eventSourceWrapper : _eventSource);
 	}
 
-
-#ifdef USE_OPENGL
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_DisplayMode displayMode;
-	if (!SDL_GetDesktopDisplayMode(0, &displayMode)) {
-		_desktopWidth  = displayMode.w;
-		_desktopHeight = displayMode.h;
-	}
-#else
-	// Query the desktop resolution. We simply hope nothing tried to change
-	// the resolution so far.
-	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
-	if (videoInfo && videoInfo->current_w > 0 && videoInfo->current_h > 0) {
-		_desktopWidth  = videoInfo->current_w;
-		_desktopHeight = videoInfo->current_h;
-	}
-#endif
-#endif
-
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL
 		// Setup a list with both SDL and OpenGL graphics modes. We only do
@@ -248,7 +227,7 @@ void OSystem_SDL::initBackend() {
 			Common::String gfxMode(ConfMan.get("gfx_mode"));
 			for (uint i = _firstGLMode; i < _graphicsModeIds.size(); ++i) {
 				if (!scumm_stricmp(_graphicsModes[i].name, gfxMode.c_str())) {
-					_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource, _window);
+					_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
 					_graphicsMode = i;
 					break;
 				}
@@ -655,7 +634,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		debug(1, "switching to OpenGL graphics");
 		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
-		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource, _window);
+		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
 
 		switchedManager = true;
 	}
@@ -719,7 +698,7 @@ void OSystem_SDL::setupGraphicsModes() {
 	assert(_defaultSDLMode != -1);
 
 	_firstGLMode = _graphicsModes.size();
-	manager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource, _window);
+	manager = new OpenGLSdlGraphicsManager(_eventSource, _window);
 	srcMode = manager->getSupportedGraphicsModes();
 	defaultMode = manager->getDefaultGraphicsMode();
 	while (srcMode->name) {

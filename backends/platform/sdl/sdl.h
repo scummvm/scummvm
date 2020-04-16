@@ -142,8 +142,6 @@ protected:
 	Backends::Log::Log *_logger;
 
 #ifdef USE_OPENGL
-	int _desktopWidth, _desktopHeight;
-
 	typedef Common::Array<GraphicsMode> GraphicsModeArray;
 	GraphicsModeArray _graphicsModes;
 	Common::Array<int> _graphicsModeIds;
