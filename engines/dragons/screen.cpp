@@ -80,9 +80,9 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, srcSurface.w, clipRect.left, destX, destY, clipRect.width(), clipRect.height(), flipX, alpha);
 }
 
-void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *palette, int destX, int destY, const Common::Rect srcRect, bool flipX, AlphaBlendMode alpha, uint16 scale) {
+void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, const byte *palette, int destX, int destY, const Common::Rect srcRect, bool flipX, AlphaBlendMode alpha, uint16 scale) {
 	if (scale != DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) {
-		drawScaledSprite(_backSurface, (byte *)srcSurface.getBasePtr(0, 0),
+		drawScaledSprite(_backSurface, (const byte *)srcSurface.getBasePtr(0, 0),
 				srcRect.width(), srcRect.height(),
 				destX, destY,
 				srcRect.width() * scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE, srcRect.height() * scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE,
@@ -171,7 +171,7 @@ void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, i
 	}
 }
 
-void Screen::copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha) {
+void Screen::copyRectToSurface8bpp(const void *buffer, const byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha) {
 	assert(buffer);
 
 	assert(destX >= 0 && destX < _backSurface->w);
@@ -201,8 +201,8 @@ void Screen::copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPit
 	}
 }
 
-void Screen::drawScaledSprite(Graphics::Surface *destSurface, byte *source, int sourceWidth, int sourceHeight,
-		int destX, int destY, int destWidth, int destHeight, byte *palette, bool flipX, uint8 alpha) {
+void Screen::drawScaledSprite(Graphics::Surface *destSurface, const byte *source, int sourceWidth, int sourceHeight,
+		int destX, int destY, int destWidth, int destHeight, const byte *palette, bool flipX, uint8 alpha) {
 	// Based on the GNAP engine scaling code
 	if (destWidth == 0 || destHeight == 0) {
 		return;
@@ -231,11 +231,11 @@ void Screen::drawScaledSprite(Graphics::Surface *destSurface, byte *source, int 
 		return;
 	byte *dst = (byte *)destSurface->getBasePtr(destX, destY);
 	int yi = ys * clipY;
-	byte *hsrc = source + sourceWidth * ((yi + 0x8000) >> 16);
+	const byte *hsrc = source + sourceWidth * ((yi + 0x8000) >> 16);
 	for (int yc = 0; yc < destHeight; ++yc) {
 		byte *wdst = flipX ? dst + (destWidth - 1) * 2 : dst;
 		int xi = flipX ? xs : xs * clipX;
-		byte *wsrc = hsrc + ((xi + 0x8000) >> 16);
+		const byte *wsrc = hsrc + ((xi + 0x8000) >> 16);
 		for (int xc = 0; xc < destWidth; ++xc) {
 			byte colorIndex = *wsrc;
 			uint16 c = READ_LE_UINT16(&palette[colorIndex * 2]);
@@ -328,7 +328,7 @@ void Screen::updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, ui
 	}
 }
 
-void Screen::loadPalette(uint16 paletteNum, byte *palette) {
+void Screen::loadPalette(uint16 paletteNum, const byte *palette) {
 	bool isTransPalette = (paletteNum & 0x8000);
 	paletteNum &= ~0x8000;
 	assert(paletteNum < DRAGONS_NUM_PALETTES);
@@ -394,7 +394,7 @@ void Screen::setScreenShakeOffset(int16 x, int16 y) {
 	_screenShakeOffset.y = y;
 }
 
-void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, byte *palette, int yOffset) {
+void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, const byte *palette, int yOffset) {
 	byte *dst = (byte *)_backSurface->getBasePtr(0, 0);
 	for (int i = 0; i < DRAGONS_SCREEN_HEIGHT; i++) {
 		const byte *src = (const byte *)srcSurface.getPixels() + ((yOffset + i) % srcSurface.h) * srcSurface.pitch;
@@ -408,7 +408,7 @@ void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, 
 	}
 }
 
-void Screen::copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, byte *palette, Common::Rect srcRect,
+void Screen::copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, const byte *palette, Common::Rect srcRect,
 										   AlphaBlendMode alpha) {
 	// Copy buffer data to internal buffer
 	const byte *src = (const byte *)srcSurface.getBasePtr(0, 0);

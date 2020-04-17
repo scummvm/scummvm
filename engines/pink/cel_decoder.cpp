@@ -55,21 +55,21 @@ bool CelDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 
 uint16 CelDecoder::getTransparentColourIndex() const {
-	CelVideoTrack *track = (CelVideoTrack *)getTrack(0);
+	const CelVideoTrack *track = (const CelVideoTrack *)getTrack(0);
 	if (!track)
 		return 0;
 	return track->getTransparentColourIndex();
 }
 
 const Graphics::Surface *CelDecoder::getCurrentFrame() const {
-	CelVideoTrack *track = (CelVideoTrack *)getTrack(0);
+	const CelVideoTrack *track = (const CelVideoTrack *)getTrack(0);
 	if (!track)
 		return 0;
 	return track->getCurrentFrame();
 }
 
 Common::Point CelDecoder::getCenter() const {
-	CelVideoTrack *track = (CelVideoTrack *)getTrack(0);
+	const CelVideoTrack *track = (const CelVideoTrack *)getTrack(0);
 	if (!track)
 		return Common::Point(0, 0);
 	return track->getCenter();
