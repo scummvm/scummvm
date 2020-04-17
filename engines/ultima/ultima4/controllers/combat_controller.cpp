@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/ultima4/map/combat.h"
+#include "ultima/ultima4/controllers/combat_controller.h"
+#include "ultima/ultima4/controllers/read_choice_controller.h"
+#include "ultima/ultima4/controllers/read_dir_controller.h"
+#include "ultima/ultima4/controllers/ztats_controller.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/map/movement.h"
 #include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/controllers/read_choice_controller.h"
-#include "ultima/ultima4/controllers/read_dir_controller.h"
-#include "ultima/ultima4/controllers/ztats_controller.h"
 #include "ultima/ultima4/core/debugger.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"

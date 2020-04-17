@@ -20,128 +20,16 @@
  *
  */
 
-#include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/map/camp.h"
-#include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/map/city.h"
-#include "ultima/ultima4/map/combat.h"
-#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/controllers/inn_controller.h"
 #include "ultima/ultima4/conversation/conversation.h"
-#include "ultima/ultima4/events/event.h"
-#include "ultima/ultima4/game/game.h"
-#include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/map/mapmgr.h"
-#include "ultima/ultima4/game/creature.h"
-#include "ultima/ultima4/sound/music.h"
-#include "ultima/ultima4/game/names.h"
-#include "ultima/ultima4/game/object.h"
-#include "ultima/ultima4/game/person.h"
-#include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/game/stats.h"
-#include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/map/city.h"
+#include "ultima/ultima4/map/mapmgr.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-void campTimer(void *data);
-void campEnd(void);
-int campHeal(HealType heal_type);
 void innTimer(void *data);
-
-CampController::CampController() {
-	MapId id;
-
-	/* setup camp (possible, but not for-sure combat situation */
-	if (g_context->_location->_context & CTX_DUNGEON)
-		id = MAP_CAMP_DNG;
-	else
-		id = MAP_CAMP_CON;
-
-	_map = getCombatMap(mapMgr->get(id));
-	g_game->setMap(_map, true, NULL, this);
-}
-
-void CampController::init(Creature *m) {
-	CombatController::init(m);
-	_camping = true;
-}
-
-void CampController::begin() {
-	// make sure everyone's asleep
-	for (int i = 0; i < g_context->_party->size(); i++)
-		g_context->_party->member(i)->putToSleep();
-
-	CombatController::begin();
-
-	g_music->camp();
-
-	screenMessage("Resting...\n");
-	screenDisableCursor();
-
-	EventHandler::wait_msecs(settings._campTime * 1000);
-
-	screenEnableCursor();
-
-	/* Is the party ambushed during their rest? */
-	if (settings._campingAlwaysCombat || (xu4_random(8) == 0)) {
-		const Creature *m = creatureMgr->randomAmbushing();
-
-		g_music->play();
-		screenMessage("Ambushed!\n");
-
-		/* create an ambushing creature (so it leaves a chest) */
-		setCreature(g_context->_location->_prev->_map->addCreature(m, g_context->_location->_prev->_coords));
-
-		/* fill the creature table with creatures and place them */
-		fillCreatureTable(m);
-		placeCreatures();
-
-		/* creatures go first! */
-		finishTurn();
-	} else {
-		/* Wake everyone up! */
-		for (int i = 0; i < g_context->_party->size(); i++)
-			g_context->_party->member(i)->wakeUp();
-
-		/* Make sure we've waited long enough for camping to be effective */
-		bool healed = false;
-		if (((g_ultima->_saveGame->_moves / CAMP_HEAL_INTERVAL) >= 0x10000) ||
-		        (((g_ultima->_saveGame->_moves / CAMP_HEAL_INTERVAL) & 0xffff) != g_ultima->_saveGame->_lastCamp))
-			healed = heal();
-
-		screenMessage(healed ? "Party Healed!\n" : "No effect.\n");
-		g_ultima->_saveGame->_lastCamp = (g_ultima->_saveGame->_moves / CAMP_HEAL_INTERVAL) & 0xffff;
-
-		eventHandler->popController();
-		g_game->exitToParentMap();
-		g_music->fadeIn(CAMP_FADE_IN_TIME, true);
-		delete this;
-	}
-}
-
-void CampController::end(bool adjustKarma) {
-	// wake everyone up!
-	for (int i = 0; i < g_context->_party->size(); i++)
-		g_context->_party->member(i)->wakeUp();
-	CombatController::end(adjustKarma);
-}
-
-bool CampController::heal() {
-	// restore each party member to max mp, and restore some hp
-	bool healed = false;
-	for (int i = 0; i < g_context->_party->size(); i++) {
-		PartyMember *m = g_context->_party->member(i);
-		m->setMp(m->getMaxMp());
-		if ((m->getHp() < m->getMaxHp()) && m->heal(HT_CAMPHEAL))
-			healed = true;
-	}
-
-	return healed;
-}
 
 InnController::InnController() {
 	_map = NULL;

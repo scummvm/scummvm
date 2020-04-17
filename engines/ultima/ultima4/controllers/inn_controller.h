@@ -20,26 +20,13 @@
  *
  */
 
-#ifndef ULTIMA4_CAMP_H
-#define ULTIMA4_CAMP_H
+#ifndef ULTIMA4_CONTROLLERS_INN_CONTROLLER_H
+#define ULTIMA4_CONTROLLERS_INN_CONTROLLER_H
 
-#include "ultima/ultima4/map/combat.h"
+#include "ultima/ultima4/controllers/combat_controller.h"
 
 namespace Ultima {
 namespace Ultima4 {
-
-#define CAMP_HEAL_INTERVAL  100   /* Number of moves before camping will heal the party */
-
-class CampController : public CombatController {
-public:
-	CampController();
-	void init(Creature *m) override;
-	void begin() override;
-	void end(bool adjustKarma) override;
-
-private:
-	bool heal();
-};
 
 class InnController : public CombatController {
 public:

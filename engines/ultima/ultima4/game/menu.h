@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_MENU_H
-#define ULTIMA4_MENU_H
+#ifndef ULTIMA4_GAME_MENU_H
+#define ULTIMA4_GAME_MENU_H
 
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/menuitem.h"
@@ -190,20 +190,6 @@ private:
 	bool _closed;
 	Common::String _title;
 	int _titleX, _titleY;
-};
-
-/**
- * This class controls a menu.  The value field of WaitableController
- * isn't used.
- */
-class MenuController : public WaitableController<void *> {
-public:
-	MenuController(Menu *menu, TextView *view);
-	bool keyPressed(int key);
-
-protected:
-	Menu *_menu;
-	TextView *_view;
 };
 
 } // End of namespace Ultima4

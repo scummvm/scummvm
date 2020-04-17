@@ -20,20 +20,19 @@
  *
  */
 
-#include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/core/debugger.h"
-#include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/spell.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/player.h"
+#include "ultima/ultima4/controllers/combat_controller.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/debugger.h"
+#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/map/combat.h"
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/map/location.h"
@@ -41,6 +40,7 @@
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
 namespace Ultima4 {

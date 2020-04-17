@@ -23,8 +23,10 @@
 #include "ultima/ultima4/core/debugger_actions.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/controllers/read_choice_controller.h"
 #include "ultima/ultima4/controllers/read_int_controller.h"
+#include "ultima/ultima4/controllers/reagents_menu_controller.h"
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/player.h"
@@ -33,7 +35,6 @@
 #include "ultima/ultima4/gfx/textcolor.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/city.h"
-#include "ultima/ultima4/map/combat.h"
 
 namespace Ultima {
 namespace Ultima4 {

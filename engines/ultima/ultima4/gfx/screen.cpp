@@ -20,8 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/controllers/intro_controller.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/utils.h"
@@ -29,11 +28,11 @@
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/game/intro.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
+#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/textcolor.h"
 #include "ultima/ultima4/map/dungeonview.h"
 #include "ultima/ultima4/map/location.h"
@@ -41,6 +40,7 @@
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/map/tileview.h"
 #include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/ultima4.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"

@@ -275,52 +275,5 @@ void Menu::setTitle(const Common::String &text, int x, int y) {
 	_titleY = y;
 }
 
-MenuController::MenuController(Menu *menu, TextView *view) {
-	this->_menu = menu;
-	this->_view = view;
-}
-
-bool MenuController::keyPressed(int key) {
-	bool handled = true;
-	bool cursorOn = _view->getCursorEnabled();
-
-	if (cursorOn)
-		_view->disableCursor();
-
-	switch (key) {
-	case U4_UP:
-		_menu->prev();
-		break;
-	case U4_DOWN:
-		_menu->next();
-		break;
-	case U4_LEFT:
-	case U4_RIGHT:
-	case U4_ENTER: {
-		MenuEvent::Type action = MenuEvent::ACTIVATE;
-
-		if (key == U4_LEFT)
-			action = MenuEvent::DECREMENT;
-		else if (key == U4_RIGHT)
-			action = MenuEvent::INCREMENT;
-		_menu->activateItem(-1, action);
-	}
-	break;
-	default:
-		handled = _menu->activateItemByShortcut(key, MenuEvent::ACTIVATE);
-	}
-
-	_menu->show(_view);
-
-	if (cursorOn)
-		_view->enableCursor();
-	_view->update();
-
-	if (_menu->getClosed())
-		doneWaiting();
-
-	return handled;
-}
-
 } // End of namespace Ultima4
 } // End of namespace Ultima

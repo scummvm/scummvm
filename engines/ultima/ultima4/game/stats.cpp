@@ -409,54 +409,5 @@ void StatsArea::resetReagentsMenu() {
 	_reagentsMixMenu.reset(false);
 }
 
-bool ReagentsMenuController::keyPressed(int key) {
-	switch (key) {
-	case 'a':
-	case 'b':
-	case 'c':
-	case 'd':
-	case 'e':
-	case 'f':
-	case 'g':
-	case 'h': {
-		/* select the corresponding reagent (if visible) */
-		Menu::MenuItemList::iterator mi = _menu->getById(key - 'a');
-		if ((*mi)->isVisible()) {
-			_menu->setCurrent(_menu->getById(key - 'a'));
-			keyPressed(U4_SPACE);
-		}
-	}
-	break;
-	case U4_LEFT:
-	case U4_RIGHT:
-	case U4_SPACE:
-		if (_menu->isVisible()) {
-			MenuItem *item = *_menu->getCurrent();
-
-			/* change whether or not it's selected */
-			item->setSelected(!item->isSelected());
-
-			if (item->isSelected())
-				_ingredients->addReagent((Reagent)item->getId());
-			else
-				_ingredients->removeReagent((Reagent)item->getId());
-		}
-		break;
-	case U4_ENTER:
-		eventHandler->setControllerDone();
-		break;
-
-	case U4_ESC:
-		_ingredients->revert();
-		eventHandler->setControllerDone();
-		break;
-
-	default:
-		return MenuController::keyPressed(key);
-	}
-
-	return true;
-}
-
 } // End of namespace Ultima4
 } // End of namespace Ultima

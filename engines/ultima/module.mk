@@ -135,14 +135,20 @@ MODULE_OBJS := \
 	ultima1/widgets/wench.o \
 	ultima1/game.o \
 	ultima4/controllers/alpha_action_controller.o \
+	ultima4/controllers/camp_controller.o \
+	ultima4/controllers/combat_controller.o \
 	ultima4/controllers/controller.o \
 	ultima4/controllers/game_controller.o \
+	ultima4/controllers/inn_controller.o \
+	ultima4/controllers/intro_controller.o \
 	ultima4/controllers/key_handler_controller.o \
+	ultima4/controllers/menu_controller.o \
 	ultima4/controllers/read_choice_controller.o \
 	ultima4/controllers/read_dir_controller.o \
 	ultima4/controllers/read_int_controller.o \
 	ultima4/controllers/read_player_controller.o \
 	ultima4/controllers/read_string_controller.o \
+	ultima4/controllers/reagents_menu_controller.o \
 	ultima4/controllers/wait_controller.o \
 	ultima4/controllers/ztats_controller.o \
 	ultima4/conversation/conversation.o \
@@ -173,7 +179,6 @@ MODULE_OBJS := \
 	ultima4/game/creature.o \
 	ultima4/game/death.o \
 	ultima4/game/game.o \
-	ultima4/game/intro.o \
 	ultima4/game/item.o \
 	ultima4/game/menu.o \
 	ultima4/game/menuitem.o \
@@ -200,9 +205,7 @@ MODULE_OBJS := \
 	ultima4/gfx/screen.o \
 	ultima4/gfx/screen_scummvm.o \
 	ultima4/map/annotation.o \
-	ultima4/map/camp.o \
 	ultima4/map/city.o \
-	ultima4/map/combat.o \
 	ultima4/map/direction.o \
 	ultima4/map/dungeon.o \
 	ultima4/map/dungeonview.o \

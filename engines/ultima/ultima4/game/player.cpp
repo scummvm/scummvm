@@ -21,19 +21,19 @@
  */
 
 #include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/game/armor.h"
-#include "ultima/ultima4/map/combat.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
-#include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/game/names.h"
-#include "ultima/ultima4/map/tilemap.h"
-#include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/game/weapon.h"
+#include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/game/weapon.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/mapmgr.h"
+#include "ultima/ultima4/map/tilemap.h"
+#include "ultima/ultima4/map/tileset.h"
 
 namespace Ultima {
 namespace Ultima4 {

@@ -164,23 +164,6 @@ private:
 	Menu _reagentsMixMenu;
 };
 
-/**
- * Controller for the reagents menu used when mixing spells.  Fills
- * the passed in Ingredients with the selected reagents.
- */
-class ReagentsMenuController : public MenuController {
-public:
-	ReagentsMenuController(Menu *menu, Ingredients *i, TextView *view) : MenuController(menu, view), _ingredients(i) { }
-
-	/**
-	 * Handles spell mixing for the Ultima V-style menu-system
-	 */
-	bool keyPressed(int key) override;
-
-private:
-	Ingredients *_ingredients;
-};
-
 } // End of namespace Ultima4
 } // End of namespace Ultima
 

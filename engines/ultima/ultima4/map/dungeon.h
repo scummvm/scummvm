@@ -23,9 +23,9 @@
 #ifndef ULTIMA4_DUNGEON_H
 #define ULTIMA4_DUNGEON_H
 
-#include "ultima/ultima4/map/combat.h"
-#include "ultima/ultima4/map/map.h"
+#include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/map/map.h"
 
 namespace Ultima {
 namespace Ultima4 {

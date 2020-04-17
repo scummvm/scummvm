@@ -21,20 +21,20 @@
  */
 
 #include "ultima/ultima4/game/creature.h"
-#include "ultima/ultima4/map/combat.h"
-#include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/game/game.h"
+#include "ultima/ultima4/game/player.h"
+#include "ultima/ultima4/controllers/combat_controller.h"
+#include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/error.h"
-#include "ultima/ultima4/game/game.h"       /* required by specialAction and specialEffect functions */
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/gfx/textcolor.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/game/player.h"     /* required by specialAction and specialEffect functions */
-#include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/gfx/screen.h"     /* FIXME: remove dependence on this */
-#include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/gfx/textcolor.h"  /* required to change the color of screen message text */
 #include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {
