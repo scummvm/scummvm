@@ -48,7 +48,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 		4
 	},
 
-	// Executa all movies in directory
+	// Execute all movies in directory
 	{
 		{
 			"directortest-all",
