@@ -38,15 +38,6 @@ SdlWindow::SdlWindow()
 	_lastFlags(0), _lastX(SDL_WINDOWPOS_UNDEFINED), _lastY(SDL_WINDOWPOS_UNDEFINED)
 #endif
 	{
-
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-	// Query the desktop resolution. We simply hope nothing tried to change
-	// the resolution so far.
-	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
-	if (videoInfo && videoInfo->current_w > 0 && videoInfo->current_h > 0) {
-		_desktopRes = Common::Rect(videoInfo->current_w, videoInfo->current_h);
-	}
-#endif
 }
 
 SdlWindow::~SdlWindow() {
@@ -200,19 +191,6 @@ bool SdlWindow::getSDLWMInformation(SDL_SysWMinfo *info) const {
 	return SDL_GetWMInfo(info);
 #endif
 }
-
-Common::Rect SdlWindow::getDesktopResolution() {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	int displayIndex = _window ? SDL_GetWindowDisplayIndex(_window) : 0;
-	SDL_DisplayMode displayMode;
-	if (!SDL_GetDesktopDisplayMode(displayIndex, &displayMode)) {
-		_desktopRes = Common::Rect(displayMode.w, displayMode.h);
-	}
-#endif
-
-	return _desktopRes;
-}
-
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 SDL_Surface *copySDLSurface(SDL_Surface *src) {

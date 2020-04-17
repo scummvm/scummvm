@@ -44,6 +44,12 @@ public:
 	 */
 	struct Capabilities {
 		/**
+		 * Desktop resolution
+		 */
+		uint desktopWidth;
+		uint desktopHeight;
+
+		/**
 		 * Is the device capable of rendering to OpenGL framebuffers
 		 */
 		bool openGLFrameBuffer;
@@ -51,7 +57,9 @@ public:
 		/** Supported levels of MSAA when using the OpenGL renderers */
 		Common::Array<uint> openGLAntiAliasLevels;
 
-		Capabilities() : openGLFrameBuffer(false) {}
+		Capabilities() :
+				desktopWidth(0), desktopHeight(0),
+				openGLFrameBuffer(false) {}
 	};
 
 	ResVmSdlGraphicsManager(SdlEventSource *source, SdlWindow *window, const Capabilities &capabilities);
