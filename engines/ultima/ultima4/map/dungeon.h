@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_DUNGEON_H
-#define ULTIMA4_DUNGEON_H
+#ifndef ULTIMA4_MAP_DUNGEON_H
+#define ULTIMA4_MAP_DUNGEON_H
 
 #include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/core/types.h"

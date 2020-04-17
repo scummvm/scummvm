@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_TEXTCOLOR_H
-#define ULTIMA4_TEXTCOLOR_H
+#ifndef ULTIMA4_GFX_TEXTCOLOR_H
+#define ULTIMA4_GFX_TEXTCOLOR_H
 
 namespace Ultima {
 namespace Ultima4 {

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_CODEX_H
-#define ULTIMA4_CODEX_H
+#ifndef ULTIMA4_GAME_CODEX_H
+#define ULTIMA4_GAME_CODEX_H
 
 namespace Ultima {
 namespace Ultima4 {

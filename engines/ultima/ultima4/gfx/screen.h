@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_SCREEN_H
-#define ULTIMA4_SCREEN_H
+#ifndef ULTIMA4_GFX_SCREEN_H
+#define ULTIMA4_GFX_SCREEN_H
 
 #include "graphics/screen.h"
 #include "ultima/ultima4/core/types.h"

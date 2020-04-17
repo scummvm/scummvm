@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_ITEM_H
-#define ULTIMA4_ITEM_H
+#ifndef ULTIMA4_GAME_ITEM_H
+#define ULTIMA4_GAME_ITEM_H
 
 #include "ultima/ultima4/core/types.h"
 #include "common/str.h"

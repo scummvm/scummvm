@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_WEAPON_H
-#define ULTIMA4_WEAPON_H
+#ifndef ULTIMA4_GAME_WEAPON_H
+#define ULTIMA4_GAME_WEAPON_H
 
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/shared/std/containers.h"

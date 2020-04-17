@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_CONFIG_H
-#define ULTIMA4_CONFIG_H
+#ifndef ULTIMA4_CORE_CONFIG_H
+#define ULTIMA4_CORE_CONFIG_H
 
 #include "ultima/shared/conf/xml_tree.h"
 #include "ultima/shared/conf/xml_node.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_IMAGELOADER_PNG_H
-#define ULTIMA4_IMAGELOADER_PNG_H
+#ifndef ULTIMA4_GFX_IMAGELOADER_PNG_H
+#define ULTIMA4_GFX_IMAGELOADER_PNG_H
 
 #include "ultima/ultima4/gfx/imageloader.h"
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_TILEVIEW_H
-#define ULTIMA4_TILEVIEW_H
+#ifndef ULTIMA4_MAP_TILEVIEW_H
+#define ULTIMA4_MAP_TILEVIEW_H
 
 #include "ultima/ultima4/game/view.h"
 

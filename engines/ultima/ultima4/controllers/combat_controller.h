@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_COMBAT_H
-#define ULTIMA4_COMBAT_H
+#ifndef ULTIMA4_CONTROLLERS_COMBAT_CONTROLLER_H
+#define ULTIMA4_CONTROLLERS_COMBAT_CONTROLLER_H
 
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/map/map.h"

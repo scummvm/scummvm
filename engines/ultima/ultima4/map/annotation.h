@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_ANNOTATION_H
-#define ULTIMA4_ANNOTATION_H
+#ifndef ULTIMA4_MAP_ANNOTATION_H
+#define ULTIMA4_MAP_ANNOTATION_H
 
 #include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/core/types.h"

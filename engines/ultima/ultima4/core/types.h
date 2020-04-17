@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_TYPEDEFS_H
-#define ULTIMA4_TYPEDEFS_H
+#ifndef ULTIMA4_CORE_TYPEDEFS_H
+#define ULTIMA4_CORE_TYPEDEFS_H
 
 #include "ultima/ultima4/map/direction.h"
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_MAP_H
-#define ULTIMA4_MAP_H
+#ifndef ULTIMA4_MAP_MAP_H
+#define ULTIMA4_MAP_MAP_H
 
 #include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/map/direction.h"

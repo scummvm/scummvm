@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_CREATURE_H
-#define ULTIMA4_CREATURE_H
+#ifndef ULTIMA4_GAME_CREATURE_H
+#define ULTIMA4_GAME_CREATURE_H
 
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/map/movement.h"

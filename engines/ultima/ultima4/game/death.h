@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_DEATH_H
-#define ULTIMA4_DEATH_H
+#ifndef ULTIMA4_GAME_DEATH_H
+#define ULTIMA4_GAME_DEATH_H
 
 namespace Ultima {
 namespace Ultima4 {

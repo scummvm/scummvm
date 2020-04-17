@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_DIALOGUELOADER_H
-#define ULTIMA4_DIALOGUELOADER_H
+#ifndef ULTIMA4_CONVERSATION_DIALOGUELOADER_H
+#define ULTIMA4_CONVERSATION_DIALOGUELOADER_H
 
 #include "common/hashmap.h"
 #include "common/str.h"

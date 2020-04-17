@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_MUSIC_H
-#define ULTIMA4_MUSIC_H
+#ifndef ULTIMA4_SOUND_MUSIC_H
+#define ULTIMA4_SOUND_MUSIC_H
 
 #include "ultima/shared/std/containers.h"
 #include "audio/audiostream.h"

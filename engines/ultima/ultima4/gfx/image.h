@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_IMAGE_H
-#define ULTIMA4_IMAGE_H
+#ifndef ULTIMA4_GFX_IMAGE_H
+#define ULTIMA4_GFX_IMAGE_H
 
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/u4file.h"

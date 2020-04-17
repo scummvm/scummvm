@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_DIRECTION_H
-#define ULTIMA4_DIRECTION_H
+#ifndef ULTIMA4_MAP_DIRECTION_H
+#define ULTIMA4_MAP_DIRECTION_H
 
 namespace Ultima {
 namespace Ultima4 {

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_UTILS_H
-#define ULTIMA4_UTILS_H
+#ifndef ULTIMA4_CORE_UTILS_H
+#define ULTIMA4_CORE_UTILS_H
 
 #include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/ultima4.h"

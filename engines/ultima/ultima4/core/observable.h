@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_OBSERVABLE_H
-#define ULTIMA4_OBSERVABLE_H
+#ifndef ULTIMA4_CORE_OBSERVABLE_H
+#define ULTIMA4_CORE_OBSERVABLE_H
 
 #include "ultima/ultima4/core/observer.h"
 #include "ultima/shared/std/containers.h"

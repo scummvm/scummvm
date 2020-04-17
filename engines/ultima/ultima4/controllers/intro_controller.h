@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_INTRO_H
-#define ULTIMA4_INTRO_H
+#ifndef ULTIMA4_CONTROLLERS_INTRO_CONTROLLER_H
+#define ULTIMA4_CONTROLLERS_INTRO_CONTROLLER_H
 
 #include "ultima/ultima4/controllers/controller.h"
 #include "ultima/ultima4/core/observer.h"

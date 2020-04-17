@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_CONTEXT_H
-#define ULTIMA4_CONTEXT_H
+#ifndef ULTIMA4_GAME_CONTEXT_H
+#define ULTIMA4_GAME_CONTEXT_H
 
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/game/aura.h"

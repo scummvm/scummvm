@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_SETTINGS_H
-#define ULTIMA4_SETTINGS_H
+#ifndef ULTIMA4_CORE_SETTINGS_H
+#define ULTIMA4_CORE_SETTINGS_H
 
 #include "ultima/ultima4/core/observable.h"
 #include "ultima/ultima4/core/types.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_SAVEGAME_H
-#define ULTIMA4_SAVEGAME_H
+#ifndef ULTIMA4_FILESYS_SAVEGAME_H
+#define ULTIMA4_FILESYS_SAVEGAME_H
 
 #include "common/stream.h"
 #include "common/serializer.h"

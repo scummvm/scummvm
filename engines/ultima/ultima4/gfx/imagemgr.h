@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_IMAGEMGR_H
-#define ULTIMA4_IMAGEMGR_H
+#ifndef ULTIMA4_GFX_IMAGEMGR_H
+#define ULTIMA4_GFX_IMAGEMGR_H
 
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/core/observer.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_OBSERVER_H
-#define ULTIMA4_OBSERVER_H
+#ifndef ULTIMA4_CORE_OBSERVER_H
+#define ULTIMA4_CORE_OBSERVER_H
 
 namespace Ultima {
 namespace Ultima4 {

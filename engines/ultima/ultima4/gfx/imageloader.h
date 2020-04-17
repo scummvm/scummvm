@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_IMAGELOADER_H
-#define ULTIMA4_IMAGELOADER_H
+#ifndef ULTIMA4_GFX_IMAGELOADER_H
+#define ULTIMA4_GFX_IMAGELOADER_H
 
 #include "ultima/shared/std/containers.h"
 #include "common/str.h"

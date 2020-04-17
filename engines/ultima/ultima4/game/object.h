@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef ULTIMA4_OBJECT_H
-#define ULTIMA4_OBJECT_H
+#ifndef ULTIMA4_GAME_OBJECT_H
+#define ULTIMA4_GAME_OBJECT_H
 
 #include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/map/tile.h"

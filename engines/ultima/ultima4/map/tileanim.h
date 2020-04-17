@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_TILEANIM_H
-#define ULTIMA4_TILEANIM_H
+#ifndef ULTIMA4_MAP_TILEANIM_H
+#define ULTIMA4_MAP_TILEANIM_H
 
 #include "ultima/ultima4/map/direction.h"
 

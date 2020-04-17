@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_EVENT_H
-#define ULTIMA4_EVENT_H
+#ifndef ULTIMA4_EVENTS_EVENT_H
+#define ULTIMA4_EVENTS_EVENT_H
 
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/events/timed_event_mgr.h"

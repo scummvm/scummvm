@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_DIALOGUELOADER_LB_H
-#define ULTIMA4_DIALOGUELOADER_LB_H
+#ifndef ULTIMA4_CONVERSATION_DIALOGUELOADER_LB_H
+#define ULTIMA4_CONVERSATION_DIALOGUELOADER_LB_H
 
 #include "ultima/ultima4/conversation/dialogueloader.h"
 

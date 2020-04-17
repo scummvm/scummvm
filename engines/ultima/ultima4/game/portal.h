@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_PORTAL_H
-#define ULTIMA4_PORTAL_H
+#ifndef ULTIMA4_GAME_PORTAL_H
+#define ULTIMA4_GAME_PORTAL_H
 
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/map/map.h"

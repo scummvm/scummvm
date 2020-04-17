@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_IMAGEVIEW_H
-#define ULTIMA4_IMAGEVIEW_H
+#ifndef ULTIMA4_GFX_IMAGEVIEW_H
+#define ULTIMA4_GFX_IMAGEVIEW_H
 
 #include "ultima/ultima4/game/view.h"
 

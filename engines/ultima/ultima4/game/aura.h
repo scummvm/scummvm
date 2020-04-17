@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_AURA_H
-#define ULTIMA4_AURA_H
+#ifndef ULTIMA4_GAME_AURA_H
+#define ULTIMA4_GAME_AURA_H
 
 #include "ultima/ultima4/core/observable.h"
 

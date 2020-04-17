@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_COORDS_H
-#define ULTIMA4_COORDS_H
+#ifndef ULTIMA4_CORE_COORDS_H
+#define ULTIMA4_CORE_COORDS_H
 
 namespace Ultima {
 namespace Ultima4 {

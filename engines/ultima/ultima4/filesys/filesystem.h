@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_FILESYSTEM_H
-#define ULTIMA4_FILESYSTEM_H
+#ifndef ULTIMA4_FILESYS_FILESYSTEM_H
+#define ULTIMA4_FILESYS_FILESYSTEM_H
 
 #include "common/list.h"
 #include "common/str.h"

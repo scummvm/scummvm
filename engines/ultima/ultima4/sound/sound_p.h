@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_SOUND_P_H
-#define ULTIMA4_SOUND_P_H
+#ifndef ULTIMA4_SOUND_SOUND_P_H
+#define ULTIMA4_SOUND_SOUND_P_H
 
 #include "ultima/ultima4/sound/sound.h"
 #include "ultima/shared/std/containers.h"

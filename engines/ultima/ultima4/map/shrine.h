@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_SHRINE_H
-#define ULTIMA4_SHRINE_H
+#ifndef ULTIMA4_MAP_SHRINE_H
+#define ULTIMA4_MAP_SHRINE_H
 
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/filesys/savegame.h"

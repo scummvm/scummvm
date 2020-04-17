@@ -20,8 +20,8 @@
 *
 */
 
-#ifndef ULTIMA4_SPELL_H
-#define ULTIMA4_SPELL_H
+#ifndef ULTIMA4_GAME_SPELL_H
+#define ULTIMA4_GAME_SPELL_H
 
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/map/location.h"

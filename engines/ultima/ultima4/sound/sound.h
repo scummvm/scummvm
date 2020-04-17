@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_SOUND_H
-#define ULTIMA4_SOUND_H
+#ifndef ULTIMA4_SOUND_SOUND_H
+#define ULTIMA4_SOUND_SOUND_H
 
 namespace Ultima {
 namespace Ultima4 {

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_MOONGATE_H
-#define ULTIMA4_MOONGATE_H
+#ifndef ULTIMA4_GAME_MOONGATE_H
+#define ULTIMA4_GAME_MOONGATE_H
 
 namespace Ultima {
 namespace Ultima4 {

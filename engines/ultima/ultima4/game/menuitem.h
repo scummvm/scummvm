@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_MENUITEM_H
-#define ULTIMA4_MENUITEM_H
+#ifndef ULTIMA4_GAME_MENUITEM_H
+#define ULTIMA4_GAME_MENUITEM_H
 
 #include "common/str.h"
 #include "ultima/shared/std/containers.h"

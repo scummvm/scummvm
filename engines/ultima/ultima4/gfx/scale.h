@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_SCALE_H
-#define ULTIMA4_SCALE_H
+#ifndef ULTIMA4_GFX_SCALE_H
+#define ULTIMA4_GFX_SCALE_H
 
 #include "ultima/ultima4/core/settings.h"
 #include "common/str.h"

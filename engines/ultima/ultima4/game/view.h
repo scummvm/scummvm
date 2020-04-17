@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_VIEW_H
-#define ULTIMA4_VIEW_H
+#ifndef ULTIMA4_GAME_VIEW_H
+#define ULTIMA4_GAME_VIEW_H
 
 namespace Ultima {
 namespace Ultima4 {

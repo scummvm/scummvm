@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_AREA_H
-#define ULTIMA4_AREA_H
+#ifndef ULTIMA4_MAP_AREA_H
+#define ULTIMA4_MAP_AREA_H
 
 #include "ultima/ultima4/map/map.h"
 

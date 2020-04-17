@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_GAME_H
-#define ULTIMA4_GAME_H
+#ifndef ULTIMA4_GAME_GAME_H
+#define ULTIMA4_GAME_GAME_H
 
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/controllers/game_controller.h"

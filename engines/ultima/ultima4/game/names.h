@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_NAMES_H
-#define ULTIMA4_NAMES_H
+#ifndef ULTIMA4_GAME_NAMES_H
+#define ULTIMA4_GAME_NAMES_H
 
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/map/direction.h"

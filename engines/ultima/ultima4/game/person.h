@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_PERSON_H
-#define ULTIMA4_PERSON_H
+#ifndef ULTIMA4_GAME_PERSON_H
+#define ULTIMA4_GAME_PERSON_H
 
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/core/types.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_SCRIPT_H
-#define ULTIMA4_SCRIPT_H
+#ifndef ULTIMA4_GAME_SCRIPT_H
+#define ULTIMA4_GAME_SCRIPT_H
 
 #include "ultima/ultima4/core/types.h"
 #include "ultima/shared/conf/xml_node.h"

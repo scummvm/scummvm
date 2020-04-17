@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_ERROR_H
-#define ULTIMA4_ERROR_H
+#ifndef ULTIMA4_CORE_ERROR_H
+#define ULTIMA4_CORE_ERROR_H
 
 namespace Ultima {
 namespace Ultima4 {

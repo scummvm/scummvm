@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_TEXTVIEW_H
-#define ULTIMA4_TEXTVIEW_H
+#ifndef ULTIMA4_GAME_TEXTVIEW_H
+#define ULTIMA4_GAME_TEXTVIEW_H
 
 #include "ultima/ultima4/game/view.h"
 #include "ultima/ultima4/gfx/image.h"

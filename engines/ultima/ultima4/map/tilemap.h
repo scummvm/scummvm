@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_TILEMAP_H
-#define ULTIMA4_TILEMAP_H
+#ifndef ULTIMA4_MAP_TILEMAP_H
+#define ULTIMA4_MAP_TILEMAP_H
 
 #include "ultima/ultima4/core/types.h"
 #include "ultima/shared/std/containers.h"

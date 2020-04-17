@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_PLAYER_H
-#define ULTIMA4_PLAYER_H
+#ifndef ULTIMA4_GAME_PLAYER_H
+#define ULTIMA4_GAME_PLAYER_H
 
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/map/direction.h"

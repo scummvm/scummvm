@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_MOVEMENT_H
-#define ULTIMA4_MOVEMENT_H
+#ifndef ULTIMA4_MAP_MOVEMENT_H
+#define ULTIMA4_MAP_MOVEMENT_H
 
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/map/map.h"

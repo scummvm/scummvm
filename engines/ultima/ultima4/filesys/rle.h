@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_RLE_H
-#define ULTIMA4_RLE_H
+#ifndef ULTIMA4_FILESYS_RLE_H
+#define ULTIMA4_FILESYS_RLE_H
 
 #include "common/stream.h"
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_IMAGELOADER_FMTOWNS_H_
-#define ULTIMA4_IMAGELOADER_FMTOWNS_H_
+#ifndef ULTIMA4_GFX_IMAGELOADER_FMTOWNS_H_
+#define ULTIMA4_GFX_IMAGELOADER_FMTOWNS_H_
 
 #include "ultima/ultima4/gfx/imageloader.h"
 
