@@ -38,9 +38,9 @@ using namespace Std;
 bool EventHandler::_controllerDone = false;
 bool EventHandler::_ended = false;
 
-EventHandler *EventHandler::_instance = NULL;
+EventHandler *EventHandler::_instance = nullptr;
 EventHandler *EventHandler::getInstance() {
-	if (_instance == NULL)
+	if (_instance == nullptr)
 		_instance = new EventHandler();
 	return _instance;
 }
@@ -85,6 +85,7 @@ TimedEventMgr *EventHandler::getTimer()  {
 }
 
 Controller *EventHandler::pushController(Controller *c) {
+	c->setActive();
 	_controllers.push_back(c);
 	getTimer()->add(&Controller::timerCallback, c->getTimerInterval(), c);
 	return c;
@@ -92,24 +93,28 @@ Controller *EventHandler::pushController(Controller *c) {
 
 Controller *EventHandler::popController() {
 	if (_controllers.empty())
-		return NULL;
+		return nullptr;
 
 	Controller *controller = _controllers.back();
 	getTimer()->remove(&Controller::timerCallback, controller);
 	_controllers.pop_back();
 
-	return getController();
+	controller = getController();
+	if (controller)
+		controller->setActive();
+
+	return controller;
 }
 
 Controller *EventHandler::getController() const {
 	if (_controllers.empty())
-		return NULL;
+		return nullptr;
 
 	return _controllers.back();
 }
 
 void EventHandler::setController(Controller *c) {
-	while (popController() != NULL) {}
+	while (popController() != nullptr) {}
 	pushController(c);
 }
 
@@ -126,7 +131,7 @@ const MouseArea *EventHandler::getMouseAreaSet() const {
 	if (_mouseAreaSets.size())
 		return _mouseAreaSets.front();
 	else
-		return NULL;
+		return nullptr;
 }
 
 } // End of namespace Ultima4

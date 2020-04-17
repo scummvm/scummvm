@@ -330,6 +330,11 @@ void GameController::update(Location *location, MoveEvent &event) {
 	}
 }
 
+void GameController::setActive() {
+	// The game controller has the keybindings enabled
+	MetaEngine::setKeybindingsActive(true);
+}
+
 void GameController::keybinder(KeybindingAction action) {
 	MetaEngine::executeAction(action);
 }

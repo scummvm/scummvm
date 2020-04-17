@@ -59,6 +59,15 @@ public:
 	static void timerCallback(void *data);
 
 	/** control methods subclasses may want to override */
+
+	/**
+	 * Called when a controller is made active
+	 */
+	virtual void setActive();
+
+	/**
+	 * Key was pressed
+	 */
 	virtual bool keyPressed(int key) = 0;
 
 	/**

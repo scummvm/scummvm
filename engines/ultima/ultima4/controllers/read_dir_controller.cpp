@@ -22,6 +22,7 @@
 
 #include "ultima/ultima4/controllers/read_dir_controller.h"
 #include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/meta_engine.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -29,6 +30,11 @@ namespace Ultima4 {
 
 ReadDirController::ReadDirController() {
 	_value = DIR_NONE;
+}
+
+void ReadDirController::setActive() {
+	// Have the keybinder active for the direction keys
+	MetaEngine::setKeybindingsActive(true);
 }
 
 void ReadDirController::keybinder(KeybindingAction action) {

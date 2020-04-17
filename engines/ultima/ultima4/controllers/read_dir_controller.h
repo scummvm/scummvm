@@ -37,6 +37,11 @@ public:
 	ReadDirController();
 
 	/**
+	 * Called when a controller is made active
+	 */
+	void setActive() override;
+
+	/**
 	 * Key was pressed
 	 */
 	bool keyPressed(int key) override;

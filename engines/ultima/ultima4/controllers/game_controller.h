@@ -50,6 +50,11 @@ public:
 	/* controller functions */
 
 	/**
+	 * Called when a controller is made active
+	 */
+	void setActive() override;
+
+	/**
 	 * Keybinder actions
 	 */
 	void keybinder(KeybindingAction action) override;

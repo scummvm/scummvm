@@ -45,6 +45,11 @@ int Controller::getTimerInterval() {
 	return _timerInterval;
 }
 
+void Controller::setActive() {
+	// Controllers by default won't use the keybindings
+	MetaEngine::setKeybindingsActive(false);
+}
+
 void Controller::timerFired() {
 }
 
