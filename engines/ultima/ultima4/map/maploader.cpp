@@ -24,7 +24,7 @@
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/map/maploader.h"
 #include "ultima/ultima4/map/city.h"
-#include "ultima/ultima4/map/combat.h"
+#include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader.h"
 #include "ultima/ultima4/map/dungeon.h"

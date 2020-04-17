@@ -65,6 +65,8 @@ protected:
 	 */
 	virtual void printN(const char *fmt, ...) = 0;
 public:
+	virtual ~DebuggerActions() {}
+
 	/**
 	 * Summons a creature given by 'creatureName'. This can either be given
 	 * as the creature's name, or the creature's id.  Once it finds the

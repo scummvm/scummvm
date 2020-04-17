@@ -23,7 +23,7 @@
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/city.h"
-#include "ultima/ultima4/map/combat.h"
+#include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/map/map.h"

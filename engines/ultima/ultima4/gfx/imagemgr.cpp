@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
-#include "ultima/ultima4/game/intro.h"
+#include "ultima/ultima4/controllers/intro_controller.h"
+#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/ultima4.h"
