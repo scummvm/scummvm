@@ -555,7 +555,7 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 			sym->u.farr = new DatumArray(*value.u.farr);
 			delete value.u.farr;
 		} else if (value.type == SYMBOL) {
-			sym->u.i = value.u.i;
+			sym->u.s = value.u.s;
 		} else if (value.type == OBJECT) {
 			sym->u.s = value.u.s;
 		} else if (value.type == VOID) {
@@ -620,7 +620,7 @@ Datum Lingo::varFetch(Datum &var) {
 		else if (sym->type == POINT)
 			result.u.farr = sym->u.farr;
 		else if (sym->type == SYMBOL)
-			result.u.i = var.u.sym->u.i;
+			result.u.s = var.u.sym->u.s;
 		else if (sym->type == VOID)
 			result.u.i = 0;
 		else if (sym->type == ARRAY) {
