@@ -1181,7 +1181,7 @@ void BladeRunnerEngine::actorsUpdate() {
 #else
 	uint32 timeNow = _time->current();
 	// Don't update actors more than 60 or 120 times per second
-	if (timeNow - _actorUpdateTimeLast < 1000 / ( _framesPerSecondMax? 120 : 60)) {
+	if (timeNow - _actorUpdateTimeLast < 1000u / ( _framesPerSecondMax? 120u : 60u)) {
 		return;
 	}
 	_actorUpdateTimeLast = timeNow;
