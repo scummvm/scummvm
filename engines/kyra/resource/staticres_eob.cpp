@@ -428,6 +428,8 @@ void EoBCoreEngine::initStaticResource() {
 	_bookNumbers = _staticres->loadStrings(kEoBBaseBookNumbers, temp);
 	_mageSpellList = _staticres->loadStrings(kEoBBaseMageSpellsList, _mageSpellListSize);
 	_clericSpellList = _staticres->loadStrings(kEoBBaseClericSpellsList, temp);
+	_mageSpellList2 = _staticres->loadStrings(_flags.platform == Common::kPlatformSegaCD ? kEoBBaseMageSpellsList2 : kEoBBaseMageSpellsList, temp);
+	_clericSpellList2 = _staticres->loadStrings(_flags.platform == Common::kPlatformSegaCD ? kEoBBaseClericSpellsList2 : kEoBBaseClericSpellsList, temp);
 	_spellNames = _staticres->loadStrings(kEoBBaseSpellNames, temp);
 
 	_magicStrings1 = _staticres->loadStrings(kEoBBaseMagicStrings1, temp);
@@ -681,21 +683,36 @@ void EoBCoreEngine::initButtonData() {
 
 	// The spellbook buttons in the table above are from EOB II. We make the necessary coordinates modifications for EOB I.
 	if (_flags.gameID == GI_EOB1) {
-		static const EoBGuiButtonDef eob1SpellbookButtonDefs[6] = {
+		static const EoBGuiButtonDef eob1SpellbookButtonDefs[7] = {
 			{ 2, 0, 0x1100, 71, 122, 20, 8, 0 },
 			{ 3, 0, 0x1100, 92, 122, 20, 8, 1 },
 			{ 4, 0, 0x1100, 113, 122, 20, 8, 2 },
 			{ 5, 0, 0x1100, 134, 122, 20, 8, 3 },
 			{ 6, 0, 0x1100, 155, 122, 20, 8, 4 },
-			{ 110, 0, 0x1100, 75, 168, 97, 6, 0 }
+			{ 110, 0, 0x1100, 75, 168, 97, 6, 0 },
+			{ 110, 0, 0x1100, 160, 120, 16, 8, 0 }
 		};
 
 		memcpy(&_buttonDefs[61], eob1SpellbookButtonDefs, 5 * sizeof(EoBGuiButtonDef));
-		memcpy(&_buttonDefs[88], &eob1SpellbookButtonDefs[5], sizeof(EoBGuiButtonDef));
-		for (int i = 67; i < 73; ++i)
+		memcpy(&_buttonDefs[88], &eob1SpellbookButtonDefs[_flags.platform == Common::kPlatformSegaCD ? 6 : 5], sizeof(EoBGuiButtonDef));
+		for (int i = 66; i < 72; ++i)
 			_buttonDefs[i].y++;
 		for (int i = 77; i < 79; ++i)
 			_buttonDefs[i].y++;
+
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			for (int i = 0; i < 5; ++i) {
+				_buttonDefs[61 + i].x = 80 + (i << 4);
+				_buttonDefs[61 + i].y -= 2;
+				_buttonDefs[61 + i].w -= 4;
+			}
+			for (int i = 0; i < 6; ++i) {
+				_buttonDefs[66 + i].x = 80;
+				_buttonDefs[66 + i].y = (16 + i) << 3;
+				_buttonDefs[66 + i].w = 96;
+				_buttonDefs[66 + i].h = 8;
+			}
+		}
 	}
 
 	// Replace keycodes for EOB II FM-Towns
@@ -1321,7 +1338,7 @@ void EoBEngine::initStaticResource() {
 		const uint8 *e1 = _doorShapeEncodeDefs;
 		const uint8 *e2 = _doorSwitchShapeEncodeDefs;
 		const uint8 **doorShapesSrc = new const uint8*[30];
-		const uint8 **doorSwitchShapesSrc = new const uint8*[30];
+		const uint8 **doorSwitchShapesSrc = new const uint8*[15];
 
 		for (int i = 0; i < 5; ++i) {
 			const uint8 *shp = _screen->getCPagePtr(2);
@@ -1331,7 +1348,7 @@ void EoBEngine::initStaticResource() {
 				e1 += 4;
 			}
 			for (int ii = 0; ii < 3; ++ii) {
-				doorSwitchShapesSrc[i * 6 + ii] = doorSwitchShapesSrc[i * 6 + 3 + ii] = shp;
+				doorSwitchShapesSrc[i * 3 + ii] = shp;
 				shp += ((e2[0] * e2[1]) << 5);
 				e2 += 4;
 			}
@@ -1509,7 +1526,7 @@ const KyraRpgGUISettings EoBEngine::_guiSettingsAmigaMainMenu = {
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsSegaCD = {
 	{ _dlgButtonPosX_Sega, _dlgButtonPosY_Sega, 0x66, 0xFF, 90, 14, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 135, 130, 132, 180, 0x00, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 0x31, 9, 2, 0x35, 4, 0x33, 12 },
+	{ 135, 130, 132, 180, 0x00, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 0x31, 9, 2, 0x35, 4, 0x33, 0x3C },
 	{	{ 184, 256, -1}, { 1, 57, 113 }, 64, 55,
 		{ 8, 80, -1 }, { 16, 72, 128 }, { 184, -1, -1 }, { 8, -1, -1 },
 		{ 40, 112, -1 }, { 16, 32, 72, 88, 128, 144 },

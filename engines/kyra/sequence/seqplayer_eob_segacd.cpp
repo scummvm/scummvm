@@ -219,6 +219,7 @@ bool SegaSequencePlayer::play(int id) {
 		if (!(_playingID == 55 || _playingID == 56))
 			_vm->snd_stopSound();
 		_screen->clearPage(0);
+		_screen->sega_paletteOps(4, 0, 0);
 	}
 
 	_scrollManager->setVScrollTimers(0, 1, 0, 0, 1, 0);

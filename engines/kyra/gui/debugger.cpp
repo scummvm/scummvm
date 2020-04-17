@@ -516,6 +516,11 @@ bool Debugger_EoB::cmdImportSaveFile(int argc, const char **argv) {
 }
 
 bool Debugger_EoB::cmdSaveOriginal(int argc, const char **argv) {
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		debugPrintf("Command not supported for this version.\n");
+		return true;
+	}
+
 	if (!_vm->_runFlag) {
 		debugPrintf("This command doesn't work during intro or outro sequences,\nfrom the main menu or from the character generation.\n");
 		return true;

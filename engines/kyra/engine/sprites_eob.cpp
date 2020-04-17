@@ -684,7 +684,6 @@ void EoBCoreEngine::drawTeleporter(int index) {
 	int16 y1 = telprtY[t];
 
 	for (int i = 0; i < 2; i++) {
-
 		int16 x2 = 0;
 		int16 y2 = 0;
 		int d = (t << 1) + i;

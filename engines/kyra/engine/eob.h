@@ -198,12 +198,14 @@ private:
 	void gui_printInventoryDigits(int x, int y, int val) override;
 	void gui_drawCharacterStatsPage() override;
 	void gui_displayMap() override;
+	void gui_drawSpellbook() override;
 	void gui_updateAnimations() override;
 	void gui_resetAnimations();
 
 	void makeNameShapes(int charId = -1) override;
 	void makeFaceShapes(int charId = -1) override;
 	void printStatsString(const char *str, int x, int y);
+	void printSpellbookString(uint16 *dst, const char *str, uint16 ntbl);
 	void drawMapButton(const char *str, int x, int y);
 	void drawMapPage(int level);
 	void drawMapSpots(int level, int animState);
@@ -219,6 +221,7 @@ private:
 	int _compassAnimDelayCounter;
 	bool _compassAnimSwitch;
 	bool _compassAnimDone;
+	bool _compassTilesRestore;
 	uint8 *_compassData;
 
 	const char *const *_mapStrings1;
@@ -233,7 +236,7 @@ private:
 	const uint16 *_statsPattern;
 	const uint8 *_charTilesTable;
 	uint16 *_playFldPattern2;
-	uint16 *_statsPattern2;
+	uint16 *_tempPattern;
 
 	static const KyraRpgGUISettings _guiSettingsVGA;
 	static const KyraRpgGUISettings _guiSettingsEGA;

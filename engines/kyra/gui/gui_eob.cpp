@@ -424,6 +424,10 @@ void EoBCoreEngine::gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32
 }
 
 void EoBCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
+	// Apparently the SegaCD version doesn't have these status frames.
+	if (_flags.platform == Common::kPlatformSegaCD)
+		return;
+
 	uint8 redGreenColor = (_partyEffectFlags & 0x20000) ? guiSettings()->colors.guiColorLightGreen : ((_configRenderMode == Common::kRenderCGA) ? 3 : guiSettings()->colors.guiColorLightRed);
 	int x = guiSettings()->charBoxCoords.facePosX_1[index & 1];
 	int y = guiSettings()->charBoxCoords.boxY[index >> 1];
@@ -1296,7 +1300,7 @@ int EoBCoreEngine::clickedSpellbookAbort(Button *button) {
 	_updateFlags = 0;
 	_screen->fillRect(64, 121, 175, 176, 0, 0);
 	_screen->fillRect(64, 121, 175, 176, 0, 2);
-	_screen->copyRegion(0, 0, 64, 121, 112, 56, Screen_EoB::kSpellbookBackupPage, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 64, _flags.platform == Common::kPlatformSegaCD ? 120 : 121, 112, 56, Screen_EoB::kSpellbookBackupPage, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 	gui_drawCompass(true);
 	gui_toggleButtons();

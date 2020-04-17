@@ -748,7 +748,7 @@ protected:
 	virtual void gui_displayMap() {}
 	void gui_drawCompass(bool force);
 	void gui_drawDialogueBox();
-	void gui_drawSpellbook();
+	virtual void gui_drawSpellbook();
 	void gui_drawSpellbookScrollArrow(int x, int y, int direction);
 	void gui_updateSlotAfterScrollUse();
 	void gui_updateControls();
@@ -963,6 +963,8 @@ protected:
 	bool _allowSkip;
 	bool _allowImport;
 
+	bool _closeSpellbookAfterUse;
+
 	Screen_EoB *_screen;
 	GUI_EoB *_gui;
 
@@ -1167,6 +1169,8 @@ protected:
 	int _clericSpellOffset;
 	const char *const *_clericSpellList;
 	const char *const *_spellNames;
+	const char *const *_mageSpellList2;
+	const char *const *_clericSpellList2;	
 	const char *const *_magicStrings1;
 	const char *const *_magicStrings2;
 	const char *const *_magicStrings3;

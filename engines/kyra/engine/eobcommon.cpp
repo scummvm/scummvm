@@ -240,6 +240,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_prefMenuPlatformOffset = 0;	
 	_lastVIntTick = _lastSecTick = _totalPlaySecs = _totalEnemiesKilled = _totalSteps = 0;
 	_levelMaps = 0;
+	_closeSpellbookAfterUse = false;
 
 	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
@@ -591,7 +592,6 @@ void EoBCoreEngine::loadFonts() {
 		_conFont = _invFont3 = Screen::FID_SJIS_FNT;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
-		//_screen->loadFont(Screen::FID_6_FNT, "FONT8SH");
 		_screen->setFontStyles(Screen::FID_8_FNT, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat);
 		_invFont1 = _invFont2 = _conFont = Screen::FID_8_FNT;
 	}
@@ -851,7 +851,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	_screen->loadShapeSetBitmap("ITEMICN", 5, 3);
 	for (int i = 0; i < _numItemIconShapes; i++)
 		_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10, false, _cgaMappingIcons);
-		
+
 	if (_flags.platform == Common::kPlatformAmiga) {
 		const uint8 offsY = (_flags.gameID == GI_EOB1) ? 80 : 96;
 		_blueItemIconShapes = new const uint8*[_numItemIconShapes];
@@ -863,7 +863,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	}
 
 	_teleporterShapes = new const uint8*[6];
-	_sparkShapes = new const uint8*[3];
+	_sparkShapes = new const uint8*[4];
 	_compassShapes = new const uint8*[12];
 	if (_flags.gameID == GI_EOB2)
 		_wallOfForceShapes = new const uint8*[6];
@@ -881,6 +881,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	_sparkShapes[0] = _screen->encodeShape(29, 0, 2, 16, false, _cgaMappingDeco);
 	_sparkShapes[1] = _screen->encodeShape(31, 0, 2, 16, false, _cgaMappingDeco);
 	_sparkShapes[2] = _screen->encodeShape(33, 0, 2, 16, false, _cgaMappingDeco);
+	_sparkShapes[3] = 0;
 	_deadCharShape = _screen->encodeShape(0, 88, 4, 32, false, _cgaMappingDeco);
 	_disabledCharGrid = _screen->encodeShape(4, 88, 4, 32, false, _cgaMappingDeco);
 	_blackBoxSmallGrid = _screen->encodeShape(9, 88, 2, 8, false, _cgaMappingDeco);
@@ -905,11 +906,15 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 		releaseShpArr(_itemIconShapes, _numItemIconShapes);
 		releaseShpArr(_blueItemIconShapes, _numItemIconShapes);
 		releaseShpArr(_xtraItemIconShapes, 3);
-		releaseShpArr(_sparkShapes, 3);
+		releaseShpArr(_sparkShapes, 4);
 		releaseShpArr(_wallOfForceShapes, 6);
-		releaseShpArr(_teleporterShapes, 6);
 		releaseShpArr(_compassShapes, 12);
 		releaseShpArr(_firebeamShapes, 3);
+
+		// SegaCD uses the spark shapes for drawing the teleporters. We copy only the pointers, not the whole shapes.
+		if (_flags.platform != Common::kPlatformSegaCD) {
+			releaseShpArr(_teleporterShapes, 6);
+		}
 
 		delete[] _redSplatShape;
 		delete[] _greenSplatShape;

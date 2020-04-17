@@ -547,7 +547,7 @@ void EoBCoreEngine::drawScene(int refresh) {
 
 	if (_sceneDrawPage2) {
 		if (refresh)
-			_screen->fillRect(0, 0, 176, 120, guiSettings()->colors.guiColorBlack);
+			_screen->fillRect(0, 0, 175, 119, guiSettings()->colors.guiColorBlack);
 
 		if (!_loading)
 			_screen->setScreenPalette(_screen->getPalette(0));

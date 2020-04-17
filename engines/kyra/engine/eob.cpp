@@ -55,7 +55,7 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_useMainMenuGUISettings = false;
 	_addrTbl1 = _textFieldPattern = 0;
 	_playFldPattern1 = _invPattern = _statsPattern;
-	_playFldPattern2 = _statsPattern2 = 0;
+	_playFldPattern2 = _tempPattern = 0;
 	_ttlCfg = 0;
 	_xdth = false;
 
@@ -63,7 +63,7 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_sceneShakeOffsetX = _sceneShakeOffsetY = 0;
 	_shakeBackBuffer1 = _shakeBackBuffer2 = 0;
 	_compassDirection2 = _compassAnimDest = _compassAnimPhase = _compassAnimStep = _compassAnimDelayCounter = 0;
-	_compassAnimSwitch = _compassAnimDone = false;
+	_compassAnimSwitch = _compassAnimDone = _compassTilesRestore = false;
 	_redGrid = _charTilesTable = 0;
 	_compassData = 0;
 	_mapStrings1 = _mapStrings2 = _mapStrings3 = 0;
@@ -81,13 +81,13 @@ EoBEngine::~EoBEngine() {
 
 	releaseShpArr(_weaponSlotShapes, 6);
 	releaseShpArr(_invSmallDigits, 32);
-	delete[] _redGrid;
 
+	delete[] _redGrid;
 	delete[] _doorShapesSrc;
 	delete[] _doorSwitchShapesSrc;
 	delete[] _itemsOverlay;
 	delete[] _playFldPattern2;
-	delete[] _statsPattern2;
+	delete[] _tempPattern;
 	delete[] _shakeBackBuffer1;
 	delete[] _shakeBackBuffer2;
 	delete[] _compassData;
@@ -155,10 +155,11 @@ Common::Error EoBEngine::init() {
 		_txt = new TextDisplayer_SegaCD(this, _screen);
 		assert(_txt);
 		_playFldPattern2 = new uint16[1040];
-		_statsPattern2 = new uint16[792];
+		_tempPattern = new uint16[792];
 		_shakeBackBuffer1 = new uint8[120 * 6];
 		_shakeBackBuffer2 = new uint8[179 * 6];
 		_compassData = new uint8[0x5000];
+		_closeSpellbookAfterUse = false;
 	}
 
 	return Common::kNoError;
@@ -214,7 +215,7 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 
 	loadAndConvertShapes(1, 0, _smallItemShapes, _numSmallItemShapes, 32, 24, 768);
 	loadAndConvertShapes(2, 0, _largeItemShapes, _numLargeItemShapes, 64, 24, 1472);
-	loadAndConvertShapes(3, 0, _sparkShapes, 3, 16, 16, 128);
+	loadAndConvertShapes(3, 0, _sparkShapes, 4, 16, 16, 128);
 	loadAndConvertShapes(11, 0, _thrownItemShapes, _numThrownItemShapes, 32, 24, 768);
 	int offset1 = 0, offset2 = 0;
 	for (int i = 0; i < 3; ++i) {
@@ -231,7 +232,9 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 	loadSpritesAndEncodeToShapes(5, 480, _weaponSlotShapes, 6, 32, 16);
 	loadSpritesAndEncodeToShapes(6, 0, _invSmallDigits, 32, 16, 8);
 
-
+	_teleporterShapes = new const uint8*[6];
+	for (int i = 0; i < 6; ++i)
+		_teleporterShapes[i] = _sparkShapes[(i + 1) >> 1];
 
 	int cp = _screen->setCurPage(Screen_EoB::kSegaInitShapesPage);
 	for (int i = 0; i < 4; ++i)
@@ -739,7 +742,8 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 				int offs = lvlIndex[_currentLevel] * 6 + shapeId[a] + i;
 				const uint8 *enc = &_doorShapeEncodeDefs[offs << 2];
 				_doorShapes[shapeId[a] + i] = _screen->sega_convertShape(_doorShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0, enc[2] - enc[3]);
-				enc = &_doorSwitchShapeEncodeDefs[(offs - shapeId[a]) << 2];
+				offs = lvlIndex[_currentLevel] * 3 + i;
+				enc = &_doorSwitchShapeEncodeDefs[offs << 2];
 				_doorSwitches[shapeId[a] + i].shp = _screen->sega_convertShape(_doorSwitchShapesSrc[offs], enc[0] << 3, enc[1] << 3, 0, enc[2] - enc[3]);
 			} else {
 				const uint8 *enc = &_doorShapeEncodeDefs[(doorType[a] * 3 + i) << 2];

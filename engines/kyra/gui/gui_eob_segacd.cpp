@@ -65,7 +65,7 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 		*dst++ = (ix < 0) ? 0 : _addrTbl1[ix];
 	}
 
-	const uint16 ps[] = { 0xCE, 0xE0, 0x2FE, 0x310, 0x52E, 0x540 };
+	static const uint16 ps[6] = { 0xCE, 0xE0, 0x2FE, 0x310, 0x52E, 0x540 };
 
 	for (int i = 0; i < 4; ++i) {
 		dst = &_playFldPattern2[ps[i] >> 1];
@@ -82,6 +82,10 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 	str = _sres->resStreamEndian(9);
 	r->loadStreamToVRAM(str, 0xA4A0, false);
 	delete str;
+	str = _sres->resStreamEndian(10);
+	r->loadStreamToVRAM(str, 0x7920, false);
+	delete str;
+
 	/*
 // CAMP MENU
 str = _sres->resStreamEndian(8);
@@ -164,18 +168,23 @@ void EoBEngine::gui_printInventoryDigits(int x, int y, int val) {
 		EoBCoreEngine::gui_printInventoryDigits(x, y, val);
 		return;
 	}
-	_screen->drawShape(_screen->_curPage, _invSmallDigits[(val < 10) ? 22 + val : (val >= 100 ? 1 : 2 + val / 10)], x, y);
-	_screen->drawShape(_screen->_curPage, (val >= 10 && val < 100) ? _invSmallDigits[12 + (val % 10)] : 0, x, y);
+	_screen->drawShape(_screen->_curPage, _invSmallDigits[(val < 10) ? 22 + val : (val >= 100 ? 1 : 2 + val / 10)], x, y, 0);
+	_screen->drawShape(_screen->_curPage, (val >= 10 && val < 100) ? _invSmallDigits[12 + (val % 10)] : 0, x, y, 0);
 }
 
 void EoBEngine::gui_drawCharacterStatsPage() {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::gui_drawCharacterStatsPage();
+		return;
+	}
+
 	SegaRenderer *r = _screen->sega_getRenderer();
 	EoBCharacter *c = &_characters[_updateCharNum];
 
-	memset(_statsPattern2, 0, 792);
+	memset(_tempPattern, 0, 792);
 	for (int i = 0; i < 11; ++i) {
-		_statsPattern2[5 * 18 + i + 1] = 0x6555 + i;
-		_statsPattern2[6 * 18 + i + 1] = 0x6565 + i;
+		_tempPattern[5 * 18 + i + 1] = 0x6555 + i;
+		_tempPattern[6 * 18 + i + 1] = 0x6565 + i;
 	}
 
 	for (int i = 0; i < 4; i++)
@@ -206,7 +215,7 @@ void EoBEngine::gui_drawCharacterStatsPage() {
 		printStatsString(Common::String::format("%6d", c->experience[i]).c_str(), 7, 17 + i);
 	}
 
-	r->fillRectWithTiles(0, 22, 0, 18, 21, 0, true, true, _statsPattern2);
+	r->fillRectWithTiles(0, 22, 0, 18, 21, 0, true, true, _tempPattern);
 	r->render(Screen_EoB::kSegaRenderPage);
 
 	_screen->copyRegion(176, 40, 176, 40, 144, 128, Screen_EoB::kSegaRenderPage, 2, Screen::CR_NO_P_CHECK);
@@ -305,6 +314,51 @@ void EoBEngine::gui_displayMap() {
 	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
 }
 
+void EoBEngine::gui_drawSpellbook() {
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		EoBCoreEngine::gui_drawSpellbook();
+		return;
+	}
+
+	SegaRenderer *r = _screen->sega_getRenderer();
+	r->fillRectWithTiles(0, 10, 15, 12, 7, 0);
+	r->fillRectWithTiles(1, 10, 15, 12, 7, 0x6429);
+	memset(_tempPattern, 0, 168);
+	uint16 *dst = _tempPattern;
+
+	for (int i = 0; i < 6; ++i) {
+		dst[0] = 0x642B + 2 * i + (i == _openBookSpellLevel ? 0 : 12);
+		dst[1] = dst[0] + 1;
+		dst += 2;
+	}
+
+	for (int i = 0; i < 6; ++i) {
+		int d = _openBookAvailableSpells[_openBookSpellLevel * 10 + i];
+		if (d < 0)
+			continue;
+		printSpellbookString(&_tempPattern[(i + 1) * 12], _openBookSpellList[d], 0x63C9);
+	}
+
+	r->fillRectWithTiles(0, 10, 15, 12, 6, 0, true, false, _tempPattern);
+	r->render(Screen_EoB::kSegaRenderPage);
+
+	// The original SegaCD version actually doesn't disable the spell book after use but closes it instead.
+	if (!_closeSpellbookAfterUse) {
+		if (_characters[_openBookChar].disabledSlots & 4) {
+			static const uint8 xpos[] = { 0x44, 0x62, 0x80, 0x90 };
+			static const uint8 ypos[] = { 0x80, 0x90, 0xA0 };
+			for (int yc = 0; yc < 3; yc++) {
+				for (int xc = 0; xc < 4; xc++)
+					_screen->drawShape(Screen_EoB::kSegaRenderPage, _weaponSlotGrid, xpos[xc], ypos[yc], 0);
+			}
+		}
+	}
+
+	_screen->copyRegion(80, 120, 80, 120, 96, 56, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+	if (!_loading)
+		_screen->updateScreen();
+}
+
 void EoBEngine::gui_updateAnimations() {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return;
@@ -344,6 +398,14 @@ void EoBEngine::gui_updateAnimations() {
 			redrawCompass = true;
 		}
 	}
+	if (_updateFlags)
+		_compassTilesRestore = true;
+	else if (_compassTilesRestore) {
+		_screen->sega_getRenderer()->fillRectWithTiles(0, 10, 15, 12, 7, 0);
+		for (int i = 15; i < 22; ++i)
+			_screen->sega_getRenderer()->fillRectWithTiles(1, 10, i, 12, 1, 0x2000, true, true, &_playFldPattern2[i * 40 + 10]);
+		_compassTilesRestore = false;
+	}
 	if (redrawCompass) {
 		_screen->sega_getRenderer()->loadToVRAM(_compassData + (_compassAnimPhase & 0x0F) * 0x500, 0x500, 0xEE00);
 		_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
@@ -378,6 +440,8 @@ void EoBEngine::gui_updateAnimations() {
 		_screen->fillRect(0, 0, 175, 2, 0, _sceneDrawPage1);
 		_screen->copyBlockToPage(_sceneDrawPage1, 173, 0, 6, 120, _shakeBackBuffer1);
 		_screen->copyBlockToPage(_sceneDrawPage1, 0, 117, 179, 6, _shakeBackBuffer2);
+		if (_updateFlags)
+			_screen->copyRegion(64, 120, 64, 120, 112, 3, Screen_EoB::kSegaRenderPage, _sceneDrawPage1);
 		_screen->copyBlockToPage(_sceneDrawPage1, _sceneXoffset + _sceneShakeOffsetX, _sceneShakeOffsetY, 176, 120, _sceneWindowBuffer);
 
 		// For whatever reason the original shakes all types of shapes (decorations, doors, etc.) except the monsters and
@@ -430,7 +494,7 @@ void EoBEngine::makeNameShapes(int charId) {
 		if (!_characters[i].flags)
 			continue;
 		if (_characters[i].portrait < 0) {
-			_screen->sega_getRenderer()->loadToVRAM(in + 27648 + (-_characters[i].portrait - 1) * 224, 224, 0x3F00 + i * 0xE0);
+			_screen->sega_getRenderer()->loadToVRAM(in + 27424 - _characters[i].portrait * 224, 224, 0x3F00 + i * 0xE0);
 			_screen->sega_getRenderer()->fillRectWithTiles(0, 0, i << 1, 7, 1, 0x61F8 + i * 7, true);
 		} else {
 			_txt->printShadowedText(_characters[i].name, 0, i << 4, 0xFF, 0xCC);
@@ -480,9 +544,17 @@ void EoBEngine::makeFaceShapes(int charId) {
 }
 
 void EoBEngine::printStatsString(const char *str, int x, int y) {
-	uint16 *dst = &_statsPattern2[y * 18 + x];
+	uint16 *dst = &_tempPattern[y * 18 + x];
 	for (const uint8 *pos = (const uint8*)str; *pos; ++pos)
 		*dst++ = 0x6525 + _charTilesTable[*pos];
+}
+
+void EoBEngine::printSpellbookString(uint16 *dst, const char *str, uint16 ntbl) {
+	for (char c = *str++; c; c = *str++) {
+		if (c > 31 && c < 128)
+			*dst = ntbl + c - 32;
+		dst++;
+	}
 }
 
 void EoBEngine::drawMapButton(const char *str, int x, int y) {

@@ -35,7 +35,7 @@ void EoBCoreEngine::useMagicBookOrSymbol(int charIndex, int type) {
 	_openBookSpellListOffset = c->slotStatus[4];
 	_openBookChar = charIndex;
 	_openBookType = type;
-	_openBookSpellList = (type == 1) ? _clericSpellList : _mageSpellList;
+	_openBookSpellList = (type == 1) ? _clericSpellList2 : _mageSpellList2;
 	_openBookAvailableSpells = (type == 1) ? c->clericSpells : c->mageSpells;
 	int8 *tmp = _openBookAvailableSpells + _openBookSpellLevel * 10 + _openBookSpellListOffset + _openBookSpellSelectedItem;
 
@@ -60,7 +60,7 @@ void EoBCoreEngine::useMagicBookOrSymbol(int charIndex, int type) {
 	}
 
 	if (!_updateFlags)
-		_screen->copyRegion(64, 121, 0, 0, 112, 56, 0, Screen_EoB::kSpellbookBackupPage, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(64, _flags.platform == Common::kPlatformSegaCD ? 120 : 121, 0, 0, 112, 56, 0, Screen_EoB::kSpellbookBackupPage, Screen::CR_NO_P_CHECK);
 	_updateFlags = 1;
 	gui_setPlayFieldButtons();
 	gui_drawSpellbook();
@@ -238,7 +238,7 @@ void EoBCoreEngine::removeCharacterEffect(int spell, int charIndex, int showWarn
 
 	if (showWarning) {
 		int od = _screen->curDimIndex();
-		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+		Screen::FontId of = _screen->setFont(_conFont);
 		_screen->setScreenDim(7);
 		printWarning(Common::String::format(_magicStrings3[_flags.gameID == GI_EOB1 ? 3 : 2], c->name, s->name).c_str());
 		_screen->setScreenDim(od);
@@ -315,6 +315,8 @@ void EoBCoreEngine::startSpell(int spell) {
 		sparkEffectOffensive();
 
 	if (s->flags & 0x20) {
+		if (_flags.platform == Common::kPlatformSegaCD)
+			_txt->printMessage(_magicStrings3[1]);
 		_txt->printMessage(c->name);
 		_txt->printMessage(_flags.gameID == GI_EOB1 ? _magicStrings3[1] : _magicStrings1[5]);
 	}
@@ -367,10 +369,16 @@ void EoBCoreEngine::startSpell(int spell) {
 	if (_castScrollSlot) {
 		gui_updateSlotAfterScrollUse();
 	} else {
-		_characters[_openBookChar].disabledSlots |= 4;
-		setCharEventTimer(_openBookChar, 72, 11, 1);
-		gui_toggleButtons();
-		gui_drawSpellbook();
+		// The SegaCD version closes the spell book after each spell instead of disabling it for a short period.
+		if (_closeSpellbookAfterUse) {
+			Button b;
+			clickedSpellbookAbort(&b);
+		} else {
+			_characters[_openBookChar].disabledSlots |= 4;
+			setCharEventTimer(_openBookChar, 72, 11, 1);
+			gui_toggleButtons();
+			gui_drawSpellbook();
+		}
 	}
 
 	if (_flags.gameID == GI_EOB2) {
@@ -405,8 +413,8 @@ void EoBCoreEngine::sparkEffectDefensive(int charIndex) {
 				int x = _sparkEffectDefAdd[iii * 2] - 8;
 				int y = _sparkEffectDefAdd[iii * 2 + 1];
 				if (_currentControlMode) {
-					x += 181;
-					y += 3;
+					x += guiSettings()->charBoxCoords.facePosX_2[0];
+					y += guiSettings()->charBoxCoords.facePosY_2[0];
 				} else {
 					x += (_sparkEffectDefX[ii] << 3);
 					y += _sparkEffectDefY[ii];
