@@ -34,6 +34,7 @@
  * @return Pointer to the first char of the last component inside str.
  */
 const char *lastPathComponent(const Common::String &str) {
+
 	int offset = str.size();
 
 	if (offset <= 0) {
@@ -60,13 +61,11 @@ MorphOSFilesystemNode::MorphOSFilesystemNode() {
 	_sPath = "";
 	_pFileLock = 0;
 	_nProt = 0; // Protection is ignored for the root volume
-
 }
 
 MorphOSFilesystemNode::MorphOSFilesystemNode(const Common::String &p) {
 
 	int offset = p.size();
-
 	if (offset <= 0) {
 		debug(6, "Bad offset");
 		return;
@@ -87,21 +86,20 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(const Common::String &p) {
 
 	BPTR pLock = Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
 	if (pLock) {
-	 if (Examine(pLock, fib) != DOSFALSE) {
-	  if (fib->fib_EntryType > 0)
-	  {
-	   	_bIsDirectory = true;
-	   	_pFileLock = DupLock(pLock);
-		_bIsValid = (_pFileLock != 0);
-	    const char c = _sPath.lastChar();
-			if (c != '/' && c != ':')
-				_sPath += '/';
-	  } else {
-	  	_bIsDirectory = false;
-		_bIsValid = false;
-	  }
-	 }
-	 UnLock(pLock);
+		if (Examine(pLock, fib) != DOSFALSE) {
+			if (fib->fib_EntryType > 0) {
+				_bIsDirectory = true;
+				_pFileLock = DupLock(pLock);
+				_bIsValid = (_pFileLock != 0);
+				const char c = _sPath.lastChar();
+				if (c != '/' && c != ':')
+					_sPath += '/';
+			} else {
+				_bIsDirectory = false;
+				_bIsValid = false;
+			}
+		}
+		UnLock(pLock);
 	}
 	FreeDosObject(DOS_FIB, fib);
 }
@@ -137,15 +135,13 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	FileInfoBlock *fib = (FileInfoBlock*) AllocDosObject(DOS_FIB, NULL);
 	
 	if (fib == NULL) {
-	 debug(6,"Failed...");
-	 return;	
+		debug(6,"Failed...");
+		return;	
 	}
 
-	if (Examine(pLock, fib) != DOSFALSE) 
-	{
+	if (Examine(pLock, fib) != DOSFALSE) {
   		_bIsDirectory = fib->fib_EntryType >0;
-		if (_bIsDirectory)
-		{
+		if (_bIsDirectory) {
 	   		if (fib->fib_EntryType != ST_ROOT)
 	   			_sPath += '/';
 	   		_pFileLock = DupLock(pLock);
@@ -160,6 +156,7 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 // We need the custom copy constructor because of DupLock()
 MorphOSFilesystemNode::MorphOSFilesystemNode(const MorphOSFilesystemNode& node)
 : AbstractFSNode() {
+
 	_sDisplayName = node._sDisplayName;
 	_bIsValid = node._bIsValid;
 	_bIsDirectory = node._bIsDirectory;
@@ -169,11 +166,13 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(const MorphOSFilesystemNode& node)
 }
 
 MorphOSFilesystemNode::~MorphOSFilesystemNode() {
+
 	if (_pFileLock)
 		UnLock(_pFileLock);
 }
 
 bool MorphOSFilesystemNode::exists() const {
+
 	if (_sPath.empty())
 		return false;
 
@@ -226,30 +225,22 @@ bool MorphOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	FileInfoBlock *fib = (FileInfoBlock*) AllocDosObject(DOS_FIB, NULL);
 	
 	if (fib == NULL) {
-	 debug(6, "Failed to allocate memory for FileInfoBLock");
-	 return false;
+		debug(6, "Failed to allocate memory for FileInfoBLock");
+		return false;
 	}
 	
 	if (Examine(_pFileLock, fib) != DOSFALSE) {
 	
-	  MorphOSFilesystemNode *entry;
-		
-	  while (ExNext(_pFileLock, fib) != DOSFALSE)
-	  {
+		MorphOSFilesystemNode *entry;
 
-	  	Common::String full_path = NULL;
-	  	BPTR pLock;
-	  	
-	  	if ((mode == Common::FSNode::kListAll) || 
-	  		(fib->fib_EntryType > 0 && (Common::FSNode::kListDirectoriesOnly == mode)) ||
-	  		(fib->fib_EntryType < 0 && (Common::FSNode::kListFilesOnly == mode )))
-	  		{
-
-	  			full_path = _sPath;
-	  			full_path += fib->fib_FileName;
-	  			pLock = Lock(full_path.c_str(), SHARED_LOCK);
-				if (pLock) 
-				{
+		while (ExNext(_pFileLock, fib) != DOSFALSE) {
+			Common::String full_path = NULL;
+			BPTR pLock;
+	  	  	if ((mode == Common::FSNode::kListAll) || (fib->fib_EntryType > 0 && (Common::FSNode::kListDirectoriesOnly == mode)) ||	(fib->fib_EntryType < 0 && (Common::FSNode::kListFilesOnly == mode ))) {
+				full_path = _sPath;
+				full_path += fib->fib_FileName;
+				pLock = Lock(full_path.c_str(), SHARED_LOCK);
+				if (pLock) {
 					entry = new MorphOSFilesystemNode( pLock, fib->fib_FileName );
 					if (entry) {
 						myList.push_back(entry);
@@ -265,7 +256,6 @@ bool MorphOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	}
 
 	FreeDosObject(DOS_FIB, fib);
-
 	return true;
 }
 
