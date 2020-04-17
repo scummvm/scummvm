@@ -234,10 +234,12 @@ bool Music::load_sys(const Common::String &pathName) {
 		return false;
 	}
 
-	Common::SeekableReadStream *s = f.readStream(f.size());
-	if (pathName.hasSuffixIgnoreCase(".mp3"))
+	if (pathName.hasSuffixIgnoreCase(".mp3")) {
+#ifdef USE_MAD
+		Common::SeekableReadStream *s = f.readStream(f.size());
 		_playing = Audio::makeMP3Stream(s, DisposeAfterUse::YES);
-	else if (pathName.hasSuffixIgnoreCase(".it"))
+#endif
+	} else if (pathName.hasSuffixIgnoreCase(".it"))
 		_playing = nullptr;
 	else
 		error("Unknown sound file");
