@@ -1464,7 +1464,7 @@ void LB::b_puppetPalette(int nargs) {
 
 void LB::b_puppetSound(int nargs) {
 	if (nargs != 1) {
-		error("b_puppetSound: expected 1 argument, got %d", nargs);
+		warning("STUB: b_puppetSound: more than 1 argument, got %d", nargs);
 		g_lingo->dropStack(nargs);
 		return;
 	}
