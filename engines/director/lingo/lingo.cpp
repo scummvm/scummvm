@@ -21,6 +21,7 @@
  */
 
 #include "common/file.h"
+#include "common/config-manager.h"
 #include "common/str-array.h"
 
 #include "director/director.h"
@@ -615,12 +616,17 @@ void Lingo::runTests() {
 	SearchMan.listMatchingMembers(fsList, "*.lingo");
 	Common::StringArray fileList;
 
-	int counter = 1;
-
-	for (Common::ArchiveMemberList::iterator it = fsList.begin(); it != fsList.end(); ++it)
-		fileList.push_back((*it)->getName());
+	// Repurpose commandline option --start-movie to run a specific lingo script.
+	if (ConfMan.hasKey("start_movie")) {
+		fileList.push_back(ConfMan.get("start_movie"));
+	} else {
+		for (Common::ArchiveMemberList::iterator it = fsList.begin(); it != fsList.end(); ++it)
+			fileList.push_back((*it)->getName());
+	}
 
 	Common::sort(fileList.begin(), fileList.end());
+
+	int counter = 1;
 
 	for (uint i = 0; i < fileList.size(); i++) {
 		Common::SeekableReadStream *const  stream = SearchMan.createReadStreamForMember(fileList[i]);
