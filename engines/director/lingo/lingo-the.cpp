@@ -736,6 +736,11 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	// Setting default type
 	d.type = INT;
 
+	if (!score) {
+		warning("Lingo::getTheCast(): No cast loaded");
+		return d;
+	}
+
 	CastType castType;
 	CastInfo *castInfo;
 	if (id > score->_castIDoffset) {
