@@ -186,11 +186,15 @@ ResourceType ResourceManager::convertResType(byte type) {
 	// older resource types here.
 	// PQ4 CD and QFG4 CD are SCI2.1, but use the resource types of the
 	// corresponding SCI2 floppy disk versions.
+	// GK1 is the only SCI 2.0 Mac game and uses the older resource types.
 	if (g_sci && (g_sci->getGameId() == GID_LSL6HIRES ||
-	        g_sci->getGameId() == GID_QFG4 || g_sci->getGameId() == GID_PQ4))
+			g_sci->getGameId() == GID_QFG4 ||
+			g_sci->getGameId() == GID_PQ4 ||
+			g_sci->getGameId() == GID_GK1)) {
 		forceSci0 = true;
+	}
 
-	if (_mapVersion < kResVersionSci2 || forceSci0) {
+	if ((_mapVersion < kResVersionSci2 && !_isSci2Mac) || forceSci0) {
 		// SCI0 - SCI2
 		if (type < ARRAYSIZE(s_resTypeMapSci0))
 			return s_resTypeMapSci0[type];
@@ -1018,6 +1022,13 @@ void ResourceManager::init() {
 		return;
 	}
 
+#ifdef ENABLE_SCI32
+	if (_volVersion == kResVersionSci11Mac)
+		_isSci2Mac = detectSci2Mac();
+	else
+#endif
+		_isSci2Mac = false;
+
 	scanNewSources();
 
 	if (!addAudioSources()) {
@@ -1472,6 +1483,36 @@ ResVersion ResourceManager::detectVolVersion() {
 	// Failed to detect volume version
 	return kResVersionUnknown;
 }
+
+#ifdef ENABLE_SCI32
+bool ResourceManager::detectSci2Mac() {
+	// SCI2 Mac games use the same volume format as SCI11 and so an extra initial check is required
+	//  to differentiate between versions so that resource parsing can apply the correct resource
+	//  type mapping before full SCI version detection occurs. A simple way to differentiate is to
+	//  search for the SCI2 Object class' script resource in Mac volume files.
+	Common::MacResManager macResManager;
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+		ResourceSource *rsrc = *it;
+		if (rsrc->getSourceType() == kSourceMacResourceFork) {
+			if (macResManager.open(rsrc->getLocationName().c_str())) {
+				const uint32 scriptTypeID = MKTAG('S', 'C', 'R', ' ');
+				const uint32 objectScriptID = 64999;
+				Common::SeekableReadStream *resource = macResManager.getResource(scriptTypeID, objectScriptID);
+				bool objectScriptExists = false;
+				if (resource != nullptr) {
+					objectScriptExists = true;
+					delete resource;
+				}
+				macResManager.close();
+				if (objectScriptExists) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+#endif
 
 bool ResourceManager::isBlacklistedPatch(const ResourceId &resId) const {
 	switch (g_sci->getGameId()) {

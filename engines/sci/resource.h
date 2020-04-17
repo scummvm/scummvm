@@ -493,6 +493,7 @@ protected:
 	ResourceSource *_audioMapSCI1; ///< Currently loaded audio map for SCI1
 	ResVersion _volVersion; ///< resource.0xx version
 	ResVersion _mapVersion; ///< resource.map version
+	bool _isSci2Mac;
 
 	/**
 	 * Add a path to the resource manager's list of sources.
@@ -557,6 +558,9 @@ protected:
 	/**--- Resource map decoding functions ---*/
 	ResVersion detectMapVersion();
 	ResVersion detectVolVersion();
+#ifdef ENABLE_SCI32
+	bool detectSci2Mac();
+#endif
 
 	/**
 	 * Reads the SCI0 resource.map file from a local directory.
