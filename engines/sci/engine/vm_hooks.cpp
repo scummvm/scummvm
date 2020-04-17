@@ -50,7 +50,7 @@ namespace Sci {
 // we solve that by calling the hook before executing the opcode following proc0_36 call
 // and check the return value. if the hero should die, we kill him
 
-const byte qfg1_die_after_running_on_ice[] = {
+static const byte qfg1_die_after_running_on_ice[] = {
 	// if shouldn't die, jump to end
 	0x2f, 22,					   // bt +22
 
@@ -65,11 +65,7 @@ const byte qfg1_die_after_running_on_ice[] = {
 	0x38, 32,  3,				   // push 800
 	0x39, 1,                       // pushi 1
 	0x39, 4,                       // pushi 4
-	0x47, 0x00, 0x01, 0x10         // calle proc0_1 
-};
-
-const byte del_me[] = {
-	38		// illegal opcode
+	0x47, 0x00, 0x01, 0x10         // calle proc0_1
 };
 
 /** Write here all games hooks
@@ -89,7 +85,7 @@ static const GeneralHookEntry allGamesHooks[] = {
 VmHooks::VmHooks() {
 	// build _hooksMap
 	for (uint i = 0; i < ARRAYSIZE(allGamesHooks); i++) {
-		if (allGamesHooks[i].gameId == g_sci->getGameId())		
+		if (allGamesHooks[i].gameId == g_sci->getGameId())
 			_hooksMap.setVal(allGamesHooks[i].key, allGamesHooks[i].entry);
 	}
 
