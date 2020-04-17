@@ -994,6 +994,12 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 	if (gump)
 		gump->OnMouseLeft();
 
+	_mouse->pushMouseCursor();
+	_mouse->setMouseCursor(Mouse::MOUSE_PENTAGRAM);
+	_screen->BeginPainting();
+	_mouse->paint();
+	_screen->EndPainting();
+
 	_saveCount++;
 
 	SavegameWriter *sgw = new SavegameWriter(stream);
@@ -1053,6 +1059,8 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 	if (gump) gump->OnMouseOver();
 
 	pout << "Done" << Std::endl;
+
+	_mouse->popMouseCursor();
 
 	return Common::kNoError;
 }
@@ -1205,6 +1213,12 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		return Common::kReadingFailed;
 	}
 
+	_mouse->pushMouseCursor();
+	_mouse->setMouseCursor(Mouse::MOUSE_PENTAGRAM);
+	_screen->BeginPainting();
+	_mouse->paint();
+	_screen->EndPainting();
+
 	IDataSource *ds;
 	GameInfo saveinfo;
 	ds = sg->getDataSource("GAME");
@@ -1313,6 +1327,10 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	pout << "MAPS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "MAPS: failed\n";
 	delete ds;
+
+	// Reset mouse cursor
+	_mouse->popAllCursors();
+	_mouse->pushMouseCursor();
 
 	if (!totalok) {
 		Error(message, "Error Loading savegame", true);
