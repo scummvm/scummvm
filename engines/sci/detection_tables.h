@@ -3001,6 +3001,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                                    GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                                    GAMEOPTION_ORIGINAL_SAVELOAD, \
                                    GAMEOPTION_HQ_VIDEO)
+#define GUIO_LIGHTHOUSE_MAC  GUIO7(GUIO_NOASPECT, \
+                                   GUIO_NOMIDI, \
+                                   GUIO_NOSUBTITLES, \
+                                   GUIO_LINKMUSICTOSFX, \
+                                   GUIO_LINKSPEECHTOSFX, \
+                                   GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                                   GAMEOPTION_HQ_VIDEO)
 
 	// Lighthouse - English Windows Demo (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.00"
@@ -3085,8 +3092,25 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
 
+	// Lighthouse - English Macintosh CD
+	// NOTE: This only contains disc 1 files
+	{ "lighthouse", "", {
+		 {"Data1", 0, "9fd95df4288bcc5f07b114bbeabaa89a", 7498955},
+		 {"Data2", 0, "97a5c80a12eee099349748a72b9f561a", 11278999},
+		 {"Data3", 0, "51085a80ec0f448938d279dc3464e1b1", 8295799},
+		 {"Data4", 0, "8c01d5243c62868207c144125de46c5a", 9132628},
+		 {"Data5", 0, "6830ea75c4459533ba6c11a09a886a8a", 9096667},
+		 {"Data6", 0, "b7b207a5d9faa1192aa566d484ffdde6", 9294588},
+		 {"Data7", 0, "87156321c318e6b61c84d7600f5cd28a", 1690205},
+		 {"Data8", 0, "c486982e4169eb42096029ee1635b2ae", 7515248},
+		 {"Data9", 0, "e5f5ad0cab47eb4b2240e3843ed5fe3c", 9833960},
+		 {"Data10", 0, "9fd95df4288bcc5f07b114bbeabaa89a", 5298538},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_LIGHTHOUSE_MAC },
+
 #undef GUIO_LIGHTHOUSE_DEMO
 #undef GUIO_LIGHTHOUSE
+#undef GUIO_LIGHTHOUSE_MAC
 
 #endif // ENABLE_SCI32
 
@@ -3795,6 +3819,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #define GUIO_PQ4_CD     GUIO3(GUIO_LINKSPEECHTOSFX, \
                               GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
                               GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GUIO_PQ4_MAC    GUIO2(GUIO_LINKSPEECHTOSFX, \
+                              GAMEOPTION_HIGH_RESOLUTION_GRAPHICS)
 
 	// Police Quest 4 - English DOS CD (from the Police Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.100.000"
@@ -3844,8 +3870,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PQ4_FLOPPY },
 
+	// Police Quest 4 - English Macintosh CD
+	{"pq4", "", {
+		{"Data1", 0, "9f0a775c66481cef43b0743275a745b7", 4946164},
+		{"Data2", 0, "e64840cdc341ac567579aae1526e6d92", 5572355},
+		{"Data3", 0, "abdd183f3d6a0c326c949ba9dda32579", 5691679},
+		{"Data4", 0, "f1d80305b254f40ecff4a0f56b1d21a7", 5431778},
+		{"Data5", 0, "e766923060f7b85f1cd8909240412796", 5194686},
+		{"Data6", 0, "ca95355f5f89dcf45e78c073ef83471b", 6599265},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_PQ4_MAC },
+
 #undef GUIO_PQ4_FLOPPY
 #undef GUIO_PQ4_CD
+#undef GUIO_PQ4_MAC
 
 #define GUIO_PQSWAT_DEMO GUIO6(GUIO_NOSUBTITLES, \
                                GUIO_NOMIDI, \
@@ -3906,6 +3944,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.004", 0, "b2bd962abeb3c1239773fdf7a530231c", 50998883},
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_PQSWAT },
+
+	// Police Quest: SWAT - English Macintosh CD
+	// NOTE: This only contains disc 1 files
+	{"pqswat", "", {
+		{"Data1", 0, "03f10959f32a894a65385dfee19022fa", 842362},
+		{"Data2", 0, "9f6975e06881ccf594d1d2011c8fac69", 8572333},
+		{"Data3", 0, "80ac4ba29e1c6a6abeef06566c389028", 9785485},
+		{"Data4", 0, "450e87b388e3b759b68c6ceb6bb4ca89", 10271339},
+		{"Data5", 0, "223eed8e3a64e2fb76f25bd49afbbb79", 1713188},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_PQSWAT },
 
 #undef GUIO_PQSWAT_DEMO
 #undef GUIO_PQSWAT
@@ -4411,6 +4460,24 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.001", 0, "70ba2ff04a2b7fb2c52420ba7fbd47c2", 8338},
 		AD_LISTEND},
 		Common::IT_ITA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_RAMA },
+
+	// RAMA - English Macintosh CD
+	// NOTE: This only contains disc 1 files
+	{"rama", "", {
+		{ "Data1", 0, "6013a1ea890f831c3ff05cdda4b4bcc0", 805865 },
+		{ "Data2", 0, "242362ae1ecfbda37b31a952b25303e9", 8570826 },
+		{ "Data3", 0, "1ee46ff2d7f02bf46ec0c4aa8f84cbb4", 10692344 },
+		{ "Data4", 0, "15519ad5d8d7f12db08e1a91a762c237", 6780250 },
+		{ "Data5", 0, "ac555290c183ba784bb9af07d6cfcd91", 6905035 },
+		{ "Data6", 0, "e98507e9d1b77dff1f5d3c0733cf246d", 7761076 },
+		{ "Data7", 0, "f43cd59c73db073d0fe4caf41d1575bb", 9179082 },
+		{ "Data8", 0, "0a8ab5005aa762dd8b0291fce6e7e838", 6928976 },
+		{ "Data9", 0, "a96190a98be651813128170e17e75c57", 6205088 },
+		{ "Data10", 0, "085542cc4ced8dda9eca454b1334dfa4", 5578134 },
+		{ "Data11", 0, "a812ef1adfccdd571797250abf6b9db2", 4948885 },
+		{ "Data12", 0, "17e2254bdfb100d1981524f93b6ed06a", 1440467 },
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_NO_FLAGS, GUIO_RAMA },
 
 #undef GUIO_RAMA_DEMO
 #undef GUIO_RAMA
