@@ -2043,6 +2043,14 @@ void LB::b_numberofwords(int nargs) {
 	d.makeString();
 	int numberofwords = 0;
 	Common::String contents = *d.u.s;
+	if (contents.empty()) {
+		d.u.i = 0;
+		d.type = INT;
+
+		g_lingo->push(d);
+
+		return;
+	}
 	for (uint32 i = 1; i < d.u.s->size(); i++) {
 		if (Common::isSpace(contents[i]) && !Common::isSpace(contents[i - 1]))
 			numberofwords++;
