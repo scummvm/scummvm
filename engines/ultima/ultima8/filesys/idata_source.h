@@ -162,12 +162,12 @@ public:
 		return count;
 	}
 
-	bool seek(int32 pos, int whence = SEEK_SET) override {
+	bool seek(int32 position, int whence = SEEK_SET) override {
 		assert(whence == SEEK_SET || whence == SEEK_CUR);
 		if (whence == SEEK_CUR) {
-			_bufPtr += pos;
+			_bufPtr += position;
 		} else if (whence == SEEK_SET) {
-			_bufPtr = _buf + pos;
+			_bufPtr = _buf + position;
 		}
 		return true;
 	}
