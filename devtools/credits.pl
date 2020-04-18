@@ -1574,8 +1574,8 @@ begin_credits("Credits");
 			"of the Hugo trilogy.");
 
 		add_paragraph(
-			"Broken Sword 2.5 team for providing sources of their engine and their great ".
-			"support.");
+			"The mindFactory team for writing Broken Sword 2.5, a splendid fan-made sequel, and for sharing ".
+			"the source code with us.");
 
 		add_paragraph(
 			"Neil Dodwell and David Dew from Creative Reality for providing the source ".
@@ -1599,14 +1599,10 @@ begin_credits("Credits");
 			"James M. Ferguson and Barry Duncan for their tenacious efforts to recover the sources.");
 
 		add_paragraph(
-			"The mindFactory team for writing Broken Sword 2.5, a splendid fan-made sequel, and for sharing ".
-			"the source code with us.");
+			"John Romero for sharing the source code of Hyperspace Delivery Boy! with us.");
 
 		add_paragraph(
-		"John Romero for sharing the source code of Hyperspace Delivery Boy! with us.");
-
-		add_paragraph(
-		"Steffen Dingel for sharing the source code of the Mission Supernova game with us.");
+			"Steffen Dingel for sharing the source code of the Mission Supernova game with us.");
 
 	end_section();
 
