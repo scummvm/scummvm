@@ -290,7 +290,7 @@ Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *cur
 		else {
 			if (_debug)
 				debug("A script with no children found (nowhere to go). Ending script...");
-			screenMessage("\n");
+			g_screen->screenMessage("\n");
 			_state = STATE_DONE;
 		}
 	}
@@ -323,7 +323,7 @@ Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *cur
 			if (output)
 				*output += content;
 			else
-				screenMessage("%s", content.c_str());
+				g_screen->screenMessage("%s", content.c_str());
 
 			if (_debug && content.size())
 				debug("Output: \n====================\n%s\n====================", content.c_str());
@@ -1006,9 +1006,9 @@ Script::ReturnCode Script::sleep(Shared::XMLNode *script, Shared::XMLNode *curre
 Script::ReturnCode Script::cursor(Shared::XMLNode *script, Shared::XMLNode *current) {
 	bool enable = current->getPropertyBool("enable");
 	if (enable)
-		screenEnableCursor();
+		g_screen->screenEnableCursor();
 	else
-		screenDisableCursor();
+		g_screen->screenDisableCursor();
 
 	return RET_OK;
 }

@@ -143,7 +143,7 @@ void Debugger::printN(const char *fmt, ...) {
 
 		debugPrintf("%s", s.c_str());
 	} else {
-		screenMessage("%s", str.c_str());
+		g_screen->screenMessage("%s", str.c_str());
 	}
 }
 
@@ -576,7 +576,7 @@ bool Debugger::cmdGet(int argc, const char **argv) {
 
 		print("The Chest Holds: %d Gold", g_context->_party->getChest());
 
-		screenPrompt();
+		g_screen->screenPrompt();
 
 		if (isCity(g_context->_location->_map) && obj == NULL)
 			g_context->_party->adjustKarma(KA_STOLE_CHEST);
@@ -1276,7 +1276,7 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 bool Debugger::cmdHelp(int argc, const char **argv) {
 	if (!isDebuggerActive()) {
 		print("Help!");
-		screenPrompt();
+		g_screen->screenPrompt();
 	}
 
 	// Help! send me to Lord British
@@ -1437,7 +1437,7 @@ bool Debugger::cmdSummon(int argc, const char **argv) {
 bool Debugger::cmdTorch(int argc, const char **argv) {
 	print("Torch: %d\n", g_context->_party->getTorchDuration());
 	if (!isDebuggerActive())
-		screenPrompt();
+		g_screen->screenPrompt();
 
 	return isDebuggerActive();
 }

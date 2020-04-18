@@ -54,11 +54,11 @@ void InnController::begin() {
 	g_context->_party->setTransport(g_context->_location->_map->_tileset->getByName("corpse")->getId());
 	gameUpdateScreen();
 
-	screenDisableCursor();
+	g_screen->screenDisableCursor();
 
 	EventHandler::wait_msecs(settings._innTime * 1000);
 
-	screenEnableCursor();
+	g_screen->screenEnableCursor();
 
 	/* restore the avatar to normal */
 	g_context->_party->setTransport(g_context->_location->_map->_tileset->getByName("avatar")->getId());
@@ -79,8 +79,8 @@ void InnController::begin() {
 		}
 	}
 
-	screenMessage("\nMorning!\n");
-	screenPrompt();
+	g_screen->screenMessage("\nMorning!\n");
+	g_screen->screenPrompt();
 
 	g_music->fadeIn(INN_FADE_IN_TIME, true);
 }
@@ -155,7 +155,7 @@ void InnController::maybeAmbush() {
 			/* While strolling down the street, attacked by rogues! */
 			mapid = MAP_INN_CON;
 			creature = g_context->_location->_map->addCreature(creatureMgr->getById(ROGUE_ID), g_context->_location->_coords);
-			screenMessage("\nIn the middle of the night while out on a stroll...\n\n");
+			g_screen->screenMessage("\nIn the middle of the night while out on a stroll...\n\n");
 			showMessage = false;
 		}
 

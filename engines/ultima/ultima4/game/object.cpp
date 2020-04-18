@@ -57,9 +57,9 @@ void Object::remove() {
 
 void Object::animateMovement() {
 	//TODO abstract movement - also make screen.h and game.h not required
-	screenTileUpdate(&g_game->_mapArea, _prevCoords, false);
-	if (screenTileUpdate(&g_game->_mapArea, _coords, false))
-		screenWait(1);
+	g_screen->screenTileUpdate(&g_game->_mapArea, _prevCoords, false);
+	if (g_screen->screenTileUpdate(&g_game->_mapArea, _coords, false))
+		g_screen->screenWait(1);
 }
 
 } // End of namespace Ultima4

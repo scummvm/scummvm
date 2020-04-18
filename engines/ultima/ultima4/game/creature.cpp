@@ -541,7 +541,7 @@ void Creature::act(CombatController *controller) {
 		break;
 
 	case CA_CAST_SLEEP: {
-		screenMessage("\nSleep!\n");
+		g_screen->screenMessage("\nSleep!\n");
 
 		gameSpellEffect('s', -1, static_cast<Sound>(SOUND_MAGIC)); /* show the sleep spell effect */
 
@@ -620,7 +620,7 @@ void Creature::act(CombatController *controller) {
 			Coords coords = getCoords();
 
 			if (MAP_IS_OOB(map, coords)) {
-				screenMessage("\n%c%s Flees!%c\n", FG_YELLOW, _name.c_str(), FG_WHITE);
+				g_screen->screenMessage("\n%c%s Flees!%c\n", FG_YELLOW, _name.c_str(), FG_WHITE);
 
 				/* Congrats, you have a heart! */
 				if (isGood())
@@ -697,7 +697,7 @@ bool Creature::divide() {
 	if (d != DIR_NONE) {
 		MapCoords coords(getCoords());
 
-		screenMessage("%s Divides!\n", _name.c_str());
+		g_screen->screenMessage("%s Divides!\n", _name.c_str());
 
 		/* find a spot to put our new creature */
 		coords.move(d, map);
@@ -834,9 +834,9 @@ bool Creature::applyDamage(int damage, bool byplayer) {
 
 	case MSTAT_DEAD:
 		if (byplayer)
-			screenMessage("%c%s Killed!%c\nExp. %d\n", FG_RED, _name.c_str(), FG_WHITE, _xp);
+			g_screen->screenMessage("%c%s Killed!%c\nExp. %d\n", FG_RED, _name.c_str(), FG_WHITE, _xp);
 		else
-			screenMessage("%c%s Killed!%c\n", FG_RED, _name.c_str(), FG_WHITE);
+			g_screen->screenMessage("%c%s Killed!%c\n", FG_RED, _name.c_str(), FG_WHITE);
 
 		/*
 		 * the creature is dead; let it spawns something else on
@@ -851,23 +851,23 @@ bool Creature::applyDamage(int damage, bool byplayer) {
 		return false;
 
 	case MSTAT_FLEEING:
-		screenMessage("%c%s Fleeing!%c\n", FG_YELLOW, _name.c_str(), FG_WHITE);
+		g_screen->screenMessage("%c%s Fleeing!%c\n", FG_YELLOW, _name.c_str(), FG_WHITE);
 		break;
 
 	case MSTAT_CRITICAL:
-		screenMessage("%s Critical!\n", _name.c_str());
+		g_screen->screenMessage("%s Critical!\n", _name.c_str());
 		break;
 
 	case MSTAT_HEAVILYWOUNDED:
-		screenMessage("%s Heavily Wounded!\n", _name.c_str());
+		g_screen->screenMessage("%s Heavily Wounded!\n", _name.c_str());
 		break;
 
 	case MSTAT_LIGHTLYWOUNDED:
-		screenMessage("%s Lightly Wounded!\n", _name.c_str());
+		g_screen->screenMessage("%s Lightly Wounded!\n", _name.c_str());
 		break;
 
 	case MSTAT_BARELYWOUNDED:
-		screenMessage("%s Barely Wounded!\n", _name.c_str());
+		g_screen->screenMessage("%s Barely Wounded!\n", _name.c_str());
 		break;
 	}
 

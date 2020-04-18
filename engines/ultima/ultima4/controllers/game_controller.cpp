@@ -71,8 +71,8 @@ void GameController::initScreenWithoutReloadingState() {
 	imageMgr->get(BKGD_BORDERS)->_image->draw(0, 0);
 	g_context->_stats->update(); /* draw the party stats */
 
-	screenMessage("Press Alt-h for help\n");
-	screenPrompt();
+	g_screen->screenMessage("Press Alt-h for help\n");
+	g_screen->screenPrompt();
 
 	eventHandler->pushMouseAreaSet(MOUSE_AREAS);
 
@@ -208,8 +208,8 @@ void GameController::finishTurn() {
 		/* update party stats */
 		//c->stats->setView(STATS_PARTY_OVERVIEW);
 
-		screenUpdate(&this->_mapArea, true, false);
-		screenWait(1);
+		g_screen->screenUpdate(&this->_mapArea, true, false);
+		g_screen->screenWait(1);
 
 		/* Creatures cannot spawn, move or attack while the avatar is on the balloon */
 		if (!g_context->_party->isFlying()) {
@@ -242,15 +242,15 @@ void GameController::finishTurn() {
 			deathStart(0);
 			return;
 		} else {
-			screenMessage("Zzzzzz\n");
-			screenWait(4);
+			g_screen->screenMessage("Zzzzzz\n");
+			g_screen->screenWait(4);
 		}
 	}
 
 	if (g_context->_location->_context == CTX_DUNGEON) {
 		Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
 		if (g_context->_party->getTorchDuration() <= 0)
-			screenMessage("It's Dark!\n");
+			g_screen->screenMessage("It's Dark!\n");
 		else g_context->_party->burnTorch();
 
 		/* handle dungeon traps */
@@ -269,19 +269,19 @@ void GameController::finishTurn() {
 
 
 	/* draw a prompt */
-	screenPrompt();
-	//screenRedrawTextArea(TEXT_AREA_X, TEXT_AREA_Y, TEXT_AREA_W, TEXT_AREA_H);
+	g_screen->screenPrompt();
+	//g_screen->screenRedrawTextArea(TEXT_AREA_X, TEXT_AREA_Y, TEXT_AREA_W, TEXT_AREA_H);
 }
 
 void GameController::flashTile(const Coords &coords, MapTile tile, int frames) {
 	g_context->_location->_map->_annotations->add(coords, tile, true);
 
-	screenTileUpdate(&g_game->_mapArea, coords);
+	g_screen->screenTileUpdate(&g_game->_mapArea, coords);
 
-	screenWait(frames);
+	g_screen->screenWait(frames);
 	g_context->_location->_map->_annotations->remove(coords, tile);
 
-	screenTileUpdate(&g_game->_mapArea, coords, false);
+	g_screen->screenTileUpdate(&g_game->_mapArea, coords, false);
 }
 
 void GameController::flashTile(const Coords &coords, const Common::String &tilename, int timeFactor) {
@@ -296,14 +296,14 @@ void GameController::update(Party *party, PartyEvent &event) {
 	switch (event._type) {
 	case PartyEvent::LOST_EIGHTH:
 		// inform a player he has lost zero or more eighths of avatarhood.
-		screenMessage("\n %cThou hast lost\n  an eighth!%c\n", FG_YELLOW, FG_WHITE);
+		g_screen->screenMessage("\n %cThou hast lost\n  an eighth!%c\n", FG_YELLOW, FG_WHITE);
 		break;
 	case PartyEvent::ADVANCED_LEVEL:
-		screenMessage("\n%c%s\nThou art now Level %d%c\n", FG_YELLOW, event._player->getName().c_str(), event._player->getRealLevel(), FG_WHITE);
+		g_screen->screenMessage("\n%c%s\nThou art now Level %d%c\n", FG_YELLOW, event._player->getName().c_str(), event._player->getRealLevel(), FG_WHITE);
 		gameSpellEffect('r', -1, SOUND_MAGIC); // Same as resurrect spell
 		break;
 	case PartyEvent::STARVING:
-		screenMessage("\n%cStarving!!!%c\n", FG_YELLOW, FG_WHITE);
+		g_screen->screenMessage("\n%cStarving!!!%c\n", FG_YELLOW, FG_WHITE);
 		/* FIXME: add sound effect here */
 
 		// 2 damage to each party member for starving!
@@ -415,14 +415,14 @@ bool GameController::keyPressed(int key) {
 	}
 
 	if ((g_context->_location->_context & CTX_DUNGEON) && strchr("abefjlotxy", key))
-		screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
+		g_screen->screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
 
 	if (valid && endTurn) {
 		if (eventHandler->getController() == g_game)
 			g_context->_location->_turnCompleter->finishTurn();
 	} else if (!endTurn) {
 		/* if our turn did not end, then manually redraw the text prompt */
-		screenPrompt();
+		g_screen->screenPrompt();
 	}
 
 	return valid || KeyHandler::defaultHandler(key, NULL);
@@ -529,18 +529,18 @@ void GameController::avatarMoved(MoveEvent &event) {
 			switch (g_context->_transportContext) {
 			case TRANSPORT_FOOT:
 			case TRANSPORT_HORSE:
-				screenMessage("%s\n", getDirectionName(event._dir));
+				g_screen->screenMessage("%s\n", getDirectionName(event._dir));
 				break;
 			case TRANSPORT_SHIP:
 				if (event._result & MOVE_TURNED)
-					screenMessage("Turn %s!\n", getDirectionName(event._dir));
+					g_screen->screenMessage("Turn %s!\n", getDirectionName(event._dir));
 				else if (event._result & MOVE_SLOWED)
-					screenMessage("%cSlow progress!%c\n", FG_GREY, FG_WHITE);
+					g_screen->screenMessage("%cSlow progress!%c\n", FG_GREY, FG_WHITE);
 				else
-					screenMessage("Sail %s!\n", getDirectionName(event._dir));
+					g_screen->screenMessage("Sail %s!\n", getDirectionName(event._dir));
 				break;
 			case TRANSPORT_BALLOON:
-				screenMessage("%cDrift Only!%c\n", FG_GREY, FG_WHITE);
+				g_screen->screenMessage("%cDrift Only!%c\n", FG_GREY, FG_WHITE);
 				break;
 			default:
 				error("bad transportContext %d in avatarMoved()", g_context->_transportContext);
@@ -573,13 +573,13 @@ void GameController::avatarMoved(MoveEvent &event) {
 			/* if we're still blocked */
 			if ((event._result & MOVE_BLOCKED) && !settings._filterMoveMessages) {
 				soundPlay(SOUND_BLOCKED, false);
-				screenMessage("%cBlocked!%c\n", FG_GREY, FG_WHITE);
+				g_screen->screenMessage("%cBlocked!%c\n", FG_GREY, FG_WHITE);
 			}
 		} else if (g_context->_transportContext == TRANSPORT_FOOT || g_context->_transportContext == TRANSPORT_HORSE) {
 			/* movement was slowed */
 			if (event._result & MOVE_SLOWED) {
 				soundPlay(SOUND_WALK_SLOWED);
-				screenMessage("%cSlow progress!%c\n", FG_GREY, FG_WHITE);
+				g_screen->screenMessage("%cSlow progress!%c\n", FG_GREY, FG_WHITE);
 			} else {
 				soundPlay(SOUND_WALK_NORMAL);
 			}
@@ -588,7 +588,7 @@ void GameController::avatarMoved(MoveEvent &event) {
 
 	/* exited map */
 	if (event._result & MOVE_EXIT_TO_PARENT) {
-		screenMessage("%cLeaving...%c\n", FG_GREY, FG_WHITE);
+		g_screen->screenMessage("%cLeaving...%c\n", FG_GREY, FG_WHITE);
 		exitToParentMap();
 		g_music->play();
 	}
@@ -612,20 +612,20 @@ void GameController::avatarMovedInDungeon(MoveEvent &event) {
 		if (event._userEvent) {
 			if (event._result & MOVE_TURNED) {
 				if (dirRotateCCW((Direction)g_ultima->_saveGame->_orientation) == realDir)
-					screenMessage("Turn Left\n");
-				else screenMessage("Turn Right\n");
+					g_screen->screenMessage("Turn Left\n");
+				else g_screen->screenMessage("Turn Right\n");
 			}
 			/* show 'Advance' or 'Retreat' in dungeons */
-			else screenMessage("%s\n", realDir == g_ultima->_saveGame->_orientation ? "Advance" : "Retreat");
+			else g_screen->screenMessage("%s\n", realDir == g_ultima->_saveGame->_orientation ? "Advance" : "Retreat");
 		}
 
 		if (event._result & MOVE_BLOCKED)
-			screenMessage("%cBlocked!%c\n", FG_GREY, FG_WHITE);
+			g_screen->screenMessage("%cBlocked!%c\n", FG_GREY, FG_WHITE);
 	}
 
 	/* if we're exiting the map, do this */
 	if (event._result & MOVE_EXIT_TO_PARENT) {
-		screenMessage("%cLeaving...%c\n", FG_GREY, FG_WHITE);
+		g_screen->screenMessage("%cLeaving...%c\n", FG_GREY, FG_WHITE);
 		exitToParentMap();
 		g_music->play();
 	}
@@ -678,7 +678,7 @@ void GameController::timerFired() {
 
 		updateMoons(true);
 
-		screenCycle();
+		g_screen->screenCycle();
 
 		/*
 		 * force pass if no commands within last 20 seconds
@@ -690,7 +690,7 @@ void GameController::timerFired() {
 
 			/* pass the turn, and redraw the text area so the prompt is shown */
 			MetaEngine::executeAction(KEYBIND_PASS);
-			screenRedrawTextArea(TEXT_AREA_X, TEXT_AREA_Y, TEXT_AREA_W, TEXT_AREA_H);
+			g_screen->screenRedrawTextArea(TEXT_AREA_X, TEXT_AREA_Y, TEXT_AREA_W, TEXT_AREA_H);
 		}
 	}
 
@@ -819,7 +819,7 @@ void GameController::checkBridgeTrolls() {
 	        xu4_random(8) != 0)
 		return;
 
-	screenMessage("\nBridge Trolls!\n");
+	g_screen->screenMessage("\nBridge Trolls!\n");
 
 	Creature *m = g_context->_location->_map->addCreature(creatureMgr->getById(TROLL_ID), g_context->_location->_coords);
 	CombatController *cc = new CombatController(MAP_BRIDGE_CON);

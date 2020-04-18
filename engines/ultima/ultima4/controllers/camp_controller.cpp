@@ -56,19 +56,19 @@ void CampController::begin() {
 
 	g_music->camp();
 
-	screenMessage("Resting...\n");
-	screenDisableCursor();
+	g_screen->screenMessage("Resting...\n");
+	g_screen->screenDisableCursor();
 
 	EventHandler::wait_msecs(settings._campTime * 1000);
 
-	screenEnableCursor();
+	g_screen->screenEnableCursor();
 
 	/* Is the party ambushed during their rest? */
 	if (settings._campingAlwaysCombat || (xu4_random(8) == 0)) {
 		const Creature *m = creatureMgr->randomAmbushing();
 
 		g_music->play();
-		screenMessage("Ambushed!\n");
+		g_screen->screenMessage("Ambushed!\n");
 
 		/* create an ambushing creature (so it leaves a chest) */
 		setCreature(g_context->_location->_prev->_map->addCreature(m, g_context->_location->_prev->_coords));
@@ -90,7 +90,7 @@ void CampController::begin() {
 		        (((g_ultima->_saveGame->_moves / CAMP_HEAL_INTERVAL) & 0xffff) != g_ultima->_saveGame->_lastCamp))
 			healed = heal();
 
-		screenMessage(healed ? "Party Healed!\n" : "No effect.\n");
+		g_screen->screenMessage(healed ? "Party Healed!\n" : "No effect.\n");
 		g_ultima->_saveGame->_lastCamp = (g_ultima->_saveGame->_moves / CAMP_HEAL_INTERVAL) & 0xffff;
 
 		eventHandler->popController();

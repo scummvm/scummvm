@@ -260,13 +260,13 @@ void CombatController::begin() {
 
 	/* if we entered an altar room, show the name */
 	if (_map->isAltarRoom()) {
-		screenMessage("\nThe Altar Room of %s\n", getBaseVirtueName(_map->getAltarRoom()));
+		g_screen->screenMessage("\nThe Altar Room of %s\n", getBaseVirtueName(_map->getAltarRoom()));
 		g_context->_location->_context = static_cast<LocationContext>(g_context->_location->_context | CTX_ALTAR_ROOM);
 	}
 
 	/* if there are creatures around, start combat! */
 	if (_showMessage && _placeCreaturesOnMap && _winOrLose)
-		screenMessage("\n%c****%c COMBAT %c****%c\n", FG_GREY, FG_WHITE, FG_GREY, FG_WHITE);
+		g_screen->screenMessage("\n%c****%c COMBAT %c****%c\n", FG_GREY, FG_WHITE, FG_GREY, FG_WHITE);
 
 	/* FIXME: there should be a better way to accomplish this */
 	if (!_camping) {
@@ -315,11 +315,11 @@ void CombatController::end(bool adjustKarma) {
 					awardLoot();
 				}
 
-				screenMessage("\nVictory!\n\n");
+				g_screen->screenMessage("\nVictory!\n\n");
 			} else if (!g_context->_party->isDead()) {
 				/* minus points for fleeing from evil creatures */
 				if (adjustKarma && _creature && _creature->isEvil()) {
-					screenMessage("\nBattle is lost!\n\n");
+					g_screen->screenMessage("\nBattle is lost!\n\n");
 					g_context->_party->adjustKarma(KA_FLED_EVIL);
 				} else if (adjustKarma && _creature && _creature->isGood())
 					g_context->_party->adjustKarma(KA_FLED_GOOD);
@@ -328,7 +328,7 @@ void CombatController::end(bool adjustKarma) {
 
 		/* exiting a dungeon room */
 		if (_map->isDungeonRoom()) {
-			screenMessage("Leave Room!\n");
+			g_screen->screenMessage("Leave Room!\n");
 			if (_map->isAltarRoom()) {
 				PortalTriggerAction action = ACTION_NONE;
 
@@ -357,7 +357,7 @@ void CombatController::end(bool adjustKarma) {
 
 				if (action != ACTION_NONE)
 					usePortalAt(g_context->_location, g_context->_location->_coords, action);
-			} else screenMessage("\n");
+			} else g_screen->screenMessage("\n");
 
 			if (_exitDir != DIR_NONE) {
 				g_ultima->_saveGame->_orientation = _exitDir;  /* face the direction exiting the room */
@@ -513,7 +513,7 @@ bool CombatController::setActivePlayer(int player) {
 		p->setFocus();
 		_focus = player;
 
-		screenMessage("\n%s with %s\n\020", p->getName().c_str(), p->getWeapon()->getName().c_str());
+		g_screen->screenMessage("\n%s with %s\n\020", p->getName().c_str(), p->getWeapon()->getName().c_str());
 		g_context->_stats->highlightPlayer(_focus);
 		return true;
 	}
@@ -576,7 +576,7 @@ bool CombatController::attackAt(const Coords &coords, PartyMember *attacker, int
 	/* Did the weapon miss? */
 	if ((g_context->_location->_prev->_map->_id == MAP_ABYSS && !weapon->isMagic()) || /* non-magical weapon in the Abyss */
 	        !attackHit(attacker, creature)) { /* player naturally missed */
-		screenMessage("Missed!\n");
+		g_screen->screenMessage("Missed!\n");
 
 		/* show the 'miss' tile */
 		GameController::flashTile(coords, misstile, 1);
@@ -624,7 +624,7 @@ bool CombatController::rangedAttack(const Coords &coords, Creature *attacker) {
 	case EFFECT_ELECTRICITY:
 		/* FIXME: are there any special effects here? */
 		soundPlay(SOUND_PC_STRUCK, false);
-		screenMessage("\n%s %cElectrified%c!\n", target->getName().c_str(), FG_BLUE, FG_WHITE);
+		g_screen->screenMessage("\n%s %cElectrified%c!\n", target->getName().c_str(), FG_BLUE, FG_WHITE);
 		attacker->dealDamage(target, attacker->getDamage());
 		break;
 
@@ -634,10 +634,10 @@ bool CombatController::rangedAttack(const Coords &coords, Creature *attacker) {
 		if ((xu4_random(2) == 0) && (target->getStatus() != STAT_POISONED)) {
 			// POISON_EFFECT, ranged hit
 			soundPlay(SOUND_POISON_EFFECT, false);
-			screenMessage("\n%s %cPoisoned%c!\n", target->getName().c_str(), FG_GREEN, FG_WHITE);
+			g_screen->screenMessage("\n%s %cPoisoned%c!\n", target->getName().c_str(), FG_GREEN, FG_WHITE);
 			target->addStatus(STAT_POISONED);
 		}
-		// else screenMessage("Failed.\n");
+		// else g_screen->screenMessage("Failed.\n");
 		break;
 
 	case EFFECT_SLEEP:
@@ -645,17 +645,17 @@ bool CombatController::rangedAttack(const Coords &coords, Creature *attacker) {
 		if (xu4_random(2) == 0) {
 			// SLEEP, ranged hit, plays even if sleep failed or PC already asleep
 			soundPlay(SOUND_SLEEP, false);
-			screenMessage("\n%s %cSlept%c!\n", target->getName().c_str(), FG_PURPLE, FG_WHITE);
+			g_screen->screenMessage("\n%s %cSlept%c!\n", target->getName().c_str(), FG_PURPLE, FG_WHITE);
 			target->putToSleep();
 		}
-		// else screenMessage("Failed.\n");
+		// else g_screen->screenMessage("Failed.\n");
 		break;
 
 	case EFFECT_LAVA:
 	case EFFECT_FIRE:
 		/* FIXME: are there any special effects here? */
 		soundPlay(SOUND_PC_STRUCK, false);
-		screenMessage("\n%s %c%s Hit%c!\n", target->getName().c_str(), FG_RED,
+		g_screen->screenMessage("\n%s %c%s Hit%c!\n", target->getName().c_str(), FG_RED,
 		              effect == EFFECT_LAVA ? "Lava" : "Fiery", FG_WHITE);
 		attacker->dealDamage(target, attacker->getDamage());
 		break;
@@ -664,8 +664,8 @@ bool CombatController::rangedAttack(const Coords &coords, Creature *attacker) {
 		/* show the appropriate 'hit' message */
 		// soundPlay(SOUND_PC_STRUCK, false);
 		if (hittile == Tileset::findTileByName("magic_flash")->getId())
-			screenMessage("\n%s %cMagical Hit%c!\n", target->getName().c_str(), FG_BLUE, FG_WHITE);
-		else screenMessage("\n%s Hit!\n", target->getName().c_str());
+			g_screen->screenMessage("\n%s %cMagical Hit%c!\n", target->getName().c_str(), FG_BLUE, FG_WHITE);
+		else g_screen->screenMessage("\n%s Hit!\n", target->getName().c_str());
 		attacker->dealDamage(target, attacker->getDamage());
 		break;
 	}
@@ -815,16 +815,16 @@ void CombatController::movePartyMember(MoveEvent &event) {
 		}
 	}
 
-	screenMessage("%s\n", getDirectionName(event._dir));
+	g_screen->screenMessage("%s\n", getDirectionName(event._dir));
 	if (event._result & MOVE_MUST_USE_SAME_EXIT) {
 		soundPlay(SOUND_ERROR);                                                // ERROR move, all PCs must use the same exit
-		screenMessage("All must use same exit!\n");
+		g_screen->screenMessage("All must use same exit!\n");
 	} else if (event._result & MOVE_BLOCKED) {
 		soundPlay(SOUND_BLOCKED);                                              // BLOCKED move
-		screenMessage("%cBlocked!%c\n", FG_GREY, FG_WHITE);
+		g_screen->screenMessage("%cBlocked!%c\n", FG_GREY, FG_WHITE);
 	} else if (event._result & MOVE_SLOWED) {
 		soundPlay(SOUND_WALK_SLOWED);                                          // WALK_SLOWED move
-		screenMessage("%cSlow progress!%c\n", FG_GREY, FG_WHITE);
+		g_screen->screenMessage("%cSlow progress!%c\n", FG_GREY, FG_WHITE);
 	} else if (_winOrLose && getCreature()->isEvil() && (event._result & (MOVE_EXIT_TO_PARENT | MOVE_MAP_CHANGE))) {
 		soundPlay(SOUND_FLEE);                                                 // FLEE move
 	} else {
@@ -848,12 +848,12 @@ bool CombatController::keyPressed(int key) {
 	case U4_ESC:
 		if (settings._debug)
 			end(false);         /* don't adjust karma */
-		else screenMessage("Bad command\n");
+		else g_screen->screenMessage("Bad command\n");
 
 		break;
 
 	case ' ':
-		screenMessage("Pass\n");
+		g_screen->screenMessage("Pass\n");
 		break;
 
 	case U4_FKEY: {
@@ -877,12 +877,12 @@ bool CombatController::keyPressed(int key) {
 
 		if (old_speed != settings._battleSpeed) {
 			if (settings._battleSpeed == DEFAULT_BATTLE_SPEED)
-				screenMessage("Battle Speed:\nNormal\n");
+				g_screen->screenMessage("Battle Speed:\nNormal\n");
 			else if (key == '+')
-				screenMessage("Battle Speed:\nUp (%d)\n", settings._battleSpeed);
-			else screenMessage("Battle Speed:\nDown (%d)\n", settings._battleSpeed);
+				g_screen->screenMessage("Battle Speed:\nUp (%d)\n", settings._battleSpeed);
+			else g_screen->screenMessage("Battle Speed:\nDown (%d)\n", settings._battleSpeed);
 		} else if (settings._battleSpeed == DEFAULT_BATTLE_SPEED)
-			screenMessage("Battle Speed:\nNormal\n");
+			g_screen->screenMessage("Battle Speed:\nNormal\n");
 	}
 
 	valid = false;
@@ -891,25 +891,25 @@ bool CombatController::keyPressed(int key) {
 	/* handle music volume adjustments */
 	case ',':
 		// decrease the volume if possible
-		screenMessage("Music: %d%s\n", g_music->decreaseMusicVolume(), "%");
+		g_screen->screenMessage("Music: %d%s\n", g_music->decreaseMusicVolume(), "%");
 		endTurn = false;
 		break;
 	case '.':
 		// increase the volume if possible
-		screenMessage("Music: %d%s\n", g_music->increaseMusicVolume(), "%");
+		g_screen->screenMessage("Music: %d%s\n", g_music->increaseMusicVolume(), "%");
 		endTurn = false;
 		break;
 
 	/* handle sound volume adjustments */
 	case '<':
 		// decrease the volume if possible
-		screenMessage("Sound: %d%s\n", g_music->decreaseSoundVolume(), "%");
+		g_screen->screenMessage("Sound: %d%s\n", g_music->decreaseSoundVolume(), "%");
 		soundPlay(SOUND_FLEE);
 		endTurn = false;
 		break;
 	case '>':
 		// increase the volume if possible
-		screenMessage("Sound: %d%s\n", g_music->increaseSoundVolume(), "%");
+		g_screen->screenMessage("Sound: %d%s\n", g_music->increaseSoundVolume(), "%");
 		soundPlay(SOUND_FLEE);
 		endTurn = false;
 		break;
@@ -919,7 +919,7 @@ bool CombatController::keyPressed(int key) {
 		break;
 
 	case 'c':
-		screenMessage("Cast Spell!\n");
+		g_screen->screenMessage("Cast Spell!\n");
 		g_debugger->castSpell(_focus);
 		break;
 
@@ -927,18 +927,18 @@ bool CombatController::keyPressed(int key) {
 	case U4_ENTER: // Fall through and get the chest.
 #endif
 	case 'g':
-		screenMessage("Get Chest!\n");
+		g_screen->screenMessage("Get Chest!\n");
 		g_debugger->getChest(_focus);
 		break;
 
 	case 'l':
 		if (settings._debug) {
 			Coords coords = getCurrentPlayer()->getCoords();
-			screenMessage("\nLocation:\nx:%d\ny:%d\nz:%d\n", coords.x, coords.y, coords.z);
-			screenPrompt();
+			g_screen->screenMessage("\nLocation:\nx:%d\ny:%d\nz:%d\n", coords.x, coords.y, coords.z);
+			g_screen->screenPrompt();
 			valid = false;
 		} else
-			screenMessage("Not here!\n");
+			g_screen->screenMessage("Not here!\n");
 		break;
 
 	case 'r':
@@ -951,25 +951,25 @@ bool CombatController::keyPressed(int key) {
 			Trigger *triggers = dungeon->_rooms[dungeon->_currentRoom]._triggers;
 			int i;
 
-			screenMessage("Triggers!\n");
+			g_screen->screenMessage("Triggers!\n");
 
 			for (i = 0; i < 4; i++) {
-				screenMessage("%.1d)xy tile xy xy\n", i + 1);
-				screenMessage("  %.1X%.1X  %.3d %.1X%.1X %.1X%.1X\n",
+				g_screen->screenMessage("%.1d)xy tile xy xy\n", i + 1);
+				g_screen->screenMessage("  %.1X%.1X  %.3d %.1X%.1X %.1X%.1X\n",
 				              triggers[i].x, triggers[i].y,
 				              triggers[i]._tile,
 				              triggers[i]._changeX1, triggers[i]._changeY1,
 				              triggers[i].changeX2, triggers[i].changeY2);
 			}
-			screenPrompt();
+			g_screen->screenPrompt();
 			valid = false;
 
 		} else
-			screenMessage("Not here!\n");
+			g_screen->screenMessage("Not here!\n");
 		break;
 
 	case 'u':
-		screenMessage("Use which item:\n");
+		g_screen->screenMessage("Use which item:\n");
 		g_context->_stats->setView(STATS_ITEMS);
 #ifdef IOS
 		U4IOS::IOSConversationHelper::setIntroString("Use which item?");
@@ -979,9 +979,9 @@ bool CombatController::keyPressed(int key) {
 
 	case 'v':
 		if (g_music->toggle())
-			screenMessage("Volume On!\n");
+			g_screen->screenMessage("Volume On!\n");
 		else
-			screenMessage("Volume Off!\n");
+			g_screen->screenMessage("Volume Off!\n");
 		endTurn = false;
 		break;
 
@@ -992,7 +992,7 @@ bool CombatController::keyPressed(int key) {
 		   and hide reagents that you don't have */
 		g_context->_stats->resetReagentsMenu();
 
-		screenMessage("Ztats\n");
+		g_screen->screenMessage("Ztats\n");
 		ZtatsController ctrl;
 		eventHandler->pushController(&ctrl);
 		ctrl.waitFor();
@@ -1016,7 +1016,7 @@ bool CombatController::keyPressed(int key) {
 	case 'w':
 	case 'x':
 	case 'y':
-		screenMessage("Not here!\n");
+		g_screen->screenMessage("Not here!\n");
 		break;
 
 	case '0':
@@ -1031,7 +1031,7 @@ bool CombatController::keyPressed(int key) {
 	case '9':
 		if (settings._enhancements && settings._enhancementsOptions._activePlayer)
 			gameSetActivePlayer(key - '1');
-		else screenMessage("Bad command\n");
+		else g_screen->screenMessage("Bad command\n");
 
 		break;
 
@@ -1050,7 +1050,7 @@ bool CombatController::keyPressed(int key) {
 }
 
 void CombatController::attack() {
-	screenMessage("Dir: ");
+	g_screen->screenMessage("Dir: ");
 
 	ReadDirController dirController;
 #ifdef IOS
@@ -1060,18 +1060,18 @@ void CombatController::attack() {
 	Direction dir = dirController.waitFor();
 	if (dir == DIR_NONE)
 		return;
-	screenMessage("%s\n", getDirectionName(dir));
+	g_screen->screenMessage("%s\n", getDirectionName(dir));
 
 	PartyMember *attacker = getCurrentPlayer();
 
 	const Weapon *weapon = attacker->getWeapon();
 	int range = weapon->getRange();
 	if (weapon->canChooseDistance()) {
-		screenMessage("Range: ");
+		g_screen->screenMessage("Range: ");
 		int choice = ReadChoiceController::get("123456789");
 		if ((choice - '0') >= 1 && (choice - '0') <= weapon->getRange()) {
 			range = choice - '0';
-			screenMessage("%d\n", range);
+			g_screen->screenMessage("%d\n", range);
 		} else {
 			return;
 		}
@@ -1108,7 +1108,7 @@ void CombatController::attack() {
 	if (weapon->loseWhenUsed() ||
 	        (weapon->loseWhenRanged() && (!foundTarget || targetDistance > 1))) {
 		if (!attacker->loseWeapon())
-			screenMessage("Last One!\n");
+			g_screen->screenMessage("Last One!\n");
 	}
 
 	// does weapon leave a tile behind? (e.g. flaming oil)
@@ -1120,7 +1120,7 @@ void CombatController::attack() {
 	if (!foundTarget) {
 		GameController::flashTile(targetCoords, weapon->getMissTile(), 1);
 		/* This goes here so messages are shown in the original order */
-		screenMessage("Missed!\n");
+		g_screen->screenMessage("Missed!\n");
 	}
 
 	// does weapon returns to its owner? (e.g. magic axe)
@@ -1130,7 +1130,7 @@ void CombatController::attack() {
 
 void CombatController::update(Party *party, PartyEvent &event) {
 	if (event._type == PartyEvent::PLAYER_KILLED)
-		screenMessage("\n%c%s is Killed!%c\n", FG_RED, event._player->getName().c_str(), FG_WHITE);
+		g_screen->screenMessage("\n%c%s is Killed!%c\n", FG_RED, event._player->getName().c_str(), FG_WHITE);
 }
 
 /*-------------------------------------------------------------------*/

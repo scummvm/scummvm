@@ -47,6 +47,8 @@ namespace Ultima4 {
 
 using Std::vector;
 
+//Image *screenScale(Image *src, int scale, int n, int filter);
+
 /**
  * Force a redraw.
  */
@@ -54,11 +56,11 @@ using Std::vector;
 //SDL_mutex *screenLockMutex = NULL;
 int frameDuration = 0;
 
-void screenRedrawTextArea(int x, int y, int width, int height) {
+void Screen::screenRedrawTextArea(int x, int y, int width, int height) {
 	g_system->updateScreen();
 }
 
-void screenWait(int numberOfAnimationFrames) {
+void Screen::screenWait(int numberOfAnimationFrames) {
 	g_system->delayMillis(numberOfAnimationFrames * frameDuration);
 }
 
@@ -71,7 +73,7 @@ bool continueScreenRefresh = true;
  * seperately. filter determines whether or not to filter the
  * resulting image.
  */
-Image *screenScale(Image *src, int scale, int n, int filter) {
+Image *Screen::screenScale(Image *src, int scale, int n, int filter) {
 	Image *dest = NULL;
 	bool isTransparent;
 	unsigned int transparentIndex;
@@ -83,13 +85,13 @@ Image *screenScale(Image *src, int scale, int n, int filter) {
 	isTransparent = src->getTransparentIndex(transparentIndex);
 	src->alphaOff();
 
-	while (filter && g_screen->_filterScaler && (scale % 2 == 0)) {
-		dest = (*g_screen->_filterScaler)(src, 2, n);
+	while (filter && _filterScaler && (scale % 2 == 0)) {
+		dest = (*_filterScaler)(src, 2, n);
 		src = dest;
 		scale /= 2;
 	}
 	if (scale == 3 && scaler3x(settings._filter)) {
-		dest = (*g_screen->_filterScaler)(src, 3, n);
+		dest = (*_filterScaler)(src, 3, n);
 		src = dest;
 		scale /= 3;
 	}
@@ -113,7 +115,7 @@ Image *screenScale(Image *src, int scale, int n, int filter) {
  * Scale an image down.  The resulting image will be 1/scale * the
  * original dimensions.  The original image is no longer deleted.
  */
-Image *screenScaleDown(Image *src, int scale) {
+Image *Screen::screenScaleDown(Image *src, int scale) {
 	int x, y;
 	Image *dest;
 	bool isTransparent;

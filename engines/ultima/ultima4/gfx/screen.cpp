@@ -48,13 +48,34 @@
 namespace Ultima {
 namespace Ultima4 {
 
-#define CURSOR_SIZE 20
+#define MOUSE_CURSOR_SIZE 20
+#define DBL_MAX 1e99
 
 Screen *g_screen;
 
+Std::vector<TileAnimSet *> tileanimSets;
+Std::vector<Common::String> gemLayoutNames;
+Std::vector<Common::String> filterNames;
+Std::vector<Common::String> lineOfSightStyles;
+Layout *gemlayout = NULL;
+Std::map<Common::String, int> dungeonTileChars;
+TileAnimSet *tileanims = NULL;
+ImageInfo *charsetInfo = NULL;
+ImageInfo *gemTilesInfo = NULL;
+
+int screenNeedPrompt = 1;
+int screenCurrentCycle = 0;
+int screenCursorX = 0;
+int screenCursorY = 0;
+int screenCursorStatus = 0;
+int screenCursorEnabled = 1;
+int screenLos[VIEWPORT_W][VIEWPORT_H];
+
+static const int BufferSize = 1024;
+
 Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1) {
 	g_screen = this;
-	Common::fill(&_cursors[0], &_cursors[5], (MouseCursorSurface *)nullptr);
+	Common::fill(&_mouseCursors[0], &_mouseCursors[5], (MouseCursorSurface *)nullptr);
 
 	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	Common::Point size(SCREEN_WIDTH * settings._scale, SCREEN_HEIGHT * settings._scale);
@@ -70,7 +91,7 @@ Screen::~Screen() {
 
 	// Delete cursors
 	for (int idx = 0; idx < 5; ++idx)
-		delete _cursors[idx];
+		delete _mouseCursors[idx];
 }
 
 void Screen::init() {
@@ -93,7 +114,7 @@ void Screen::loadMouseCursors() {
 		Shared::File cursorsFile("data/graphics/cursors.txt");
 
 		for (int idx = 0; idx < 5; ++idx)
-			_cursors[idx] = loadMouseCursor(cursorsFile);
+			_mouseCursors[idx] = loadMouseCursor(cursorsFile);
 
 	} else {
 		g_system->showMouse(false);
@@ -105,39 +126,36 @@ void Screen::loadMouseCursors() {
 }
 
 void Screen::setMouseCursor(MouseCursor cursor) {
-	const MouseCursorSurface *c = _cursors[cursor];
+	const MouseCursorSurface *c = _mouseCursors[cursor];
 
 	if (c && cursor != _currentMouseCursor) {
 		_currentMouseCursor = cursor;
 
-		const uint TRANSPARENT = g_screen->format.RGBToColor(0x80, 0x80, 0x80);
-		CursorMan.replaceCursor(c->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
-			c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, &g_screen->format);
+		const uint TRANSPARENT = format.RGBToColor(0x80, 0x80, 0x80);
+		CursorMan.replaceCursor(c->getPixels(), MOUSE_CURSOR_SIZE, MOUSE_CURSOR_SIZE,
+			c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, &format);
 	}
 }
-
-
-#define CURSOR_SIZE 20
 
 MouseCursorSurface *Screen::loadMouseCursor(Shared::File &src) {
 	uint row, col, endCol, pixel;
 	int hotX, hotY;
 	Common::String line;
 	byte *destP;
-	const uint WHITE = g_screen->format.RGBToColor(0xff, 0xff, 0xff);
-	const uint BLACK = g_screen->format.RGBToColor(0, 0, 0);
-	const uint TRANSPARENT = g_screen->format.RGBToColor(0x80, 0x80, 0x80);
-	int bpp = g_screen->format.bytesPerPixel;
+	const uint WHITE = format.RGBToColor(0xff, 0xff, 0xff);
+	const uint BLACK = format.RGBToColor(0, 0, 0);
+	const uint TRANSPARENT = format.RGBToColor(0x80, 0x80, 0x80);
+	int bpp = format.bytesPerPixel;
 	assert(bpp >= 2);
 
 	MouseCursorSurface *c = new MouseCursorSurface();
-	c->create(CURSOR_SIZE, CURSOR_SIZE, g_screen->format);
+	c->create(MOUSE_CURSOR_SIZE, MOUSE_CURSOR_SIZE, format);
 	c->clear(TRANSPARENT);
 
-	for (row = 0; row < CURSOR_SIZE; row++) {
+	for (row = 0; row < MOUSE_CURSOR_SIZE; row++) {
 		line = src.readLine();
 		destP = (byte *)c->getBasePtr(0, row);
-		endCol = MIN(line.size(), (uint)CURSOR_SIZE);
+		endCol = MIN(line.size(), (uint)MOUSE_CURSOR_SIZE);
 
 		for (col = 0; col < endCol; ++col, destP += bpp) {
 			pixel = TRANSPARENT;
@@ -162,39 +180,7 @@ MouseCursorSurface *Screen::loadMouseCursor(Shared::File &src) {
 	return c;
 }
 
-/*-------------------------------------------------------------------*/
-
-#define DBL_MAX 1e99
-
-void screenLoadGraphicsFromConf(void);
-Layout *screenLoadLayoutFromConf(const ConfigElement &conf);
-void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, int y);
-
-Std::vector<TileAnimSet *> tileanimSets;
-Std::vector<Common::String> gemLayoutNames;
-Std::vector<Common::String> filterNames;
-Std::vector<Common::String> lineOfSightStyles;
-Layout *gemlayout = NULL;
-Std::map<Common::String, int> dungeonTileChars;
-TileAnimSet *tileanims = NULL;
-ImageInfo *charsetInfo = NULL;
-ImageInfo *gemTilesInfo = NULL;
-
-void screenFindLineOfSight(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
-void screenFindLineOfSightDOS(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
-void screenFindLineOfSightEnhanced(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
-
-int screenNeedPrompt = 1;
-int screenCurrentCycle = 0;
-int screenCursorX = 0;
-int screenCursorY = 0;
-int screenCursorStatus = 0;
-int screenCursorEnabled = 1;
-int screenLos[VIEWPORT_W][VIEWPORT_H];
-
-static const int BufferSize = 1024;
-
-void screenInit() {
+void Screen::screenInit() {
 	filterNames.clear();
 	filterNames.push_back("point");
 	filterNames.push_back("2xBi");
@@ -253,20 +239,17 @@ void screenInit() {
 	dungeonTileChars["sleep_field"] = '^';
 }
 
-/**
- * Re-initializes the screen and implements any changes made in settings
- */
-void screenReInit() {
+void Screen::screenReInit() {
 	intro->deleteIntro();       /* delete intro stuff */
 	Tileset::unloadAllImages(); /* unload tilesets, which will be reloaded lazily as needed */
 	ImageMgr::destroy();
 	tileanims = NULL;
-	g_screen->clear();
-	g_screen->init();           // re-init screen stuff (loading new backgrounds, etc.)
+	clear();
+	init();           // re-init screen stuff (loading new backgrounds, etc.)
 	intro->init();    /* re-fix the backgrounds loaded and scale images, etc. */
 }
 
-void screenTextAt(int x, int y, const char *fmt, ...) {
+void Screen::screenTextAt(int x, int y, const char *fmt, ...) {
 	char buffer[BufferSize];
 	unsigned int i;
 
@@ -279,14 +262,14 @@ void screenTextAt(int x, int y, const char *fmt, ...) {
 		screenShowChar(buffer[i], x + i, y);
 }
 
-void screenPrompt() {
+void Screen::screenPrompt() {
 	if (screenNeedPrompt && screenCursorEnabled && g_context->col == 0) {
 		screenMessage("%c", CHARSET_PROMPT);
 		screenNeedPrompt = 0;
 	}
 }
 
-void screenMessage(const char *fmt, ...) {
+void Screen::screenMessage(const char *fmt, ...) {
 #ifdef IOS
 	static bool recursed = false;
 #endif
@@ -374,33 +357,21 @@ void screenMessage(const char *fmt, ...) {
 	screenNeedPrompt = 1;
 }
 
-const Std::vector<Common::String> &screenGetFilterNames() {
-	return filterNames;
-}
-
-const Std::vector<Common::String> &screenGetGemLayoutNames() {
-	return gemLayoutNames;
-}
-
-const Std::vector<Common::String> &screenGetLineOfSightStyles() {
-	return lineOfSightStyles;
-}
-
-void screenLoadGraphicsFromConf() {
+void Screen::screenLoadGraphicsFromConf() {
 	const Config *config = Config::getInstance();
 
 	Std::vector<ConfigElement> graphicsConf = config->getElement("graphics").getChildren();
 	for (Std::vector<ConfigElement>::iterator conf = graphicsConf.begin(); conf != graphicsConf.end(); conf++) {
 
 		if (conf->getName() == "layout")
-			g_screen->_layouts.push_back(screenLoadLayoutFromConf(*conf));
+			_layouts.push_back(screenLoadLayoutFromConf(*conf));
 		else if (conf->getName() == "tileanimset")
 			tileanimSets.push_back(new TileAnimSet(*conf));
 	}
 
 	gemLayoutNames.clear();
 	Std::vector<Layout *>::const_iterator i;
-	for (i = g_screen->_layouts.begin(); i != g_screen->_layouts.end(); i++) {
+	for (i = _layouts.begin(); i != _layouts.end(); i++) {
 		Layout *layout = *i;
 		if (layout->_type == LAYOUT_GEM) {
 			gemLayoutNames.push_back(layout->_name);
@@ -410,7 +381,7 @@ void screenLoadGraphicsFromConf() {
 	/*
 	 * Find gem layout to use.
 	 */
-	for (i = g_screen->_layouts.begin(); i != g_screen->_layouts.end(); i++) {
+	for (i = _layouts.begin(); i != _layouts.end(); i++) {
 		Layout *layout = *i;
 
 		if (layout->_type == LAYOUT_GEM && layout->_name == settings._gemLayout) {
@@ -422,7 +393,7 @@ void screenLoadGraphicsFromConf() {
 		errorFatal("no gem layout named %s found!\n", settings._gemLayout.c_str());
 }
 
-Layout *screenLoadLayoutFromConf(const ConfigElement &conf) {
+Layout *Screen::screenLoadLayoutFromConf(const ConfigElement &conf) {
 	Layout *layout;
 	static const char *typeEnumStrings[] = { "standard", "gem", "dungeon_gem", NULL };
 
@@ -447,8 +418,7 @@ Layout *screenLoadLayoutFromConf(const ConfigElement &conf) {
 }
 
 
-
-Std::vector<MapTile> screenViewportTile(unsigned int width, unsigned int height, int x, int y, bool &focus) {
+Std::vector<MapTile> Screen::screenViewportTile(unsigned int width, unsigned int height, int x, int y, bool &focus) {
 	MapCoords center = g_context->_location->_coords;
 	static MapTile grass = g_context->_location->_map->_tileset->getByName("grass")->getId();
 
@@ -477,7 +447,7 @@ Std::vector<MapTile> screenViewportTile(unsigned int width, unsigned int height,
 	return g_context->_location->tilesAt(tc, focus);
 }
 
-bool screenTileUpdate(TileView *view, const Coords &coords, bool redraw) {
+bool Screen::screenTileUpdate(TileView *view, const Coords &coords, bool redraw) {
 	if (g_context->_location->_map->_flags & FIRST_PERSON)
 		return false;
 
@@ -509,12 +479,7 @@ bool screenTileUpdate(TileView *view, const Coords &coords, bool redraw) {
 	return false;
 }
 
-/**
- * Redraw the screen.  If showmap is set, the normal map is drawn in
- * the map area.  If blackout is set, the map area is blacked out. If
- * neither is set, the map area is left untouched.
- */
-void screenUpdate(TileView *view, bool showmap, bool blackout) {
+void Screen::screenUpdate(TileView *view, bool showmap, bool blackout) {
 	ASSERT(g_context != NULL, "context has not yet been initialized");
 
 	if (blackout) {
@@ -555,10 +520,7 @@ void screenUpdate(TileView *view, bool showmap, bool blackout) {
 	screenUpdateWind();
 }
 
-/**
- * Draw an image or subimage on the screen.
- */
-void screenDrawImage(const Common::String &name, int x, int y) {
+void Screen::screenDrawImage(const Common::String &name, int x, int y) {
 	ImageInfo *info = imageMgr->get(name);
 	if (info) {
 		info->_image->alphaOn();
@@ -585,7 +547,7 @@ void screenDrawImage(const Common::String &name, int x, int y) {
 	errorFatal("ERROR 1006: Unable to load the image \"%s\".\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", name.c_str(), settings._game.c_str());
 }
 
-void screenDrawImageInMapArea(const Common::String &name) {
+void Screen::screenDrawImageInMapArea(const Common::String &name) {
 	ImageInfo *info;
 
 	info = imageMgr->get(name);
@@ -598,11 +560,7 @@ void screenDrawImageInMapArea(const Common::String &name) {
 	                          VIEWPORT_H * TILE_HEIGHT * settings._scale);
 }
 
-
-/**
- * Change the current text color
- */
-void screenTextColor(int color) {
+void Screen::screenTextColor(int color) {
 	if (charsetInfo == NULL) {
 		charsetInfo = imageMgr->get(BKGD_CHARSET);
 		if (!charsetInfo)
@@ -625,10 +583,7 @@ void screenTextColor(int color) {
 	}
 }
 
-/**
- * Draw a character from the charset onto the screen.
- */
-void screenShowChar(int chr, int x, int y) {
+void Screen::screenShowChar(int chr, int x, int y) {
 	if (charsetInfo == NULL) {
 		charsetInfo = imageMgr->get(BKGD_CHARSET);
 		if (!charsetInfo)
@@ -640,10 +595,7 @@ void screenShowChar(int chr, int x, int y) {
 	                                 charsetInfo->_image->width(), CHAR_HEIGHT * settings._scale);
 }
 
-/**
- * Scroll the text in the message area up one position.
- */
-void screenScrollMessageArea() {
+void Screen::screenScrollMessageArea() {
 	ASSERT(charsetInfo != NULL && charsetInfo->_image != NULL, "charset not initialized!");
 
 	Image *screen = imageMgr->get("screen")->_image;
@@ -663,16 +615,16 @@ void screenScrollMessageArea() {
 	                 CHAR_HEIGHT * settings._scale,
 	                 0, 0, 0);
 
-	g_screen->update();
+	update();
 }
 
-void screenCycle() {
+void Screen::screenCycle() {
 	if (++screenCurrentCycle >= SCR_CYCLE_MAX)
 		screenCurrentCycle = 0;
-	g_screen->update();
+	update();
 }
 
-void screenUpdateCursor() {
+void Screen::screenUpdateCursor() {
 	int phase = screenCurrentCycle * SCR_CYCLE_PER_SECOND / SCR_CYCLE_MAX;
 
 	ASSERT(phase >= 0 && phase < 4, "derived an invalid cursor phase: %d", phase);
@@ -683,7 +635,7 @@ void screenUpdateCursor() {
 	}
 }
 
-void screenUpdateMoons() {
+void Screen::screenUpdateMoons() {
 	int trammelChar, feluccaChar;
 
 	/* show "L?" for the dungeon level */
@@ -707,7 +659,7 @@ void screenUpdateMoons() {
 	screenRedrawTextArea(11, 0, 2, 1);
 }
 
-void screenUpdateWind() {
+void Screen::screenUpdateWind() {
 
 	/* show the direction we're facing in the dungeon */
 	if (g_context->_location->_context == CTX_DUNGEON) {
@@ -722,14 +674,14 @@ void screenUpdateWind() {
 	screenRedrawTextArea(WIND_AREA_X, WIND_AREA_Y, WIND_AREA_W, WIND_AREA_H);
 }
 
-void screenShowCursor() {
+void Screen::screenShowCursor() {
 	if (!screenCursorStatus && screenCursorEnabled) {
 		screenCursorStatus = 1;
 		screenUpdateCursor();
 	}
 }
 
-void screenHideCursor() {
+void Screen::screenHideCursor() {
 	if (screenCursorStatus) {
 		screenEraseTextArea(screenCursorX, screenCursorY, 1, 1);
 		screenRedrawTextArea(screenCursorX, screenCursorY, 1, 1);
@@ -737,25 +689,21 @@ void screenHideCursor() {
 	screenCursorStatus = 0;
 }
 
-void screenEnableCursor(void) {
+void Screen::screenEnableCursor(void) {
 	screenCursorEnabled = 1;
 }
 
-void screenDisableCursor(void) {
+void Screen::screenDisableCursor(void) {
 	screenHideCursor();
 	screenCursorEnabled = 0;
 }
 
-void screenSetCursorPos(int x, int y) {
+void Screen::screenSetCursorPos(int x, int y) {
 	screenCursorX = x;
 	screenCursorY = y;
 }
 
-/**
- * Finds which tiles in the viewport are visible from the avatars
- * location in the middle. (original DOS algorithm)
- */
-void screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
+void Screen::screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
 	int x, y;
 
 	if (!g_context)
@@ -790,12 +738,7 @@ void screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWP
 		errorFatal("unknown line of sight style %s!\n", settings._lineOfSight.c_str());
 }
 
-
-/**
- * Finds which tiles in the viewport are visible from the avatars
- * location in the middle. (original DOS algorithm)
- */
-void screenFindLineOfSightDOS(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
+void Screen::screenFindLineOfSightDOS(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
 	int x, y;
 
 	screenLos[VIEWPORT_W / 2][VIEWPORT_H / 2] = 1;
@@ -875,25 +818,7 @@ void screenFindLineOfSightDOS(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VI
 	}
 }
 
-/**
- * Finds which tiles in the viewport are visible from the avatars
- * location in the middle.
- *
- * A new, more accurate LOS function
- *
- * Based somewhat off Andy McFadden's 1994 article,
- *   "Improvements to a Fast Algorithm for Calculating Shading
- *   and Visibility in a Two-Dimensional Field"
- *   -----
- *   http://www.fadden.com/techmisc/fast-los.html
- *
- * This function uses a lookup table to get the correct shadowmap,
- * therefore, the table will need to be updated if the viewport
- * dimensions increase. Also, the function assumes that the
- * viewport width and height are odd values and that the player
- * is always at the center of the screen.
- */
-void screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
+void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
 	int x, y;
 
 	/*
@@ -1121,13 +1046,7 @@ void screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[VIEWPORT_
 	}
 }
 
-/**
- * Generates terms a and b for equation "ax + b = y" that defines the
- * line containing the two given points.  Vertical lines are special
- * cased to return DBL_MAX for a and the x coordinate as b since they
- * cannot be represented with the above formula.
- */
-static void screenGetLineTerms(int x1, int y1, int x2, int y2, double *a, double *b) {
+void Screen::screenGetLineTerms(int x1, int y1, int x2, int y2, double *a, double *b) {
 	if (x2 - x1 == 0) {
 		*a = DBL_MAX;
 		*b = x1;
@@ -1137,12 +1056,7 @@ static void screenGetLineTerms(int x1, int y1, int x2, int y2, double *a, double
 	}
 }
 
-/**
- * Determine if two points are on the same side of a line (or both on
- * the line).  The line is defined by the terms a and b of the
- * equation "ax + b = y".
- */
-static int screenPointsOnSameSideOfLine(int x1, int y1, int x2, int y2, double a, double b) {
+int Screen::screenPointsOnSameSideOfLine(int x1, int y1, int x2, int y2, double a, double b) {
 	double p1, p2;
 
 	if (a == DBL_MAX) {
@@ -1161,7 +1075,7 @@ static int screenPointsOnSameSideOfLine(int x1, int y1, int x2, int y2, double a
 	return 0;
 }
 
-static int screenPointInTriangle(int x, int y, int tx1, int ty1, int tx2, int ty2, int tx3, int ty3) {
+int Screen::screenPointInTriangle(int x, int y, int tx1, int ty1, int tx2, int ty2, int tx3, int ty3) {
 	double a[3], b[3];
 
 	screenGetLineTerms(tx1, ty1, tx2, ty2, &(a[0]), &(b[0]));
@@ -1178,10 +1092,7 @@ static int screenPointInTriangle(int x, int y, int tx1, int ty1, int tx2, int ty
 	return 1;
 }
 
-/**
- * Determine if the given point is within a mouse area.
- */
-int screenPointInMouseArea(int x, int y, const MouseArea *area) {
+int Screen::screenPointInMouseArea(int x, int y, const MouseArea *area) {
 	ASSERT(area->_nPoints == 2 || area->_nPoints == 3, "unsupported number of points in area: %d", area->_nPoints);
 
 	/* two points define a rectangle */
@@ -1205,11 +1116,11 @@ int screenPointInMouseArea(int x, int y, const MouseArea *area) {
 	return 0;
 }
 
-void screenRedrawMapArea() {
+void Screen::screenRedrawMapArea() {
 	g_game->_mapArea.update();
 }
 
-void screenEraseMapArea() {
+void Screen::screenEraseMapArea() {
 	Image *screen = imageMgr->get("screen")->_image;
 	screen->fillRect(BORDER_WIDTH * settings._scale,
 	                 BORDER_WIDTH * settings._scale,
@@ -1218,7 +1129,7 @@ void screenEraseMapArea() {
 	                 0, 0, 0);
 }
 
-void screenEraseTextArea(int x, int y, int width, int height) {
+void Screen::screenEraseTextArea(int x, int y, int width, int height) {
 	Image *screen = imageMgr->get("screen")->_image;
 	screen->fillRect(x * CHAR_WIDTH * settings._scale,
 	                 y * CHAR_HEIGHT * settings._scale,
@@ -1227,10 +1138,7 @@ void screenEraseTextArea(int x, int y, int width, int height) {
 	                 0, 0, 0);
 }
 
-/**
- * Do the tremor spell effect where the screen shakes.
- */
-void screenShake(int iterations) {
+void Screen::screenShake(int iterations) {
 	int shakeOffset;
 	unsigned short i;
 	Image *screen = imageMgr->get("screen")->_image;
@@ -1256,13 +1164,13 @@ void screenShake(int iterations) {
 			screen->drawSubRectOn(screen, 0, SCALED(shakeOffset), 0, 0, SCALED(320), SCALED(200 - (shakeOffset + 1)));
 			bottom->drawOn(screen, 0, SCALED(200 - (shakeOffset)));
 			screen->fillRect(0, 0, SCALED(320), SCALED(shakeOffset), 0, 0, 0);
-			g_screen->update();
+			update();
 			EventHandler::sleep(settings._shakeInterval);
 
 			// shift the screen back up, and replace the bottom row
 			screen->drawOn(screen, 0, 0 - SCALED(shakeOffset));
 			bottom->drawOn(screen, 0, SCALED(200 - (shakeOffset + 1)));
-			g_screen->update();
+			update();
 			EventHandler::sleep(settings._shakeInterval);
 		}
 		// free the bottom row image
@@ -1270,10 +1178,7 @@ void screenShake(int iterations) {
 	}
 }
 
-/**
- * Draw a tile graphic on the screen.
- */
-void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, int y) {
+void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, int y) {
 	// Make sure we account for tiles that look like other tiles (dungeon tiles, mainly)
 	Common::String looks_like = t.getTileType()->getLooksLike();
 	if (!looks_like.empty())
@@ -1317,10 +1222,10 @@ void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, 
 	}
 }
 
-Layout *screenGetGemLayout(const Map *map) {
+Layout *Screen::screenGetGemLayout(const Map *map) {
 	if (map->_type == Map::DUNGEON) {
 		Std::vector<Layout *>::const_iterator i;
-		for (i = g_screen->_layouts.begin(); i != g_screen->_layouts.end(); i++) {
+		for (i = _layouts.begin(); i != _layouts.end(); i++) {
 			Layout *layout = *i;
 
 			if (layout->_type == LAYOUT_DUNGEONGEM)
@@ -1333,7 +1238,7 @@ Layout *screenGetGemLayout(const Map *map) {
 }
 
 
-void screenGemUpdate() {
+void Screen::screenGemUpdate() {
 	MapTile tile;
 	int x, y;
 	Image *screen = imageMgr->get("screen")->_image;
@@ -1444,6 +1349,19 @@ void inline screenLock() {};
 void inline screenUnlock() {};
 void inline screenWait(int numberOfAnimationFrames) {};
 #endif
+
+
+const Std::vector<Common::String> &screenGetFilterNames() {
+	return filterNames;
+}
+
+const Std::vector<Common::String> &screenGetGemLayoutNames() {
+	return gemLayoutNames;
+}
+
+const Std::vector<Common::String> &screenGetLineOfSightStyles() {
+	return lineOfSightStyles;
+}
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

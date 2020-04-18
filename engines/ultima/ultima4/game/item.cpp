@@ -360,7 +360,7 @@ void useBBC(int item) {
 #ifdef IOS
 			U4IOS::testFlightPassCheckPoint("The Bell rings on and on!");
 #endif
-			screenMessage("\nThe Bell rings on and on!\n");
+			g_screen->screenMessage("\nThe Bell rings on and on!\n");
 			g_ultima->_saveGame->_items |= ITEM_BELL_USED;
 		}
 		/* then the book */
@@ -368,27 +368,27 @@ void useBBC(int item) {
 #ifdef IOS
 			U4IOS::testFlightPassCheckPoint("The words resonate with the ringing!");
 #endif
-			screenMessage("\nThe words resonate with the ringing!\n");
+			g_screen->screenMessage("\nThe words resonate with the ringing!\n");
 			g_ultima->_saveGame->_items |= ITEM_BOOK_USED;
 		}
 		/* then the candle */
 		else if ((item == ITEM_CANDLE) && (g_ultima->_saveGame->_items & ITEM_BOOK_USED)) {
-			screenMessage("\nAs you light the Candle the Earth Trembles!\n");
+			g_screen->screenMessage("\nAs you light the Candle the Earth Trembles!\n");
 #ifdef IOS
 			U4IOS::testFlightPassCheckPoint("As you light the Candle the Earth Trembles!");
 #endif
 			g_ultima->_saveGame->_items |= ITEM_CANDLE_USED;
-		} else screenMessage("\nHmm...No effect!\n");
+		} else g_screen->screenMessage("\nHmm...No effect!\n");
 	}
 	/* somewhere else */
-	else screenMessage("\nHmm...No effect!\n");
+	else g_screen->screenMessage("\nHmm...No effect!\n");
 }
 
 /**
  * Uses the silver horn
  */
 void useHorn(int item) {
-	screenMessage("\nThe Horn sounds an eerie tone!\n");
+	g_screen->screenMessage("\nThe Horn sounds an eerie tone!\n");
 	g_context->_aura->set(Aura::HORN, 10);
 }
 
@@ -397,9 +397,9 @@ void useHorn(int item) {
  */
 void useWheel(int item) {
 	if ((g_context->_transportContext == TRANSPORT_SHIP) && (g_ultima->_saveGame->_shipHull == 50)) {
-		screenMessage("\nOnce mounted, the Wheel glows with a blue light!\n");
+		g_screen->screenMessage("\nOnce mounted, the Wheel glows with a blue light!\n");
 		g_context->_party->setShipHull(99);
-	} else screenMessage("\nHmm...No effect!\n");
+	} else g_screen->screenMessage("\nHmm...No effect!\n");
 }
 
 /**
@@ -412,13 +412,13 @@ void useSkull(int item) {
 	/* We do the check here instead of in the table, because we need to distinguish between a
 	   never-found skull and a destroyed skull. */
 	if (g_ultima->_saveGame->_items & ITEM_SKULL_DESTROYED) {
-		screenMessage("\nNone owned!\n");
+		g_screen->screenMessage("\nNone owned!\n");
 		return;
 	}
 
 	/* destroy the skull! pat yourself on the back */
 	if (g_context->_location->_coords.x == 0xe9 && g_context->_location->_coords.y == 0xe9) {
-		screenMessage("\n\nYou cast the Skull of Mondain into the Abyss!\n");
+		g_screen->screenMessage("\n\nYou cast the Skull of Mondain into the Abyss!\n");
 #ifdef IOS
 		U4IOS::testFlightPassCheckPoint("You cast the Skull of Mondain into the Abyss!");
 #endif
@@ -429,7 +429,7 @@ void useSkull(int item) {
 
 	/* use the skull... bad, very bad */
 	else {
-		screenMessage("\n\nYou hold the evil Skull of Mondain the Wizard aloft...\n");
+		g_screen->screenMessage("\n\nYou hold the evil Skull of Mondain the Wizard aloft...\n");
 #ifdef IOS
 		U4IOS::testFlightPassCheckPoint("You hold the evil Skull of Mondain the Wizard aloft...");
 #endif
@@ -489,7 +489,7 @@ void useStone(int item) {
 						stoneMask |= stone;
 					/* we already used that stone! */
 					else if (stone & stoneMask) {
-						screenMessage("\nAlready used!\n");
+						g_screen->screenMessage("\nAlready used!\n");
 						needStoneNames = 0;
 						stoneMask = 0; /* reset the mask so you can try again */
 						return;
@@ -498,7 +498,7 @@ void useStone(int item) {
 
 				/* see if we have all the stones, if not, get more names! */
 				if (attr && needStoneNames) {
-					screenMessage("\n%c:", 'E' - needStoneNames);
+					g_screen->screenMessage("\n%c:", 'E' - needStoneNames);
 #ifdef IOS
 					U4IOS::IOSConversationHelper::setIntroString("Which Color?");
 #endif
@@ -538,9 +538,9 @@ void useStone(int item) {
 						}
 						U4IOS::testFlightPassCheckPoint("Receive a key: " + keyName);
 #endif
-						screenMessage("\nThou doth find one third of the Three Part Key!\n");
+						g_screen->screenMessage("\nThou doth find one third of the Three Part Key!\n");
 						g_ultima->_saveGame->_items |= key;
-					} else screenMessage("\nHmm...No effect!\n");
+					} else g_screen->screenMessage("\nHmm...No effect!\n");
 
 					stoneMask = 0; /* reset the mask so you can try again */
 				}
@@ -553,7 +553,7 @@ void useStone(int item) {
 					if (g_context->_location->_coords.z < 7) {
 						/* replace the altar with a down-ladder */
 						MapCoords pos;
-						screenMessage("\n\nThe altar changes before thyne eyes!\n");
+						g_screen->screenMessage("\n\nThe altar changes before thyne eyes!\n");
 						g_context->_location->getCurrentPosition(&pos);
 						g_context->_location->_map->_annotations->add(pos, g_context->_location->_map->_tileset->getByName("down_ladder")->getId());
 					}
@@ -561,10 +561,10 @@ void useStone(int item) {
 					else {
 						codexStart();
 					}
-				} else screenMessage("\nHmm...No effect!\n");
+				} else g_screen->screenMessage("\nHmm...No effect!\n");
 			}
 		} else {
-			screenMessage("\nNot a Usable Item!\n");
+			g_screen->screenMessage("\nNot a Usable Item!\n");
 			stoneMask = 0; /* reset the mask so you can try again */
 		}
 	}
@@ -578,8 +578,8 @@ void useStone(int item) {
 
 		int virtueMask = getBaseVirtues((Virtue)g_context->_location->_coords.z);
 		if (virtueMask > 0)
-			screenMessage("\n\nAs thou doth approach, a voice rings out: What virtue dost stem from %s?\n\n", getBaseVirtueName(virtueMask));
-		else screenMessage("\n\nA voice rings out:  What virtue exists independently of Truth, Love, and Courage?\n\n");
+			g_screen->screenMessage("\n\nAs thou doth approach, a voice rings out: What virtue dost stem from %s?\n\n", getBaseVirtueName(virtueMask));
+		else g_screen->screenMessage("\n\nA voice rings out:  What virtue exists independently of Truth, Love, and Courage?\n\n");
 #ifdef IOS
 		U4IOS::IOSConversationHelper::setIntroString("Which virtue?");
 #endif
@@ -587,14 +587,14 @@ void useStone(int item) {
 
 		if (scumm_strnicmp(virtue.c_str(), getVirtueName((Virtue)g_context->_location->_coords.z), 6) == 0) {
 			/* now ask for stone */
-			screenMessage("\n\nThe Voice says: Use thy Stone.\n\nColor:\n");
+			g_screen->screenMessage("\n\nThe Voice says: Use thy Stone.\n\nColor:\n");
 			needStoneNames = 1;
 #ifdef IOS
 			U4IOS::IOSConversationHelper::setIntroString("Which color?");
 #endif
 			itemHandleStones(gameGetInput());
 		} else {
-			screenMessage("\nHmm...No effect!\n");
+			g_screen->screenMessage("\nHmm...No effect!\n");
 		}
 	}
 
@@ -604,18 +604,18 @@ void useStone(int item) {
 	else if ((g_context->_location->_context & CTX_ALTAR_ROOM) &&
 	         coords.x == 5 && coords.y == 5) {
 		needStoneNames = 4;
-		screenMessage("\n\nThere are holes for 4 stones.\nWhat colors:\nA:");
+		g_screen->screenMessage("\n\nThere are holes for 4 stones.\nWhat colors:\nA:");
 #ifdef IOS
 		U4IOS::IOSConversationHelper::setIntroString("Which color?");
 #endif
 		itemHandleStones(gameGetInput());
-	} else screenMessage("\nNo place to Use them!\n");
+	} else g_screen->screenMessage("\nNo place to Use them!\n");
 	// This used to say "\nNo place to Use them!\nHmm...No effect!\n"
 	// That doesn't match U4DOS; does it match another?
 }
 
 void useKey(int item) {
-	screenMessage("\nNo place to Use them!\n");
+	g_screen->screenMessage("\nNo place to Use them!\n");
 }
 
 bool isMysticInInventory(int mystic) {
@@ -667,7 +667,7 @@ void putWeaponInInventory(int weapon) {
 }
 
 void useTelescope(int notused) {
-	screenMessage("You see a knob\non the telescope\nmarked A-P\nYou Select:");
+	g_screen->screenMessage("You see a knob\non the telescope\nmarked A-P\nYou Select:");
 #ifdef IOS
 	U4IOS::IOSConversationChoiceHelper telescopeHelper;
 	telescopeHelper.updateChoices("abcdefghijklmnop ");
@@ -691,7 +691,7 @@ void putReagentInInventory(int reag) {
 
 	if (g_ultima->_saveGame->_reagents[reag] > 99) {
 		g_ultima->_saveGame->_reagents[reag] = 99;
-		screenMessage("Dropped some!\n");
+		g_screen->screenMessage("Dropped some!\n");
 	}
 }
 
@@ -746,11 +746,11 @@ void itemUse(const Common::String &shortname) {
 
 				/* use the item, if we can! */
 				if (!item || !item->_useItem)
-					screenMessage("\nNot a Usable item!\n");
+					g_screen->screenMessage("\nNot a Usable item!\n");
 				else
 					(*item->_useItem)(ITEMS[i]._data);
 			} else
-				screenMessage("\nNone owned!\n");
+				g_screen->screenMessage("\nNone owned!\n");
 
 			/* we found the item, no need to keep searching */
 			break;
@@ -759,7 +759,7 @@ void itemUse(const Common::String &shortname) {
 
 	/* item was not found */
 	if (!item)
-		screenMessage("\nNot a Usable item!\n");
+		g_screen->screenMessage("\nNot a Usable item!\n");
 }
 
 /**
@@ -771,7 +771,7 @@ bool isAbyssOpened(const Portal *p) {
 	int isopened = (items & ITEM_BELL_USED) && (items & ITEM_BOOK_USED) && (items & ITEM_CANDLE_USED);
 
 	if (!isopened)
-		screenMessage("Enter Can't!\n");
+		g_screen->screenMessage("Enter Can't!\n");
 	return isopened;
 }
 
@@ -790,7 +790,7 @@ void itemHandleStones(const Common::String &color) {
 	}
 
 	if (!found) {
-		screenMessage("\nNone owned!\n");
+		g_screen->screenMessage("\nNone owned!\n");
 		stoneMask = 0; /* make sure stone mask is reset */
 	}
 }

@@ -91,14 +91,14 @@ bool DebuggerActions::destroyAt(const Coords &coords) {
 	if (obj) {
 		if (isCreature(obj)) {
 			Creature *c = dynamic_cast<Creature *>(obj);
-			screenMessage("%s Destroyed!\n", c->getName().c_str());
+			g_screen->screenMessage("%s Destroyed!\n", c->getName().c_str());
 		} else {
 			Tile *t = g_context->_location->_map->_tileset->get(obj->getTile()._id);
-			screenMessage("%s Destroyed!\n", t->getName().c_str());
+			g_screen->screenMessage("%s Destroyed!\n", t->getName().c_str());
 		}
 
 		g_context->_location->_map->removeObject(obj);
-		screenPrompt();
+		g_screen->screenPrompt();
 
 		return true;
 	}
@@ -175,13 +175,13 @@ bool DebuggerActions::getChestTrapHandler(int player) {
 
 		/* apply the effects from the trap */
 		if (trapType == EFFECT_FIRE)
-			screenMessage("%cAcid%c Trap!\n", FG_RED, FG_WHITE);
+			g_screen->screenMessage("%cAcid%c Trap!\n", FG_RED, FG_WHITE);
 		else if (trapType == EFFECT_POISON)
-			screenMessage("%cPoison%c Trap!\n", FG_GREEN, FG_WHITE);
+			g_screen->screenMessage("%cPoison%c Trap!\n", FG_GREEN, FG_WHITE);
 		else if (trapType == EFFECT_SLEEP)
-			screenMessage("%cSleep%c Trap!\n", FG_PURPLE, FG_WHITE);
+			g_screen->screenMessage("%cSleep%c Trap!\n", FG_PURPLE, FG_WHITE);
 		else if (trapType == EFFECT_LAVA)
-			screenMessage("%cBomb%c Trap!\n", FG_RED, FG_WHITE);
+			g_screen->screenMessage("%cBomb%c Trap!\n", FG_RED, FG_WHITE);
 
 		// player is < 0 during the 'O'pen spell (immune to traps)
 		//
@@ -193,7 +193,7 @@ bool DebuggerActions::getChestTrapHandler(int player) {
 			if (trapType == EFFECT_LAVA) /* bomb trap */
 				g_context->_party->applyEffect(trapType);
 			else g_context->_party->member(player)->applyEffect(trapType);
-		} else screenMessage("Evaded!\n");
+		} else g_screen->screenMessage("Evaded!\n");
 
 		return true;
 	}
@@ -212,9 +212,9 @@ bool DebuggerActions::jimmyAt(const Coords &coords) {
 		ASSERT(door, "no door tile found in tileset");
 		g_ultima->_saveGame->_keys--;
 		g_context->_location->_map->_annotations->add(coords, door->getId());
-		screenMessage("\nUnlocked!\n");
+		g_screen->screenMessage("\nUnlocked!\n");
 	} else
-		screenMessage("%cNo keys left!%c\n", FG_GREY, FG_WHITE);
+		g_screen->screenMessage("%cNo keys left!%c\n", FG_GREY, FG_WHITE);
 
 	return true;
 }
@@ -222,7 +222,7 @@ bool DebuggerActions::jimmyAt(const Coords &coords) {
 bool DebuggerActions::mixReagentsForSpellU4(int spell) {
 	Ingredients ingredients;
 
-	screenMessage("Reagent: ");
+	g_screen->screenMessage("Reagent: ");
 
 	while (1) {
 		int choice = ReadChoiceController::get("abcdefgh\n\r \033");
@@ -230,12 +230,12 @@ bool DebuggerActions::mixReagentsForSpellU4(int spell) {
 		// done selecting reagents? mix it up and prompt to mix
 		// another spell
 		if (choice == '\n' || choice == '\r' || choice == ' ') {
-			screenMessage("\n\nYou mix the Reagents, and...\n");
+			g_screen->screenMessage("\n\nYou mix the Reagents, and...\n");
 
 			if (spellMix(spell, &ingredients))
-				screenMessage("Success!\n\n");
+				g_screen->screenMessage("Success!\n\n");
 			else
-				screenMessage("It Fizzles!\n\n");
+				g_screen->screenMessage("It Fizzles!\n\n");
 
 			return false;
 		}
@@ -246,10 +246,10 @@ bool DebuggerActions::mixReagentsForSpellU4(int spell) {
 			return true;
 		}
 
-		screenMessage("%c\n", toupper(choice));
+		g_screen->screenMessage("%c\n", toupper(choice));
 		if (!ingredients.addReagent((Reagent)(choice - 'a')))
-			screenMessage("%cNone Left!%c\n", FG_GREY, FG_WHITE);
-		screenMessage("Reagent: ");
+			g_screen->screenMessage("%cNone Left!%c\n", FG_GREY, FG_WHITE);
+		g_screen->screenMessage("Reagent: ");
 	}
 
 	return true;
@@ -258,7 +258,7 @@ bool DebuggerActions::mixReagentsForSpellU4(int spell) {
 bool DebuggerActions::mixReagentsForSpellU5(int spell) {
 	Ingredients ingredients;
 
-	screenDisableCursor();
+	g_screen->screenDisableCursor();
 
 	g_context->_stats->getReagentsMenu()->reset(); // reset the menu, highlighting the first item
 	ReagentsMenuController getReagentsController(g_context->_stats->getReagentsMenu(), &ingredients, g_context->_stats->getMainArea());
@@ -266,7 +266,7 @@ bool DebuggerActions::mixReagentsForSpellU5(int spell) {
 	getReagentsController.waitFor();
 
 	g_context->_stats->getMainArea()->disableCursor();
-	screenEnableCursor();
+	g_screen->screenEnableCursor();
 
 	printN("How many? ");
 
@@ -323,7 +323,7 @@ bool DebuggerActions::openAt(const Coords &coords) {
 		return false;
 
 	if (tile->isLockedDoor()) {
-		screenMessage("%cCan't!%c\n", FG_GREY, FG_WHITE);
+		g_screen->screenMessage("%cCan't!%c\n", FG_GREY, FG_WHITE);
 		return true;
 	}
 
@@ -331,7 +331,7 @@ bool DebuggerActions::openAt(const Coords &coords) {
 	ASSERT(floor, "no floor tile found in tileset");
 	g_context->_location->_map->_annotations->add(coords, floor->getId(), false, true)->setTTL(4);
 
-	screenMessage("\nOpened!\n");
+	g_screen->screenMessage("\nOpened!\n");
 
 	return true;
 }
@@ -343,7 +343,7 @@ void DebuggerActions::gameCastSpell(unsigned int spell, int caster, int param) {
 	if (!spellCast(spell, caster, param, &spellError, true)) {
 		msg = spellGetErrorMessage(spell, spellError);
 		if (!msg.empty())
-			screenMessage("%s", msg.c_str());
+			g_screen->screenMessage("%s", msg.c_str());
 	}
 }
 
@@ -353,7 +353,7 @@ bool DebuggerActions::talkAt(const Coords &coords) {
 
 	/* can't have any conversations outside of town */
 	if (!isCity(g_context->_location->_map)) {
-		screenMessage("Funny, no response!\n");
+		g_screen->screenMessage("Funny, no response!\n");
 		return true;
 	}
 
@@ -373,7 +373,7 @@ bool DebuggerActions::talkAt(const Coords &coords) {
 	/* if we're talking to Lord British and the avatar is dead, LB resurrects them! */
 	if (talker->getNpcType() == NPC_LORD_BRITISH &&
 		g_context->_party->member(0)->getStatus() == STAT_DEAD) {
-		screenMessage("%s, Thou shalt live again!\n", g_context->_party->member(0)->getName().c_str());
+		g_screen->screenMessage("%s, Thou shalt live again!\n", g_context->_party->member(0)->getName().c_str());
 
 		g_context->_party->member(0)->setStatus(STAT_GOOD);
 		g_context->_party->member(0)->heal(HT_FULLHEAL);
@@ -397,7 +397,7 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 		// TODO: instead of calculating linesused again, cache the
 		// result in person.cpp somewhere.
 		int linesused = linecount(conv._reply.front(), TEXT_AREA_W);
-		screenMessage("%s", conv._reply.front().c_str());
+		g_screen->screenMessage("%s", conv._reply.front().c_str());
 		conv._reply.pop_front();
 
 		/* if all chunks haven't been shown, wait for a key and process next chunk*/
@@ -452,7 +452,7 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 					ReadChoiceController::get("");
 				}
 
-				screenMessage("%s", prompt.c_str());
+				g_screen->screenMessage("%s", prompt.c_str());
 			}
 		}
 
@@ -462,7 +462,7 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 		{
 			conv._playerInput = gameGetInput(maxlen);
 #ifdef IOS
-			screenMessage("%s", conv.playerInput.c_str()); // Since we put this in a different window, we need to show it again.
+			g_screen->screenMessage("%s", conv.playerInput.c_str()); // Since we put this in a different window, we need to show it again.
 #endif
 			conv._reply = talker->getConversationText(&conv, conv._playerInput.c_str());
 			conv._playerInput.clear();
@@ -495,7 +495,7 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 		}
 	}
 	if (conv._reply.size() > 0)
-		screenMessage("%s", conv._reply.front().c_str());
+		g_screen->screenMessage("%s", conv._reply.front().c_str());
 }
 
 void DebuggerActions::gameLordBritishCheckLevels() {
@@ -508,14 +508,14 @@ void DebuggerActions::gameLordBritishCheckLevels() {
 
 			// add an extra space to separate messages
 			if (!advanced) {
-				screenMessage("\n");
+				g_screen->screenMessage("\n");
 				advanced = true;
 			}
 
 		player->advanceLevel();
 	}
 
-	screenMessage("\nWhat would thou\nask of me?\n");
+	g_screen->screenMessage("\nWhat would thou\nask of me?\n");
 }
 
 } // End of namespace Ultima4

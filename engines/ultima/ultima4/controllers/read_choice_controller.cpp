@@ -41,7 +41,7 @@ bool ReadChoiceController::keyPressed(int key) {
 	if (_choices.empty() || _choices.findFirstOf(_value) < _choices.size()) {
 		// If the value is printable, display it
 		if (!Common::isSpace(key))
-			screenMessage("%c", toupper(key));
+			g_screen->screenMessage("%c", toupper(key));
 		doneWaiting();
 		return true;
 	}

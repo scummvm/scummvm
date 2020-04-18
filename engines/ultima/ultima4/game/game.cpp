@@ -104,19 +104,19 @@ void gameSetViewMode(ViewMode newMode) {
 void gameUpdateScreen() {
 	switch (g_context->_location->_viewMode) {
 	case VIEW_NORMAL:
-		screenUpdate(&g_game->_mapArea, true, false);
+		g_screen->screenUpdate(&g_game->_mapArea, true, false);
 		break;
 	case VIEW_GEM:
-		screenGemUpdate();
+		g_screen->screenGemUpdate();
 		break;
 	case VIEW_RUNE:
-		screenUpdate(&g_game->_mapArea, false, false);
+		g_screen->screenUpdate(&g_game->_mapArea, false, false);
 		break;
 	case VIEW_DUNGEON:
-		screenUpdate(&g_game->_mapArea, true, false);
+		g_screen->screenUpdate(&g_game->_mapArea, true, false);
 		break;
 	case VIEW_DEAD:
-		screenUpdate(&g_game->_mapArea, true, true);
+		g_screen->screenUpdate(&g_game->_mapArea, true, true);
 		break;
 	case VIEW_CODEX: /* the screen updates will be handled elsewhere */
 		break;
@@ -165,7 +165,7 @@ void gameSpellEffect(int spell, int player, Sound sound) {
 		if (effect == Spell::SFX_TREMOR) {
 			gameUpdateScreen();
 			soundPlay(SOUND_RUMBLE, false);
-			screenShake(8);
+			g_screen->screenShake(8);
 
 		}
 
@@ -174,8 +174,8 @@ void gameSpellEffect(int spell, int player, Sound sound) {
 }
 
 Common::String gameGetInput(int maxlen) {
-	screenEnableCursor();
-	screenShowCursor();
+	g_screen->screenEnableCursor();
+	g_screen->screenShowCursor();
 #ifdef IOS
 	U4IOS::IOSConversationHelper helper;
 	helper.beginConversation(U4IOS::UIKeyboardTypeDefault);
@@ -198,18 +198,18 @@ int gameGetPlayer(bool canBeDisabled, bool canBeActivePlayer) {
 		}
 
 		if (player == -1) {
-			screenMessage("None\n");
+			g_screen->screenMessage("None\n");
 			return -1;
 		}
 	}
 
 	g_context->col--;// display the selected character name, in place of the number
 	if ((player >= 0) && (player < 8)) {
-		screenMessage("%s\n", g_ultima->_saveGame->_players[player].name); //Write player's name after prompt
+		g_screen->screenMessage("%s\n", g_ultima->_saveGame->_players[player].name); //Write player's name after prompt
 	}
 
 	if (!canBeDisabled && g_context->_party->member(player)->isDisabled()) {
-		screenMessage("%cDisabled!%c\n", FG_GREY, FG_WHITE);
+		g_screen->screenMessage("%cDisabled!%c\n", FG_GREY, FG_WHITE);
 		return -1;
 	}
 
@@ -220,7 +220,7 @@ int gameGetPlayer(bool canBeDisabled, bool canBeActivePlayer) {
 Direction gameGetDirection() {
 	ReadDirController dirController;
 
-	screenMessage("Dir?");
+	g_screen->screenMessage("Dir?");
 #ifdef IOS
 	U4IOS::IOSDirectionHelper directionPopup;
 #endif
@@ -228,13 +228,13 @@ Direction gameGetDirection() {
 	eventHandler->pushController(&dirController);
 	Direction dir = dirController.waitFor();
 
-	screenMessage("\b\b\b\b");
+	g_screen->screenMessage("\b\b\b\b");
 
 	if (dir == DIR_NONE) {
-		screenMessage("    \n");
+		g_screen->screenMessage("    \n");
 		return dir;
 	} else {
-		screenMessage("%s\n", getDirectionName(dir));
+		g_screen->screenMessage("%s\n", getDirectionName(dir));
 		return dir;
 	}
 }
@@ -311,7 +311,7 @@ bool gamePeerCity(int city, void *data) {
 		g_game->_paused = true;
 		g_game->_pausedTimer = 0;
 
-		screenDisableCursor();
+		g_screen->screenDisableCursor();
 #ifdef IOS
 		U4IOS::IOSConversationChoiceHelper continueHelper;
 		continueHelper.updateChoices(" ");
@@ -320,7 +320,7 @@ bool gamePeerCity(int city, void *data) {
 		ReadChoiceController::get("\015 \033");
 
 		g_game->exitToParentMap();
-		screenEnableCursor();
+		g_screen->screenEnableCursor();
 		g_game->_paused = false;
 
 		return true;
@@ -335,17 +335,17 @@ void peer(bool useGem) {
 
 	if (useGem) {
 		if (g_ultima->_saveGame->_gems <= 0) {
-			screenMessage("%cPeer at What?%c\n", FG_GREY, FG_WHITE);
+			g_screen->screenMessage("%cPeer at What?%c\n", FG_GREY, FG_WHITE);
 			return;
 		}
 
 		g_ultima->_saveGame->_gems--;
-		screenMessage("Peer at a Gem!\n");
+		g_screen->screenMessage("Peer at a Gem!\n");
 	}
 
 	g_game->_paused = true;
 	g_game->_pausedTimer = 0;
-	screenDisableCursor();
+	g_screen->screenDisableCursor();
 
 	g_context->_location->_viewMode = VIEW_GEM;
 #ifdef IOS
@@ -355,7 +355,7 @@ void peer(bool useGem) {
 #endif
 	ReadChoiceController::get("\015 \033");
 
-	screenEnableCursor();
+	g_screen->screenEnableCursor();
 	g_context->_location->_viewMode = VIEW_NORMAL;
 	g_game->_paused = false;
 }
@@ -370,7 +370,7 @@ void gameCheckHullIntegrity() {
 	bool killAll = false;
 	/* see if the ship has sunk */
 	if ((g_context->_transportContext == TRANSPORT_SHIP) && g_ultima->_saveGame->_shipHull <= 0) {
-		screenMessage("\nThy ship sinks!\n\n");
+		g_screen->screenMessage("\nThy ship sinks!\n\n");
 		killAll = true;
 	}
 
@@ -379,7 +379,7 @@ void gameCheckHullIntegrity() {
 	        g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITHOUT_OBJECTS)->isSailable() &&
 	        !g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_GROUND_OBJECTS)->isShip() &&
 	        !g_context->_location->_map->getValidMoves(g_context->_location->_coords, g_context->_party->getTransport())) {
-		screenMessage("\nTrapped at sea without thy ship, thou dost drown!\n\n");
+		g_screen->screenMessage("\nTrapped at sea without thy ship, thou dost drown!\n\n");
 		killAll = true;
 	}
 
@@ -442,7 +442,7 @@ void gameCreatureAttack(Creature *m) {
 	Object *under;
 	const Tile *ground;
 
-	screenMessage("\nAttacked by %s\n", m->getName().c_str());
+	g_screen->screenMessage("\nAttacked by %s\n", m->getName().c_str());
 
 	/// TODO: CHEST: Make a user option to not make chests change battlefield
 	/// map (2 of 2)
@@ -583,7 +583,7 @@ void gameDamageParty(int minDamage, int maxDamage) {
 		}
 	}
 
-	screenShake(1);
+	g_screen->screenShake(1);
 
 	// Un-highlight the last player
 	if (lastdmged != -1) g_context->_stats->highlightPlayer(lastdmged);
@@ -602,7 +602,7 @@ void gameDamageShip(int minDamage, int maxDamage) {
 		         xu4_random((maxDamage + 1) - minDamage) + minDamage :
 		         maxDamage;
 
-		screenShake(1);
+		g_screen->screenShake(1);
 
 		g_context->_party->damageShip(damage);
 		gameCheckHullIntegrity();
@@ -615,11 +615,11 @@ void gameDamageShip(int minDamage, int maxDamage) {
 void gameSetActivePlayer(int player) {
 	if (player == -1) {
 		g_context->_party->setActivePlayer(-1);
-		screenMessage("Set Active Player: None!\n");
+		g_screen->screenMessage("Set Active Player: None!\n");
 	} else if (player < g_context->_party->size()) {
-		screenMessage("Set Active Player: %s!\n", g_context->_party->member(player)->getName().c_str());
+		g_screen->screenMessage("Set Active Player: %s!\n", g_context->_party->member(player)->getName().c_str());
 		if (g_context->_party->member(player)->isDisabled())
-			screenMessage("Disabled!\n");
+			g_screen->screenMessage("Disabled!\n");
 		else
 			g_context->_party->setActivePlayer(player);
 	}
@@ -759,32 +759,32 @@ const int colors[] = {
 };
 
 void showMixturesSuper(int page = 0) {
-	screenTextColor(FG_WHITE);
+	g_screen->screenTextColor(FG_WHITE);
 	for (int i = 0; i < 13; i++) {
 		char buf[4];
 
 		const Spell *s = getSpell(i + 13 * page);
 		int line = i + 8;
-		screenTextAt(2, line, "%s", s->_name);
+		g_screen->screenTextAt(2, line, "%s", s->_name);
 
 		snprintf(buf, 4, "%3d", g_ultima->_saveGame->_mixtures[i + 13 * page]);
-		screenTextAt(6, line, "%s", buf);
+		g_screen->screenTextAt(6, line, "%s", buf);
 
-		screenShowChar(32, 9, line);
+		g_screen->screenShowChar(32, 9, line);
 		int comp = s->_components;
 		for (int j = 0; j < 8; j++) {
-			screenTextColor(colors[j]);
-			screenShowChar(comp & (1 << j) ? CHARSET_BULLET : ' ', 10 + j, line);
+			g_screen->screenTextColor(colors[j]);
+			g_screen->screenShowChar(comp & (1 << j) ? CHARSET_BULLET : ' ', 10 + j, line);
 		}
-		screenTextColor(FG_WHITE);
+		g_screen->screenTextColor(FG_WHITE);
 
 		snprintf(buf, 3, "%2d", s->_mp);
-		screenTextAt(19, line, "%s", buf);
+		g_screen->screenTextAt(19, line, "%s", buf);
 	}
 }
 
 void mixReagentsSuper() {
-	screenMessage("Mix reagents\n");
+	g_screen->screenMessage("Mix reagents\n");
 
 	static int page = 0;
 
@@ -802,43 +802,43 @@ void mixReagentsSuper() {
 
 	int oldlocation = g_context->_location->_viewMode;
 	g_context->_location->_viewMode = VIEW_MIXTURES;
-	screenUpdate(&g_game->_mapArea, true, true);
+	g_screen->screenUpdate(&g_game->_mapArea, true, true);
 
-	screenTextAt(16, 2, "%s", "<-Shops");
+	g_screen->screenTextAt(16, 2, "%s", "<-Shops");
 
 	g_context->_stats->setView(StatsView(STATS_REAGENTS));
-	screenTextColor(FG_PURPLE);
-	screenTextAt(2, 7, "%s", "SPELL # Reagents MP");
+	g_screen->screenTextColor(FG_PURPLE);
+	g_screen->screenTextAt(2, 7, "%s", "SPELL # Reagents MP");
 
 	for (int i = 0; i < shopcount; i++) {
 		int line = i + 1;
 		ReagentShop *s = &shops[i];
-		screenTextColor(FG_WHITE);
-		screenTextAt(2, line, "%s", s->name);
+		g_screen->screenTextColor(FG_WHITE);
+		g_screen->screenTextAt(2, line, "%s", s->name);
 		for (int j = 0; j < 6; j++) {
-			screenTextColor(colors[j]);
-			screenShowChar('0' + s->price[j], 10 + j, line);
+			g_screen->screenTextColor(colors[j]);
+			g_screen->screenShowChar('0' + s->price[j], 10 + j, line);
 		}
 	}
 
 	for (int i = 0; i < 8; i++) {
-		screenTextColor(colors[i]);
-		screenShowChar('A' + i, 10 + i, 6);
+		g_screen->screenTextColor(colors[i]);
+		g_screen->screenShowChar('A' + i, 10 + i, 6);
 	}
 
 	bool done = false;
 	while (!done) {
 		showMixturesSuper(page);
-		screenMessage("For Spell: ");
+		g_screen->screenMessage("For Spell: ");
 
 		int spell = ReadChoiceController::get("abcdefghijklmnopqrstuvwxyz \033\n\r");
 		if (spell < 'a' || spell > 'z') {
-			screenMessage("\nDone.\n");
+			g_screen->screenMessage("\nDone.\n");
 			done = true;
 		} else {
 			spell -= 'a';
 			const Spell *s = getSpell(spell);
-			screenMessage("%s\n", s->_name);
+			g_screen->screenMessage("%s\n", s->_name);
 			page = (spell >= 13);
 			showMixturesSuper(page);
 
@@ -853,17 +853,17 @@ void mixReagentsSuper() {
 						ingQty = reagentQty;
 				}
 			}
-			screenMessage("You can make %d.\n", (mixQty > ingQty) ? ingQty : mixQty);
-			screenMessage("How many? ");
+			g_screen->screenMessage("You can make %d.\n", (mixQty > ingQty) ? ingQty : mixQty);
+			g_screen->screenMessage("How many? ");
 
 			int howmany = ReadIntController::get(2, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
 
 			if (howmany == 0) {
-				screenMessage("\nNone mixed!\n");
+				g_screen->screenMessage("\nNone mixed!\n");
 			} else if (howmany > mixQty) {
-				screenMessage("\n%cYou cannot mix that much more of that spell!%c\n", FG_GREY, FG_WHITE);
+				g_screen->screenMessage("\n%cYou cannot mix that much more of that spell!%c\n", FG_GREY, FG_WHITE);
 			} else if (howmany > ingQty) {
-				screenMessage("\n%cYou don't have enough reagents to mix %d spells!%c\n", FG_GREY, howmany, FG_WHITE);
+				g_screen->screenMessage("\n%cYou don't have enough reagents to mix %d spells!%c\n", FG_GREY, howmany, FG_WHITE);
 			} else {
 				g_ultima->_saveGame->_mixtures[spell] += howmany;
 				for (int i = 0; i < 8; i++) {
@@ -871,7 +871,7 @@ void mixReagentsSuper() {
 						g_ultima->_saveGame->_reagents[i] -= howmany;
 					}
 				}
-				screenMessage("\nSuccess!\n\n");
+				g_screen->screenMessage("\nSuccess!\n\n");
 			}
 		}
 		g_context->_stats->setView(StatsView(STATS_REAGENTS));

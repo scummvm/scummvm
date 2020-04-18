@@ -81,7 +81,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 		return 0;
 	/* must klimb or descend on foot! */
 	else if (g_context->_transportContext & ~TRANSPORT_FOOT && (action == ACTION_KLIMB || action == ACTION_DESCEND)) {
-		screenMessage("%sOnly on foot!\n", action == ACTION_KLIMB ? "Klimb\n" : "");
+		g_screen->screenMessage("%sOnly on foot!\n", action == ACTION_KLIMB ? "Klimb\n" : "");
 		return 1;
 	}
 
@@ -102,17 +102,17 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 			switch (destination->_type) {
 			case Map::CITY: {
 				City *city = dynamic_cast<City *>(destination);
-				screenMessage("Enter %s!\n\n%s\n\n", city->_type.c_str(), city->getName().c_str());
+				g_screen->screenMessage("Enter %s!\n\n%s\n\n", city->_type.c_str(), city->getName().c_str());
 			}
 			break;
 			case Map::SHRINE:
-				screenMessage("Enter the %s!\n\n", destination->getName().c_str());
+				g_screen->screenMessage("Enter the %s!\n\n", destination->getName().c_str());
 				break;
 			case Map::DUNGEON:
 #ifdef IOS
 				U4IOS::testFlightPassCheckPoint("Enter " + destination->getName());
 #endif
-				screenMessage("Enter dungeon!\n\n%s\n\n", destination->getName().c_str());
+				g_screen->screenMessage("Enter dungeon!\n\n%s\n\n", destination->getName().c_str());
 				break;
 			default:
 				break;
@@ -126,12 +126,12 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 
 	/* check the transportation requisites of the portal */
 	if (g_context->_transportContext & ~portal->_portalTransportRequisites) {
-		screenMessage("Only on foot!\n");
+		g_screen->screenMessage("Only on foot!\n");
 		return 1;
 	}
 	/* ok, we know the portal is going to work -- now display the custom message, if any */
 	else if (!portal->_message.empty() || strlen(msg))
-		screenMessage("%s", portal->_message.empty() ? msg : portal->_message.c_str());
+		g_screen->screenMessage("%s", portal->_message.empty() ? msg : portal->_message.c_str());
 
 	/* portal just exits to parent map */
 	if (portal->_exitPortal) {

@@ -37,8 +37,6 @@ using Std::map;
 using Common::String;
 using Std::vector;
 
-Image *screenScale(Image *src, int scale, int n, int filter);
-
 bool ImageInfo::hasBlackBackground() {
 	return this->_filetype == "image/x-u4raw";
 }
@@ -649,7 +647,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 	}
 	imageScale /= info->_prescale;
 
-	info->_image = screenScale(unscaled, imageScale, info->_tiles, 1);
+	info->_image = g_screen->screenScale(unscaled, imageScale, info->_tiles, 1);
 
 	delete unscaled;
 	return info;

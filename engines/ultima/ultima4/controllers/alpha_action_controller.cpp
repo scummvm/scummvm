@@ -35,11 +35,11 @@ bool AlphaActionController::keyPressed(int key) {
 		_value = key - 'A';
 		doneWaiting();
 	} else if (key == U4_SPACE || key == U4_ESC || key == U4_ENTER) {
-		screenMessage("\n");
+		g_screen->screenMessage("\n");
 		_value = -1;
 		doneWaiting();
 	} else {
-		screenMessage("\n%s", _prompt.c_str());
+		g_screen->screenMessage("\n%s", _prompt.c_str());
 		g_screen->update();
 		return KeyHandler::defaultHandler(key, NULL);
 	}

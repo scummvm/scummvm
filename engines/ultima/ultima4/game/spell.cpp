@@ -766,7 +766,7 @@ static int spellWinds(int fromdir) {
 
 static int spellXit(int unused) {
 	if (!g_context->_location->_map->isWorldMap()) {
-		screenMessage("Leaving...\n");
+		g_screen->screenMessage("Leaving...\n");
 		g_game->exitToParentMap();
 		g_music->play();
 		return 1;
@@ -792,7 +792,7 @@ static int spellYup(int unused) {
 		}
 		/* exiting the dungeon */
 	} else {
-		screenMessage("Leaving...\n");
+		g_screen->screenMessage("Leaving...\n");
 		g_game->exitToParentMap();
 		g_music->play();
 		return 1;

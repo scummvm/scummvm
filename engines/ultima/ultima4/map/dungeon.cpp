@@ -110,11 +110,11 @@ void dungeonSearch(void) {
 	if (a.size() > 0)
 		token = DUNGEON_CORRIDOR;
 
-	screenMessage("Search...\n");
+	g_screen->screenMessage("Search...\n");
 
 	switch (token) {
 	case DUNGEON_MAGIC_ORB: /* magic orb */
-		screenMessage("You find a Magical Ball...\nWho touches? ");
+		g_screen->screenMessage("You find a Magical Ball...\nWho touches? ");
 		dungeonTouchOrb();
 		break;
 
@@ -127,14 +127,14 @@ void dungeonSearch(void) {
 		item = itemAtLocation(dungeon, g_context->_location->_coords);
 		if (item) {
 			if (*item->_isItemInInventory != NULL && (*item->_isItemInInventory)(item->_data))
-				screenMessage("Nothing Here!\n");
+				g_screen->screenMessage("Nothing Here!\n");
 			else {
 				if (item->_name)
-					screenMessage("You find...\n%s!\n", item->_name);
+					g_screen->screenMessage("You find...\n%s!\n", item->_name);
 				(*item->_putItemInInventory)(item->_data);
 			}
 		} else
-			screenMessage("\nYou find Nothing!\n");
+			g_screen->screenMessage("\nYou find Nothing!\n");
 	}
 
 	break;
@@ -145,7 +145,7 @@ void dungeonSearch(void) {
  * Drink from the fountain at the current location
  */
 void dungeonDrinkFountain() {
-	screenMessage("You find a Fountain.\nWho drinks? ");
+	g_screen->screenMessage("You find a Fountain.\nWho drinks? ");
 	int player = gameGetPlayer(false, false);
 	if (player == -1)
 		return;
@@ -156,27 +156,27 @@ void dungeonDrinkFountain() {
 	switch (type) {
 	/* plain fountain */
 	case FOUNTAIN_NORMAL:
-		screenMessage("\nHmmm--No Effect!\n");
+		g_screen->screenMessage("\nHmmm--No Effect!\n");
 		break;
 
 	/* healing fountain */
 	case FOUNTAIN_HEALING:
 		if (g_context->_party->member(player)->heal(HT_FULLHEAL))
-			screenMessage("\nAhh-Refreshing!\n");
-		else screenMessage("\nHmmm--No Effect!\n");
+			g_screen->screenMessage("\nAhh-Refreshing!\n");
+		else g_screen->screenMessage("\nHmmm--No Effect!\n");
 		break;
 
 	/* acid fountain */
 	case FOUNTAIN_ACID:
 		g_context->_party->member(player)->applyDamage(100); /* 100 damage to drinker */
-		screenMessage("\nBleck--Nasty!\n");
+		g_screen->screenMessage("\nBleck--Nasty!\n");
 		break;
 
 	/* cure fountain */
 	case FOUNTAIN_CURE:
 		if (g_context->_party->member(player)->heal(HT_CURE))
-			screenMessage("\nHmmm--Delicious!\n");
-		else screenMessage("\nHmmm--No Effect!\n");
+			g_screen->screenMessage("\nHmmm--Delicious!\n");
+		else g_screen->screenMessage("\nHmmm--No Effect!\n");
 		break;
 
 	/* poison fountain */
@@ -185,8 +185,8 @@ void dungeonDrinkFountain() {
 			soundPlay(SOUND_POISON_DAMAGE);
 			g_context->_party->member(player)->applyEffect(EFFECT_POISON);
 			g_context->_party->member(player)->applyDamage(100); /* 100 damage to drinker also */
-			screenMessage("\nArgh-Choke-Gasp!\n");
-		} else screenMessage("\nHmm--No Effect!\n");
+			g_screen->screenMessage("\nArgh-Choke-Gasp!\n");
+		} else g_screen->screenMessage("\nHmm--No Effect!\n");
 		break;
 
 	default:
@@ -198,7 +198,7 @@ void dungeonDrinkFountain() {
  * Touch the magical ball at the current location
  */
 void dungeonTouchOrb() {
-	screenMessage("You find a Magical Ball...\nWho touches? ");
+	g_screen->screenMessage("You find a Magical Ball...\nWho touches? ");
 	int player = gameGetPlayer(false, false);
 	if (player == -1)
 		return;
@@ -238,17 +238,17 @@ void dungeonTouchOrb() {
 
 	/* give stats bonuses */
 	if (stats & STATSBONUS_STR) {
-		screenMessage("Strength + 5\n");
+		g_screen->screenMessage("Strength + 5\n");
 		AdjustValueMax(g_ultima->_saveGame->_players[player]._str, 5, 50);
 		damage += 200;
 	}
 	if (stats & STATSBONUS_DEX) {
-		screenMessage("Dexterity + 5\n");
+		g_screen->screenMessage("Dexterity + 5\n");
 		AdjustValueMax(g_ultima->_saveGame->_players[player]._dex, 5, 50);
 		damage += 200;
 	}
 	if (stats & STATSBONUS_INT) {
-		screenMessage("Intelligence + 5\n");
+		g_screen->screenMessage("Intelligence + 5\n");
 		AdjustValueMax(g_ultima->_saveGame->_players[player]._intel, 5, 50);
 		damage += 200;
 	}
@@ -266,17 +266,17 @@ bool dungeonHandleTrap(TrapType trap) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
 	switch ((TrapType)dungeon->currentSubToken()) {
 	case TRAP_WINDS:
-		screenMessage("\nWinds!\n");
+		g_screen->screenMessage("\nWinds!\n");
 		g_context->_party->quenchTorch();
 		break;
 	case TRAP_FALLING_ROCK:
 		// Treat falling rocks and pits like bomb traps
 		// XXX: That's a little harsh.
-		screenMessage("\nFalling Rocks!\n");
+		g_screen->screenMessage("\nFalling Rocks!\n");
 		g_context->_party->applyEffect(EFFECT_LAVA);
 		break;
 	case TRAP_PIT:
-		screenMessage("\nPit!\n");
+		g_screen->screenMessage("\nPit!\n");
 		g_context->_party->applyEffect(EFFECT_LAVA);
 		break;
 	default:

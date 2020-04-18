@@ -58,7 +58,7 @@ Std::vector<Common::String> shrineAdvice;
 bool shrineCanEnter(const Portal *p) {
 	Shrine *shrine = dynamic_cast<Shrine *>(mapMgr->get(p->_destid));
 	if (!g_context->_party->canEnterShrine(shrine->getVirtue())) {
-		screenMessage("Thou dost not bear the rune of entry!  A strange force keeps you out!\n");
+		g_screen->screenMessage("Thou dost not bear the rune of entry!  A strange force keeps you out!\n");
 		return 0;
 	}
 	return 1;
@@ -118,9 +118,9 @@ void Shrine::enter() {
 	if (settings._enhancements && settings._enhancementsOptions._u5shrines)
 		enhancedSequence();
 	else
-		screenMessage("You enter the ancient shrine and sit before the altar...");
+		g_screen->screenMessage("You enter the ancient shrine and sit before the altar...");
 
-	screenMessage("\nUpon which virtue dost thou meditate?\n");
+	g_screen->screenMessage("\nUpon which virtue dost thou meditate?\n");
 	Common::String virtue;
 #ifdef IOS
 	{
@@ -133,7 +133,7 @@ void Shrine::enter() {
 #endif
 
 	int choice;
-	screenMessage("\n\nFor how many Cycles (0-3)? ");
+	g_screen->screenMessage("\n\nFor how many Cycles (0-3)? ");
 #ifdef IOS
 	{
 		U4IOS::IOSConversationChoiceHelper cyclesChoice;
@@ -149,21 +149,21 @@ void Shrine::enter() {
 		cycles = choice - '0';
 	completedCycles = 0;
 
-	screenMessage("\n\n");
+	g_screen->screenMessage("\n\n");
 
 	// ensure the player chose the right virtue and entered a valid number for cycles
 	if (scumm_strnicmp(virtue.c_str(), getVirtueName(getVirtue()), 6) != 0 || cycles == 0) {
-		screenMessage("Thou art unable to focus thy thoughts on this subject!\n");
+		g_screen->screenMessage("Thou art unable to focus thy thoughts on this subject!\n");
 		eject();
 		return;
 	}
 
 	if (((g_ultima->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) >= 0x10000) ||
 	        (((g_ultima->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff) != g_ultima->_saveGame->_lastMeditation)) {
-		screenMessage("Begin Meditation\n");
+		g_screen->screenMessage("Begin Meditation\n");
 		meditationCycle();
 	} else {
-		screenMessage("Thy mind is still weary from thy last Meditation!\n");
+		g_screen->screenMessage("Thy mind is still weary from thy last Meditation!\n");
 		eject();
 	}
 }
@@ -172,8 +172,8 @@ void Shrine::enhancedSequence() {
 	/* replace the 'static' avatar tile with grass */
 	_annotations->add(Coords(5, 6, g_context->_location->_coords.z), _tileset->getByName("grass")->getId(), false, true);
 
-	screenDisableCursor();
-	screenMessage("You approach\nthe ancient\nshrine...\n");
+	g_screen->screenDisableCursor();
+	g_screen->screenMessage("You approach\nthe ancient\nshrine...\n");
 	gameUpdateScreen();
 	EventHandler::wait_cycles(settings._gameCyclesPerSecond);
 
@@ -197,9 +197,9 @@ void Shrine::enhancedSequence() {
 	obj->setTile(creatureMgr->getById(BEGGAR_ID)->getTile());
 	gameUpdateScreen();
 
-	screenMessage("\n...and kneel before the altar.\n");
+	g_screen->screenMessage("\n...and kneel before the altar.\n");
 	EventHandler::wait_cycles(settings._gameCyclesPerSecond);
-	screenEnableCursor();
+	g_screen->screenEnableCursor();
 }
 
 void Shrine::meditationCycle() {
@@ -212,20 +212,20 @@ void Shrine::meditationCycle() {
 
 	g_ultima->_saveGame->_lastMeditation = (g_ultima->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff;
 
-	screenDisableCursor();
+	g_screen->screenDisableCursor();
 	for (int i = 0; i < MEDITATION_MANTRAS_PER_CYCLE; i++) {
 		WaitController controller(interval);
 		eventHandler->pushController(&controller);
 		controller.wait();
-		screenMessage(".");
+		g_screen->screenMessage(".");
 		g_screen->update();
 	}
 	askMantra();
 }
 
 void Shrine::askMantra() {
-	screenEnableCursor();
-	screenMessage("\nMantra: ");
+	g_screen->screenEnableCursor();
+	g_screen->screenMessage("\nMantra: ");
 	g_screen->update();       // FIXME: needed?
 	Common::String mantra;
 #ifdef IOS
@@ -234,14 +234,14 @@ void Shrine::askMantra() {
 		mantraHelper.beginConversation(U4IOS::UIKeyboardTypeASCIICapable, "Mantra?");
 #endif
 		mantra = ReadStringController::get(4, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
-		screenMessage("\n");
+		g_screen->screenMessage("\n");
 #ifdef IOS
 	}
 #endif
 
 	if (scumm_stricmp(mantra.c_str(), getMantra().c_str()) != 0) {
 		g_context->_party->adjustKarma(KA_BAD_MANTRA);
-		screenMessage("Thou art not able to focus thy thoughts with that Mantra!\n");
+		g_screen->screenMessage("Thou art not able to focus thy thoughts with that Mantra!\n");
 		eject();
 	} else if (--cycles > 0) {
 		completedCycles++;
@@ -253,10 +253,10 @@ void Shrine::askMantra() {
 
 		bool elevated = completedCycles == 3 && g_context->_party->attemptElevation(getVirtue());
 		if (elevated)
-			screenMessage("\nThou hast achieved partial Avatarhood in the Virtue of %s\n\n",
+			g_screen->screenMessage("\nThou hast achieved partial Avatarhood in the Virtue of %s\n\n",
 			              getVirtueName(getVirtue()));
 		else
-			screenMessage("\nThy thoughts are pure. "
+			g_screen->screenMessage("\nThy thoughts are pure. "
 			              "Thou art granted a vision!\n");
 
 #ifdef IOS
@@ -280,11 +280,11 @@ void Shrine::showVision(bool elevated) {
 	};
 
 	if (elevated) {
-		screenMessage("Thou art granted a vision!\n");
+		g_screen->screenMessage("Thou art granted a vision!\n");
 		gameSetViewMode(VIEW_RUNE);
-		screenDrawImageInMapArea(visionImageNames[getVirtue()]);
+		g_screen->screenDrawImageInMapArea(visionImageNames[getVirtue()]);
 	} else {
-		screenMessage("\n%s", shrineAdvice[getVirtue() * 3 + completedCycles - 1].c_str());
+		g_screen->screenMessage("\n%s", shrineAdvice[getVirtue() * 3 + completedCycles - 1].c_str());
 	}
 }
 

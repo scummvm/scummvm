@@ -88,7 +88,7 @@ void deathStart(int delay) {
 	gameSetViewMode(VIEW_DEAD);
 
 	eventHandler->pushKeyHandler(&KeyHandler::ignoreKeys);
-	screenDisableCursor();
+	g_screen->screenDisableCursor();
 
 	eventHandler->getTimer()->add(&deathTimer, settings._gameCyclesPerSecond);
 }
@@ -98,8 +98,8 @@ void deathTimer(void *data) {
 	timerCount++;
 	if ((timerMsg < N_MSGS) && (timerCount > deathMsgs[timerMsg].timeout)) {
 
-		screenMessage(deathMsgs[timerMsg].text, g_context->_party->member(0)->getName().c_str());
-		screenHideCursor();
+		g_screen->screenMessage(deathMsgs[timerMsg].text, g_context->_party->member(0)->getName().c_str());
+		g_screen->screenHideCursor();
 
 		timerCount = 0;
 		timerMsg++;
@@ -138,8 +138,8 @@ void deathRevive() {
 
 	g_context->_party->reviveParty();
 
-	screenEnableCursor();
-	screenShowCursor();
+	g_screen->screenEnableCursor();
+	g_screen->screenShowCursor();
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
 	g_screen->update();
 }

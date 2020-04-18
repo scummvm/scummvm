@@ -200,7 +200,7 @@ const MouseArea *EventHandler::mouseAreaForPoint(int x, int y) {
 		return NULL;
 
 	for (i = 0; areas[i]._nPoints != 0; i++) {
-		if (screenPointInMouseArea(x, y, &(areas[i]))) {
+		if (g_screen->screenPointInMouseArea(x, y, &(areas[i]))) {
 			return &(areas[i]);
 		}
 	}

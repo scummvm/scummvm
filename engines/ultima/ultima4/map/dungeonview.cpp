@@ -58,7 +58,7 @@ void DungeonView::display(Context *c, TileView *view) {
 
 		Std::vector<MapTile> tiles;
 
-		screenEraseMapArea();
+		g_screen->screenEraseMapArea();
 		if (c->_party->getTorchDuration() > 0) {
 			for (y = 3; y >= 0; y--) {
 				DungeonGraphicType type;
@@ -159,9 +159,9 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
 	if (dscale[distance] == 0)
 		return;
 	else if (dscale[distance] == 1)
-		scaled = screenScaleDown(_animated, 2);
+		scaled = g_screen->screenScaleDown(_animated, 2);
 	else {
-		scaled = screenScale(_animated, dscale[distance] / 2, 1, 0);
+		scaled = g_screen->screenScale(_animated, dscale[distance] / 2, 1, 0);
 	}
 
 	if (tiledWall) {
@@ -436,17 +436,17 @@ void DungeonView::drawWall(int xoffset, int distance, Direction orientation, Dun
 		y = subimage->y;
 	}
 
-	screenDrawImage(dngGraphicInfo[index].subimage, (BORDER_WIDTH + x) * settings._scale,
+	g_screen->screenDrawImage(dngGraphicInfo[index].subimage, (BORDER_WIDTH + x) * settings._scale,
 	                (BORDER_HEIGHT + y) * settings._scale);
 
 	if (dngGraphicInfo[index].subimage2 != NULL) {
 		// FIXME: subimage2 is a horrible hack, needs to be cleaned up
 		if (settings._videoType == "EGA")
-			screenDrawImage(dngGraphicInfo[index].subimage2,
+			g_screen->screenDrawImage(dngGraphicInfo[index].subimage2,
 			                (8 + dngGraphicInfo[index].ega_x2) * settings._scale,
 			                (8 + dngGraphicInfo[index].ega_y2) * settings._scale);
 		else
-			screenDrawImage(dngGraphicInfo[index].subimage2,
+			g_screen->screenDrawImage(dngGraphicInfo[index].subimage2,
 			                (8 + dngGraphicInfo[index].vga_x2) * settings._scale,
 			                (8 + dngGraphicInfo[index].vga_y2) * settings._scale);
 	}

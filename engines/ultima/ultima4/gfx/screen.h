@@ -24,6 +24,7 @@
 #define ULTIMA4_GFX_SCREEN_H
 
 #include "graphics/screen.h"
+#include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/gfx/scale.h"
@@ -99,7 +100,7 @@ struct Layout {
 
 class Screen : public Graphics::Screen {
 private:
-	MouseCursorSurface *_cursors[5];
+	MouseCursorSurface *_mouseCursors[5];
 	int _currentMouseCursor;
 private:
 	/**
@@ -111,6 +112,64 @@ private:
 	 * Loads the data for a single cursor from the passed file
 	 */
 	MouseCursorSurface *loadMouseCursor(Shared::File &src);
+
+	void screenLoadGraphicsFromConf();
+	Layout *screenLoadLayoutFromConf(const ConfigElement &conf);
+
+	/**
+	 * Draw a tile graphic on the screen.
+	 */
+	void screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus, int x, int y);
+
+	/**
+	 * Finds which tiles in the viewport are visible from the avatars
+	 * location in the middle. (original DOS algorithm)
+	 */
+	void screenFindLineOfSight(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
+
+	/**
+	 * Finds which tiles in the viewport are visible from the avatars
+	 * location in the middle. (original DOS algorithm)
+	 */
+	void screenFindLineOfSightDOS(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
+
+	/**
+	 * Finds which tiles in the viewport are visible from the avatars
+	 * location in the middle.
+	 *
+	 * A new, more accurate LOS function
+	 *
+	 * Based somewhat off Andy McFadden's 1994 article,
+	 *   "Improvements to a Fast Algorithm for Calculating Shading
+	 *   and Visibility in a Two-Dimensional Field"
+	 *   -----
+	 *   http://www.fadden.com/techmisc/fast-los.html
+	 *
+	 * This function uses a lookup table to get the correct shadowmap,
+	 * therefore, the table will need to be updated if the viewport
+	 * dimensions increase. Also, the function assumes that the
+	 * viewport width and height are odd values and that the player
+	 * is always at the center of the screen.
+	 */
+	void screenFindLineOfSightEnhanced(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
+
+	/**
+	 * Generates terms a and b for equation "ax + b = y" that defines the
+	 * line containing the two given points.  Vertical lines are special
+	 * cased to return DBL_MAX for a and the x coordinate as b since they
+	 * cannot be represented with the above formula.
+	 */
+	void screenGetLineTerms(int x1, int y1, int x2, int y2, double *a, double *b);
+
+	/**
+	 * Determine if two points are on the same side of a line (or both on
+	 * the line).  The line is defined by the terms a and b of the
+	 * equation "ax + b = y".
+	 */
+	int screenPointsOnSameSideOfLine(int x1, int y1, int x2, int y2, double a, double b);
+
+	int screenPointInTriangle(int x, int y, int tx1, int ty1, int tx2, int ty2, int tx3, int ty3);
+	Layout *screenGetGemLayout(const Map *map);
 public:
 	Std::vector<Layout *> _layouts;
 	Scaler _filterScaler;
@@ -129,56 +188,88 @@ public:
 	 * Sets a given mouse cursor
 	 */
 	void setMouseCursor(MouseCursor cursor);
+
+	void screenInit(void);
+	void screenRefreshTimerInit(void);
+
+	/**
+	 * Re-initializes the screen and implements any changes made in settings
+	 */
+	void screenReInit(void);
+	void screenWait(int numberOfAnimationFrames);
+
+	/**
+	 * Draw an image or subimage on the screen.
+	 */
+	void screenDrawImage(const Common::String &name, int x = 0, int y = 0);
+	void screenDrawImageInMapArea(const Common::String &bkgd);
+
+	void screenCycle(void);
+	void screenEraseMapArea(void);
+	void screenEraseTextArea(int x, int y, int width, int height);
+	void screenGemUpdate(void);
+
+	void screenMessage(const char *fmt, ...) GCC_PRINTF(1, 2);
+	void screenPrompt(void);
+	void screenRedrawMapArea(void);
+	void screenRedrawTextArea(int x, int y, int width, int height);
+
+	/**
+	 * Scroll the text in the message area up one position.
+	 */
+	void screenScrollMessageArea(void);
+
+	/**
+	 * Do the tremor spell effect where the screen shakes.
+	 */
+	void screenShake(int iterations);
+
+	/**
+	 * Draw a character from the charset onto the screen.
+	 */
+	void screenShowChar(int chr, int x, int y);
+	void screenShowCharMasked(int chr, int x, int y, unsigned char mask);
+	void screenTextAt(int x, int y, const char *fmt, ...) GCC_PRINTF(3, 4);
+
+	/**
+	 * Change the current text color
+	 */
+	void screenTextColor(int color);
+	bool screenTileUpdate(TileView *view, const Coords &coords, bool redraw = true); //Returns true if the screen was affected
+
+	/**
+	 * Redraw the screen.  If showmap is set, the normal map is drawn in
+	 * the map area.  If blackout is set, the map area is blacked out. If
+	 * neither is set, the map area is left untouched.
+	 */
+	void screenUpdate(TileView *view, bool showmap, bool blackout);
+	void screenUpdateCursor(void);
+	void screenUpdateMoons(void);
+	void screenUpdateWind(void);
+	Std::vector<MapTile> screenViewportTile(unsigned int width, unsigned int height, int x, int y, bool &focus);
+
+	void screenShowCursor(void);
+	void screenHideCursor(void);
+	void screenEnableCursor(void);
+	void screenDisableCursor(void);
+	void screenSetCursorPos(int x, int y);
+
+	/**
+	 * Determine if the given point is within a mouse area.
+	 */
+	int screenPointInMouseArea(int x, int y, const MouseArea *area);
+
+	Image *screenScale(Image *src, int scale, int n, int filter);
+	Image *screenScaleDown(Image *src, int scale);
 };
 
 extern Screen *g_screen;
 
-void screenInit(void);
-void screenRefreshTimerInit(void);
-void screenReInit(void);
-void screenWait(int numberOfAnimationFrames);
-
-const Std::vector<Common::String> &screenGetGemLayoutNames();
-const Std::vector<Common::String> &screenGetFilterNames();
-const Std::vector<Common::String> &screenGetLineOfSightStyles();
-
-void screenDrawImage(const Common::String &name, int x = 0, int y = 0);
-void screenDrawImageInMapArea(const Common::String &bkgd);
-
-void screenCycle(void);
-void screenEraseMapArea(void);
-void screenEraseTextArea(int x, int y, int width, int height);
-void screenGemUpdate(void);
-
-void screenMessage(const char *fmt, ...) GCC_PRINTF(1, 2);
-void screenPrompt(void);
-void screenRedrawMapArea(void);
-void screenRedrawTextArea(int x, int y, int width, int height);
-void screenScrollMessageArea(void);
-void screenShake(int iterations);
-void screenShowChar(int chr, int x, int y);
-void screenShowCharMasked(int chr, int x, int y, unsigned char mask);
-void screenTextAt(int x, int y, const char *fmt, ...) GCC_PRINTF(3, 4);
-void screenTextColor(int color);
-bool screenTileUpdate(TileView *view, const Coords &coords, bool redraw = true); //Returns true if the screen was affected
-void screenUpdate(TileView *view, bool showmap, bool blackout);
-void screenUpdateCursor(void);
-void screenUpdateMoons(void);
-void screenUpdateWind(void);
-Std::vector<MapTile> screenViewportTile(unsigned int width, unsigned int height, int x, int y, bool &focus);
-
-void screenShowCursor(void);
-void screenHideCursor(void);
-void screenEnableCursor(void);
-void screenDisableCursor(void);
-void screenSetCursorPos(int x, int y);
-
-int screenPointInMouseArea(int x, int y, const MouseArea *area);
-
-Image *screenScale(Image *src, int scale, int n, int filter);
-Image *screenScaleDown(Image *src, int scale);
-
 extern int screenCurrentCycle;
+
+extern const Std::vector<Common::String> &screenGetGemLayoutNames();
+extern const Std::vector<Common::String> &screenGetFilterNames();
+extern const Std::vector<Common::String> &screenGetLineOfSightStyles();
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

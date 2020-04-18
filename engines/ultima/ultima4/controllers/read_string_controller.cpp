@@ -60,10 +60,10 @@ bool ReadStringController::keyPressed(int key) {
 					_view->textAt(_screenX + len - 1, _screenY, " ");
 					_view->setCursorPos(_screenX + len - 1, _screenY, true);
 				} else {
-					screenHideCursor();
-					screenTextAt(_screenX + len - 1, _screenY, " ");
-					screenSetCursorPos(_screenX + len - 1, _screenY);
-					screenShowCursor();
+					g_screen->screenHideCursor();
+					g_screen->screenTextAt(_screenX + len - 1, _screenY, " ");
+					g_screen->screenSetCursorPos(_screenX + len - 1, _screenY);
+					g_screen->screenShowCursor();
 				}
 			}
 		} else if (key == '\n' || key == '\r') {
@@ -75,11 +75,11 @@ bool ReadStringController::keyPressed(int key) {
 			if (_view) {
 				_view->textAt(_screenX + len, _screenY, "%c", key);
 			} else {
-				screenHideCursor();
-				screenTextAt(_screenX + len, _screenY, "%c", key);
-				screenSetCursorPos(_screenX + len + 1, _screenY);
+				g_screen->screenHideCursor();
+				g_screen->screenTextAt(_screenX + len, _screenY, "%c", key);
+				g_screen->screenSetCursorPos(_screenX + len + 1, _screenY);
 				g_context->col = len + 1;
-				screenShowCursor();
+				g_screen->screenShowCursor();
 			}
 		}
 	} else valid = false;

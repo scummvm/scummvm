@@ -404,9 +404,9 @@ bool IntroController::keyPressed(int key) {
 			_errorMessage.clear();
 			// Make a copy of our settings so we can change them
 			settingsChanged = settings;
-			screenDisableCursor();
+			g_screen->screenDisableCursor();
 			runMenu(&_confMenu, &_extendedMenuArea, true);
-			screenEnableCursor();
+			g_screen->screenEnableCursor();
 			updateScreen();
 			break;
 		}
@@ -594,7 +594,7 @@ void IntroController::drawAbacusBeads(int row, int selectedVirtue, int rejectedV
 }
 
 void IntroController::updateScreen() {
-	screenHideCursor();
+	g_screen->screenHideCursor();
 
 	switch (_mode) {
 	case INTRO_MAP:
@@ -603,7 +603,7 @@ void IntroController::updateScreen() {
 		drawBeasties();
 		// display the profile name if a local profile is being used
 		if (useProfile)
-			screenTextAt(40 - profileName.size(), 24, "%s", profileName.c_str());
+			g_screen->screenTextAt(40 - profileName.size(), 24, "%s", profileName.c_str());
 		break;
 
 	case INTRO_MENU:
@@ -634,21 +634,21 @@ void IntroController::updateScreen() {
 		drawBeasties();
 
 		// draw the cursor last
-		screenSetCursorPos(24, 16);
-		screenShowCursor();
+		g_screen->screenSetCursorPos(24, 16);
+		g_screen->screenShowCursor();
 		break;
 
 	default:
 		error("bad mode in updateScreen");
 	}
 
-	screenUpdateCursor();
+	g_screen->screenUpdateCursor();
 	g_screen->update();
 }
 
 void IntroController::initiateNewGame() {
 	// disable the screen cursor because a text cursor will now be used
-	screenDisableCursor();
+	g_screen->screenDisableCursor();
 
 	// draw the extended background for all option screens
 	_backgroundArea.draw(BKGD_INTRO);
@@ -671,7 +671,7 @@ void IntroController::initiateNewGame() {
 	if (nameBuffer.empty()) {
 		// the user didn't enter a name
 		_menuArea.disableCursor();
-		screenEnableCursor();
+		g_screen->screenEnableCursor();
 		updateScreen();
 		return;
 	}
@@ -721,7 +721,7 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 	strcpy(avatar.name, nameBuffer.c_str());
 	avatar._sex = sex;
 	saveGame.init(&avatar);
-	screenHideCursor();
+	g_screen->screenHideCursor();
 	initPlayers(&saveGame);
 	saveGame._food = 30000;
 	saveGame._gold = 200;
@@ -821,7 +821,7 @@ void IntroController::startQuestions() {
 		eventHandler->pushController(&pauseController);
 		pauseController.waitFor();
 
-		screenEnableCursor();
+		g_screen->screenEnableCursor();
 		// show the question to choose between virtues
 		showText(getQuestion(_questionTree[_questionRound * 2], _questionTree[_questionRound * 2 + 1]));
 
@@ -885,14 +885,14 @@ void IntroController::about() {
 	_backgroundArea.draw(BKGD_INTRO);
 	_backgroundArea.draw(BKGD_OPTIONS_BTM, 0, 120);
 
-	screenHideCursor();
+	g_screen->screenHideCursor();
 	_menuArea.textAt(11, 1, "ScummVM Ultima IV");
 	_menuArea.textAt(1, 3, "Based on the xu4 project");
 	drawBeasties();
 
 	ReadChoiceController::get("");
 
-	screenShowCursor();
+	g_screen->screenShowCursor();
 	updateScreen();
 }
 
@@ -933,8 +933,8 @@ void IntroController::runMenu(Menu *menu, TextView *view, bool withBeasties) {
 }
 
 void IntroController::timerFired() {
-	screenCycle();
-	screenUpdateCursor();
+	g_screen->screenCycle();
+	g_screen->screenUpdateCursor();
 
 	if (_mode == INTRO_TITLES)
 		if (updateTitle() == false) {
@@ -1041,7 +1041,7 @@ void IntroController::updateVideoMenu(MenuEvent &event) {
 				settings.write();
 
 				/* FIXME: resize images, etc. */
-				screenReInit();
+				g_screen->screenReInit();
 
 				// go back to menu mode
 				_mode = INTRO_MENU;
@@ -1566,7 +1566,7 @@ void IntroController::getTitleSourceData() {
 			    _transparentColor.b);
 
 			Image *scaled;      // the scaled and filtered image
-			scaled = screenScale(_titles[i]._srcImage, settings._scale / info->_prescale, 1, 1);
+			scaled = g_screen->screenScale(_titles[i]._srcImage, settings._scale / info->_prescale, 1, 1);
 			if (_transparentIndex >= 0)
 				scaled->setTransparentIndex(_transparentIndex);
 
@@ -1605,7 +1605,7 @@ void IntroController::getTitleSourceData() {
 	}
 
 	// scale the original image now
-	Image *scaled = screenScale(info->_image,
+	Image *scaled = g_screen->screenScale(info->_image,
 	                            settings._scale / info->_prescale,
 	                            info->_image->isIndexed(),
 	                            1);
@@ -1920,7 +1920,7 @@ void IntroController::drawTitle() {
 	if (_title->_prescaled)
 		scaled = _title->_destImage;
 	else
-		scaled = screenScale(_title->_destImage, settings._scale, 1, 1);
+		scaled = g_screen->screenScale(_title->_destImage, settings._scale, 1, 1);
 
 	scaled->setTransparentIndex(_transparentIndex);
 	scaled->drawSubRect(
