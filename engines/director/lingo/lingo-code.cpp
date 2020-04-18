@@ -1022,7 +1022,7 @@ Datum LC::eqData(Datum d1, Datum d2) {
 	if (d1.type == ARRAY || d2.type == ARRAY) {
 		return LC::compareArrays(LC::eqData, d1, d2);
 	}
-	d1.u.i = (d1.compareToIgnoreCase(d2) == 0) ? 1 : 0;
+	d1.u.i = (d1.compareTo(d2, true) == 0) ? 1 : 0;
 	d1.type = INT;
 	return d1;
 }
@@ -1037,7 +1037,7 @@ Datum LC::neqData(Datum d1, Datum d2) {
 	if (d1.type == ARRAY || d2.type == ARRAY) {
 		return LC::compareArrays(LC::neqData, d1, d2);
 	}
-	d1.u.i = (d1.compareToIgnoreCase(d2) != 0) ? 1 : 0;
+	d1.u.i = (d1.compareTo(d2, true) != 0) ? 1 : 0;
 	d1.type = INT;
 	return d1;
 }

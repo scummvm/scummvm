@@ -115,8 +115,7 @@ struct Datum {	/* interpreter stack type */
 
 	const char *type2str(bool isk = false);
 
-	int compareTo(Datum d);
-	int compareToIgnoreCase(Datum d);
+	int compareTo(Datum d, bool ignoreCase = false);
 };
 
 struct Builtin {
