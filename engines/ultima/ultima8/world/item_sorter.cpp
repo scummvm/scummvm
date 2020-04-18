@@ -228,9 +228,7 @@ struct SortItem {
 
 	// Comparison for the sorted lists
 	inline bool ListLessThan(const SortItem *other) const {
-		return _z < other->_z ||
-		       (_z == other->_z && _x < other->_x) ||
-		       (_z == other->_z && _x == other->_x && _y < other->_y);
+		return _z < other->_z || (_z == other->_z && _flat);
 	}
 
 };
@@ -264,8 +262,8 @@ inline bool SortItem::overlap(const SortItem &si2) const {
 	const bool bot_right_clear = dot_bot_right >= 0;
 
 	const bool clear = right_clear || left_clear ||
-	                   (bot_right_clear && bot_left_clear) ||
-	                   (top_right_clear && top_left_clear);
+	                   (bot_right_clear || bot_left_clear) ||
+	                   (top_right_clear || top_left_clear);
 
 	return !clear;
 }
@@ -333,33 +331,12 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	}
 	// Mixed, or non flat
 	else {
-
-		// Clearly X, Y and Z (useful?)
-		//if (si1._x <= si2._xLeft && si1._y <= si2._yFar && si1._zTop <= si2._z) return true;
-		//else if (si1._xLeft >= si2._x && si1._yFar >= si2._y && si1._z >= si2._zTop) return false;
-
-		//int front1 = si1._x + si1._y;
-		//int rear1 = si1._xLeft + si1._yFar;
-		//int front2 = si2._x + si2._y;
-		//int rear2 = si2._xLeft + si2._yFar;
-
-		// Rear of object is infront of other's front
-		//if (front1 <= rear2) return true;
-		//else if (rear1 >= front2) return false;
-
 		// Clearly in z
 		if (si1._zTop <= si2._z)
 			return true;
 		else if (si1._z >= si2._zTop)
 			return false;
-
-		// Partial in z
-		//if (si1._zTop != si2._zTop) return si1._zTop < si2._zTop;
 	}
-
-	// Clearly in x and y? (useful?)
-	//if (si1._x <= si2._xLeft && si1._y <= si2._yFar) return true;
-	//else if (si1._xLeft >= si2._x && si1._yFar >= si2._y) return false;
 
 	// Clearly in x?
 	if (si1._x <= si2._xLeft) return true;
@@ -402,7 +379,7 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	// Partial in y?
 	if (si1._y != si2._y) return si1._y < si2._y;
 
-	// Just sort by _shape number - not a number any more (is a pointer)
+	// Just sort by shape number
 	if (si1._shapeNum != si2._shapeNum) return si1._shapeNum < si2._shapeNum;
 
 	// And then by _frame
@@ -702,6 +679,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	// Do Clipping here
 	si->_clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, _frame->_width, _frame->_height));
 	if (si->_clipped < 0)
+		// Clipped away entirely - don't add to the list.
 		return;
 
 	// These help out with sorting. We calc them now, so it will be faster
@@ -825,22 +803,31 @@ void ItemSorter::PaintDisplayList(bool item_highlight) {
 	}
 }
 
+/**
+ * Recursively paint this item and all its dependencies.
+ * Returns true if recursion should stop.
+ */
 bool ItemSorter::PaintSortItem(SortItem *si) {
-	// Don't paint this, or dependencies if occluded
-	if (si->_occluded) return false;
+	// Don't paint this, or dependencies (yet) if occluded
+	if (si->_occluded)
+		return false;
 
-	// Resursion, detection
+	// Resursion detection
 	si->_order = -2;
 
 	// Iterate through our dependancies, and paint them, if possible
 	SortItem::DependsList::iterator it = si->_depends.begin();
 	SortItem::DependsList::iterator end = si->_depends.end();
 	while (it != end) {
-		// Well, it can't. Implies infinite recursive sorting.
-		//if ((*it)->_order == -2) CANT_HAPPEN_MSG("Detected cycle in the dependency graph");
-
-		if ((*it)->_order == -1) if (PaintSortItem((*it))) return true;
-
+		if ((*it)->_order == -2) {
+			warning("cycle in paint dependency graph %d -> %d -> ... -> %d",
+					si->_shapeNum, (*it)->_shapeNum, si->_shapeNum);
+			break;
+		}
+		else if ((*it)->_order == -1) {
+			if (PaintSortItem((*it)))
+				return true;
+		}
 		++it;
 	}
 
