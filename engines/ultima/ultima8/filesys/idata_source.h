@@ -95,8 +95,8 @@ public:
 		return _in->read(b, len);
 	}
 
-	bool seek(int32 pos, int whence = SEEK_SET) override {
-		return _in->seek(pos, whence);
+	bool seek(int32 position, int whence = SEEK_SET) override {
+		return _in->seek(position, whence);
 	}
 
 	int32 size() const override {
