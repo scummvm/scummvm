@@ -532,7 +532,8 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		}
 
 		if (sym->type != INT && sym->type != VOID &&
-				sym->type != FLOAT && sym->type != STRING && sym->type != ARRAY) {
+				sym->type != FLOAT && sym->type != STRING &&
+				sym->type != ARRAY && sym->type != PARRAY) {
 			warning("varAssign: assignment to non-variable '%s'", sym->name.c_str());
 			return;
 		}
@@ -542,6 +543,8 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 
 		if (sym->type == POINT || sym->type == RECT || sym->type == ARRAY)
 			delete var.u.sym->u.farr;
+		else if (sym->type == PARRAY)
+			delete var.u.sym->u.parr;
 
 		sym->type = value.type;
 		if (value.type == INT) {
@@ -554,6 +557,8 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		} else if (value.type == POINT || value.type == ARRAY) {
 			sym->u.farr = new DatumArray(*value.u.farr);
 			delete value.u.farr;
+		} else if (value.type == PARRAY) {
+			sym->u.parr = new PropertyArray(*value.u.parr);
 		} else if (value.type == SYMBOL) {
 			sym->u.s = value.u.s;
 		} else if (value.type == OBJECT) {
@@ -623,9 +628,11 @@ Datum Lingo::varFetch(Datum &var) {
 			result.u.s = var.u.sym->u.s;
 		else if (sym->type == VOID)
 			result.u.i = 0;
-		else if (sym->type == ARRAY) {
+		else if (sym->type == ARRAY)
 			result.u.farr = sym->u.farr;
-		} else {
+		else if (sym->type == PARRAY)
+			result.u.parr = sym->u.parr;
+		else {
 			warning("varFetch: unhandled type: %s", var.type2str());
 			result.type = VOID;
 		}

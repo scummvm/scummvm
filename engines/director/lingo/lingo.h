@@ -78,6 +78,7 @@ struct Symbol {	/* symbol table entry */
 		void (*bltin)(int);	/* BUILTIN */
 		Common::String	*s;	/* STRING */
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
+		PropertyArray *parr;
 	} u;
 	int nargs;		/* number of arguments */
 	int maxArgs;	/* maximal number of arguments, for builtins */
@@ -92,6 +93,14 @@ struct Symbol {	/* symbol table entry */
 	Symbol();
 };
 
+struct PCell {
+	Datum *p;
+	Datum *v;
+
+	PCell();
+	PCell(Datum &prop, Datum &val);
+};
+
 struct Datum {	/* interpreter stack type */
 	int type;
 
@@ -101,6 +110,7 @@ struct Datum {	/* interpreter stack type */
 		Common::String *s;	/* STRING */
 		Symbol	*sym;
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
+		PropertyArray *parr; /* PARRAY */
 	} u;
 
 	Datum() { u.sym = NULL; type = VOID; }

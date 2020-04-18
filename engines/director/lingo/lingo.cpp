@@ -50,6 +50,21 @@ Symbol::Symbol() {
 	archiveIndex = 0;
 }
 
+PCell::PCell() {
+	p = nullptr;
+	v = nullptr;
+}
+
+PCell::PCell(Datum &prop, Datum &val) {
+	p = new Datum;
+	p->type = prop.type;
+	p->u = prop.u;
+
+	v = new Datum;
+	v->type = val.type;
+	v->u = val.u;
+}
+
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
@@ -531,6 +546,20 @@ Common::String *Datum::makeString(bool printonly) {
 				*s += ", ";
 			Datum d = u.farr->operator[](i);
 			*s += *d.makeString(printonly);
+		}
+
+		*s += "]";
+		break;
+	case PARRAY:
+		*s = "[";
+		if (u.parr->size() == 0)
+			*s += ":";
+		for (uint i = 0; i < u.parr->size(); i++) {
+			if (i > 0)
+				*s += ", ";
+			Datum p = *u.parr->operator[](i).p;
+			Datum v = *u.parr->operator[](i).v;
+			*s += Common::String::format("%s:%s", p.makeString(printonly)->c_str(), v.makeString(printonly)->c_str());
 		}
 
 		*s += "]";
