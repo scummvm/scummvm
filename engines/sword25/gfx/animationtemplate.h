@@ -75,18 +75,18 @@ public:
 	}
 
 	/**
-	    @brief Fügt einen neuen Frame zur Animation hinzu.
+	    @brief FÃ¼gt einen neuen Frame zur Animation hinzu.
 
-	    Der Frame wird an das Ende der Animation angehängt.
+	    Der Frame wird an das Ende der Animation angehÃ¤ngt.
 
 	    @param Index der Index des Frames in der Quellanimation
 	*/
 	void addFrame(int index);
 
 	/**
-	    @brief Ändert einen bereits in der Animation vorhandenen Frame.
-	    @param DestIndex der Index des Frames der überschrieben werden soll
-	    @param SrcIndex der Index des einzufügenden Frames in der Quellanimation
+	    @brief Ã„ndert einen bereits in der Animation vorhandenen Frame.
+	    @param DestIndex der Index des Frames der Ã¼berschrieben werden soll
+	    @param SrcIndex der Index des einzufÃ¼genden Frames in der Quellanimation
 	*/
 	void setFrame(int destIndex, int srcIndex);
 

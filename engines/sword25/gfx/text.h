@@ -49,7 +49,7 @@ public:
 	/**
 	    @brief Setzt den Font mit dem der Text dargestellt werden soll.
 	    @param Font der Dateiname der Fontdatei.
-	    @return Gibt false zurück, wenn der Font nicht gefunden wurde.
+	    @return Gibt false zurÃ¼ck, wenn der Font nicht gefunden wurde.
 	*/
 	bool setFont(const Common::String &font);
 
@@ -68,7 +68,7 @@ public:
 	/**
 	    @brief Legt fest, ob der Text automatisch umgebrochen werden soll.
 
-	    Wenn dieses Attribut auf true gesetzt ist, wird der Text umgebrochen, sofern er länger als GetAutoWrapThreshold() ist.
+	    Wenn dieses Attribut auf true gesetzt ist, wird der Text umgebrochen, sofern er lÃ¤nger als GetAutoWrapThreshold() ist.
 
 	    @param AutoWrap gibt an, ob der automatische Umbruch aktiviert oder deaktiviert werden soll.
 	    @remark Dieses Attribut wird mit dem Wert false initialisiert.
@@ -76,21 +76,21 @@ public:
 	void setAutoWrap(bool autoWrap);
 
 	/**
-	    @brief Legt die Längengrenze des Textes in Pixeln fest, ab der ein automatischer Zeilenumbruch vorgenommen wird.
+	    @brief Legt die LÃ¤ngengrenze des Textes in Pixeln fest, ab der ein automatischer Zeilenumbruch vorgenommen wird.
 	    @remark Dieses Attribut wird mit dem Wert 300 initialisiert.
 	    @remark Eine automatische Formatierung wird nur vorgenommen, wenn diese durch einen Aufruf von SetAutoWrap() aktiviert wurde.
 	*/
 	void setAutoWrapThreshold(uint32 autoWrapThreshold);
 
 	/**
-	    @brief Gibt den dargestellten Text zurück.
+	    @brief Gibt den dargestellten Text zurÃ¼ck.
 	*/
 	const Common::String &getText() {
 		return _text;
 	}
 
 	/**
-	    @brief Gibt den Namen das momentan benutzten Fonts zurück.
+	    @brief Gibt den Namen das momentan benutzten Fonts zurÃ¼ck.
 	*/
 	const Common::String &getFont() {
 		return _font;
@@ -103,7 +103,7 @@ public:
 	void setColor(uint32 modulationColor);
 
 	/**
-	    @brief Gibt den Alphawert des Textes zurück.
+	    @brief Gibt den Alphawert des Textes zurÃ¼ck.
 	    @return Der Alphawert des Textes (0 = keine Deckung, 255 = volle Deckung).
 	*/
 	int getAlpha() const {
@@ -111,7 +111,7 @@ public:
 	}
 
 	/**
-	    @brief Gibt die Farbe des Textes zurück.
+	    @brief Gibt die Farbe des Textes zurÃ¼ck.
 	    @return Eine 24-Bit RGB Farbe, die die Farbe des Textes angibt.
 	*/
 	int getColor() const {
@@ -119,14 +119,14 @@ public:
 	}
 
 	/**
-	    @brief Gibt zurück, ob die automatische Formatierung aktiviert ist.
+	    @brief Gibt zurÃ¼ck, ob die automatische Formatierung aktiviert ist.
 	*/
 	bool isAutoWrapActive() const {
 		return _autoWrap;
 	}
 
 	/**
-	    @brief Gibt die Längengrenze des Textes in Pixeln zurück, ab der eine automatische Formatierung vorgenommen wird.
+	    @brief Gibt die LÃ¤ngengrenze des Textes in Pixeln zurÃ¼ck, ab der eine automatische Formatierung vorgenommen wird.
 	*/
 	uint32 getAutoWrapThreshold() const {
 		return _autoWrapThreshold;

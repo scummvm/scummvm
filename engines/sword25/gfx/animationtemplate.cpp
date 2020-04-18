@@ -79,7 +79,7 @@ AnimationTemplate::AnimationTemplate(const Common::String &sourceAnimation) {
 
 	_valid = false;
 
-	// Die Animations-Resource wird für die gesamte Lebensdauer des Objektes gelockt
+	// Die Animations-Resource wird fÃ¼r die gesamte Lebensdauer des Objektes gelockt
 	_sourceAnimationPtr = requestSourceAnimation(sourceAnimation);
 
 	// Erfolg signalisieren
@@ -92,7 +92,7 @@ AnimationTemplate::AnimationTemplate(const AnimationTemplate &other) : Animation
 
 	_valid = false;
 
-	// Die Animations-Resource wird für die gesamte Lebensdauer des Objektes gelockt.
+	// Die Animations-Resource wird fÃ¼r die gesamte Lebensdauer des Objektes gelockt.
 	if (!other._sourceAnimationPtr)
 		return;
 	_sourceAnimationPtr = requestSourceAnimation(other._sourceAnimationPtr->getFileName());
@@ -225,7 +225,7 @@ bool AnimationTemplate::unpersist(InputPersistenceBlock &reader) {
 		_frames.push_back(frame);
 	}
 
-	// Die Animations-Resource wird für die gesamte Lebensdauer des Objektes gelockt
+	// Die Animations-Resource wird fÃ¼r die gesamte Lebensdauer des Objektes gelockt
 	Common::String sourceAnimation;
 	reader.readString(sourceAnimation);
 	_sourceAnimationPtr = requestSourceAnimation(sourceAnimation);

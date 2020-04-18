@@ -65,7 +65,7 @@ bool StaticBitmap::initBitmapResource(const Common::String &filename) {
 
 	BitmapResource *bitmapPtr = static_cast<BitmapResource *>(resourcePtr);
 
-	// Den eindeutigen Dateinamen zum späteren Referenzieren speichern
+	// Den eindeutigen Dateinamen zum spÃ¤teren Referenzieren speichern
 	_resourceFilename = bitmapPtr->getFileName();
 
 	// RenderObject Eigenschaften aktualisieren

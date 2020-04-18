@@ -68,7 +68,7 @@ RenderObjectManager::RenderObjectManager(int width, int height, int framebufferC
 }
 
 RenderObjectManager::~RenderObjectManager() {
-	// Die Wurzel des Baumes löschen, damit werden alle BS_RenderObjects mitgelöscht.
+	// Die Wurzel des Baumes lÃ¶schen, damit werden alle BS_RenderObjects mitgelÃ¶scht.
 	_rootPtr.erase();
 	delete _uta;
 	delete _currQueue;
@@ -81,7 +81,7 @@ void RenderObjectManager::startFrame() {
 	// Verstrichene Zeit bestimmen
 	int timeElapsed = Kernel::getInstance()->getGfx()->getLastFrameDurationMicro();
 
-	// Alle BS_TimedRenderObject Objekte über den Framestart und die verstrichene Zeit in Kenntnis setzen
+	// Alle BS_TimedRenderObject Objekte Ã¼ber den Framestart und die verstrichene Zeit in Kenntnis setzen
 	RenderObjectList::iterator iter = _timedRenderObjects.begin();
 	for (; iter != _timedRenderObjects.end(); ++iter)
 		(*iter)->frameNotification(timeElapsed);
@@ -96,7 +96,7 @@ bool RenderObjectManager::render() {
 
 	_frameStarted = false;
 
-	// Die Render-Methode der Wurzel aufrufen. Dadurch wird das rekursive Rendern der Baumelemente angestoßen.
+	// Die Render-Methode der Wurzel aufrufen. Dadurch wird das rekursive Rendern der Baumelemente angestoÃŸen.
 
 	_currQueue->clear();
 	_rootPtr->preRender(_currQueue);
@@ -191,7 +191,7 @@ bool RenderObjectManager::persist(OutputPersistenceBlock &writer) {
 bool RenderObjectManager::unpersist(InputPersistenceBlock &reader) {
 	bool result = true;
 
-	// Alle Kinder des Wurzelknotens löschen. Damit werden alle BS_RenderObjects gelöscht.
+	// Alle Kinder des Wurzelknotens lÃ¶schen. Damit werden alle BS_RenderObjects gelÃ¶scht.
 	_rootPtr->deleteAllChildren();
 
 	// Alle BS_RenderObjects wieder hestellen.
@@ -200,7 +200,7 @@ bool RenderObjectManager::unpersist(InputPersistenceBlock &reader) {
 
 	reader.read(_frameStarted);
 
-	// Momentan gespeicherte Referenzen auf TimedRenderObjects löschen.
+	// Momentan gespeicherte Referenzen auf TimedRenderObjects lÃ¶schen.
 	_timedRenderObjects.resize(0);
 
 	// Referenzen auf die TimedRenderObjects wieder herstellen.

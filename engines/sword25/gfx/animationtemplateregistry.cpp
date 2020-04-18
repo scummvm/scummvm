@@ -43,7 +43,7 @@ namespace Sword25 {
 bool AnimationTemplateRegistry::persist(OutputPersistenceBlock &writer) {
 	bool result = true;
 
-	// Das nächste zu vergebene Handle schreiben.
+	// Das nÃ¤chste zu vergebene Handle schreiben.
 	writer.write(_nextHandle);
 
 	// Anzahl an BS_AnimationTemplates schreiben.
@@ -69,10 +69,10 @@ bool AnimationTemplateRegistry::persist(OutputPersistenceBlock &writer) {
 bool AnimationTemplateRegistry::unpersist(InputPersistenceBlock &reader) {
 	bool result = true;
 
-	// Das nächste zu vergebene Handle wieder herstellen.
+	// Das nÃ¤chste zu vergebene Handle wieder herstellen.
 	reader.read(_nextHandle);
 
-	// Alle vorhandenen BS_AnimationTemplates zerstören.
+	// Alle vorhandenen BS_AnimationTemplates zerstÃ¶ren.
 	while (!_handle2PtrMap.empty())
 		delete _handle2PtrMap.begin()->_value;
 

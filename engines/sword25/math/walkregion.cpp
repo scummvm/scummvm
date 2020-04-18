@@ -237,7 +237,7 @@ void WalkRegion::initNodeVector() {
 			nodeCount += _polygons[i].vertexCount;
 	}
 
-	// Knoten-Vector füllen
+	// Knoten-Vector fÃ¼llen
 	_nodes.reserve(nodeCount);
 	{
 		for (uint j = 0; j < _polygons.size(); j++)

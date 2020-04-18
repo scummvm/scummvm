@@ -181,7 +181,7 @@ bool RenderObject::updateObjectState() {
 
 		++_version;
 
-		// Änderungen Validieren
+		// Ã„nderungen Validieren
 		validateObject();
 	}
 
@@ -533,7 +533,7 @@ RenderObjectPtr<RenderObject> RenderObject::recreatePersistedRenderObject(InputP
 }
 
 bool RenderObject::greater(const RenderObjectPtr<RenderObject> lhs, const RenderObjectPtr<RenderObject> rhs) {
-	// Das Objekt mit dem kleinem Z-Wert müssen zuerst gerendert werden.
+	// Das Objekt mit dem kleinem Z-Wert mÃ¼ssen zuerst gerendert werden.
 	if (lhs->_z != rhs->_z)
 		return lhs->_z < rhs->_z;
 	// Falls der Z-Wert gleich ist, wird das weiter oben gelegenen Objekte zuerst gezeichnet.
