@@ -77,6 +77,8 @@ class Map;
 class Tile;
 class TileView;
 class Coords;
+class TileAnimSet;
+class ImageInfo;
 
 struct MouseCursorSurface : public Graphics::ManagedSurface {
 	Common::Point _hotspot;
@@ -102,6 +104,25 @@ class Screen : public Graphics::Screen {
 private:
 	MouseCursorSurface *_mouseCursors[5];
 	int _currentMouseCursor;
+
+	Std::vector<TileAnimSet *> tileanimSets;
+	Layout *gemlayout;
+	Std::map<Common::String, int> dungeonTileChars;
+	ImageInfo *charsetInfo;
+	ImageInfo *gemTilesInfo;
+
+	int screenNeedPrompt;
+	int screenCursorX;
+	int screenCursorY;
+	int screenCursorStatus;
+	int screenCursorEnabled;
+	int screenLos[VIEWPORT_W][VIEWPORT_H];
+public:
+	Std::vector<Common::String> gemLayoutNames;
+	Std::vector<Common::String> filterNames;
+	Std::vector<Common::String> lineOfSightStyles;
+	int screenCurrentCycle;
+	TileAnimSet *tileanims;
 private:
 	/**
 	 * Load the cursors
@@ -264,8 +285,6 @@ public:
 };
 
 extern Screen *g_screen;
-
-extern int screenCurrentCycle;
 
 extern const Std::vector<Common::String> &screenGetGemLayoutNames();
 extern const Std::vector<Common::String> &screenGetFilterNames();

@@ -175,7 +175,7 @@ void TileView::drawFocus(int x, int y) {
 	ASSERT(y < _rows, "y value of %d out of range", y);
 
 	// Draw the focus rectangle around the tile
-	if ((screenCurrentCycle * 4 / SCR_CYCLE_PER_SECOND) % 2) {
+	if ((g_screen->screenCurrentCycle * 4 / SCR_CYCLE_PER_SECOND) % 2) {
 		// left edge
 		_screen->fillRect(SCALED(x * _tileWidth + this->_x),
 			SCALED(y * _tileHeight + this->_y),

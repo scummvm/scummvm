@@ -27,6 +27,7 @@
 #include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
+#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/map/tileanim.h"
@@ -36,8 +37,6 @@
 
 namespace Ultima {
 namespace Ultima4 {
-
-extern TileAnimSet *tileanims;
 
 TileId Tile::_nextId = 0;
 
@@ -171,8 +170,8 @@ void Tile::loadImage() {
 
 		if (_animationRule.size() > 0) {
 			_anim = NULL;
-			if (tileanims)
-				_anim = tileanims->getByName(_animationRule);
+			if (g_screen->tileanims)
+				_anim = g_screen->tileanims->getByName(_animationRule);
 			if (_anim == NULL)
 				errorWarning("Warning: animation style '%s' not found", _animationRule.c_str());
 		}

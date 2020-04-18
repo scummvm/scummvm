@@ -53,29 +53,16 @@ namespace Ultima4 {
 
 Screen *g_screen;
 
-Std::vector<TileAnimSet *> tileanimSets;
-Std::vector<Common::String> gemLayoutNames;
-Std::vector<Common::String> filterNames;
-Std::vector<Common::String> lineOfSightStyles;
-Layout *gemlayout = NULL;
-Std::map<Common::String, int> dungeonTileChars;
-TileAnimSet *tileanims = NULL;
-ImageInfo *charsetInfo = NULL;
-ImageInfo *gemTilesInfo = NULL;
-
-int screenNeedPrompt = 1;
-int screenCurrentCycle = 0;
-int screenCursorX = 0;
-int screenCursorY = 0;
-int screenCursorStatus = 0;
-int screenCursorEnabled = 1;
-int screenLos[VIEWPORT_W][VIEWPORT_H];
-
 static const int BufferSize = 1024;
 
-Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1) {
+Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1),
+		gemlayout(nullptr), tileanims(nullptr), charsetInfo(nullptr),
+		gemTilesInfo(nullptr), screenNeedPrompt(1),
+		screenCurrentCycle(0), screenCursorX(0), screenCursorY(0),
+		screenCursorStatus(0), screenCursorEnabled(1) {
 	g_screen = this;
 	Common::fill(&_mouseCursors[0], &_mouseCursors[5], (MouseCursorSurface *)nullptr);
+	Common::fill(&screenLos[0][0], &screenLos[VIEWPORT_W][0], 0);
 
 	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	Common::Point size(SCREEN_WIDTH * settings._scale, SCREEN_HEIGHT * settings._scale);
@@ -1352,15 +1339,15 @@ void inline screenWait(int numberOfAnimationFrames) {};
 
 
 const Std::vector<Common::String> &screenGetFilterNames() {
-	return filterNames;
+	return g_screen->filterNames;
 }
 
 const Std::vector<Common::String> &screenGetGemLayoutNames() {
-	return gemLayoutNames;
+	return g_screen->gemLayoutNames;
 }
 
 const Std::vector<Common::String> &screenGetLineOfSightStyles() {
-	return lineOfSightStyles;
+	return g_screen->lineOfSightStyles;
 }
 
 } // End of namespace Ultima4
