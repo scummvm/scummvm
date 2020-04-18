@@ -578,9 +578,9 @@ const char *Datum::type2str(bool isk) {
 	}
 }
 
-int Datum::compareTo(Datum d) {
+int Datum::compareTo(Datum d, bool ignoreCase) {
 	if (type == STRING && d.type == STRING) {
-		return u.s->compareTo(*d.u.s);
+		return ignoreCase ? u.s->compareToIgnoreCase(*d.u.s) : u.s->compareTo(*d.u.s);
 	} else if (g_lingo->alignTypes(*this, d) == FLOAT) {
 		if (u.f < d.u.f) {
 			return -1;
@@ -598,15 +598,6 @@ int Datum::compareTo(Datum d) {
 			return 1;
 		}
 	}
-}
-
-int Datum::compareToIgnoreCase(Datum d) {
-	if (type == STRING && d.type == STRING) {
-		Common::String *s1 = toLowercaseMac(u.s);
-		Common::String *s2 = toLowercaseMac(d.u.s);
-		return s1->compareTo(*s2);
-	}
-	return compareTo(d);
 }
 
 void Lingo::parseMenu(const char *code) {
