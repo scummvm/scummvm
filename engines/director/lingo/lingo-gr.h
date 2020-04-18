@@ -59,7 +59,7 @@ extern int yydebug;
     OBJECT = 265,
     REFERENCE = 266,
     LEXERROR = 267,
-    PCELL = 268,
+    PARRAY = 268,
     INT = 269,
     ARGC = 270,
     ARGCNORET = 271,

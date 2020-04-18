@@ -155,7 +155,7 @@ extern int yydebug;
     OBJECT = 265,
     REFERENCE = 266,
     LEXERROR = 267,
-    PCELL = 268,
+    PARRAY = 268,
     INT = 269,
     ARGC = 270,
     ARGCNORET = 271,
@@ -668,7 +668,7 @@ static const yytype_int16 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "UNARY", "CASTREF", "VOID", "VAR",
-  "POINT", "RECT", "ARRAY", "OBJECT", "REFERENCE", "LEXERROR", "PCELL",
+  "POINT", "RECT", "ARRAY", "OBJECT", "REFERENCE", "LEXERROR", "PARRAY",
   "INT", "ARGC", "ARGCNORET", "THEENTITY", "THEENTITYWITHID",
   "THEMENUITEMENTITY", "THEMENUITEMSENTITY", "FLOAT", "BLTIN", "FBLTIN",
   "RBLTIN", "ID", "STRING", "HANDLER", "SYMBOL", "ENDCLAUSE", "tPLAYACCEL",
