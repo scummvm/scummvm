@@ -39,6 +39,13 @@
 
 namespace Director {
 
+#define ARGNUMCHECK(n) \
+	if (nargs != 1) { \
+		error("%s: expected %d argument%s, got %d", __FUNCTION__, (n), ((n) == 1 ? "" : "s"), nargs); \
+		g_lingo->dropStack(nargs); \
+		return; \
+	}
+
 static struct BuiltinProto {
 	const char *name;
 	void (*func)(int);
@@ -552,11 +559,8 @@ void LB::b_add(int nargs) {
 }
 
 void LB::b_addAt(int nargs) {
-	if (nargs != 3) {
-		warning("b_addAt: expected 3 args, not %d", nargs);
-		g_lingo->dropStack(nargs);
-		return;
-	}
+	ARGNUMCHECK(3);
+
 	Datum value = g_lingo->pop();
 	Datum index = g_lingo->pop();
 	Datum list = g_lingo->pop();
@@ -577,11 +581,8 @@ void LB::b_addProp(int nargs) {
 }
 
 void LB::b_append(int nargs) {
-	if (nargs != 2) {
-		warning("b_append: expected 2 args, not %d", nargs);
-		g_lingo->dropStack(nargs);
-		return;
-	}
+	ARGNUMCHECK(2);
+
 	Datum value = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	if (list.type != ARRAY) {
@@ -592,11 +593,8 @@ void LB::b_append(int nargs) {
 }
 
 void LB::b_count(int nargs) {
-	if (nargs != 1) {
-		warning("b_count: expected 1 args, not %d", nargs);
-		g_lingo->dropStack(nargs);
-		return;
-	}
+	ARGNUMCHECK(1);
+
 	Datum list = g_lingo->pop();
 	if (list.type != ARRAY) {
 		warning("b_append: list arg should be of type ARRAY, not %s", list.type2str());
@@ -609,11 +607,8 @@ void LB::b_count(int nargs) {
 }
 
 void LB::b_deleteAt(int nargs) {
-	if (nargs != 2) {
-		warning("b_deleteAt: expected 2 args, not %d", nargs);
-		g_lingo->dropStack(nargs);
-		return;
-	}
+	ARGNUMCHECK(2);
+
 	Datum index = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	if (index.type != INT) {
@@ -648,11 +643,8 @@ void LB::b_getaProp(int nargs) {
 }
 
 void LB::b_getAt(int nargs) {
-	if (nargs != 2) {
-		warning("b_getAt: expected 2 args, not %d", nargs);
-		g_lingo->dropStack(nargs);
-		return;
-	}
+	ARGNUMCHECK(2);
+
 	Datum index = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	if (index.type == FLOAT)
@@ -1839,11 +1831,7 @@ void LB::b_sound(int nargs) {
 }
 
 void LB::b_soundBusy(int nargs) {
-	if (nargs != 1) {
-		error("b_soundBusy: expected 1 argument, got %d", nargs);
-		g_lingo->dropStack(nargs);
-		return;
-	}
+	ARGNUMCHECK(1);
 
 	DirectorSound *sound = g_director->getSoundManager();
 	Datum whichChannel = g_lingo->pop();
