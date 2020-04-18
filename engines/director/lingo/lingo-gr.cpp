@@ -2089,10 +2089,10 @@ yyreduce:
 			YYERROR;
 		}
 
-		warning("STUB: menuItems entity");
-		g_lingo->code1(LC::c_themenuitementityassign);
+		g_lingo->code1(LC::c_themenuentitypush);
 		g_lingo->codeInt((yyvsp[-4].e)[0]);
 		g_lingo->codeInt((yyvsp[-4].e)[1]);
+		g_lingo->code1(LC::c_assign);
 		(yyval.code) = (yyvsp[0].code); }
 #line 2098 "engines/director/lingo/lingo-gr.cpp"
     break;

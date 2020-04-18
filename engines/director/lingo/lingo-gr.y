@@ -161,10 +161,10 @@ asgn: tPUT expr tINTO ID 		{
 			YYERROR;
 		}
 
-		warning("STUB: menuItems entity");
-		g_lingo->code1(LC::c_themenuitementityassign);
+		g_lingo->code1(LC::c_themenuentitypush);
 		g_lingo->codeInt($THEMENUITEMSENTITY[0]);
 		g_lingo->codeInt($THEMENUITEMSENTITY[1]);
+		g_lingo->code1(LC::c_assign);
 		$$ = $expr; }
 	| tPUT expr tAFTER expr 		{ $$ = g_lingo->code1(LC::c_after); }		// D3
 	| tPUT expr tBEFORE expr 		{ $$ = g_lingo->code1(LC::c_before); }		// D3

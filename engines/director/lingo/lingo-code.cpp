@@ -130,6 +130,7 @@ static struct FuncDescr {
 	{ LC::c_telldone,		"c_telldone",		"" },
 	{ LC::c_theentityassign,"c_theentityassign","EF" },
 	{ LC::c_theentitypush,	"c_theentitypush",	"EF" }, // entity, field
+	{ LC::c_themenuentitypush,"c_themenuentitypush","EF" },
 	{ LC::c_themenuitementityassign,"c_themenuitementityassign","EF" },
 	{ LC::c_varpush,		"c_varpush",		"s" },
 	{ LC::c_voidpush,		"c_voidpush",		""  },
@@ -423,6 +424,21 @@ void LC::c_theentitypush() {
 	int field  = g_lingo->readInt();
 
 	Datum d = g_lingo->getTheEntity(entity, id, field);
+	g_lingo->push(d);
+}
+
+void LC::c_themenuentitypush() {
+	int entity = g_lingo->readInt();
+	int field  = g_lingo->readInt();
+
+	Datum menuId = g_lingo->pop();
+	Datum menuItemId;
+
+	if (entity != kTheMenuItems) { // "<entity> of menuitems" has 1 parameter
+		menuItemId = g_lingo->pop();
+	}
+
+	Datum d = g_lingo->getTheMenuItemEntity(entity, menuId, field, menuItemId);
 	g_lingo->push(d);
 }
 

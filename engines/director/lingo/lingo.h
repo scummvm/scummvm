@@ -287,6 +287,7 @@ public:
 	Datum getObjectField(Common::String &obj, int field);
 	void setObjectField(Common::String &obj, int field, Datum &d);
 	Datum getObjectRef(Common::String &obj, Common::String &field);
+	Datum getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId);
 	const char *entity2str(int id);
 	const char *field2str(int id);
 
