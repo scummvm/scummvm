@@ -198,6 +198,12 @@ Common::Error EoBEngine::init() {
 void EoBEngine::loadItemsAndDecorationsShapes() {
 	if (_flags.platform != Common::kPlatformSegaCD) {
 		EoBCoreEngine::loadItemsAndDecorationsShapes();
+		if (_flags.platform == Common::kPlatformPC98) {
+			_blueItemIconShapes = new const uint8 * [_numItemIconShapes];
+			_screen->loadShapeSetBitmap("DETECT", 5, 3);
+			for (int i = 0; i < _numItemIconShapes; i++)
+				_blueItemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10);
+		}
 		return;
 	}
 
