@@ -642,10 +642,12 @@ void Ultima8Engine::GraphicSysInit() {
 
 	_screen = new_screen;
 
-	// Show the splash _screen immediately now that the _screen has been set up
+	// Show the splash screen immediately now that the screen has been set up
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
-	if (saveSlot == -1)
+	if (saveSlot == -1) {
+		_mouse->setMouseCursor(Mouse::MOUSE_NONE);
 		showSplashScreen();
+	}
 
 	bool ttf_antialiasing = true;
 	_settingMan->setDefault("ttf_antialiasing", true);
