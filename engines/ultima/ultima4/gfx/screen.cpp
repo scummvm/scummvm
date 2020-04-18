@@ -52,16 +52,16 @@ namespace Ultima4 {
 
 Screen *g_screen;
 
-Screen::Screen() : _filterScaler(nullptr), _currentCursor(-1) {
+Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1) {
 	g_screen = this;
-	Common::fill(&_cursors[0], &_cursors[5], (Cursor *)nullptr);
+	Common::fill(&_cursors[0], &_cursors[5], (MouseCursorSurface *)nullptr);
 
 	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	Common::Point size(SCREEN_WIDTH * settings._scale, SCREEN_HEIGHT * settings._scale);
 	initGraphics(size.x, size.y, &SCREEN_FORMAT);
 
 	create(size.x, size.y, SCREEN_FORMAT);
-	loadCursors();
+	loadMouseCursors();
 }
 
 Screen::~Screen() {
@@ -85,7 +85,7 @@ void Screen::clear() {
 	ImageMgr::destroy();
 }
 
-void Screen::loadCursors() {
+void Screen::loadMouseCursors() {
 	// enable or disable the mouse cursor
 	if (settings._mouseOptions._enabled) {
 		g_system->showMouse(true);
@@ -93,7 +93,7 @@ void Screen::loadCursors() {
 		Shared::File cursorsFile("data/graphics/cursors.txt");
 
 		for (int idx = 0; idx < 5; ++idx)
-			_cursors[idx] = loadCursor(cursorsFile);
+			_cursors[idx] = loadMouseCursor(cursorsFile);
 
 	} else {
 		g_system->showMouse(false);
@@ -104,11 +104,11 @@ void Screen::loadCursors() {
 		errorFatal("%s is not a valid filter", settings._filter.c_str());
 }
 
-void Screen::setCursor(MouseCursor cursor) {
-	const Cursor *c = _cursors[cursor];
+void Screen::setMouseCursor(MouseCursor cursor) {
+	const MouseCursorSurface *c = _cursors[cursor];
 
-	if (c && cursor != _currentCursor) {
-		_currentCursor = cursor;
+	if (c && cursor != _currentMouseCursor) {
+		_currentMouseCursor = cursor;
 
 		const uint TRANSPARENT = g_screen->format.RGBToColor(0x80, 0x80, 0x80);
 		CursorMan.replaceCursor(c->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
@@ -119,7 +119,7 @@ void Screen::setCursor(MouseCursor cursor) {
 
 #define CURSOR_SIZE 20
 
-Cursor *Screen::loadCursor(Shared::File &src) {
+MouseCursorSurface *Screen::loadMouseCursor(Shared::File &src) {
 	uint row, col, endCol, pixel;
 	int hotX, hotY;
 	Common::String line;
@@ -130,7 +130,7 @@ Cursor *Screen::loadCursor(Shared::File &src) {
 	int bpp = g_screen->format.bytesPerPixel;
 	assert(bpp >= 2);
 
-	Cursor *c = new Cursor();
+	MouseCursorSurface *c = new MouseCursorSurface();
 	c->create(CURSOR_SIZE, CURSOR_SIZE, g_screen->format);
 	c->clear(TRANSPARENT);
 

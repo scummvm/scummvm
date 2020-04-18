@@ -77,7 +77,7 @@ class Tile;
 class TileView;
 class Coords;
 
-struct Cursor : public Graphics::ManagedSurface {
+struct MouseCursorSurface : public Graphics::ManagedSurface {
 	Common::Point _hotspot;
 };
 
@@ -99,18 +99,18 @@ struct Layout {
 
 class Screen : public Graphics::Screen {
 private:
-	Cursor *_cursors[5];
-	int _currentCursor;
+	MouseCursorSurface *_cursors[5];
+	int _currentMouseCursor;
 private:
 	/**
 	 * Load the cursors
 	 */
-	void loadCursors();
+	void loadMouseCursors();
 
 	/**
 	 * Loads the data for a single cursor from the passed file
 	 */
-	Cursor *loadCursor(Shared::File &src);
+	MouseCursorSurface *loadMouseCursor(Shared::File &src);
 public:
 	Std::vector<Layout *> _layouts;
 	Scaler _filterScaler;
@@ -128,7 +128,7 @@ public:
 	/**
 	 * Sets a given mouse cursor
 	 */
-	void setCursor(MouseCursor cursor);
+	void setMouseCursor(MouseCursor cursor);
 };
 
 extern Screen *g_screen;

@@ -44,9 +44,9 @@ static void handleMouseMotionEvent(const Common::Event &event) {
 	const MouseArea *area;
 	area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
 	if (area)
-		g_screen->setCursor(area->_cursor);
+		g_screen->setMouseCursor(area->_cursor);
 	else
-		g_screen->setCursor(MC_DEFAULT);
+		g_screen->setMouseCursor(MC_DEFAULT);
 }
 
 static void handleMouseButtonDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen) {
