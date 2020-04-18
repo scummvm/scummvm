@@ -116,6 +116,8 @@ private:
 	int _cursorStatus;
 	int _cursorEnabled;
 	int _los[VIEWPORT_W][VIEWPORT_H];
+	int _frameDuration;
+	bool _continueScreenRefresh;
 public:
 	Std::vector<Common::String> _gemLayoutNames;
 	Std::vector<Common::String> _filterNames;
@@ -278,7 +280,19 @@ public:
 	 */
 	int screenPointInMouseArea(int x, int y, const MouseArea *area);
 
+	/**
+	 * Scale an image up.  The resulting image will be scale * the
+	 * original dimensions.  The original image is no longer deleted.
+	 * n is the number of tiles in the image; each tile is filtered
+	 * seperately. filter determines whether or not to filter the
+	 * resulting image.
+	 */
 	Image *screenScale(Image *src, int scale, int n, int filter);
+
+	/**
+	 * Scale an image down.  The resulting image will be 1/scale * the
+	 * original dimensions.  The original image is no longer deleted.
+	 */
 	Image *screenScaleDown(Image *src, int scale);
 };
 

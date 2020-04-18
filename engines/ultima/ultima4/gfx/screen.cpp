@@ -50,15 +50,15 @@ namespace Ultima4 {
 
 #define MOUSE_CURSOR_SIZE 20
 #define DBL_MAX 1e99
-
+#define BUFFER_SIZE 1024
+ 
 Screen *g_screen;
-
-static const int BufferSize = 1024;
 
 Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1),
 		_gemLayout(nullptr), _tileAnims(nullptr), _charSetInfo(nullptr),
 		_gemTilesInfo(nullptr), _needPrompt(1), _currentCycle(0),
-		_cursorStatus(0), _cursorEnabled(1) {
+		_cursorStatus(0), _cursorEnabled(1), _frameDuration(0),
+		_continueScreenRefresh(true) {
 	g_screen = this;
 	Common::fill(&_mouseCursors[0], &_mouseCursors[5], (MouseCursorSurface *)nullptr);
 	Common::fill(&_los[0][0], &_los[VIEWPORT_W][0], 0);
@@ -236,12 +236,12 @@ void Screen::screenReInit() {
 }
 
 void Screen::screenTextAt(int x, int y, const char *fmt, ...) {
-	char buffer[BufferSize];
+	char buffer[BUFFER_SIZE];
 	unsigned int i;
 
 	va_list args;
 	va_start(args, fmt);
-	vsnprintf(buffer, BufferSize, fmt, args);
+	vsnprintf(buffer, BUFFER_SIZE, fmt, args);
 	va_end(args);
 
 	for (i = 0; i < strlen(buffer); i++)
@@ -262,13 +262,13 @@ void Screen::screenMessage(const char *fmt, ...) {
 
 	if (!g_context)
 		return; //Because some cases (like the intro) don't have the context initiated.
-	char buffer[BufferSize];
+	char buffer[BUFFER_SIZE];
 	unsigned int i;
 	int wordlen;
 
 	va_list args;
 	va_start(args, fmt);
-	vsnprintf(buffer, BufferSize, fmt, args);
+	vsnprintf(buffer, BUFFER_SIZE, fmt, args);
 	va_end(args);
 #ifdef IOS
 	if (recursed)
@@ -1223,7 +1223,6 @@ Layout *Screen::screenGetGemLayout(const Map *map) {
 		return _gemLayout;
 }
 
-
 void Screen::screenGemUpdate() {
 	MapTile tile;
 	int x, y;
@@ -1327,6 +1326,91 @@ void Screen::screenGemUpdate() {
 	screenUpdateCursor();
 	screenUpdateMoons();
 	screenUpdateWind();
+}
+
+
+void Screen::screenRedrawTextArea(int x, int y, int width, int height) {
+	g_system->updateScreen();
+}
+
+void Screen::screenWait(int numberOfAnimationFrames) {
+	g_system->delayMillis(numberOfAnimationFrames * _frameDuration);
+}
+
+Image *Screen::screenScale(Image *src, int scale, int n, int filter) {
+	Image *dest = NULL;
+	bool isTransparent;
+	unsigned int transparentIndex;
+	bool alpha = src->isAlphaOn();
+
+	if (n == 0)
+		n = 1;
+
+	isTransparent = src->getTransparentIndex(transparentIndex);
+	src->alphaOff();
+
+	while (filter && _filterScaler && (scale % 2 == 0)) {
+		dest = (*_filterScaler)(src, 2, n);
+		src = dest;
+		scale /= 2;
+	}
+	if (scale == 3 && scaler3x(settings._filter)) {
+		dest = (*_filterScaler)(src, 3, n);
+		src = dest;
+		scale /= 3;
+	}
+
+	if (scale != 1)
+		dest = (*scalerGet("point"))(src, scale, n);
+
+	if (!dest)
+		dest = Image::duplicate(src);
+
+	if (isTransparent)
+		dest->setTransparentIndex(transparentIndex);
+
+	if (alpha)
+		src->alphaOn();
+
+	return dest;
+}
+
+Image *Screen::screenScaleDown(Image *src, int scale) {
+	int x, y;
+	Image *dest;
+	bool isTransparent;
+	unsigned int transparentIndex;
+	bool alpha = src->isAlphaOn();
+
+	isTransparent = src->getTransparentIndex(transparentIndex);
+
+	src->alphaOff();
+
+	dest = Image::create(src->width() / scale, src->height() / scale, src->isIndexed(), Image::HARDWARE);
+	if (!dest)
+		return NULL;
+
+	if (!dest)
+		dest = Image::duplicate(src);
+
+	if (dest->isIndexed())
+		dest->setPaletteFromImage(src);
+
+	for (y = 0; y < src->height(); y += scale) {
+		for (x = 0; x < src->width(); x += scale) {
+			unsigned int index;
+			src->getPixelIndex(x, y, index);
+			dest->putPixelIndex(x / scale, y / scale, index);
+		}
+	}
+
+	if (isTransparent)
+		dest->setTransparentIndex(transparentIndex);
+
+	if (alpha)
+		src->alphaOn();
+
+	return dest;
 }
 
 #ifdef IOS

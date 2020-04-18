@@ -203,7 +203,6 @@ MODULE_OBJS := \
 	ultima4/gfx/imageview.o \
 	ultima4/gfx/scale.o \
 	ultima4/gfx/screen.o \
-	ultima4/gfx/screen_scummvm.o \
 	ultima4/map/annotation.o \
 	ultima4/map/city.o \
 	ultima4/map/direction.o \
