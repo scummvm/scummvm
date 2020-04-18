@@ -238,7 +238,9 @@ enum {
 };
 
 struct Datum;
+struct PCell;
 typedef Common::Array<Datum> DatumArray;
+typedef Common::Array<PCell> PropertyArray;
 
 const char *scriptType2str(ScriptType scr);
 

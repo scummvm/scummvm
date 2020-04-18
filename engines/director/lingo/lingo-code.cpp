@@ -230,6 +230,9 @@ void LC::c_printtop(void) {
 	case ARRAY:
 		warning("%s", d.getPrintable().c_str());
 		break;
+	case PARRAY:
+		warning("%s", d.getPrintable().c_str());
+		break;
 	default:
 		warning("--unknown--");
 	}
@@ -315,13 +318,17 @@ void LC::c_proparraypush() {
 	Datum d;
 	int arraySize = g_lingo->readInt();
 
-	warning("STUB: c_proparraypush()");
+	d.type = PARRAY;
+	d.u.parr = new PropertyArray;
 
-	for (int i = 0; i < arraySize * 2; i++)
-		g_lingo->pop();
+	for (int i = 0; i < arraySize; i++) {
+		Datum p = g_lingo->pop();
+		Datum v = g_lingo->pop();
 
-	d.u.i = arraySize;
-	d.type = INT;
+		PCell cell = PCell(p, v);
+		d.u.parr->insert_at(0, cell);
+	}
+
 	g_lingo->push(d);
 }
 
@@ -380,7 +387,7 @@ void LC::c_assign() {
 }
 
 bool LC::verify(Symbol *s) {
-	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT && s->type != SYMBOL && s->type != ARRAY) {
+	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT && s->type != SYMBOL && s->type != ARRAY && s->type != PARRAY) {
 		warning("attempt to evaluate non-variable '%s'", s->name.c_str());
 
 		return false;
