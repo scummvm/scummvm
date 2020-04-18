@@ -105,24 +105,23 @@ private:
 	MouseCursorSurface *_mouseCursors[5];
 	int _currentMouseCursor;
 
-	Std::vector<TileAnimSet *> tileanimSets;
-	Layout *gemlayout;
-	Std::map<Common::String, int> dungeonTileChars;
-	ImageInfo *charsetInfo;
-	ImageInfo *gemTilesInfo;
+	Std::vector<TileAnimSet *> _tileAnimSets;
+	Layout *_gemLayout;
+	Std::map<Common::String, int> _dungeonTileChars;
+	ImageInfo *_charSetInfo;
+	ImageInfo *_gemTilesInfo;
 
-	int screenNeedPrompt;
-	int screenCursorX;
-	int screenCursorY;
-	int screenCursorStatus;
-	int screenCursorEnabled;
-	int screenLos[VIEWPORT_W][VIEWPORT_H];
+	int _needPrompt;
+	Common::Point _cursorPos;
+	int _cursorStatus;
+	int _cursorEnabled;
+	int _los[VIEWPORT_W][VIEWPORT_H];
 public:
-	Std::vector<Common::String> gemLayoutNames;
-	Std::vector<Common::String> filterNames;
-	Std::vector<Common::String> lineOfSightStyles;
-	int screenCurrentCycle;
-	TileAnimSet *tileanims;
+	Std::vector<Common::String> _gemLayoutNames;
+	Std::vector<Common::String> _filterNames;
+	Std::vector<Common::String> _lineOfSightStyles;
+	int _currentCycle;
+	TileAnimSet *_tileAnims;
 private:
 	/**
 	 * Load the cursors
@@ -249,7 +248,6 @@ public:
 	 * Draw a character from the charset onto the screen.
 	 */
 	void screenShowChar(int chr, int x, int y);
-	void screenShowCharMasked(int chr, int x, int y, unsigned char mask);
 	void screenTextAt(int x, int y, const char *fmt, ...) GCC_PRINTF(3, 4);
 
 	/**

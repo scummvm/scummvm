@@ -158,7 +158,7 @@ void TileAnimScrollTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 	if (_increment == 0)
 		_increment = tile->getScale();
 
-	int offset = g_screen->screenCurrentCycle * 4 / SCR_CYCLE_PER_SECOND * tile->getScale();
+	int offset = g_screen->_currentCycle * 4 / SCR_CYCLE_PER_SECOND * tile->getScale();
 	if (_lastOffset != offset) {
 		_lastOffset = offset;
 		_current += _increment;

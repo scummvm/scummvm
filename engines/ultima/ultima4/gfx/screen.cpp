@@ -56,13 +56,12 @@ Screen *g_screen;
 static const int BufferSize = 1024;
 
 Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1),
-		gemlayout(nullptr), tileanims(nullptr), charsetInfo(nullptr),
-		gemTilesInfo(nullptr), screenNeedPrompt(1),
-		screenCurrentCycle(0), screenCursorX(0), screenCursorY(0),
-		screenCursorStatus(0), screenCursorEnabled(1) {
+		_gemLayout(nullptr), _tileAnims(nullptr), _charSetInfo(nullptr),
+		_gemTilesInfo(nullptr), _needPrompt(1), _currentCycle(0),
+		_cursorStatus(0), _cursorEnabled(1) {
 	g_screen = this;
 	Common::fill(&_mouseCursors[0], &_mouseCursors[5], (MouseCursorSurface *)nullptr);
-	Common::fill(&screenLos[0][0], &screenLos[VIEWPORT_W][0], 0);
+	Common::fill(&_los[0][0], &_los[VIEWPORT_W][0], 0);
 
 	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	Common::Point size(SCREEN_WIDTH * settings._scale, SCREEN_HEIGHT * settings._scale);
@@ -168,18 +167,18 @@ MouseCursorSurface *Screen::loadMouseCursor(Shared::File &src) {
 }
 
 void Screen::screenInit() {
-	filterNames.clear();
-	filterNames.push_back("point");
-	filterNames.push_back("2xBi");
-	filterNames.push_back("2xSaI");
-	filterNames.push_back("Scale2x");
+	_filterNames.clear();
+	_filterNames.push_back("point");
+	_filterNames.push_back("2xBi");
+	_filterNames.push_back("2xSaI");
+	_filterNames.push_back("Scale2x");
 
-	lineOfSightStyles.clear();
-	lineOfSightStyles.push_back("DOS");
-	lineOfSightStyles.push_back("Enhanced");
+	_lineOfSightStyles.clear();
+	_lineOfSightStyles.push_back("DOS");
+	_lineOfSightStyles.push_back("Enhanced");
 
-	charsetInfo = NULL;
-	gemTilesInfo = NULL;
+	_charSetInfo = NULL;
+	_gemTilesInfo = NULL;
 
 	screenLoadGraphicsFromConf();
 
@@ -193,44 +192,44 @@ void Screen::screenInit() {
 	KeyHandler::setKeyRepeat(settings._keydelay, settings._keyinterval);
 
 	/* find the tile animations for our tileset */
-	tileanims = NULL;
-	for (Std::vector<TileAnimSet *>::const_iterator i = tileanimSets.begin(); i != tileanimSets.end(); i++) {
+	_tileAnims = NULL;
+	for (Std::vector<TileAnimSet *>::const_iterator i = _tileAnimSets.begin(); i != _tileAnimSets.end(); i++) {
 		TileAnimSet *set = *i;
 		if (set->_name == settings._videoType)
-			tileanims = set;
+			_tileAnims = set;
 	}
-	if (!tileanims)
+	if (!_tileAnims)
 		errorFatal("unable to find tile animations for \"%s\" video mode in graphics.xml", settings._videoType.c_str());
 
-	dungeonTileChars.clear();
-	dungeonTileChars["brick_floor"] = CHARSET_FLOOR;
-	dungeonTileChars["up_ladder"] = CHARSET_LADDER_UP;
-	dungeonTileChars["down_ladder"] = CHARSET_LADDER_DOWN;
-	dungeonTileChars["up_down_ladder"] = CHARSET_LADDER_UPDOWN;
-	dungeonTileChars["chest"] = '$';
-	dungeonTileChars["ceiling_hole"] = CHARSET_FLOOR;
-	dungeonTileChars["floor_hole"] = CHARSET_FLOOR;
-	dungeonTileChars["magic_orb"] = CHARSET_ORB;
-	dungeonTileChars["ceiling_hole"] = 'T';
-	dungeonTileChars["floor_hole"] = 'T';
-	dungeonTileChars["fountain"] = 'F';
-	dungeonTileChars["secret_door"] = CHARSET_SDOOR;
-	dungeonTileChars["brick_wall"] = CHARSET_WALL;
-	dungeonTileChars["dungeon_door"] = CHARSET_ROOM;
-	dungeonTileChars["avatar"] = CHARSET_REDDOT;
-	dungeonTileChars["dungeon_room"] = CHARSET_ROOM;
-	dungeonTileChars["dungeon_altar"] = CHARSET_ANKH;
-	dungeonTileChars["energy_field"] = '^';
-	dungeonTileChars["fire_field"] = '^';
-	dungeonTileChars["poison_field"] = '^';
-	dungeonTileChars["sleep_field"] = '^';
+	_dungeonTileChars.clear();
+	_dungeonTileChars["brick_floor"] = CHARSET_FLOOR;
+	_dungeonTileChars["up_ladder"] = CHARSET_LADDER_UP;
+	_dungeonTileChars["down_ladder"] = CHARSET_LADDER_DOWN;
+	_dungeonTileChars["up_down_ladder"] = CHARSET_LADDER_UPDOWN;
+	_dungeonTileChars["chest"] = '$';
+	_dungeonTileChars["ceiling_hole"] = CHARSET_FLOOR;
+	_dungeonTileChars["floor_hole"] = CHARSET_FLOOR;
+	_dungeonTileChars["magic_orb"] = CHARSET_ORB;
+	_dungeonTileChars["ceiling_hole"] = 'T';
+	_dungeonTileChars["floor_hole"] = 'T';
+	_dungeonTileChars["fountain"] = 'F';
+	_dungeonTileChars["secret_door"] = CHARSET_SDOOR;
+	_dungeonTileChars["brick_wall"] = CHARSET_WALL;
+	_dungeonTileChars["dungeon_door"] = CHARSET_ROOM;
+	_dungeonTileChars["avatar"] = CHARSET_REDDOT;
+	_dungeonTileChars["dungeon_room"] = CHARSET_ROOM;
+	_dungeonTileChars["dungeon_altar"] = CHARSET_ANKH;
+	_dungeonTileChars["energy_field"] = '^';
+	_dungeonTileChars["fire_field"] = '^';
+	_dungeonTileChars["poison_field"] = '^';
+	_dungeonTileChars["sleep_field"] = '^';
 }
 
 void Screen::screenReInit() {
 	intro->deleteIntro();       /* delete intro stuff */
 	Tileset::unloadAllImages(); /* unload tilesets, which will be reloaded lazily as needed */
 	ImageMgr::destroy();
-	tileanims = NULL;
+	_tileAnims = NULL;
 	clear();
 	init();           // re-init screen stuff (loading new backgrounds, etc.)
 	intro->init();    /* re-fix the backgrounds loaded and scale images, etc. */
@@ -250,9 +249,9 @@ void Screen::screenTextAt(int x, int y, const char *fmt, ...) {
 }
 
 void Screen::screenPrompt() {
-	if (screenNeedPrompt && screenCursorEnabled && g_context->col == 0) {
+	if (_needPrompt && _cursorEnabled && g_context->col == 0) {
 		screenMessage("%c", CHARSET_PROMPT);
-		screenNeedPrompt = 0;
+		_needPrompt = 0;
 	}
 }
 
@@ -341,7 +340,7 @@ void Screen::screenMessage(const char *fmt, ...) {
 	screenSetCursorPos(TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
 	screenShowCursor();
 
-	screenNeedPrompt = 1;
+	_needPrompt = 1;
 }
 
 void Screen::screenLoadGraphicsFromConf() {
@@ -353,15 +352,15 @@ void Screen::screenLoadGraphicsFromConf() {
 		if (conf->getName() == "layout")
 			_layouts.push_back(screenLoadLayoutFromConf(*conf));
 		else if (conf->getName() == "tileanimset")
-			tileanimSets.push_back(new TileAnimSet(*conf));
+			_tileAnimSets.push_back(new TileAnimSet(*conf));
 	}
 
-	gemLayoutNames.clear();
+	_gemLayoutNames.clear();
 	Std::vector<Layout *>::const_iterator i;
 	for (i = _layouts.begin(); i != _layouts.end(); i++) {
 		Layout *layout = *i;
 		if (layout->_type == LAYOUT_GEM) {
-			gemLayoutNames.push_back(layout->_name);
+			_gemLayoutNames.push_back(layout->_name);
 		}
 	}
 
@@ -372,11 +371,11 @@ void Screen::screenLoadGraphicsFromConf() {
 		Layout *layout = *i;
 
 		if (layout->_type == LAYOUT_GEM && layout->_name == settings._gemLayout) {
-			gemlayout = layout;
+			_gemLayout = layout;
 			break;
 		}
 	}
-	if (!gemlayout)
+	if (!_gemLayout)
 		errorFatal("no gem layout named %s found!\n", settings._gemLayout.c_str());
 }
 
@@ -455,7 +454,7 @@ bool Screen::screenTileUpdate(TileView *view, const Coords &coords, bool redraw)
 	}
 
 	// Draw if it is on screen
-	if (x >= 0 && y >= 0 && x < VIEWPORT_W && y < VIEWPORT_H && screenLos[x][y]) {
+	if (x >= 0 && y >= 0 && x < VIEWPORT_W && y < VIEWPORT_H && _los[x][y]) {
 		view->drawTile(tiles, focus, x, y);
 
 		if (redraw) {
@@ -493,7 +492,7 @@ void Screen::screenUpdate(TileView *view, bool showmap, bool blackout) {
 
 		for (y = 0; y < VIEWPORT_H; y++) {
 			for (x = 0; x < VIEWPORT_W; x++) {
-				if (screenLos[x][y]) {
+				if (_los[x][y]) {
 					view->drawTile(viewportTiles[x][y], viewportFocus[x][y], x, y);
 				} else
 					view->drawTile(black, false, x, y);
@@ -548,9 +547,9 @@ void Screen::screenDrawImageInMapArea(const Common::String &name) {
 }
 
 void Screen::screenTextColor(int color) {
-	if (charsetInfo == NULL) {
-		charsetInfo = imageMgr->get(BKGD_CHARSET);
-		if (!charsetInfo)
+	if (_charSetInfo == NULL) {
+		_charSetInfo = imageMgr->get(BKGD_CHARSET);
+		if (!_charSetInfo)
 			errorFatal("ERROR 1003: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_CHARSET, settings._game.c_str());
 	}
 
@@ -566,39 +565,39 @@ void Screen::screenTextColor(int color) {
 	case FG_RED:
 	case FG_YELLOW:
 	case FG_WHITE:
-		charsetInfo->_image->setFontColorFG((ColorFG)color);
+		_charSetInfo->_image->setFontColorFG((ColorFG)color);
 	}
 }
 
 void Screen::screenShowChar(int chr, int x, int y) {
-	if (charsetInfo == NULL) {
-		charsetInfo = imageMgr->get(BKGD_CHARSET);
-		if (!charsetInfo)
+	if (_charSetInfo == NULL) {
+		_charSetInfo = imageMgr->get(BKGD_CHARSET);
+		if (!_charSetInfo)
 			error("ERROR 1001: Unable to load the \"%s\" data file", BKGD_CHARSET);
 	}
 
-	charsetInfo->_image->drawSubRect(x * charsetInfo->_image->width(), y * (CHAR_HEIGHT * settings._scale),
+	_charSetInfo->_image->drawSubRect(x * _charSetInfo->_image->width(), y * (CHAR_HEIGHT * settings._scale),
 	                                 0, chr * (CHAR_HEIGHT * settings._scale),
-	                                 charsetInfo->_image->width(), CHAR_HEIGHT * settings._scale);
+	                                 _charSetInfo->_image->width(), CHAR_HEIGHT * settings._scale);
 }
 
 void Screen::screenScrollMessageArea() {
-	ASSERT(charsetInfo != NULL && charsetInfo->_image != NULL, "charset not initialized!");
+	ASSERT(_charSetInfo != NULL && _charSetInfo->_image != NULL, "charset not initialized!");
 
 	Image *screen = imageMgr->get("screen")->_image;
 
 	screen->drawSubRectOn(screen,
-	                      TEXT_AREA_X * charsetInfo->_image->width(),
+	                      TEXT_AREA_X * _charSetInfo->_image->width(),
 	                      TEXT_AREA_Y * CHAR_HEIGHT * settings._scale,
-	                      TEXT_AREA_X * charsetInfo->_image->width(),
+	                      TEXT_AREA_X * _charSetInfo->_image->width(),
 	                      (TEXT_AREA_Y + 1) * CHAR_HEIGHT * settings._scale,
-	                      TEXT_AREA_W * charsetInfo->_image->width(),
+	                      TEXT_AREA_W * _charSetInfo->_image->width(),
 	                      (TEXT_AREA_H - 1) * CHAR_HEIGHT * settings._scale);
 
 
-	screen->fillRect(TEXT_AREA_X * charsetInfo->_image->width(),
+	screen->fillRect(TEXT_AREA_X * _charSetInfo->_image->width(),
 	                 TEXT_AREA_Y * CHAR_HEIGHT * settings._scale + (TEXT_AREA_H - 1) * CHAR_HEIGHT * settings._scale,
-	                 TEXT_AREA_W * charsetInfo->_image->width(),
+	                 TEXT_AREA_W * _charSetInfo->_image->width(),
 	                 CHAR_HEIGHT * settings._scale,
 	                 0, 0, 0);
 
@@ -606,19 +605,19 @@ void Screen::screenScrollMessageArea() {
 }
 
 void Screen::screenCycle() {
-	if (++screenCurrentCycle >= SCR_CYCLE_MAX)
-		screenCurrentCycle = 0;
+	if (++_currentCycle >= SCR_CYCLE_MAX)
+		_currentCycle = 0;
 	update();
 }
 
 void Screen::screenUpdateCursor() {
-	int phase = screenCurrentCycle * SCR_CYCLE_PER_SECOND / SCR_CYCLE_MAX;
+	int phase = _currentCycle * SCR_CYCLE_PER_SECOND / SCR_CYCLE_MAX;
 
 	ASSERT(phase >= 0 && phase < 4, "derived an invalid cursor phase: %d", phase);
 
-	if (screenCursorStatus) {
-		screenShowChar(31 - phase, screenCursorX, screenCursorY);
-		screenRedrawTextArea(screenCursorX, screenCursorY, 1, 1);
+	if (_cursorStatus) {
+		screenShowChar(31 - phase, _cursorPos.x, _cursorPos.y);
+		screenRedrawTextArea(_cursorPos.x, _cursorPos.y, 1, 1);
 	}
 }
 
@@ -662,32 +661,32 @@ void Screen::screenUpdateWind() {
 }
 
 void Screen::screenShowCursor() {
-	if (!screenCursorStatus && screenCursorEnabled) {
-		screenCursorStatus = 1;
+	if (!_cursorStatus && _cursorEnabled) {
+		_cursorStatus = 1;
 		screenUpdateCursor();
 	}
 }
 
 void Screen::screenHideCursor() {
-	if (screenCursorStatus) {
-		screenEraseTextArea(screenCursorX, screenCursorY, 1, 1);
-		screenRedrawTextArea(screenCursorX, screenCursorY, 1, 1);
+	if (_cursorStatus) {
+		screenEraseTextArea(_cursorPos.x, _cursorPos.y, 1, 1);
+		screenRedrawTextArea(_cursorPos.x, _cursorPos.y, 1, 1);
 	}
-	screenCursorStatus = 0;
+	_cursorStatus = 0;
 }
 
 void Screen::screenEnableCursor(void) {
-	screenCursorEnabled = 1;
+	_cursorEnabled = 1;
 }
 
 void Screen::screenDisableCursor(void) {
 	screenHideCursor();
-	screenCursorEnabled = 0;
+	_cursorEnabled = 0;
 }
 
 void Screen::screenSetCursorPos(int x, int y) {
-	screenCursorX = x;
-	screenCursorY = y;
+	_cursorPos.x = x;
+	_cursorPos.y = y;
 }
 
 void Screen::screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
@@ -702,7 +701,7 @@ void Screen::screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_
 	if (g_context->_location->_map->_flags & NO_LINE_OF_SIGHT) {
 		for (y = 0; y < VIEWPORT_H; y++) {
 			for (x = 0; x < VIEWPORT_W; x++) {
-				screenLos[x][y] = 1;
+				_los[x][y] = 1;
 			}
 		}
 		return;
@@ -713,7 +712,7 @@ void Screen::screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_
 	 */
 	for (y = 0; y < VIEWPORT_H; y++) {
 		for (x = 0; x < VIEWPORT_W; x++) {
-			screenLos[x][y] = 0;
+			_los[x][y] = 0;
 		}
 	}
 
@@ -728,79 +727,79 @@ void Screen::screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_
 void Screen::screenFindLineOfSightDOS(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
 	int x, y;
 
-	screenLos[VIEWPORT_W / 2][VIEWPORT_H / 2] = 1;
+	_los[VIEWPORT_W / 2][VIEWPORT_H / 2] = 1;
 
 	for (x = VIEWPORT_W / 2 - 1; x >= 0; x--)
-		if (screenLos[x + 1][VIEWPORT_H / 2] &&
+		if (_los[x + 1][VIEWPORT_H / 2] &&
 		        !viewportTiles[x + 1][VIEWPORT_H / 2].front().getTileType()->isOpaque())
-			screenLos[x][VIEWPORT_H / 2] = 1;
+			_los[x][VIEWPORT_H / 2] = 1;
 
 	for (x = VIEWPORT_W / 2 + 1; x < VIEWPORT_W; x++)
-		if (screenLos[x - 1][VIEWPORT_H / 2] &&
+		if (_los[x - 1][VIEWPORT_H / 2] &&
 		        !viewportTiles[x - 1][VIEWPORT_H / 2].front().getTileType()->isOpaque())
-			screenLos[x][VIEWPORT_H / 2] = 1;
+			_los[x][VIEWPORT_H / 2] = 1;
 
 	for (y = VIEWPORT_H / 2 - 1; y >= 0; y--)
-		if (screenLos[VIEWPORT_W / 2][y + 1] &&
+		if (_los[VIEWPORT_W / 2][y + 1] &&
 		        !viewportTiles[VIEWPORT_W / 2][y + 1].front().getTileType()->isOpaque())
-			screenLos[VIEWPORT_W / 2][y] = 1;
+			_los[VIEWPORT_W / 2][y] = 1;
 
 	for (y = VIEWPORT_H / 2 + 1; y < VIEWPORT_H; y++)
-		if (screenLos[VIEWPORT_W / 2][y - 1] &&
+		if (_los[VIEWPORT_W / 2][y - 1] &&
 		        !viewportTiles[VIEWPORT_W / 2][y - 1].front().getTileType()->isOpaque())
-			screenLos[VIEWPORT_W / 2][y] = 1;
+			_los[VIEWPORT_W / 2][y] = 1;
 
 	for (y = VIEWPORT_H / 2 - 1; y >= 0; y--) {
 
 		for (x = VIEWPORT_W / 2 - 1; x >= 0; x--) {
-			if (screenLos[x][y + 1] &&
+			if (_los[x][y + 1] &&
 			        !viewportTiles[x][y + 1].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
-			else if (screenLos[x + 1][y] &&
+				_los[x][y] = 1;
+			else if (_los[x + 1][y] &&
 			         !viewportTiles[x + 1][y].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
-			else if (screenLos[x + 1][y + 1] &&
+				_los[x][y] = 1;
+			else if (_los[x + 1][y + 1] &&
 			         !viewportTiles[x + 1][y + 1].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
+				_los[x][y] = 1;
 		}
 
 		for (x = VIEWPORT_W / 2 + 1; x < VIEWPORT_W; x++) {
-			if (screenLos[x][y + 1] &&
+			if (_los[x][y + 1] &&
 			        !viewportTiles[x][y + 1].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
-			else if (screenLos[x - 1][y] &&
+				_los[x][y] = 1;
+			else if (_los[x - 1][y] &&
 			         !viewportTiles[x - 1][y].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
-			else if (screenLos[x - 1][y + 1] &&
+				_los[x][y] = 1;
+			else if (_los[x - 1][y + 1] &&
 			         !viewportTiles[x - 1][y + 1].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
+				_los[x][y] = 1;
 		}
 	}
 
 	for (y = VIEWPORT_H / 2 + 1; y < VIEWPORT_H; y++) {
 
 		for (x = VIEWPORT_W / 2 - 1; x >= 0; x--) {
-			if (screenLos[x][y - 1] &&
+			if (_los[x][y - 1] &&
 			        !viewportTiles[x][y - 1].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
-			else if (screenLos[x + 1][y] &&
+				_los[x][y] = 1;
+			else if (_los[x + 1][y] &&
 			         !viewportTiles[x + 1][y].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
-			else if (screenLos[x + 1][y - 1] &&
+				_los[x][y] = 1;
+			else if (_los[x + 1][y - 1] &&
 			         !viewportTiles[x + 1][y - 1].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
+				_los[x][y] = 1;
 		}
 
 		for (x = VIEWPORT_W / 2 + 1; x < VIEWPORT_W; x++) {
-			if (screenLos[x][y - 1] &&
+			if (_los[x][y - 1] &&
 			        !viewportTiles[x][y - 1].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
-			else if (screenLos[x - 1][y] &&
+				_los[x][y] = 1;
+			else if (_los[x - 1][y] &&
 			         !viewportTiles[x - 1][y].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
-			else if (screenLos[x - 1][y - 1] &&
+				_los[x][y] = 1;
+			else if (_los[x - 1][y - 1] &&
 			         !viewportTiles[x - 1][y - 1].front().getTileType()->isOpaque())
-				screenLos[x][y] = 1;
+				_los[x][y] = 1;
 		}
 	}
 }
@@ -1005,9 +1004,9 @@ void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[V
 						for (int currentShadow = 1; currentShadow <= shadowLength; currentShadow++) {
 							// apply the shadow to the shadowMap
 							if (reflect) {
-								screenLos[xTile + ((yTileOffset) * ySign)][yTile + ((currentShadow + xTileOffset) * xSign)] |= shadowType;
+								_los[xTile + ((yTileOffset) * ySign)][yTile + ((currentShadow + xTileOffset) * xSign)] |= shadowType;
 							} else {
-								screenLos[xTile + ((currentShadow + xTileOffset) * xSign)][yTile + ((yTileOffset) * ySign)] |= shadowType;
+								_los[xTile + ((currentShadow + xTileOffset) * xSign)][yTile + ((yTileOffset) * ySign)] |= shadowType;
 							}
 						}
 						xTileOffset += shadowLength;
@@ -1024,10 +1023,10 @@ void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[V
 		for (x = 0; x < VIEWPORT_W; x++) {
 			// if the shadow flags equal __VCH, hide it, otherwise it's fully visible
 			//
-			if ((screenLos[x][y] & __VCH) == __VCH) {
-				screenLos[x][y] = 0;
+			if ((_los[x][y] & __VCH) == __VCH) {
+				_los[x][y] = 0;
 			} else {
-				screenLos[x][y] = 1;
+				_los[x][y] = 1;
 			}
 		}
 	}
@@ -1174,10 +1173,10 @@ void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus,
 	unsigned int tile = map->translateToRawTileIndex(t);
 
 	if (map->_type == Map::DUNGEON) {
-		ASSERT(charsetInfo, "charset not initialized");
-		Std::map<Common::String, int>::iterator charIndex = dungeonTileChars.find(t.getTileType()->getName());
-		if (charIndex != dungeonTileChars.end()) {
-			charsetInfo->_image->drawSubRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
+		ASSERT(_charSetInfo, "charset not initialized");
+		Std::map<Common::String, int>::iterator charIndex = _dungeonTileChars.find(t.getTileType()->getName());
+		if (charIndex != _dungeonTileChars.end()) {
+			_charSetInfo->_image->drawSubRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
 			                                 (layout->_viewport.top + (y * layout->_tileShape.y)) * settings._scale,
 			                                 0,
 			                                 charIndex->_value * layout->_tileShape.y * settings._scale,
@@ -1185,14 +1184,14 @@ void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus,
 			                                 layout->_tileShape.y * settings._scale);
 		}
 	} else {
-		if (gemTilesInfo == NULL) {
-			gemTilesInfo = imageMgr->get(BKGD_GEMTILES);
-			if (!gemTilesInfo)
+		if (_gemTilesInfo == NULL) {
+			_gemTilesInfo = imageMgr->get(BKGD_GEMTILES);
+			if (!_gemTilesInfo)
 				errorFatal("ERROR 1002: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_GEMTILES, settings._game.c_str());
 		}
 
 		if (tile < 128) {
-			gemTilesInfo->_image->drawSubRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
+			_gemTilesInfo->_image->drawSubRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
 			                                  (layout->_viewport.top + (y * layout->_tileShape.y)) * settings._scale,
 			                                  0,
 			                                  tile * layout->_tileShape.y * settings._scale,
@@ -1221,7 +1220,7 @@ Layout *Screen::screenGetGemLayout(const Map *map) {
 		errorFatal("no dungeon gem layout found!\n");
 		return NULL;
 	} else
-		return gemlayout;
+		return _gemLayout;
 }
 
 
@@ -1339,15 +1338,15 @@ void inline screenWait(int numberOfAnimationFrames) {};
 
 
 const Std::vector<Common::String> &screenGetFilterNames() {
-	return g_screen->filterNames;
+	return g_screen->_filterNames;
 }
 
 const Std::vector<Common::String> &screenGetGemLayoutNames() {
-	return g_screen->gemLayoutNames;
+	return g_screen->_gemLayoutNames;
 }
 
 const Std::vector<Common::String> &screenGetLineOfSightStyles() {
-	return g_screen->lineOfSightStyles;
+	return g_screen->_lineOfSightStyles;
 }
 
 } // End of namespace Ultima4

@@ -170,8 +170,8 @@ void Tile::loadImage() {
 
 		if (_animationRule.size() > 0) {
 			_anim = NULL;
-			if (g_screen->tileanims)
-				_anim = g_screen->tileanims->getByName(_animationRule);
+			if (g_screen->_tileAnims)
+				_anim = g_screen->_tileAnims->getByName(_animationRule);
 			if (_anim == NULL)
 				errorWarning("Warning: animation style '%s' not found", _animationRule.c_str());
 		}
