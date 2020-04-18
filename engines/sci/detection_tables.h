@@ -3092,6 +3092,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
 
+	// Lighthouse - Italian DOS
+	// VERSION file reports "1.0"
+	{"lighthouse", "", {
+		{"resmap.001", 0, "4e07734dcfdb593f755a05dc43ca4532", 7846},
+		{"ressci.001", 0, "dbb615146ec943e4ff7764a485c90511", 121894854},
+		{"resmap.002", 0, "012a93dc0612f62142afabb673b157aa", 7612},
+		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 114590776},
+		AD_LISTEND},
+		Common::IT_ITA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
+
 	// Lighthouse - English Macintosh CD
 	// NOTE: This only contains disc 1 files
 	{ "lighthouse", "", {
