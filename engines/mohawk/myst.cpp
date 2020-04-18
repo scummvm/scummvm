@@ -741,7 +741,9 @@ void MohawkEngine_Myst::doAction(MystEventAction action) {
 			break;
 		}
 
-		openMainMenuDialog();
+		if (!isGameVariant(GF_25TH)) {
+			openMainMenuDialog();
+		}
 
 		break;
 	case kMystActionSkip:

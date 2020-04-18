@@ -278,7 +278,7 @@ void MohawkEngine_Riven::processInput() {
 					} else {
 						resumeFromMainMenu();
 					}
-				} else {
+				} else if (!isGameVariant(GF_25TH)) {
 					openMainMenuDialog();
 				}
 				break;
