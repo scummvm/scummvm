@@ -52,6 +52,12 @@ namespace Director {
 		return; \
 	}
 
+#define ARRBOUNDSCHECK(idx,array) \
+	if ((idx)-1 < 0 || (idx) > (array).u.farr->size()) { \
+		warning("%s: index out of bounds (%d of %d)", __FUNCTION__, (idx), (array).u.farr->size()); \
+		return; \
+	}
+
 static struct BuiltinProto {
 	const char *name;
 	void (*func)(int);
@@ -645,11 +651,7 @@ void LB::b_getAt(int nargs) {
 
 	TYPECHECK(index, INT);
 	TYPECHECK(list, ARRAY);
-
-	if (index.u.i-1 < 0 || index.u.i > list.u.farr->size()){
-		warning("b_getAt: index %s out of bounds", index.type2str());
-		return;
-	}
+	ARRBOUNDSCHECK(index.u.i, list);
 
 	Datum result = list.u.farr->operator[](index.u.i-1);
 	g_lingo->push(result);
