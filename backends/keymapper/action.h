@@ -115,6 +115,14 @@ public:
 	}
 
 	/**
+	 * Allows an action bound to a keyboard event to be repeatedly
+	 * triggered by key repeats
+	 */
+	void allowKbdReapets() {
+		event.kbdRepeat = true;
+	}
+
+	/**
 	 * Add a default input mapping for the action
 	 *
 	 * Unknown hardware inputs will be silently ignored.

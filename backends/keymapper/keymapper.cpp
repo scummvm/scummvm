@@ -186,10 +186,10 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 		}
 	}
 
-	// Ignore keyboard repeat events. Repeat event are meant for text input,
-	// the keymapper / keymaps are supposed to be disabled during text input.
-	// TODO: Add a way to keep repeat events if needed.
-	if (!mappedEvents.empty() && ev.type == EVENT_KEYDOWN && ev.kbdRepeat) {
+	// Ignore keyboard repeat events unless the action explicitly allows it.
+	// This is a convenience to prevent actions getting triggered multiple times
+	if (!mappedEvents.empty() && ev.type == EVENT_KEYDOWN && ev.kbdRepeat
+			&& !mappedEvents.front().kbdRepeat) {
 		return List<Event>();
 	}
 
