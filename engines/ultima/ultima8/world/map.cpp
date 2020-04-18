@@ -87,6 +87,8 @@ void Map::addMapFix(uint32 shape, uint32 frame, int32 x, int32 y, int32 z) {
 void Map::loadFixed(Common::SeekableReadStream *rs) {
 	loadFixedFormatObjects(_fixedItems, rs, Item::EXT_FIXED);
 
+	// WORKAROUND - add some missing map tiles from game data
+
 	// U8 hack for missing ground tiles on map 25. See docs/u8bugs.txt
 	if (GAME_IS_U8 && _mapNum == 25) {
 		// TODO

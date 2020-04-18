@@ -1091,8 +1091,8 @@ void UCMachine::execProcess(UCProcess *p) {
 					if (ui16a < l->getSize()) {
 						p->_stack.push((*l)[ui16a], ui32a);
 					} else {
-						perr << "Warning: ignore 0x44 request to push " << ui16a <<
-								" from list len " << l->getSize() << Std::endl;
+						// WORKAROUND
+						warning("ignore 0x44 request to push %d from list len %d", ui16a, l->getSize());
 					}
 				}
 			}
