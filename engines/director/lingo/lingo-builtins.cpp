@@ -41,7 +41,7 @@ namespace Director {
 
 #define ARGNUMCHECK(n) \
 	if (nargs != 1) { \
-		error("%s: expected %d argument%s, got %d", __FUNCTION__, (n), ((n) == 1 ? "" : "s"), nargs); \
+		warning("%s: expected %d argument%s, got %d", __FUNCTION__, (n), ((n) == 1 ? "" : "s"), nargs); \
 		g_lingo->dropStack(nargs); \
 		return; \
 	}
