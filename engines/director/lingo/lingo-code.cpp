@@ -50,6 +50,7 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -436,12 +437,16 @@ void LC::c_theentityassign() {
 }
 
 void LC::c_themenuitementityassign() {
-	Datum d = g_lingo->pop();
-	Datum menuId = g_lingo->pop();
-	Datum menuItemId = g_lingo->pop();
-
 	int entity = g_lingo->readInt();
 	int field  = g_lingo->readInt();
+
+	Datum d = g_lingo->pop();
+	Datum menuId = g_lingo->pop();
+	Datum menuItemId;
+
+	if (entity != kTheMenuItems) { // "<entity> of menuitems" has 2 parameters
+		menuItemId = g_lingo->pop();
+	}
 
 	g_lingo->setTheMenuItemEntity(entity, menuId, field, menuItemId, d);
 }
