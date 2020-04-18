@@ -43,15 +43,14 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 
 	switch (type) {
 	case 0:
-		transform = new TileAnimInvertTransform(conf.getInt("x"),
-		                                        conf.getInt("y"),
-		                                        conf.getInt("width"),
-		                                        conf.getInt("height"));
+		transform = new TileAnimInvertTransform(
+			conf.getInt("x"), conf.getInt("y"),
+			conf.getInt("width"), conf.getInt("height"));
 		break;
 
 	case 1: {
-		transform = new TileAnimPixelTransform(conf.getInt("x"),
-		                                       conf.getInt("y"));
+		transform = new TileAnimPixelTransform(
+			conf.getInt("x"), conf.getInt("y"));
 
 		vector<ConfigElement> children = conf.getChildren();
 		for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
@@ -60,9 +59,8 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 				((TileAnimPixelTransform *)transform)->_colors.push_back(rgba);
 			}
 		}
+		break;
 	}
-
-	break;
 
 	case 2:
 		transform = new TileAnimScrollTransform(conf.getInt("increment"));
@@ -73,10 +71,9 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 		break;
 
 	case 4: {
-		transform = new TileAnimPixelColorTransform(conf.getInt("x"),
-		        conf.getInt("y"),
-		        conf.getInt("width"),
-		        conf.getInt("height"));
+		transform = new TileAnimPixelColorTransform(
+			conf.getInt("x"), conf.getInt("y"),
+			conf.getInt("width"), conf.getInt("height"));
 
 		vector<ConfigElement> children = conf.getChildren();
 		for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
@@ -84,9 +81,11 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 				RGBA *rgba = loadColorFromConf(*i);
 				if (i == children.begin())
 					((TileAnimPixelColorTransform *)transform)->_start = rgba;
-				else ((TileAnimPixelColorTransform *)transform)->_end = rgba;
+				else
+					((TileAnimPixelColorTransform *)transform)->_end = rgba;
 			}
 		}
+		break;
 	}
 
 	default:

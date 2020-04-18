@@ -211,9 +211,6 @@ public:
 	 */
 	void setMouseCursor(MouseCursor cursor);
 
-	void screenInit(void);
-	void screenRefreshTimerInit(void);
-
 	/**
 	 * Re-initializes the screen and implements any changes made in settings
 	 */
@@ -231,7 +228,7 @@ public:
 	void screenEraseTextArea(int x, int y, int width, int height);
 	void screenGemUpdate(void);
 
-	void screenMessage(const char *fmt, ...) GCC_PRINTF(1, 2);
+	void screenMessage(const char *fmt, ...);
 	void screenPrompt(void);
 	void screenRedrawMapArea(void);
 	void screenRedrawTextArea(int x, int y, int width, int height);
@@ -250,7 +247,7 @@ public:
 	 * Draw a character from the charset onto the screen.
 	 */
 	void screenShowChar(int chr, int x, int y);
-	void screenTextAt(int x, int y, const char *fmt, ...) GCC_PRINTF(3, 4);
+	void screenTextAt(int x, int y, const char *fmt, ...);
 
 	/**
 	 * Change the current text color

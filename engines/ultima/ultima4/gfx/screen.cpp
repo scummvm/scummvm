@@ -81,6 +81,59 @@ Screen::~Screen() {
 }
 
 void Screen::init() {
+	_filterNames.clear();
+	_filterNames.push_back("point");
+	_filterNames.push_back("2xBi");
+	_filterNames.push_back("2xSaI");
+	_filterNames.push_back("Scale2x");
+
+	_lineOfSightStyles.clear();
+	_lineOfSightStyles.push_back("DOS");
+	_lineOfSightStyles.push_back("Enhanced");
+
+	screenLoadGraphicsFromConf();
+
+	debug(1, "using %s scaler\n", settings._filter.c_str());
+
+	/* if we can't use vga, reset to default:ega */
+	if (!u4isUpgradeAvailable() && settings._videoType == "VGA")
+		settings._videoType = "EGA";
+
+
+	KeyHandler::setKeyRepeat(settings._keydelay, settings._keyinterval);
+
+	/* find the tile animations for our tileset */
+	_tileAnims = nullptr;
+	for (Std::vector<TileAnimSet *>::const_iterator i = _tileAnimSets.begin(); i != _tileAnimSets.end(); i++) {
+		TileAnimSet *set = *i;
+		if (set->_name == settings._videoType)
+			_tileAnims = set;
+	}
+	if (!_tileAnims)
+		errorFatal("unable to find tile animations for \"%s\" video mode in graphics.xml", settings._videoType.c_str());
+
+	_dungeonTileChars.clear();
+	_dungeonTileChars["brick_floor"] = CHARSET_FLOOR;
+	_dungeonTileChars["up_ladder"] = CHARSET_LADDER_UP;
+	_dungeonTileChars["down_ladder"] = CHARSET_LADDER_DOWN;
+	_dungeonTileChars["up_down_ladder"] = CHARSET_LADDER_UPDOWN;
+	_dungeonTileChars["chest"] = '$';
+	_dungeonTileChars["ceiling_hole"] = CHARSET_FLOOR;
+	_dungeonTileChars["floor_hole"] = CHARSET_FLOOR;
+	_dungeonTileChars["magic_orb"] = CHARSET_ORB;
+	_dungeonTileChars["ceiling_hole"] = 'T';
+	_dungeonTileChars["floor_hole"] = 'T';
+	_dungeonTileChars["fountain"] = 'F';
+	_dungeonTileChars["secret_door"] = CHARSET_SDOOR;
+	_dungeonTileChars["brick_wall"] = CHARSET_WALL;
+	_dungeonTileChars["dungeon_door"] = CHARSET_ROOM;
+	_dungeonTileChars["avatar"] = CHARSET_REDDOT;
+	_dungeonTileChars["dungeon_room"] = CHARSET_ROOM;
+	_dungeonTileChars["dungeon_altar"] = CHARSET_ANKH;
+	_dungeonTileChars["energy_field"] = '^';
+	_dungeonTileChars["fire_field"] = '^';
+	_dungeonTileChars["poison_field"] = '^';
+	_dungeonTileChars["sleep_field"] = '^';
 }
 
 void Screen::clear() {
@@ -166,70 +219,11 @@ MouseCursorSurface *Screen::loadMouseCursor(Shared::File &src) {
 	return c;
 }
 
-void Screen::screenInit() {
-	_filterNames.clear();
-	_filterNames.push_back("point");
-	_filterNames.push_back("2xBi");
-	_filterNames.push_back("2xSaI");
-	_filterNames.push_back("Scale2x");
-
-	_lineOfSightStyles.clear();
-	_lineOfSightStyles.push_back("DOS");
-	_lineOfSightStyles.push_back("Enhanced");
-
-	_charSetInfo = NULL;
-	_gemTilesInfo = NULL;
-
-	screenLoadGraphicsFromConf();
-
-	debug(1, "using %s scaler\n", settings._filter.c_str());
-
-	/* if we can't use vga, reset to default:ega */
-	if (!u4isUpgradeAvailable() && settings._videoType == "VGA")
-		settings._videoType = "EGA";
-
-
-	KeyHandler::setKeyRepeat(settings._keydelay, settings._keyinterval);
-
-	/* find the tile animations for our tileset */
-	_tileAnims = NULL;
-	for (Std::vector<TileAnimSet *>::const_iterator i = _tileAnimSets.begin(); i != _tileAnimSets.end(); i++) {
-		TileAnimSet *set = *i;
-		if (set->_name == settings._videoType)
-			_tileAnims = set;
-	}
-	if (!_tileAnims)
-		errorFatal("unable to find tile animations for \"%s\" video mode in graphics.xml", settings._videoType.c_str());
-
-	_dungeonTileChars.clear();
-	_dungeonTileChars["brick_floor"] = CHARSET_FLOOR;
-	_dungeonTileChars["up_ladder"] = CHARSET_LADDER_UP;
-	_dungeonTileChars["down_ladder"] = CHARSET_LADDER_DOWN;
-	_dungeonTileChars["up_down_ladder"] = CHARSET_LADDER_UPDOWN;
-	_dungeonTileChars["chest"] = '$';
-	_dungeonTileChars["ceiling_hole"] = CHARSET_FLOOR;
-	_dungeonTileChars["floor_hole"] = CHARSET_FLOOR;
-	_dungeonTileChars["magic_orb"] = CHARSET_ORB;
-	_dungeonTileChars["ceiling_hole"] = 'T';
-	_dungeonTileChars["floor_hole"] = 'T';
-	_dungeonTileChars["fountain"] = 'F';
-	_dungeonTileChars["secret_door"] = CHARSET_SDOOR;
-	_dungeonTileChars["brick_wall"] = CHARSET_WALL;
-	_dungeonTileChars["dungeon_door"] = CHARSET_ROOM;
-	_dungeonTileChars["avatar"] = CHARSET_REDDOT;
-	_dungeonTileChars["dungeon_room"] = CHARSET_ROOM;
-	_dungeonTileChars["dungeon_altar"] = CHARSET_ANKH;
-	_dungeonTileChars["energy_field"] = '^';
-	_dungeonTileChars["fire_field"] = '^';
-	_dungeonTileChars["poison_field"] = '^';
-	_dungeonTileChars["sleep_field"] = '^';
-}
-
 void Screen::screenReInit() {
 	intro->deleteIntro();       /* delete intro stuff */
 	Tileset::unloadAllImages(); /* unload tilesets, which will be reloaded lazily as needed */
 	ImageMgr::destroy();
-	_tileAnims = NULL;
+	_tileAnims = nullptr;
 	clear();
 	init();           // re-init screen stuff (loading new backgrounds, etc.)
 	intro->init();    /* re-fix the backgrounds loaded and scale images, etc. */
@@ -381,7 +375,7 @@ void Screen::screenLoadGraphicsFromConf() {
 
 Layout *Screen::screenLoadLayoutFromConf(const ConfigElement &conf) {
 	Layout *layout;
-	static const char *typeEnumStrings[] = { "standard", "gem", "dungeon_gem", NULL };
+	static const char *typeEnumStrings[] = { "standard", "gem", "dungeon_gem", nullptr };
 
 	layout = new Layout();
 	layout->_name = conf.getString("name");
@@ -466,7 +460,7 @@ bool Screen::screenTileUpdate(TileView *view, const Coords &coords, bool redraw)
 }
 
 void Screen::screenUpdate(TileView *view, bool showmap, bool blackout) {
-	ASSERT(g_context != NULL, "context has not yet been initialized");
+	ASSERT(g_context != nullptr, "context has not yet been initialized");
 
 	if (blackout) {
 		screenEraseMapArea();
@@ -547,7 +541,7 @@ void Screen::screenDrawImageInMapArea(const Common::String &name) {
 }
 
 void Screen::screenTextColor(int color) {
-	if (_charSetInfo == NULL) {
+	if (_charSetInfo == nullptr) {
 		_charSetInfo = imageMgr->get(BKGD_CHARSET);
 		if (!_charSetInfo)
 			errorFatal("ERROR 1003: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_CHARSET, settings._game.c_str());
@@ -570,7 +564,7 @@ void Screen::screenTextColor(int color) {
 }
 
 void Screen::screenShowChar(int chr, int x, int y) {
-	if (_charSetInfo == NULL) {
+	if (_charSetInfo == nullptr) {
 		_charSetInfo = imageMgr->get(BKGD_CHARSET);
 		if (!_charSetInfo)
 			error("ERROR 1001: Unable to load the \"%s\" data file", BKGD_CHARSET);
@@ -582,7 +576,7 @@ void Screen::screenShowChar(int chr, int x, int y) {
 }
 
 void Screen::screenScrollMessageArea() {
-	ASSERT(_charSetInfo != NULL && _charSetInfo->_image != NULL, "charset not initialized!");
+	ASSERT(_charSetInfo != nullptr && _charSetInfo->_image != nullptr, "charset not initialized!");
 
 	Image *screen = imageMgr->get("screen")->_image;
 
@@ -1184,7 +1178,7 @@ void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus,
 			                                 layout->_tileShape.y * settings._scale);
 		}
 	} else {
-		if (_gemTilesInfo == NULL) {
+		if (_gemTilesInfo == nullptr) {
 			_gemTilesInfo = imageMgr->get(BKGD_GEMTILES);
 			if (!_gemTilesInfo)
 				errorFatal("ERROR 1002: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_GEMTILES, settings._game.c_str());
@@ -1218,7 +1212,7 @@ Layout *Screen::screenGetGemLayout(const Map *map) {
 				return layout;
 		}
 		errorFatal("no dungeon gem layout found!\n");
-		return NULL;
+		return nullptr;
 	} else
 		return _gemLayout;
 }
@@ -1338,7 +1332,7 @@ void Screen::screenWait(int numberOfAnimationFrames) {
 }
 
 Image *Screen::screenScale(Image *src, int scale, int n, int filter) {
-	Image *dest = NULL;
+	Image *dest = nullptr;
 	bool isTransparent;
 	unsigned int transparentIndex;
 	bool alpha = src->isAlphaOn();
@@ -1388,7 +1382,7 @@ Image *Screen::screenScaleDown(Image *src, int scale) {
 
 	dest = Image::create(src->width() / scale, src->height() / scale, src->isIndexed(), Image::HARDWARE);
 	if (!dest)
-		return NULL;
+		return nullptr;
 
 	if (!dest)
 		dest = Image::duplicate(src);

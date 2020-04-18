@@ -90,8 +90,13 @@ bool Ultima4Engine::initialize() {
 
 	_screen->init();
 	setDebugger(new Debugger());
+	soundInit();
+	Tileset::loadAll();
+	creatureMgr->getInstance();
+
 
 	_saveSlotToLoad = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
 
 	return true;
 }
@@ -101,7 +106,6 @@ void Ultima4Engine::startup() {
 
 	soundInit();
 	Tileset::loadAll();
-	creatureMgr->getInstance();
 
 	if (!skipInfo) {
 		// do the intro
