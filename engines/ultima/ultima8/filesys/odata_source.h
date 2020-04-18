@@ -130,15 +130,15 @@ public:
 		return true;
 	};
 
-	void skip(int32 pos) override {
+	void skip(int32 position) override {
 		// No seeking past the end
-		if (pos >= 0) {
-			_loc += pos;
+		if (position >= 0) {
+			_loc += position;
 			if (_loc > _size) _loc = _size;
 		}
 		// No seeking past the start
 		else {
-			uint32 invpos = -pos;
+			uint32 invpos = -position;
 			if (invpos > _loc) invpos = _loc;
 			_loc -= invpos;
 		}
