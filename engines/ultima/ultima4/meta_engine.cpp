@@ -155,6 +155,11 @@ Common::KeymapArray MetaEngine::initKeymaps() {
 			act->addDefaultInputMapping(r->_key);
 			if (r->_joy)
 				act->addDefaultInputMapping(r->_joy);
+			if (r->_action == KEYBIND_UP || r->_action == KEYBIND_DOWN ||
+					r->_action == KEYBIND_LEFT || r->_action == KEYBIND_RIGHT)
+				// Allow movement actions to be triggered on keyboard repeats
+				act->allowKbdReapets();
+
 			keyMap->addAction(act);
 		}
 	}
