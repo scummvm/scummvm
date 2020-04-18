@@ -120,10 +120,10 @@ public:
 		return len;
 	};
 
-	bool seek(int32 pos, int whence = SEEK_SET) override {
+	bool seek(int32 position, int whence = SEEK_SET) override {
 		assert(whence == SEEK_SET);
 		// No seeking past the end of the buffer
-		if (pos <= static_cast<int32>(_size)) _loc = pos;
+		if (position <= static_cast<int32>(_size)) _loc = position;
 		else _loc = _size;
 
 		_bufPtr = const_cast<unsigned char *>(_buf) + _loc;
