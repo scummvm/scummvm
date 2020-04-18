@@ -46,6 +46,12 @@ namespace Director {
 		return; \
 	}
 
+#define TYPECHECK(datum,t) \
+	if ((datum).type != (t)) { \
+		warning("%s: %s arg should be of type %s, not %s", __FUNCTION__, #datum, #t, (datum).type2str()); \
+		return; \
+	}
+
 static struct BuiltinProto {
 	const char *name;
 	void (*func)(int);
@@ -443,8 +449,7 @@ void LB::b_chars(int nargs) {
 	Datum from = g_lingo->pop();
 	Datum s = g_lingo->pop();
 
-	if (s.type != STRING)
-		error("Incorrect type for 'chars' function: %s", s.type2str());
+	TYPECHECK(s, STRING);
 
 	to.makeInt();
 	from.makeInt();
@@ -465,8 +470,7 @@ void LB::b_chars(int nargs) {
 void LB::b_charToNum(int nargs) {
 	Datum d = g_lingo->pop();
 
-	if (d.type != STRING)
-		error("Incorrect type for 'charToNum' function: %s", d.type2str());
+	TYPECHECK(d, STRING);
 
 	byte chr = d.u.s->c_str()[0];
 	delete d.u.s;
@@ -501,8 +505,7 @@ void LB::b_length(int nargs) {
 	if (d.type == REFERENCE)
 		d.makeString();
 
-	if (d.type != STRING)
-		error("Incorrect type for 'length' function: %s", d.type2str());
+	TYPECHECK(d, STRING);
 
 	int len = strlen(d.u.s->c_str());
 	delete d.u.s;
@@ -564,14 +567,10 @@ void LB::b_addAt(int nargs) {
 	Datum value = g_lingo->pop();
 	Datum index = g_lingo->pop();
 	Datum list = g_lingo->pop();
-	if (index.type != INT) {
-		warning("b_addAt: index arg should be of type INT, not %s", index.type2str());
-		return;
-	}
-	if (list.type != ARRAY) {
-		warning("b_addAt: list arg should be of type ARRAY, not %s", list.type2str());
-		return;
-	}
+
+	TYPECHECK(index, INT);
+	TYPECHECK(list, ARRAY);
+
 	list.u.farr->insert_at(index.u.i-1, value);
 }
 
@@ -585,10 +584,9 @@ void LB::b_append(int nargs) {
 
 	Datum value = g_lingo->pop();
 	Datum list = g_lingo->pop();
-	if (list.type != ARRAY) {
-		warning("b_append: list arg should be of type ARRAY, not %s", list.type2str());
-		return;
-	}
+
+	TYPECHECK(list, ARRAY);
+
 	list.u.farr->push_back(value);
 }
 
@@ -596,10 +594,9 @@ void LB::b_count(int nargs) {
 	ARGNUMCHECK(1);
 
 	Datum list = g_lingo->pop();
-	if (list.type != ARRAY) {
-		warning("b_append: list arg should be of type ARRAY, not %s", list.type2str());
-		return;
-	}
+
+	TYPECHECK(list, ARRAY);
+
 	Datum result;
 	result.type = INT;
 	result.u.i = list.u.farr->size();
@@ -611,14 +608,10 @@ void LB::b_deleteAt(int nargs) {
 
 	Datum index = g_lingo->pop();
 	Datum list = g_lingo->pop();
-	if (index.type != INT) {
-		warning("b_deleteAt: index arg should be of type INT, not %s", index.type2str());
-		return;
-	}
-	if (list.type != ARRAY) {
-		warning("b_deleteAt: list arg should be of type ARRAY, not %s", list.type2str());
-		return;
-	}
+
+	TYPECHECK(index, INT);
+	TYPECHECK(list, ARRAY);
+
 	list.u.farr->remove_at(index.u.i-1);
 }
 
@@ -650,14 +643,9 @@ void LB::b_getAt(int nargs) {
 	if (index.type == FLOAT)
 		index.makeInt();
 
-	if (index.type != INT) {
-		warning("b_getAt: index arg should be of type INT or FLOAT, not %s", index.type2str());
-		return;
-	}
-	if (list.type != ARRAY) {
-		warning("b_getAt: list arg should be of type ARRAY, not %s", list.type2str());
-		return;
-	}
+	TYPECHECK(index, INT);
+	TYPECHECK(list, ARRAY);
+
 	if (index.u.i-1 < 0 || index.u.i > list.u.farr->size()){
 		warning("b_getAt: index %s out of bounds", index.type2str());
 		return;
@@ -967,9 +955,8 @@ void LB::b_go(int nargs) {
 
 			if (nargs > 0) {
 				movie = firstArg;
-				if (movie.type != STRING) {
-					warning("b_go: movie arg should be of type STRING, not %s", movie.type2str());
-				}
+				TYPECHECK(movie, STRING);
+
 				frame = g_lingo->pop();
 				nargs -= 1;
 			} else {
@@ -1799,10 +1786,8 @@ void LB::b_sound(int nargs) {
 			return;
 		}
 
-		if (firstArg.type != INT) {
-			warning("sound close: whichChannel arg should be of type INT, not %s", firstArg.type2str());
-			return;
-		}
+		TYPECHECK(firstArg, INT);
+
 		g_director->getSoundManager()->stopSound(firstArg.u.i);
 	} else if (verb.u.s->equalsIgnoreCase("fadeIn")) {
 		warning("STUB: sound fadeIn");
@@ -1811,18 +1796,10 @@ void LB::b_sound(int nargs) {
 		warning("STUB: sound fadeOut");
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("playFile")) {
-		if (nargs != 3) {
-			warning("sound playFile: expected 2 arguments, got %d", nargs - 1);
-			return;
-		}
-		if (firstArg.type != INT) {
-			warning("sound playFile: whichChannel arg should be of type INT, not %s", firstArg.type2str());
-			return;
-		}
-		if (secondArg.type != STRING) {
-			warning("sound playFile: whichFile arg should be of type STRING, not %s", secondArg.type2str());
-			return;
-		}
+		ARGNUMCHECK(3)
+
+		TYPECHECK(firstArg, INT);
+		TYPECHECK(secondArg, STRING);
 
 		g_director->getSoundManager()->playFile(pathMakeRelative(*secondArg.u.s), firstArg.u.i);
 	} else {
@@ -1835,10 +1812,9 @@ void LB::b_soundBusy(int nargs) {
 
 	DirectorSound *sound = g_director->getSoundManager();
 	Datum whichChannel = g_lingo->pop();
-	if (whichChannel.type != INT) {
-		warning("b_soundBusy(): whichChannel arg should be of type INT, not %s", whichChannel.type2str());
-		return;
-	}
+
+	TYPECHECK(whichChannel, INT);
+
 	bool isBusy = sound->isChannelActive(whichChannel.u.i);
 	Datum result;
 	result.type = INT;
