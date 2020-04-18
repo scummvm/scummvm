@@ -446,7 +446,7 @@ void GuestAdditions::patchGameSaveRestoreTorin(Script &script) const {
 
 	if (g_sci->isBE()) {
 		SWAP(patchPtr[1], patchPtr[2]);
-		SWAP(patchPtr[8], patchPtr[9]);
+		SWAP(patchPtr[7], patchPtr[8]);
 	}
 }
 
