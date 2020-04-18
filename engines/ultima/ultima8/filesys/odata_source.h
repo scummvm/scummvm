@@ -79,7 +79,7 @@ protected:
 		// Reallocate the buffer
 		if (_loc > _allocated) {
 			// The old pointer position
-			uint32 pos = static_cast<uint32>(_bufPtr - _buf);
+			uint32 position = static_cast<uint32>(_bufPtr - _buf);
 
 			// The new buffer and size (2 times what is needed)
 			_allocated = _loc * 2;
@@ -89,7 +89,7 @@ protected:
 			delete [] _buf;
 
 			_buf = new_buf;
-			_bufPtr = _buf + pos;
+			_bufPtr = _buf + position;
 		}
 
 		// Update size
