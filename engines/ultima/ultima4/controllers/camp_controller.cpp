@@ -39,7 +39,7 @@ CampController::CampController() {
 		id = MAP_CAMP_CON;
 
 	_map = getCombatMap(mapMgr->get(id));
-	g_game->setMap(_map, true, NULL, this);
+	g_game->setMap(_map, true, nullptr, this);
 }
 
 void CampController::init(Creature *m) {

@@ -46,7 +46,7 @@ const Coords *moongateGetGateCoordsForPhase(int phase) {
 	moongate = gates.find(phase);
 	if (moongate != gates.end())
 		return &moongate->_value;
-	return NULL;
+	return nullptr;
 }
 
 bool moongateFindActiveGateAt(int trammel, int felucca, const Coords &src, Coords &dest) {

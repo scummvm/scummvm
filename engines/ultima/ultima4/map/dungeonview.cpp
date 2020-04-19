@@ -40,7 +40,7 @@ DungeonView::DungeonView(int x, int y, int columns, int rows) : TileView(x, y, r
 }
 
 
-DungeonView *DungeonView::_instance(NULL);
+DungeonView *DungeonView::_instance(nullptr);
 DungeonView *DungeonView::getInstance() {
 	if (!_instance)     {
 		_instance = new DungeonView(BORDER_WIDTH, BORDER_HEIGHT, VIEWPORT_W, VIEWPORT_H);
@@ -439,7 +439,7 @@ void DungeonView::drawWall(int xoffset, int distance, Direction orientation, Dun
 	g_screen->screenDrawImage(dngGraphicInfo[index].subimage, (BORDER_WIDTH + x) * settings._scale,
 	                (BORDER_HEIGHT + y) * settings._scale);
 
-	if (dngGraphicInfo[index].subimage2 != NULL) {
+	if (dngGraphicInfo[index].subimage2 != nullptr) {
 		// FIXME: subimage2 is a horrible hack, needs to be cleaned up
 		if (settings._videoType == "EGA")
 			g_screen->screenDrawImage(dngGraphicInfo[index].subimage2,

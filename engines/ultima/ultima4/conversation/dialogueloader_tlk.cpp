@@ -47,7 +47,7 @@ Dialogue *U4TlkDialogueLoader::load(void *source) {
 	/* there's no dialogues left in the file */
 	char tlk_buffer[288];
 	if (u4fread(tlk_buffer, 1, sizeof(tlk_buffer), file) != sizeof(tlk_buffer))
-		return NULL;
+		return nullptr;
 
 	char *ptr = &tlk_buffer[3];
 	Std::vector<Common::String> strings;
@@ -57,7 +57,7 @@ Dialogue *U4TlkDialogueLoader::load(void *source) {
 	}
 
 	Dialogue *dlg = new Dialogue();
-	unsigned char prob = tlk_buffer[2];
+	byte prob = tlk_buffer[2];
 	QTrigger qtrigger = QTrigger(tlk_buffer[0]);
 	bool humilityTestQuestion = tlk_buffer[1] == 1;
 

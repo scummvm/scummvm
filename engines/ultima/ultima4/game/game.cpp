@@ -82,9 +82,9 @@ using namespace std;
 
 /* main game functions */
 void gameAdvanceLevel(PartyMember *player);
-void gameInnHandler(void);
+void gameInnHandler();
 void gameLostEighth(Virtue virtue);
-void gamePartyStarving(void);
+void gamePartyStarving();
 
 void mixReagentsSuper();
 
@@ -244,7 +244,7 @@ bool fireAt(const Coords &coords, bool originAvatar) {
 	bool hitsAvatar = false;
 	bool objectHit = false;
 
-	Object *obj = NULL;
+	Object *obj = nullptr;
 
 
 	MapTile tile(g_context->_location->_map->_tileset->getByName("miss_flash")->getId());
@@ -305,8 +305,8 @@ bool gamePeerCity(int city, void *data) {
 
 	peerMap = mapMgr->get((MapId)(city + 1));
 
-	if (peerMap != NULL) {
-		g_game->setMap(peerMap, 1, NULL);
+	if (peerMap != nullptr) {
+		g_game->setMap(peerMap, 1, nullptr);
 		g_context->_location->_viewMode = VIEW_GEM;
 		g_game->_paused = true;
 		g_game->_pausedTimer = 0;
@@ -627,7 +627,7 @@ void gameSetActivePlayer(int player) {
 
 /**
  * Spawns a creature (m) just offscreen of the avatar.
- * If (m==NULL) then it finds its own creature to spawn and spawns it.
+ * If (m==nullptr) then it finds its own creature to spawn and spawns it.
  */
 bool gameSpawnCreature(const Creature *m) {
 	int t, i;

@@ -70,7 +70,7 @@ typedef void *UIEvent;
 #endif
 #endif
 
-typedef void(*updateScreenCallback)(void);
+typedef void(*updateScreenCallback)();
 /**
  * A class for handling game events.
  */
@@ -93,17 +93,17 @@ public:
 	 * This doesn't actually stop events, but it stops the user from interacting
 	 * While some important event happens (e.g., getting hit by a cannon ball or a spell effect).
 	 */
-	static void sleep(unsigned int usec);
+	static void sleep(uint usec);
 
 	/**
 	 * Waits a given number of milliseconds before continuing
 	 */
-	static void wait_msecs(unsigned int msecs);
+	static void wait_msecs(uint msecs);
 
 	/**
 	 * Waits a given number of game cycles before continuing
 	 */
-	static void wait_cycles(unsigned int cycles);
+	static void wait_cycles(uint cycles);
 
 	static void setControllerDone(bool exit = true);
 	static bool getControllerDone();
@@ -144,7 +144,7 @@ public:
 
 	/**
 	 * Returns a pointer to the current key handler.
-	 * Returns NULL if there is no key handler.
+	 * Returns nullptr if there is no key handler.
 	 */
 	KeyHandler *getKeyHandler() const;
 

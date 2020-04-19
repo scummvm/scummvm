@@ -48,14 +48,14 @@ long rleDecompressFile(Common::ReadStream *in, long inlen, void **out) {
 }
 
 long rleDecompressMemory(void *in, long inlen, void **out) {
-	unsigned char *indata, *outdata;
+	byte *indata, *outdata;
 	long outlen;
 
 	/* input should be longer than 0 bytes */
 	if (inlen <= 0)
 		return -1;
 
-	indata = (unsigned char *)in;
+	indata = (byte *)in;
 
 	/* determine decompressed file size */
 	outlen = rleGetDecompressedSize(indata, inlen);
@@ -64,7 +64,7 @@ long rleDecompressMemory(void *in, long inlen, void **out) {
 		return -1;
 
 	/* decompress file from inlen to outlen */
-	outdata = (unsigned char *) malloc(outlen);
+	outdata = (byte *) malloc(outlen);
 	rleDecompress(indata, inlen, outdata, outlen);
 
 	*out = outdata;
@@ -75,9 +75,9 @@ long rleDecompressMemory(void *in, long inlen, void **out) {
 /**
  * Determine the uncompressed size of RLE compressed data.
  */
-long rleGetDecompressedSize(unsigned char *indata, long inlen) {
-	unsigned char *p;
-	unsigned char ch, count;
+long rleGetDecompressedSize(byte *indata, long inlen) {
+	byte *p;
+	byte ch, count;
 	long len = 0;
 
 	p = indata;
@@ -97,10 +97,10 @@ long rleGetDecompressedSize(unsigned char *indata, long inlen) {
 /**
  * Decompress a block of RLE encoded memory.
  */
-long rleDecompress(unsigned char *indata, long inlen, unsigned char *outdata, long outlen) {
+long rleDecompress(byte *indata, long inlen, byte *outdata, long outlen) {
 	int i;
-	unsigned char *p, *q;
-	unsigned char ch, count, val;
+	byte *p, *q;
+	byte ch, count, val;
 
 	p = indata;
 	q = outdata;

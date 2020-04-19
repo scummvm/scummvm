@@ -44,7 +44,7 @@ Scaler scalerGet(const Common::String &filter) {
 	else if (filter == "Scale2x")
 		return &scaleScale2x;
 	else
-		return NULL;
+		return nullptr;
 }
 
 /**
@@ -63,7 +63,7 @@ Image *scalePoint(Image *src, int scale, int n) {
 
 	dest = Image::create(src->width() * scale, src->height() * scale, src->isIndexed(), Image::HARDWARE);
 	if (!dest)
-		return NULL;
+		return nullptr;
 
 	if (dest->isIndexed())
 		dest->setPaletteFromImage(src);
@@ -72,7 +72,7 @@ Image *scalePoint(Image *src, int scale, int n) {
 		for (x = 0; x < src->width(); x++) {
 			for (i = 0; i < scale; i++) {
 				for (j = 0; j < scale; j++) {
-					unsigned int index;
+					uint index;
 					src->getPixelIndex(x, y, index);
 					dest->putPixelIndex(x * scale + j, y * scale + i, index);
 				}
@@ -97,7 +97,7 @@ Image *scale2xBilinear(Image *src, int scale, int n) {
 
 	dest = Image::create(src->width() * scale, src->height() * scale, false, Image::HARDWARE);
 	if (!dest)
-		return NULL;
+		return nullptr;
 
 	/*
 	 * Each pixel in the source image is translated into four in the
@@ -199,7 +199,7 @@ Image *scale2xSaI(Image *src, int scale, int N) {
 
 	dest = Image::create(src->width() * scale, src->height() * scale, false, Image::HARDWARE);
 	if (!dest)
-		return NULL;
+		return nullptr;
 
 	/*
 	 * Each pixel in the source image is translated into four in the
@@ -365,7 +365,7 @@ Image *scaleScale2x(Image *src, int scale, int n) {
 
 	dest = Image::create(src->width() * scale, src->height() * scale, src->isIndexed(), Image::HARDWARE);
 	if (!dest)
-		return NULL;
+		return nullptr;
 
 	if (dest->isIndexed())
 		dest->setPaletteFromImage(src);

@@ -82,8 +82,8 @@ public:
 
 	MapCoords &wrap(const class Map *map);
 	MapCoords &putInBounds(const class Map *map);
-	MapCoords &move(Direction d, const class Map *map = NULL);
-	MapCoords &move(int dx, int dy, const class Map *map = NULL);
+	MapCoords &move(Direction d, const class Map *map = nullptr);
+	MapCoords &move(int dx, int dy, const class Map *map = nullptr);
 
 	/**
 	 * Returns a mask of directions that indicate where one point is relative
@@ -94,7 +94,7 @@ public:
 	 * itself accordingly. If the two coordinates are not on the same z-plane,
 	 * then this function return DIR_NONE.
 	 */
-	int getRelativeDirection(const MapCoords &c, const class Map *map = NULL) const;
+	int getRelativeDirection(const MapCoords &c, const class Map *map = nullptr) const;
 
 	/**
 	 * Finds the appropriate direction to travel to get from one point to
@@ -103,7 +103,7 @@ public:
 	 * This function also takes into account map boundaries and adjusts
 	 * itself accordingly, provided the 'map' parameter is passed
 	 */
-	Direction pathTo(const MapCoords &c, int valid_dirs = MASK_DIR_ALL, bool towards = true, const class Map *map = NULL) const;
+	Direction pathTo(const MapCoords &c, int valid_dirs = MASK_DIR_ALL, bool towards = true, const class Map *map = nullptr) const;
 
 	/**
 	 * Finds the appropriate direction to travel to move away from one point
@@ -115,14 +115,14 @@ public:
 	 * on a map, taking into account map boundaries and such.  If the two coords
 	 * are not on the same z-plane, then this function returns -1;
 	 */
-	int movementDistance(const MapCoords &c, const class Map *map = NULL) const;
+	int movementDistance(const MapCoords &c, const class Map *map = nullptr) const;
 
 	/**
 	 * Finds the distance (using diagonals) from point a to point b on a map
 	 * If the two coordinates are not on the same z-plane, then this function
 	 * returns -1. This function also takes into account map boundaries.
 	 */
-	int distance(const MapCoords &c, const class Map *map = NULL) const;
+	int distance(const MapCoords &c, const class Map *map = nullptr) const;
 
 	static MapCoords nowhere;
 };
@@ -164,14 +164,14 @@ public:
 
 	/**
 	 * Returns the object at the given (x,y,z) coords, if one exists.
-	 * Otherwise, returns NULL.
+	 * Otherwise, returns nullptr.
 	 */
 	Object *objectAt(const Coords &coords);
 
 	/**
 	 * Returns the portal for the correspoding action(s) given.
 	 * If there is no portal that corresponds to the actions flagged
-	 * by 'actionFlags' at the given (x,y,z) coords, it returns NULL.
+	 * by 'actionFlags' at the given (x,y,z) coords, it returns nullptr.
 	 */
 	const Portal *portalAt(const Coords &coords, int actionFlags);
 
@@ -257,18 +257,18 @@ public:
 	// u4dos compatibility
 	bool fillMonsterTable();
 	MapTile translateFromRawTileIndex(int c) const;
-	unsigned int translateToRawTileIndex(MapTile &tile) const;
+	uint translateToRawTileIndex(MapTile &tile) const;
 
 public:
 	MapId           _id;
 	Common::String  _fname;
 	Type            _type;
-	unsigned int    _width,
+	uint    _width,
 	         _height,
 	         _levels;
-	unsigned int    _chunkWidth,
+	uint    _chunkWidth,
 	         _chunkHeight;
-	unsigned int    _offset;
+	uint    _offset;
 
 	Source          _baseSource;
 	Common::List<Source> _extraSources;

@@ -221,7 +221,7 @@ void Music::destroy_sys() {
 
 bool Music::load_sys(const Common::String &pathName) {
 	delete _playing;
-	_playing = NULL;
+	_playing = nullptr;
 
 	if (pathName.hasSuffixIgnoreCase(".it")) {
 		warning("TODO: Play music file - %s", pathName.c_str());

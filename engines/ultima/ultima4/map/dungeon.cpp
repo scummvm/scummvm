@@ -41,7 +41,7 @@ namespace Ultima4 {
  */
 bool isDungeon(Map *punknown) {
 	Dungeon *pd;
-	if ((pd = dynamic_cast<Dungeon *>(punknown)) != NULL)
+	if ((pd = dynamic_cast<Dungeon *>(punknown)) != nullptr)
 		return true;
 	else
 		return false;
@@ -86,7 +86,7 @@ DungeonToken Dungeon::currentToken() {
  * Return the dungeon sub-token associated with the given dungeon tile.
  *
  */
-unsigned char Dungeon::currentSubToken() {
+byte Dungeon::currentSubToken() {
 	return subTokenAt(g_context->_location->_coords);
 }
 
@@ -94,7 +94,7 @@ DungeonToken Dungeon::tokenAt(MapCoords coords) {
 	return tokenForTile(*getTileFromData(coords));
 }
 
-unsigned char Dungeon::subTokenAt(MapCoords coords) {
+byte Dungeon::subTokenAt(MapCoords coords) {
 	int index = coords.x + (coords.y * _width) + (_width * _height * coords.z);
 	return _dataSubTokens[index];
 }
@@ -126,7 +126,7 @@ void dungeonSearch(void) {
 		/* see if there is an item at the current location (stones on altars, etc.) */
 		item = itemAtLocation(dungeon, g_context->_location->_coords);
 		if (item) {
-			if (*item->_isItemInInventory != NULL && (*item->_isItemInInventory)(item->_data))
+			if (*item->_isItemInInventory != nullptr && (*item->_isItemInInventory)(item->_data))
 				g_screen->screenMessage("Nothing Here!\n");
 			else {
 				if (item->_name)

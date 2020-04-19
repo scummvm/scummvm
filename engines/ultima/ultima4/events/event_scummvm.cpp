@@ -34,7 +34,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-EventHandler::EventHandler() : _timer(settings._eventTimerGranularity), _updateScreen(NULL)  {
+EventHandler::EventHandler() : _timer(settings._eventTimerGranularity), _updateScreen(nullptr)  {
 }
 
 static void handleMouseMotionEvent(const Common::Event &event) {
@@ -110,7 +110,7 @@ static void handleKeyDownEvent(const Common::Event &event, Controller *controlle
 	}
 }
 
-void EventHandler::sleep(unsigned int msec) {
+void EventHandler::sleep(uint msec) {
 	g_system->delayMillis(msec);
 }
 
@@ -177,18 +177,18 @@ void EventHandler::popKeyHandler() {
 
 KeyHandler *EventHandler::getKeyHandler() const {
 	if (_controllers.empty())
-		return NULL;
+		return nullptr;
 
 	KeyHandlerController *khc = dynamic_cast<KeyHandlerController *>(_controllers.back());
-	ASSERT(khc != NULL, "EventHandler::getKeyHandler called when controller wasn't a keyhandler");
-	if (khc == NULL)
-		return NULL;
+	ASSERT(khc != nullptr, "EventHandler::getKeyHandler called when controller wasn't a keyhandler");
+	if (khc == nullptr)
+		return nullptr;
 
 	return khc->getKeyHandler();
 }
 
 void EventHandler::setKeyHandler(KeyHandler kh) {
-	while (popController() != NULL) {}
+	while (popController() != nullptr) {}
 	pushKeyHandler(kh);
 }
 
@@ -197,14 +197,14 @@ const MouseArea *EventHandler::mouseAreaForPoint(int x, int y) {
 	const MouseArea *areas = getMouseAreaSet();
 
 	if (!areas)
-		return NULL;
+		return nullptr;
 
 	for (i = 0; areas[i]._nPoints != 0; i++) {
 		if (g_screen->screenPointInMouseArea(x, y, &(areas[i]))) {
 			return &(areas[i]);
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace Ultima4

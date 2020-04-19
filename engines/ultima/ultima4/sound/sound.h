@@ -61,8 +61,8 @@ enum Sound {
 	SOUND_MAX
 };
 
-int soundInit(void);
-void soundDelete(void);
+int soundInit();
+void soundDelete();
 
 void soundPlay(Sound sound, bool onlyOnce = true, int specificDurationInTicks = -1);
 

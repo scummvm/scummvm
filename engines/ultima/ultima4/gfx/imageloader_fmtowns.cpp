@@ -42,7 +42,7 @@ Image *FMTOWNSImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 
 	long rawLen = file->length() - _offset;
 	file->seek(_offset, 0);
-	unsigned char *raw = (unsigned char *) malloc(rawLen);
+	byte *raw = (byte *) malloc(rawLen);
 	file->read(raw, 1, rawLen);
 
 	long requiredLength = (width * height * bpp / 8);
@@ -50,14 +50,14 @@ Image *FMTOWNSImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 		if (raw)
 			free(raw);
 		errorWarning("FMTOWNS Image of size %d does not fit anticipated size %d", rawLen, requiredLength);
-		return NULL;
+		return nullptr;
 	}
 
 	Image *image = Image::create(width, height, bpp <= 8, Image::HARDWARE);
 	if (!image) {
 		if (raw)
 			free(raw);
-		return NULL;
+		return nullptr;
 	}
 
 	if (bpp == 4) {
@@ -66,7 +66,7 @@ Image *FMTOWNSImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 		setFromRawData(image, width, height, bpp, raw);
 //      if (width % 2)
 //          errorFatal("FMTOWNS 4bit images cannot handle widths not divisible by 2!");
-//      unsigned char nibble_mask = 0x0F;
+//      byte nibble_mask = 0x0F;
 //        for (int y = 0; y < height; y++)
 //        {
 //            for (int x = 0; x < width; x+=2)
@@ -87,17 +87,17 @@ Image *FMTOWNSImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 		//Masks
 		//------------------------  //  0000000011111111    --Byte 0 and 1
 		//------------------------  //  RRRRRGGGGGBBBBB?
-		unsigned char low5 = 0x1F;          //  11111000--------    low5
-		unsigned char high6 = (byte)~3U;    //  --------00111111    high6
-		unsigned char high3 = (byte)~31U;   //  00000111--------    high3
-		unsigned char low2 = 3;             //  --------11000000    low2
-		unsigned char lastbit = 128;        //  --------00000001    low2
+		byte low5 = 0x1F;          //  11111000--------    low5
+		byte high6 = (byte)~3U;    //  --------00111111    high6
+		byte high3 = (byte)~31U;   //  00000111--------    high3
+		byte low2 = 3;             //  --------11000000    low2
+		byte lastbit = 128;        //  --------00000001    low2
 		// Warning, this diagram is left-to-right, not standard right-to-left
 
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				unsigned char byte0 = raw[(y * width + x) * 2];
-				unsigned char byte1 = raw[(y * width + x) * 2 + 1];
+				byte byte0 = raw[(y * width + x) * 2];
+				byte byte1 = raw[(y * width + x) * 2 + 1];
 
 				int r = (byte0 & low5);
 				r <<= 3;

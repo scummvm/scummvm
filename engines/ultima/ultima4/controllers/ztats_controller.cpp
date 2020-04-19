@@ -60,7 +60,7 @@ bool ZtatsController::keyPressed(int key) {
 		doneWaiting();
 		return true;
 	default:
-		return KeyHandler::defaultHandler(key, NULL);
+		return KeyHandler::defaultHandler(key, nullptr);
 	}
 }
 

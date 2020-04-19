@@ -68,7 +68,7 @@ public:
 	 * statistics area, where a line is masked out for each virtue in
 	 * which the player is not an avatar.
 	 */
-	void drawCharMasked(int chr, int x, int y, unsigned char mask);
+	void drawCharMasked(int chr, int x, int y, byte mask);
 	void textAt(int x, int y, const char *fmt, ...) PRINTF_LIKE(4, 5);
 	void scroll();
 
@@ -100,7 +100,7 @@ public:
 	/**
 	 * Depending on the status type, apply colorization to the character
 	 */
-	Common::String colorizeString(Common::String input, ColorFG color, unsigned int colorstart, unsigned int colorlength = 0);
+	Common::String colorizeString(Common::String input, ColorFG color, uint colorstart, uint colorlength = 0);
 
 protected:
 	int _columns, _rows;         /**< size of the view in character cells  */

@@ -34,7 +34,7 @@ namespace Ultima4 {
 /*
  * Initialize static members
  */
-Settings *Settings::_instance = NULL;
+Settings *Settings::_instance = nullptr;
 
 bool SettingsEnhancementOptions::operator==(const SettingsEnhancementOptions &s) const {
 	return _activePlayer == s._activePlayer
@@ -100,7 +100,7 @@ void Settings::init() {
 }
 
 Settings &Settings::getInstance() {
-	if (_instance == NULL)
+	if (_instance == nullptr)
 		_instance = new Settings();
 	return *_instance;
 }

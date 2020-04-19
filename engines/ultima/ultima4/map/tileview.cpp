@@ -66,7 +66,7 @@ void TileView::reinit() {
 	// Scratchpad needs to be re-inited if we rescale...
 	if (_animated) {
 		delete _animated;
-		_animated = NULL;
+		_animated = nullptr;
 	}
 	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
 }

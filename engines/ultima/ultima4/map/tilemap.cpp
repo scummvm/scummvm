@@ -117,17 +117,17 @@ void TileMap::load(const ConfigElement &tilemapConf) {
 TileMap *TileMap::get(Common::String name) {
 	if (_tileMaps.find(name) != _tileMaps.end())
 		return _tileMaps[name];
-	else return NULL;
+	else return nullptr;
 }
 
-MapTile TileMap::translate(unsigned int index) {
+MapTile TileMap::translate(uint index) {
 	return _tileMap[index];
 }
 
-unsigned int TileMap::untranslate(MapTile &tile) {
-	unsigned int index = 0;
+uint TileMap::untranslate(MapTile &tile) {
+	uint index = 0;
 
-	for (Std::map<unsigned int, MapTile>::iterator i = _tileMap.begin(); i != _tileMap.end(); i++) {
+	for (Std::map<uint, MapTile>::iterator i = _tileMap.begin(); i != _tileMap.end(); i++) {
 		if (i->_value == tile) {
 			index = i->_key;
 			break;

@@ -39,27 +39,27 @@ enum StatsBonusType {
 };
 
 struct Trigger {
-	unsigned char _tile;
-	unsigned char x, y;
-	unsigned char _changeX1, _changeY1, changeX2, changeY2;
+	byte _tile;
+	byte x, y;
+	byte _changeX1, _changeY1, changeX2, changeY2;
 };
 
 struct DngRoom {
 	Trigger _triggers[DNGROOM_NTRIGGERS];
-	unsigned char _creatureTiles[16];
-	unsigned char _creatureStartX[16];
-	unsigned char _creatureStartY[16];
-	unsigned char _partyNorthStartX[8];
-	unsigned char _partyNorthStartY[8];
-	unsigned char _partyEastStartX[8];
-	unsigned char _partyEastStartY[8];
-	unsigned char _partySouthStartX[8];
-	unsigned char _partySouthStartY[8];
-	unsigned char _partyWestStartX[8];
-	unsigned char _partyWestStartY[8];
+	byte _creatureTiles[16];
+	byte _creatureStartX[16];
+	byte _creatureStartY[16];
+	byte _partyNorthStartX[8];
+	byte _partyNorthStartY[8];
+	byte _partyEastStartX[8];
+	byte _partyEastStartY[8];
+	byte _partySouthStartX[8];
+	byte _partySouthStartY[8];
+	byte _partyWestStartX[8];
+	byte _partyWestStartY[8];
 	MapData  _mapData;  // This is OK to change to MapData since sizeof(DngRoom) or
 	// anything like it is not being used.
-	unsigned char _buffer[7];
+	byte _buffer[7];
 };
 
 /**
@@ -107,7 +107,7 @@ public:
 	/**
 	 * Returns the dungeon sub-token for the current location
 	 */
-	unsigned char currentSubToken();
+	byte currentSubToken();
 
 	/**
 	 * Returns the dungeon token for the given coordinates
@@ -121,7 +121,7 @@ public:
 	 * This function will always need type-casting to the token type
 	 * necessary
 	 */
-	unsigned char subTokenAt(MapCoords coords);
+	byte subTokenAt(MapCoords coords);
 
 	/**
 	 * Returns true if a ladder-up is found at the given coordinates
@@ -137,13 +137,13 @@ public:
 
 	// Properties
 	Common::String _name;
-	unsigned int _nRooms;
-	Std::vector<unsigned char> _dataSubTokens;
+	uint _nRooms;
+	Std::vector<byte> _dataSubTokens;
 	DngRoom *_rooms;
 	CombatMap **_roomMaps;
 	int _currentRoom;
-	unsigned char _partyStartX[8];
-	unsigned char _partyStartY[8];
+	byte _partyStartX[8];
+	byte _partyStartY[8];
 };
 
 /**
@@ -170,7 +170,7 @@ enum FieldType {
 	FIELD_SLEEP                 = 0x3
 };
 
-void dungeonSearch(void);
+void dungeonSearch();
 void dungeonDrinkFountain();
 void dungeonTouchOrb();
 bool dungeonHandleTrap(TrapType trap);

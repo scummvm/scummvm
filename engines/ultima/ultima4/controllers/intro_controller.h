@@ -61,11 +61,11 @@ public:
 	bool load();
 
 	Std::vector<MapTile> _introMap;
-	unsigned char *_sigData;
-	unsigned char *_scriptTable;
+	byte *_sigData;
+	byte *_scriptTable;
 	Tile **_baseTileTable;
-	unsigned char *_beastie1FrameTable;
-	unsigned char *_beastie2FrameTable;
+	byte *_beastie1FrameTable;
+	byte *_beastie2FrameTable;
 	Std::vector<Common::String> _introText;
 	Std::vector<Common::String> _introQuestions;
 	Std::vector<Common::String> _introGypsy;
@@ -111,7 +111,7 @@ public:
 	 * Handles keystrokes during the introduction.
 	 */
 	bool keyPressed(int key);
-	unsigned char *getSigData();
+	byte *getSigData();
 
 	/**
 	 * Paints the screen.

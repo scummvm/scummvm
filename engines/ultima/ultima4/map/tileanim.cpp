@@ -37,7 +37,7 @@ using Std::vector;
 
 TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 	TileAnimTransform *transform;
-	static const char *transformTypeEnumStrings[] = { "invert", "pixel", "scroll", "frame", "pixel_color", NULL };
+	static const char *transformTypeEnumStrings[] = { "invert", "pixel", "scroll", "frame", "pixel_color", nullptr };
 
 	int type = conf.getEnum("type", transformTypeEnumStrings);
 
@@ -220,8 +220,8 @@ void TileAnimPixelColorTransform::draw(Image *dest, Tile *tile, MapTile &mapTile
 
 TileAnimContext *TileAnimContext::create(const ConfigElement &conf) {
 	TileAnimContext *context;
-	static const char *contextTypeEnumStrings[] = { "frame", "dir", NULL };
-	static const char *dirEnumStrings[] = { "none", "west", "north", "east", "south", NULL };
+	static const char *contextTypeEnumStrings[] = { "frame", "dir", nullptr };
+	static const char *dirEnumStrings[] = { "none", "west", "north", "east", "south", nullptr };
 
 	TileAnimContext::Type type = (TileAnimContext::Type)conf.getEnum("type", contextTypeEnumStrings);
 
@@ -233,7 +233,7 @@ TileAnimContext *TileAnimContext::create(const ConfigElement &conf) {
 		context = new TileAnimPlayerDirContext(Direction(conf.getEnum("dir", dirEnumStrings)));
 		break;
 	default:
-		context = NULL;
+		context = nullptr;
 		break;
 	}
 
@@ -288,7 +288,7 @@ TileAnimSet::TileAnimSet(const ConfigElement &conf) {
 TileAnim *TileAnimSet::getByName(const Common::String &name) {
 	TileAnimMap::iterator i = _tileAnims.find(name);
 	if (i == _tileAnims.end())
-		return NULL;
+		return nullptr;
 	return i->_value;
 }
 

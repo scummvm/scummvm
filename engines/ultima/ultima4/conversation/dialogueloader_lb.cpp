@@ -45,7 +45,7 @@ Response *lordBritishGetIntro(const DynamicResponse *resp);
 Dialogue *U4LBDialogueLoader::load(void *source) {
 	U4FILE *avatar = u4fopen("avatar.exe");
 	if (!avatar)
-		return NULL;
+		return nullptr;
 
 	Std::vector<Common::String> lbKeywords = u4read_stringtable(avatar, 87581, 24);
 	/* There's a \0 in the 19th Common::String so we get a

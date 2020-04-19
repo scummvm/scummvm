@@ -36,7 +36,7 @@ const Weapon *Weapon::get(WeaponType w) {
 	loadConf();
 
 	if (static_cast<unsigned>(w) >= _weapons.size())
-		return NULL;
+		return nullptr;
 	return _weapons[w];
 }
 
@@ -48,7 +48,7 @@ const Weapon *Weapon::get(const Common::String &name) {
 		if (scumm_stricmp(name.c_str(), _weapons[i]->_name.c_str()) == 0)
 			return _weapons[i];
 	}
-	return NULL;
+	return nullptr;
 }
 
 Weapon::Weapon(const ConfigElement &conf)
@@ -64,7 +64,7 @@ Weapon::Weapon(const ConfigElement &conf)
 	, _flags(0) {
 	static const struct {
 		const char *name;
-		unsigned int flag;
+		uint flag;
 	} booleanAttributes[] = {
 		{ "lose", WEAP_LOSE },
 		{ "losewhenranged", WEAP_LOSEWHENRANGED },
@@ -110,7 +110,7 @@ Weapon::Weapon(const ConfigElement &conf)
 
 	Std::vector<ConfigElement> contraintConfs = conf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = contraintConfs.begin(); i != contraintConfs.end(); i++) {
-		unsigned char mask = 0;
+		byte mask = 0;
 
 		if (i->getName() != "constraint")
 			continue;

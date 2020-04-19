@@ -50,7 +50,7 @@ class TurnCompleter;
 class Location : public Observable<Location *, MoveEvent &> {
 public:
 	/**
-	 * Add a new location to the stack, or start a new stack if 'prev' is NULL
+	 * Add a new location to the stack, or start a new stack if 'prev' is nullptr
 	 */
 	Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx, TurnCompleter *turnCompleter, Location *prev);
 

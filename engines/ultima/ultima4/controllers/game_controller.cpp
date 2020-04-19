@@ -45,7 +45,7 @@ namespace Ultima4 {
 
 using namespace std;
 
-GameController *g_game = NULL;
+GameController *g_game = nullptr;
 
 static const MouseArea MOUSE_AREAS[] = {
 	{ 3, { { 8, 8 }, { 8, 184 }, { 96, 96 } }, MC_WEST, { U4_ENTER, 0, U4_LEFT } },
@@ -95,7 +95,7 @@ void GameController::init() {
 	g_context->_horseSpeed = 0;
 	g_context->_opacity = 1;
 	g_context->_lastCommandTime = g_system->getMillis();
-	g_context->_lastShip = NULL;
+	g_context->_lastShip = nullptr;
 }
 
 void GameController::setMap(Map *map, bool saveLocation, const Portal *portal, TurnCompleter *turnCompleter) {
@@ -164,7 +164,7 @@ int GameController::exitToParentMap() {
 	if (!g_context->_location)
 		return 0;
 
-	if (g_context->_location->_prev != NULL) {
+	if (g_context->_location->_prev != nullptr) {
 		// Create the balloon for Hythloth
 		if (g_context->_location->_map->_id == MAP_HYTHLOTH)
 			createBalloon(g_context->_location->_prev->_map);
@@ -193,7 +193,7 @@ int GameController::exitToParentMap() {
 
 void GameController::finishTurn() {
 	g_context->_lastCommandTime = g_system->getMillis();
-	Creature *attacker = NULL;
+	Creature *attacker = nullptr;
 
 	while (1) {
 
@@ -375,10 +375,10 @@ bool GameController::keyPressed(int key) {
 		else key = 'x';
 
 		/* Klimb? */
-		if ((g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_KLIMB) != NULL))
+		if ((g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_KLIMB) != nullptr))
 			key = 'k';
 		/* Descend? */
-		else if ((g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_DESCEND) != NULL))
+		else if ((g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_DESCEND) != nullptr))
 			key = 'd';
 
 		if (g_context->_location->_context == CTX_DUNGEON) {
@@ -400,7 +400,7 @@ bool GameController::keyPressed(int key) {
 		}
 
 		/* Enter? */
-		if (g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_ENTER) != NULL)
+		if (g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_ENTER) != nullptr)
 			key = 'e';
 
 		/* Get Chest? */
@@ -425,15 +425,15 @@ bool GameController::keyPressed(int key) {
 		g_screen->screenPrompt();
 	}
 
-	return valid || KeyHandler::defaultHandler(key, NULL);
+	return valid || KeyHandler::defaultHandler(key, nullptr);
 }
 
 void GameController::initMoons() {
 	int trammelphase = g_ultima->_saveGame->_trammelPhase,
 	    feluccaphase = g_ultima->_saveGame->_feluccaPhase;
 
-	ASSERT(g_context != NULL, "Game context doesn't exist!");
-	ASSERT(g_ultima->_saveGame != NULL, "Savegame doesn't exist!");
+	ASSERT(g_context != nullptr, "Game context doesn't exist!");
+	ASSERT(g_ultima->_saveGame != nullptr, "Savegame doesn't exist!");
 	//ASSERT(mapIsWorldMap(c->location->map) && c->location->viewMode == VIEW_NORMAL, "Can only call gameInitMoons() from the world map!");
 
 	g_ultima->_saveGame->_trammelPhase = g_ultima->_saveGame->_feluccaPhase = 0;
@@ -564,8 +564,8 @@ void GameController::avatarMoved(MoveEvent &event) {
 				} else if (tile->getTileType()->isLockedDoor()) {
 					g_debugger->jimmyAt(new_coords);
 					event._result = (MoveResult)(MOVE_SUCCEEDED | MOVE_END_TURN);
-				} /*else if (mapPersonAt(c->location->map, new_coords) != NULL) {
-                    talkAtCoord(newx, newy, 1, NULL);
+				} /*else if (mapPersonAt(c->location->map, new_coords) != nullptr) {
+                    talkAtCoord(newx, newy, 1, nullptr);
                     event.result = MOVE_SUCCEEDED | MOVE_END_TURN;
                     }*/
 			}
@@ -684,8 +684,8 @@ void GameController::timerFired() {
 		 * force pass if no commands within last 20 seconds
 		 */
 		Controller *controller = eventHandler->getController();
-		if (controller != NULL && (eventHandler->getController() == g_game ||
-			dynamic_cast<CombatController *>(eventHandler->getController()) != NULL) &&
+		if (controller != nullptr && (eventHandler->getController() == g_game ||
+			dynamic_cast<CombatController *>(eventHandler->getController()) != nullptr) &&
 			gameTimeSinceLastCommand() > 20) {
 
 			/* pass the turn, and redraw the text area so the prompt is shown */
@@ -761,7 +761,7 @@ bool GameController::checkMoongates() {
 			if (!g_context->_party->canEnterShrine(VIRT_SPIRITUALITY))
 				return true;
 
-			setMap(shrine_spirituality, 1, NULL);
+			setMap(shrine_spirituality, 1, nullptr);
 			g_music->play();
 
 			shrine_spirituality->enter();
@@ -805,7 +805,7 @@ void GameController::checkRandomCreatures() {
 	        xu4_random(spawnDivisor) != 0)
 		return;
 
-	gameSpawnCreature(NULL);
+	gameSpawnCreature(nullptr);
 }
 
 void GameController::checkBridgeTrolls() {

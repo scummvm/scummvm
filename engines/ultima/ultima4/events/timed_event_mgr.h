@@ -38,7 +38,7 @@ public:
 	typedef void (*Callback)(void *);
 
 	/* Constructors */
-	TimedEvent(Callback callback, int interval, void *data = NULL);
+	TimedEvent(Callback callback, int interval, void *data = nullptr);
 
 	/* Member functions */
 	Callback getCallback() const;
@@ -97,14 +97,14 @@ public:
 	/**
 	 * Adds a timed event to the event queue.
 	 */
-	void add(TimedEvent::Callback theCallback, int interval, void *data = NULL);
+	void add(TimedEvent::Callback theCallback, int interval, void *data = nullptr);
 
 	/**
 	 * Removes a timed event from the event queue.
 	 */
 	List::iterator remove(List::iterator i);
 	void remove(TimedEvent *event);
-	void remove(TimedEvent::Callback theCallback, void *data = NULL);
+	void remove(TimedEvent::Callback theCallback, void *data = nullptr);
 
 	/**
 	 * Runs each of the callback functions of the TimedEvents associated with this manager.
@@ -116,7 +116,7 @@ public:
 	/**
 	 * Re-initializes the timer manager to a new timer granularity
 	 */
-	void reset(unsigned int interval);     /**< Re-initializes the event manager to a new base interval */
+	void reset(uint interval);     /**< Re-initializes the event manager to a new base interval */
 #if defined(IOS)
 	bool hasActiveTimer() const;
 #endif

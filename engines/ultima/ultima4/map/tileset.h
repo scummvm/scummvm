@@ -40,7 +40,7 @@ typedef Common::HashMap<Common::String, class TileRule *> TileRuleMap;
 class TileRule {
 public:
 	/**
-	 * Returns the tile rule with the given name, or NULL if none could be found
+	 * Returns the tile rule with the given name, or nullptr if none could be found
 	 */
 	static TileRule *findByName(const Common::String &name);
 
@@ -130,19 +130,19 @@ public:
 	/**
 	 * Returns the number of tiles in the tileset
 	 */
-	unsigned int numTiles() const;
+	uint numTiles() const;
 
 	/**
 	 * Returns the total number of frames in the tileset
 	 */
-	unsigned int numFrames() const;
+	uint numFrames() const;
 
 private:
 	static TilesetMap tilesets;
 
 	Common::String _name;
 	TileIdMap _tiles;
-	unsigned int _totalFrames;
+	uint _totalFrames;
 	Common::String _imageName;
 	Tileset *_extends;
 

@@ -73,7 +73,7 @@ public:
 	bool isCamping() const;
 	bool isWinOrLose() const;
 	Direction getExitDir() const;
-	unsigned char getFocus() const;
+	byte getFocus() const;
 	CombatMap *getMap() const;
 	Creature *getCreature() const;
 	PartyMemberVector *getParty();
@@ -184,7 +184,7 @@ protected:
 	CombatMap *_map;
 
 	PartyMemberVector _party;
-	unsigned char _focus;
+	byte _focus;
 
 	const Creature *creatureTable[AREA_CREATURES];
 	Creature *_creature;
@@ -221,13 +221,13 @@ public:
 
 	/**
 	 * Returns the party member at the given coords, if there is one,
-	 * NULL if otherwise.
+	 * nullptr if otherwise.
 	 */
 	PartyMember *partyMemberAt(Coords coords);
 
 	/**
 	 * Returns the creature at the given coords, if there is one,
-	 * NULL if otherwise.
+	 * nullptr if otherwise.
 	 */
 	Creature *creatureAt(Coords coords);
 
@@ -273,7 +273,7 @@ public:
 };
 
 bool isCombatMap(Map *punknown);
-CombatMap *getCombatMap(Map *punknown = NULL);
+CombatMap *getCombatMap(Map *punknown = nullptr);
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

@@ -32,8 +32,8 @@ namespace Ultima4 {
 
 long rleDecompressFile(Common::ReadStream *in, long inlen, void **out);
 long rleDecompressMemory(void *in, long inlen, void **out);
-long rleGetDecompressedSize(unsigned char *indata, long inlen);
-long rleDecompress(unsigned char *indata, long inlen, unsigned char *outdata, long outlen);
+long rleGetDecompressedSize(byte *indata, long inlen);
+long rleDecompress(byte *indata, long inlen, byte *outdata, long outlen);
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

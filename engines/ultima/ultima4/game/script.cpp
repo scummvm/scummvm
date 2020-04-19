@@ -52,7 +52,7 @@ extern SpellEffectCallback spellEffectCallback;
  */
 Script::Variable::Variable() : _iVal(0), _sVal(""), _set(false) {}
 Script::Variable::Variable(const Common::String &v) : _set(true) {
-	_iVal = static_cast<int>(strtol(v.c_str(), NULL, 10));
+	_iVal = static_cast<int>(strtol(v.c_str(), nullptr, 10));
 	_sVal = v;
 }
 
@@ -100,7 +100,7 @@ bool Script::Variable::isSet() const {
  */
 Script::ActionMap Script::_actionMap;
 
-Script::Script() : _vendorScriptDoc(NULL), _scriptNode(NULL), _debug(false), _state(STATE_UNLOADED),
+Script::Script() : _vendorScriptDoc(nullptr), _scriptNode(nullptr), _debug(false), _state(STATE_UNLOADED),
 	_nounName("item"), _idPropName("id") {
 	_actionMap["context"]           = ACTION_SET_CONTEXT;
 	_actionMap["unset_context"]     = ACTION_UNSET_CONTEXT;
@@ -186,8 +186,8 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
 	if (root->hasProperty("id_prop"))
 		_idPropName = root->getProperty("id_prop");
 
-	_currentScript = NULL;
-	_currentItem = NULL;
+	_currentScript = nullptr;
+	_currentItem = nullptr;
 
 	for (node = root->firstChild(); node; node = node->getNext()) {
 		if (node->nodeIsText() || !node->id().equalsIgnoreCase("script"))
@@ -256,7 +256,7 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
 void Script::unload() {
 	if (_vendorScriptDoc) {
 		_vendorScriptDoc->freeDoc();
-		_vendorScriptDoc = NULL;
+		_vendorScriptDoc = nullptr;
 	}
 }
 
@@ -285,7 +285,7 @@ Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *cur
 	if (!script->hasChildren()) {
 		/* redirect the script to another node */
 		if (script->hasProperty("redirect"))
-			retval = redirect(NULL, script);
+			retval = redirect(nullptr, script);
 		/* end the conversation */
 		else {
 			if (_debug)
@@ -503,7 +503,7 @@ int Script::getInputMaxLen()            {
 }
 
 void Script::translate(Common::String *text) {
-	unsigned int pos;
+	uint pos;
 	bool nochars = true;
 	Shared::XMLNode *node = _translationContext.back();
 
@@ -531,7 +531,7 @@ void Script::translate(Common::String *text) {
 		int total_pos = 0;
 		Common::String current = item;
 		while (true) {
-			unsigned int open = current.findFirstOf("{"),
+			uint open = current.findFirstOf("{"),
 			             close = current.findFirstOf("}");
 
 			if (close == current.size())
@@ -607,7 +607,7 @@ void Script::translate(Common::String *text) {
 
 							/* set translation context to nodePtr */
 							_translationContext.push_back(nodePtr);
-							execute(itemShowScript, NULL, &prop);
+							execute(itemShowScript, nullptr, &prop);
 							_translationContext.pop_back();
 
 							_iterator++;
@@ -716,7 +716,7 @@ void Script::translate(Common::String *text) {
 
 				/* generate a random number */
 				else if (funcName == "random")
-					prop = xu4_to_string(xu4_random((int)strtol(content.c_str(), NULL, 10)));
+					prop = xu4_to_string(xu4_random((int)strtol(content.c_str(), nullptr, 10)));
 
 				/* replaced with "true" if content is empty, or "false" if not */
 				else if (funcName == "isempty") {
@@ -769,7 +769,7 @@ Shared::XMLNode *Script::find(Shared::XMLNode *node, const Common::String &scrip
 			current = find(node, script_to_find, "", true);
 		return current;
 	}
-	return NULL;
+	return nullptr;
 }
 
 Common::String Script::getPropAsStr(Std::list<Shared::XMLNode *> &nodes, const Common::String &prop, bool recursive) {
@@ -1389,8 +1389,8 @@ bool Script::mathParse(const Common::String &str, int *lval, int *rval, Common::
 	if (!Common::isDigit(left[0]) || !Common::isDigit(right[0]))
 		return false;
 
-	*lval = (int)strtol(left.c_str(), NULL, 10);
-	*rval = (int)strtol(right.c_str(), NULL, 10);
+	*lval = (int)strtol(left.c_str(), nullptr, 10);
+	*rval = (int)strtol(right.c_str(), nullptr, 10);
 	return true;
 }
 
@@ -1423,7 +1423,7 @@ int Script::mathValue(const Common::String &str) {
 
 	/* something was invalid, just return the integer value */
 	if (!mathParse(str, &lval, &rval, &op))
-		return (int)strtol(str.c_str(), NULL, 10);
+		return (int)strtol(str.c_str(), nullptr, 10);
 	else
 		return math(lval, rval, op);
 }
@@ -1519,7 +1519,7 @@ bool Script::compare(const Common::String &statement) {
 }
 
 void Script::funcParse(const Common::String &str, Common::String *funcName, Common::String *contents) {
-	unsigned int pos;
+	uint pos;
 	*funcName = str;
 
 	pos = funcName->findFirstOf("(");

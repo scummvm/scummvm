@@ -94,7 +94,7 @@ bool SoundManager::load(Sound sound) {
 	if (!Music::_functional || !settings._soundVol)
 		return false;
 
-	if (_soundChunk[sound] == NULL) {
+	if (_soundChunk[sound] == nullptr) {
 		Common::String pathname(u4find_sound(_soundFilenames[sound]));
 		Common::String basename = pathname.substr(pathname.findLastOf("/") + 1);
 		if (!basename.empty())
@@ -111,7 +111,7 @@ void SoundManager::play(Sound sound, bool onlyOnce, int specificDurationInTicks)
 	if (!Music::_functional || !settings._soundVol)
 		return;
 
-	if (_soundChunk[sound] == NULL) {
+	if (_soundChunk[sound] == nullptr) {
 		if (!load(sound)) {
 			return;
 		}

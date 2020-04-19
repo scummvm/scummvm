@@ -39,7 +39,7 @@ int ReadIntController::get(int maxlen, int screenX, int screenY, EventHandler *e
 }
 
 int ReadIntController::getInt() const {
-	return static_cast<int>(strtol(_value.c_str(), NULL, 10));
+	return static_cast<int>(strtol(_value.c_str(), nullptr, 10));
 }
 
 } // End of namespace Ultima4

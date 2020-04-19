@@ -251,8 +251,8 @@ struct SaveGame {
 	 */
 	void synchronize(Common::Serializer &s);
 
-	unsigned int _unknown1;
-	unsigned int _moves;
+	uint _unknown1;
+	uint _moves;
 	SaveGamePlayerRecord _players[8];
 	int _food;
 	short _gold;

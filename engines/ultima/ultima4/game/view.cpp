@@ -28,11 +28,11 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Image *View::_screen = NULL;
+Image *View::_screen = nullptr;
 
 View::View(int x, int y, int width, int height) : _x(x), _y(y), _width(width), _height(height),
 	_highlighted(false), _highlightX(0), _highlightY(0), _highlightW(0), _highlightH(0) {
-	if (_screen == NULL)
+	if (_screen == nullptr)
 		_screen = imageMgr->get("screen")->_image;
 }
 

@@ -69,7 +69,7 @@ bool shrineCanEnter(const Portal *p) {
  */
 bool isShrine(Map *punknown) {
 	Shrine *ps;
-	if ((ps = dynamic_cast<Shrine *>(punknown)) != NULL)
+	if ((ps = dynamic_cast<Shrine *>(punknown)) != nullptr)
 		return true;
 	else
 		return false;

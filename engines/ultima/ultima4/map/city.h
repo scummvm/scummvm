@@ -68,7 +68,7 @@ public:
 
 	/**
 	 * Returns the person object at the given (x,y,z) coords, if one exists.
-	 * Otherwise, returns NULL.
+	 * Otherwise, returns nullptr.
 	 */
 	Person *personAt(const Coords &coords);
 

@@ -241,7 +241,7 @@ bool Debugger::cmdAttack(int argc, const char **argv) {
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(
 		MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
-		1, 1, NULL, true);
+		1, 1, nullptr, true);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (attackAt(*i))
 			return isDebuggerActive();
@@ -520,7 +520,7 @@ bool Debugger::cmdFire(int argc, const char **argv) {
 
 	// nothing (not even mountains!) can block cannonballs
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), broadsidesDirs, g_context->_location->_coords,
-		1, 3, NULL, false);
+		1, 3, nullptr, false);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (fireAt(*i, true))
 			return isDebuggerActive();
@@ -550,7 +550,7 @@ bool Debugger::cmdGet(int argc, const char **argv) {
 	/* get the object for the chest, if it is indeed an object */
 	Object *obj = g_context->_location->_map->objectAt(coords);
 	if (obj && !obj->getTile().getTileType()->isChest())
-		obj = NULL;
+		obj = nullptr;
 
 	if (tile->isChest() || obj) {
 		// if a spell was cast to open this chest,
@@ -578,7 +578,7 @@ bool Debugger::cmdGet(int argc, const char **argv) {
 
 		g_screen->screenPrompt();
 
-		if (isCity(g_context->_location->_map) && obj == NULL)
+		if (isCity(g_context->_location->_map) && obj == nullptr)
 			g_context->_party->adjustKarma(KA_STOLE_CHEST);
 	} else {
 		print("%cNot Here!%c", FG_GREY, FG_WHITE);
@@ -601,7 +601,7 @@ bool Debugger::cmdHoleUp(int argc, const char **argv) {
 	}
 
 	CombatController *cc = new CampController();
-	cc->init(NULL);
+	cc->init(nullptr);
 	cc->begin();
 
 	return isDebuggerActive();
@@ -627,7 +627,7 @@ bool Debugger::cmdJimmy(int argc, const char **argv) {
 		return isDebuggerActive();
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
-		1, 1, NULL, true);
+		1, 1, nullptr, true);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (jimmyAt(*i))
 			return isDebuggerActive();
@@ -772,7 +772,7 @@ bool Debugger::cmdOpenDoor(int argc, const char **argv) {
 		return isDebuggerActive();
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
-		1, 1, NULL, true);
+		1, 1, nullptr, true);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (openAt(*i))
 			return isDebuggerActive();
@@ -896,7 +896,7 @@ bool Debugger::cmdSearch(int argc, const char **argv) {
 
 		const ItemLocation *item = itemAtLocation(g_context->_location->_map, g_context->_location->_coords);
 		if (item) {
-			if (*item->_isItemInInventory != NULL && (*item->_isItemInInventory)(item->_data))
+			if (*item->_isItemInInventory != nullptr && (*item->_isItemInInventory)(item->_data))
 				print("%cNothing Here!%c", FG_GREY, FG_WHITE);
 			else {
 				if (item->_name)
@@ -1084,7 +1084,7 @@ bool Debugger::cmdAbyss(int argc, const char **argv) {
 	// first teleport to the abyss
 	g_context->_location->_coords.x = 0xe9;
 	g_context->_location->_coords.y = 0xe9;
-	g_game->setMap(mapMgr->get(MAP_ABYSS), 1, NULL);
+	g_game->setMap(mapMgr->get(MAP_ABYSS), 1, nullptr);
 
 	// then to the final altar
 	g_context->_location->_coords.x = 7;
@@ -1107,7 +1107,7 @@ bool Debugger::cmdCollisions(int argc, const char **argv) {
 
 bool Debugger::cmdCompanions(int argc, const char **argv) {
 	for (int m = g_ultima->_saveGame->_members; m < 8; m++) {
-		if (g_context->_party->canPersonJoin(g_ultima->_saveGame->_players[m].name, NULL)) {
+		if (g_context->_party->canPersonJoin(g_ultima->_saveGame->_players[m].name, nullptr)) {
 			g_context->_party->join(g_ultima->_saveGame->_players[m].name);
 		}
 	}
@@ -1134,7 +1134,7 @@ bool Debugger::cmdDestroy(int argc, const char **argv) {
 		return isDebuggerActive();
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir),
-		MASK_DIR_ALL, g_context->_location->_coords, 1, 1, NULL, true);
+		MASK_DIR_ALL, g_context->_location->_coords, 1, 1, nullptr, true);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (destroyAt(*i)) {
 			return false;
@@ -1154,15 +1154,15 @@ bool Debugger::cmdDungeon(int argc, const char **argv) {
 				g_context->_location->_coords = g_context->_location->_map->_portals[dungNum - 1]->_coords;
 				return false;
 			} else if (dungNum == 9) {
-				g_game->setMap(mapMgr->get(MAP_DECEIT), 1, NULL);
+				g_game->setMap(mapMgr->get(MAP_DECEIT), 1, nullptr);
 				g_context->_location->_coords = MapCoords(1, 0, 7);
 				g_ultima->_saveGame->_orientation = DIR_SOUTH;
 			} else if (dungNum == 10) {
-				g_game->setMap(mapMgr->get(MAP_DESPISE), 1, NULL);
+				g_game->setMap(mapMgr->get(MAP_DESPISE), 1, nullptr);
 				g_context->_location->_coords = MapCoords(3, 2, 7);
 				g_ultima->_saveGame->_orientation = DIR_SOUTH;
 			} else if (dungNum == 11) {
-				g_game->setMap(mapMgr->get(MAP_DESTARD), 1, NULL);
+				g_game->setMap(mapMgr->get(MAP_DESTARD), 1, nullptr);
 				g_context->_location->_coords = MapCoords(7, 6, 7);
 				g_ultima->_saveGame->_orientation = DIR_SOUTH;
 			} else {

@@ -31,7 +31,7 @@ ReadStringController::ReadStringController(int maxlen, int screenX, int screenY,
 	_maxLen = maxlen;
 	_screenX = screenX;
 	_screenY = screenY;
-	_view = NULL;
+	_view = nullptr;
 	_accepted = accepted_chars;
 }
 
@@ -84,7 +84,7 @@ bool ReadStringController::keyPressed(int key) {
 		}
 	} else valid = false;
 
-	return valid || KeyHandler::defaultHandler(key, NULL);
+	return valid || KeyHandler::defaultHandler(key, nullptr);
 }
 
 Common::String ReadStringController::get(int maxlen, int screenX, int screenY, EventHandler *eh) {

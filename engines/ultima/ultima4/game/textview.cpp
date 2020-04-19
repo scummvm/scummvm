@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Image *TextView::_charset = NULL;
+Image *TextView::_charset = nullptr;
 
 TextView::TextView(int x, int y, int columns, int rows) : View(x, y, columns * CHAR_WIDTH, rows * CHAR_HEIGHT) {
 	this->_columns = columns;
@@ -40,7 +40,7 @@ TextView::TextView(int x, int y, int columns, int rows) : View(x, y, columns * C
 	this->_cursorX = 0;
 	this->_cursorY = 0;
 	this->_cursorPhase = 0;
-	if (_charset == NULL)
+	if (_charset == nullptr)
 		_charset = imageMgr->get(BKGD_CHARSET)->_image;
 	eventHandler->getTimer()->add(&cursorTimer, /*SCR_CYCLE_PER_SECOND*/4, this);
 }
@@ -65,7 +65,7 @@ void TextView::drawChar(int chr, int x, int y) {
 	                      SCALED(CHAR_HEIGHT));
 }
 
-void TextView::drawCharMasked(int chr, int x, int y, unsigned char mask) {
+void TextView::drawCharMasked(int chr, int x, int y, byte mask) {
 	drawChar(chr, x, y);
 	for (int i = 0; i < 8; i++) {
 		if (mask & (1 << i)) {
@@ -118,7 +118,7 @@ Common::String TextView::colorizeStatus(char statustype) {
 	return output;
 }
 
-Common::String TextView::colorizeString(Common::String input, ColorFG color, unsigned int colorstart, unsigned int colorlength) {
+Common::String TextView::colorizeString(Common::String input, ColorFG color, uint colorstart, uint colorlength) {
 	if (!settings._enhancements || !settings._enhancementsOptions._textColorization)
 		return input;
 
@@ -166,8 +166,8 @@ void TextView::setFontColorBG(ColorBG bg) {
 
 void TextView::textAt(int x, int y, const char *fmt, ...) {
 	char buffer[1024];
-	unsigned int i;
-	unsigned int offset = 0;
+	uint i;
+	uint offset = 0;
 
 	bool reenableCursor = false;
 	if (_cursorFollowsText && _cursorEnabled) {

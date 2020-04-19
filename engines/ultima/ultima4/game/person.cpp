@@ -55,7 +55,7 @@ int chars_needed(const char *s, int columnmax, int linesdesired, int *real_lines
  */
 bool isPerson(Object *punknown) {
 	Person *p;
-	if ((p = dynamic_cast<Person *>(punknown)) != NULL)
+	if ((p = dynamic_cast<Person *>(punknown)) != nullptr)
 		return true;
 	else
 		return false;
@@ -73,10 +73,10 @@ Common::List<Common::String> replySplit(const Common::String &text) {
 	if ((pos = str.find("\n\n")) == 0)
 		str = str.substr(pos + 1);
 
-	unsigned int num_chars = chars_needed(str.c_str(), TEXT_AREA_W, TEXT_AREA_H, &real_lines);
+	uint num_chars = chars_needed(str.c_str(), TEXT_AREA_W, TEXT_AREA_H, &real_lines);
 
 	/* we only have one chunk, no need to split it up */
-	unsigned int len = str.size();
+	uint len = str.size();
 	if (num_chars == len)
 		reply.push_back(str);
 	else {
@@ -108,7 +108,7 @@ Common::List<Common::String> replySplit(const Common::String &text) {
 
 Person::Person(MapTile tile) : Creature(tile), _start(0, 0) {
 	setType(Object::PERSON);
-	_dialogue = NULL;
+	_dialogue = nullptr;
 	_npcType = NPC_EMPTY;
 }
 
@@ -117,7 +117,7 @@ Person::Person(const Person *p) : Creature(p->_tile) {
 }
 
 bool Person::canConverse() const {
-	return isVendor() || _dialogue != NULL;
+	return isVendor() || _dialogue != nullptr;
 }
 
 bool Person::isVendor() const {
@@ -151,7 +151,7 @@ void Person::setDialogue(Dialogue *d) {
 
 void Person::setNpcType(PersonNpcType t) {
 	_npcType = t;
-	ASSERT(!isVendor() || _dialogue == NULL, "vendor has dialogue");
+	ASSERT(!isVendor() || _dialogue == nullptr, "vendor has dialogue");
 }
 
 Common::List<Common::String> Person::getConversationText(Conversation *cnv, const char *inquiry) {
@@ -330,7 +330,7 @@ const char *Person::getChoices(Conversation *cnv) {
 		error("invalid state: %d", cnv->_state);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Common::String Person::getIntro(Conversation *cnv) {
@@ -476,7 +476,7 @@ Common::String Person::talkerGetQuestionResponse(Conversation *cnv, const char *
 Common::String Person::beggarGetQuantityResponse(Conversation *cnv, const char *response) {
 	Common::String reply;
 
-	cnv->_quant = (int) strtol(response, NULL, 10);
+	cnv->_quant = (int) strtol(response, nullptr, 10);
 	cnv->_state = Conversation::TALK;
 
 	if (cnv->_quant > 0) {
@@ -572,7 +572,7 @@ int chars_needed(const char *s, int columnmax, int linesdesired, int *real_lines
 	// try breaking text into paragraphs first
 	Common::String text = s;
 	Common::String paragraphs;
-	unsigned int pos;
+	uint pos;
 	int lines = 0;
 	while ((pos = text.find("\n\n")) < text.size()) {
 		Common::String p = text.substr(0, pos);

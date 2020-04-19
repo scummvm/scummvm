@@ -41,8 +41,8 @@ public:
 	/**
 	 * Translates a raw index to a MapTile.
 	 */
-	MapTile translate(unsigned int index);
-	unsigned int untranslate(MapTile &tile);
+	MapTile translate(uint index);
+	uint untranslate(MapTile &tile);
 
 	/**
 	 * Load all tilemaps from the specified xml file
@@ -68,7 +68,7 @@ private:
 	static void load(const ConfigElement &tilemapConf);
 	static TileIndexMapMap _tileMaps;
 
-	Std::map<unsigned int, MapTile> _tileMap;
+	Std::map<uint, MapTile> _tileMap;
 };
 
 } // End of namespace Ultima4

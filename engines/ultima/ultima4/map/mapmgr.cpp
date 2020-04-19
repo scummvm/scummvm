@@ -45,21 +45,21 @@ namespace Ultima4 {
 using Std::vector;
 using Std::pair;
 
-MapMgr *MapMgr::_instance = NULL;
+MapMgr *MapMgr::_instance = nullptr;
 
 extern bool isAbyssOpened(const Portal *p);
 extern bool shrineCanEnter(const Portal *p);
 
 MapMgr *MapMgr::getInstance() {
-	if (_instance == NULL)
+	if (_instance == nullptr)
 		_instance = new MapMgr();
 	return _instance;
 }
 
 void MapMgr::destroy() {
-	if (_instance != NULL) {
+	if (_instance != nullptr) {
 		delete _instance;
-		_instance = NULL;
+		_instance = nullptr;
 	}
 }
 
@@ -132,7 +132,7 @@ Map *MapMgr::get(MapId id) {
 	/* if the map hasn't been loaded yet, load it! */
 	if (!_mapList[id]->_data.size()) {
 		MapLoader *loader = MapLoader::getLoader(_mapList[id]->_type);
-		if (loader == NULL)
+		if (loader == nullptr)
 			errorFatal("can't load map of type \"%d\"", _mapList[id]->_type);
 
 		loader->load(_mapList[id]);
@@ -142,9 +142,9 @@ Map *MapMgr::get(MapId id) {
 
 void MapMgr::registerMap(Map *map) {
 	if (_mapList.size() <= map->_id)
-		_mapList.resize(map->_id + 1, NULL);
+		_mapList.resize(map->_id + 1, nullptr);
 
-	if (_mapList[map->_id] != NULL)
+	if (_mapList[map->_id] != nullptr)
 		errorFatal("Error: A map with id '%d' already exists", map->_id);
 
 	_mapList[map->_id] = map;
@@ -152,12 +152,12 @@ void MapMgr::registerMap(Map *map) {
 
 Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 	Map *map;
-	static const char *mapTypeEnumStrings[] = { "world", "city", "shrine", "combat", "dungeon", NULL };
-	static const char *borderBehaviorEnumStrings[] = { "wrap", "exit", "fixed", NULL };
+	static const char *mapTypeEnumStrings[] = { "world", "city", "shrine", "combat", "dungeon", nullptr };
+	static const char *borderBehaviorEnumStrings[] = { "wrap", "exit", "fixed", nullptr };
 
 	map = initMap(static_cast<Map::Type>(mapConf.getEnum("type", mapTypeEnumStrings)));
 	if (!map)
-		return NULL;
+		return nullptr;
 
 	map->_id = static_cast<MapId>(mapConf.getInt("id"));
 	map->_type = static_cast<Map::Type>(mapConf.getEnum("type", mapTypeEnumStrings));
@@ -231,7 +231,7 @@ PersonRole *MapMgr::initPersonRoleFromConf(const ConfigElement &personRoleConf) 
 	PersonRole *personrole;
 	static const char *roleEnumStrings[] = { "companion", "weaponsvendor", "armorvendor", "foodvendor", "tavernkeeper",
 	                                         "reagentsvendor", "healer", "innkeeper", "guildvendor", "horsevendor",
-	                                         "lordbritish", "hawkwind", NULL
+	                                         "lordbritish", "hawkwind", nullptr
 	                                       };
 
 	personrole = new PersonRole();
@@ -247,8 +247,8 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 
 	portal = new Portal();
 
-	portal->_portalConditionsMet = NULL;
-	portal->_retroActiveDest = NULL;
+	portal->_portalConditionsMet = nullptr;
+	portal->_retroActiveDest = nullptr;
 
 	portal->_coords = MapCoords(
 	                      portalConf.getInt("x"),
@@ -320,7 +320,7 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 }
 
 void MapMgr::initShrineFromConf(const ConfigElement &shrineConf, Shrine *shrine) {
-	static const char *virtues[] = {"Honesty", "Compassion", "Valor", "Justice", "Sacrifice", "Honor", "Spirituality", "Humility", NULL};
+	static const char *virtues[] = {"Honesty", "Compassion", "Valor", "Justice", "Sacrifice", "Honor", "Spirituality", "Humility", nullptr};
 
 	shrine->setVirtue(static_cast<Virtue>(shrineConf.getEnum("virtue", virtues)));
 	shrine->setMantra(shrineConf.getString("mantra"));
@@ -328,8 +328,8 @@ void MapMgr::initShrineFromConf(const ConfigElement &shrineConf, Shrine *shrine)
 
 void MapMgr::initDungeonFromConf(const ConfigElement &dungeonConf, Dungeon *dungeon) {
 	dungeon->_nRooms = dungeonConf.getInt("rooms");
-	dungeon->_rooms = NULL;
-	dungeon->_roomMaps = NULL;
+	dungeon->_rooms = nullptr;
+	dungeon->_roomMaps = nullptr;
 	dungeon->_name = dungeonConf.getString("name");
 }
 

@@ -39,11 +39,11 @@
 namespace Ultima {
 namespace Ultima4 {
 
-CreatureMgr *CreatureMgr::_instance = NULL;
+CreatureMgr *CreatureMgr::_instance = nullptr;
 
 bool isCreature(Object *punknown) {
 	Creature *m;
-	if ((m = dynamic_cast<Creature *>(punknown)) != NULL)
+	if ((m = dynamic_cast<Creature *>(punknown)) != nullptr)
 		return true;
 	else
 		return false;
@@ -57,11 +57,11 @@ Creature::Creature(MapTile tile) :
 }
 
 void Creature::load(const ConfigElement &conf) {
-	unsigned int idx;
+	uint idx;
 
 	static const struct {
 		const char *name;
-		unsigned int mask;
+		uint mask;
 	} booleanAttributes[] = {
 		{ "undead", MATTR_UNDEAD },
 		{ "good", MATTR_GOOD },
@@ -80,7 +80,7 @@ void Creature::load(const ConfigElement &conf) {
 	/* steals="" */
 	static const struct {
 		const char *name;
-		unsigned int mask;
+		uint mask;
 	} steals[] = {
 		{ "food", MATTR_STEALFOOD },
 		{ "gold", MATTR_STEALGOLD }
@@ -89,7 +89,7 @@ void Creature::load(const ConfigElement &conf) {
 	/* casts="" */
 	static const struct {
 		const char *name;
-		unsigned int mask;
+		uint mask;
 	} casts[] = {
 		{ "sleep", MATTR_CASTS_SLEEP },
 		{ "negate", MATTR_NEGATE }
@@ -98,7 +98,7 @@ void Creature::load(const ConfigElement &conf) {
 	/* movement="" */
 	static const struct {
 		const char *name;
-		unsigned int mask;
+		uint mask;
 	} movement[] = {
 		{ "none", MATTR_STATIONARY },
 		{ "wanders", MATTR_WANDERS }
@@ -107,7 +107,7 @@ void Creature::load(const ConfigElement &conf) {
 	/* boolean attributes that affect movement */
 	static const struct {
 		const char *name;
-		unsigned int mask;
+		uint mask;
 	} movementBoolean[] = {
 		{ "swims", MATTR_SWIMS },
 		{ "sails", MATTR_SAILS },
@@ -130,7 +130,7 @@ void Creature::load(const ConfigElement &conf) {
 	_id = static_cast<unsigned short>(conf.getInt("id"));
 
 	/* Get the leader if it's been included, otherwise the leader is itself */
-	_leader = static_cast<unsigned char>(conf.getInt("leader", _id));
+	_leader = static_cast<byte>(conf.getInt("leader", _id));
 
 	_xp = static_cast<unsigned short>(conf.getInt("exp"));
 	_ranged = conf.getBool("ranged");
@@ -225,7 +225,7 @@ void Creature::load(const ConfigElement &conf) {
 
 	if (conf.exists("spawnsOnDeath")) {
 		_mAttr = static_cast<CreatureAttrib>(_mAttr | MATTR_SPAWNSONDEATH);
-		_spawn = static_cast<unsigned char>(conf.getInt("spawnsOnDeath"));
+		_spawn = static_cast<byte>(conf.getInt("spawnsOnDeath"));
 	}
 
 	/* Figure out which 'slowed' function to use */
@@ -334,7 +334,7 @@ bool Creature::specialAction() {
 		*/
 		if (mapdist <= 3 && xu4_random(2) == 0 && (g_context->_location->_context & CTX_CITY) == 0) {
 			Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, _coords,
-			                           1, 3, NULL, false);
+			                           1, 3, nullptr, false);
 			for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 				if (creatureRangeAttack(*i, this))
 					break;
@@ -355,7 +355,7 @@ bool Creature::specialAction() {
 
 			// nothing (not even mountains!) can block cannonballs
 			Std::vector<Coords> path = gameGetDirectionalActionPath(dir, broadsidesDirs, _coords,
-			                           1, 3, NULL, false);
+			                           1, 3, nullptr, false);
 			for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 				if (fireAt(*i, false))
 					break;
@@ -500,7 +500,7 @@ void Creature::act(CombatController *controller) {
 	 */
 
 	target = nearestOpponent(&dist, action == CA_RANGED);
-	if (target == NULL)
+	if (target == nullptr)
 		return;
 
 	if (action == CA_ATTACK && dist > 1)
@@ -520,7 +520,7 @@ void Creature::act(CombatController *controller) {
 
 
 			if (!dealDamage(target, getDamage()))
-				target = NULL;
+				target = nullptr;
 
 			if (target && isPartyMember(target)) {
 				/* steal gold if the creature steals gold */
@@ -745,7 +745,7 @@ bool Creature::hideOrShow() {
 	int dist;
 
 	/* ok, now we've got the nearest party member.  Now, see if they're close enough */
-	if (nearestOpponent(&dist, false) != NULL) {
+	if (nearestOpponent(&dist, false) != nullptr) {
 		if ((dist < 5) && !isVisible())
 			setVisible(); /* show yourself */
 		else if (dist >= 5)
@@ -756,7 +756,7 @@ bool Creature::hideOrShow() {
 }
 
 Creature *Creature::nearestOpponent(int *dist, bool ranged) {
-	Creature *opponent = NULL;
+	Creature *opponent = nullptr;
 	int d, leastDist = 0xFFFF;
 	ObjectDeque::iterator i;
 	bool jinx = (*g_context->_aura == Aura::JINX);
@@ -886,7 +886,7 @@ bool Creature::dealDamage(Creature *m, int damage) {
  * CreatureMgr class implementation
  */
 CreatureMgr *CreatureMgr::getInstance() {
-	if (_instance == NULL) {
+	if (_instance == nullptr) {
 		_instance = new CreatureMgr();
 		_instance->loadAll();
 	}
@@ -919,14 +919,14 @@ Creature *CreatureMgr::getByTile(MapTile tile) {
 
 //    if (tile.id)
 //      errorWarning("Did not find creature for tile %d", tile.id);
-	return NULL;
+	return nullptr;
 }
 
 Creature *CreatureMgr::getById(CreatureId id) {
 	CreatureMap::const_iterator i = _creatures.find(id);
 	if (i != _creatures.end())
 		return i->_value;
-	else return NULL;
+	else return nullptr;
 }
 
 Creature *CreatureMgr::getByName(Common::String name) {
@@ -935,7 +935,7 @@ Creature *CreatureMgr::getByName(Common::String name) {
 		if (scumm_stricmp(i->_value->getName().c_str(), name.c_str()) == 0)
 			return i->_value;
 	}
-	return NULL;
+	return nullptr;
 }
 
 Creature *CreatureMgr::randomForTile(const Tile *tile) {
@@ -958,7 +958,7 @@ Creature *CreatureMgr::randomForTile(const Tile *tile) {
 	}
 
 	if (!tile->isCreatureWalkable())
-		return NULL;
+		return nullptr;
 
 	//if (c->saveGame->_moves > 100000) // FIXME: what's 100,000 moves all about (if anything)?
 	if (g_ultima->_saveGame->_moves > 30000)
@@ -1014,7 +1014,7 @@ Creature *CreatureMgr::randomAmbushing() {
 	}
 
 	error("failed to find an ambushing creature");
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace Ultima4

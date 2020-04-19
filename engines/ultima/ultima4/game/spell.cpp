@@ -45,7 +45,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-SpellEffectCallback spellEffectCallback = NULL;
+SpellEffectCallback spellEffectCallback = nullptr;
 
 CombatController *spellCombatController();
 void spellMagicAttack(const Common::String &tilename, Direction dir, int minDamage, int maxDamage);
@@ -208,32 +208,32 @@ void Ingredients::multiply(int batches) {
 	}
 }
 
-const char *spellGetName(unsigned int spell) {
+const char *spellGetName(uint spell) {
 	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
 
 	return spells[spell]._name;
 }
 
-int spellGetRequiredMP(unsigned int spell) {
+int spellGetRequiredMP(uint spell) {
 	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
 
 	return spells[spell]._mp;
 }
 
-LocationContext spellGetContext(unsigned int spell) {
+LocationContext spellGetContext(uint spell) {
 	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
 
 	return spells[spell]._context;
 }
 
-TransportContext spellGetTransportContext(unsigned int spell) {
+TransportContext spellGetTransportContext(uint spell) {
 	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
 
 	return spells[spell]._transportContext;
 }
 
-Common::String spellGetErrorMessage(unsigned int spell, SpellCastError error) {
-	unsigned int i;
+Common::String spellGetErrorMessage(uint spell, SpellCastError error) {
+	uint i;
 	SpellCastError err = error;
 
 	/* try to find a more specific error message */
@@ -266,7 +266,7 @@ Common::String spellGetErrorMessage(unsigned int spell, SpellCastError error) {
  * Mix reagents for a spell.  Fails and returns false if the reagents
  * selected were not correct.
  */
-int spellMix(unsigned int spell, const Ingredients *ingredients) {
+int spellMix(uint spell, const Ingredients *ingredients) {
 	int regmask, reg;
 
 	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
@@ -285,7 +285,7 @@ int spellMix(unsigned int spell, const Ingredients *ingredients) {
 	return 1;
 }
 
-Spell::Param spellGetParamType(unsigned int spell) {
+Spell::Param spellGetParamType(uint spell) {
 	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
 
 	return spells[spell]._paramType;
@@ -296,7 +296,7 @@ Spell::Param spellGetParamType(unsigned int spell) {
  * error if no mixture is available, the context is invalid, or the
  * character doesn't have enough magic points.
  */
-SpellCastError spellCheckPrerequisites(unsigned int spell, int character) {
+SpellCastError spellCheckPrerequisites(uint spell, int character) {
 	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
 	ASSERT(character >= 0 && character < g_ultima->_saveGame->_members, "character out of range: %d", character);
 
@@ -319,7 +319,7 @@ SpellCastError spellCheckPrerequisites(unsigned int spell, int character) {
  * Casts spell.  Fails and returns false if the spell cannot be cast.
  * The error code is updated with the reason for failure.
  */
-bool spellCast(unsigned int spell, int character, int param, SpellCastError *error, bool spellEffect) {
+bool spellCast(uint spell, int character, int param, SpellCastError *error, bool spellEffect) {
 	int subject = (spells[spell]._paramType == Spell::PARAM_PLAYER) ? param : -1;
 	PartyMember *p = g_context->_party->member(character);
 

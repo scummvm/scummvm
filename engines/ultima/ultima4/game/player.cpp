@@ -40,7 +40,7 @@ namespace Ultima4 {
 
 bool isPartyMember(Object *punknown) {
 	PartyMember *pm;
-	if ((pm = dynamic_cast<PartyMember *>(punknown)) != NULL)
+	if ((pm = dynamic_cast<PartyMember *>(punknown)) != nullptr)
 		return true;
 	else
 		return false;
@@ -508,7 +508,7 @@ void PartyMember::wakeUp() {
 }
 
 MapTile PartyMember::tileForClass(int klass) {
-	const char *name = NULL;
+	const char *name = nullptr;
 
 	switch (klass) {
 	case CLASS_MAGE:
@@ -615,7 +615,7 @@ Common::String Party::translate(Std::vector<Common::String> &parts) {
 			size_t pos = str.findFirstOf("1234567890");
 			if (pos != Common::String::npos) {
 				str = str.substr(pos);
-				int p_member = (int)strtol(str.c_str(), NULL, 10);
+				int p_member = (int)strtol(str.c_str(), nullptr, 10);
 
 				// Make the party member translate its own stuff
 				if (p_member > 0)
@@ -842,7 +842,7 @@ bool Party::canPersonJoin(Common::String name, Virtue *v) {
 	return false;
 }
 
-void Party::damageShip(unsigned int pts) {
+void Party::damageShip(uint pts) {
 	_saveGame->_shipHull -= pts;
 	if ((short)_saveGame->_shipHull < 0)
 		_saveGame->_shipHull = 0;
@@ -926,7 +926,7 @@ int Party::getTorchDuration() const {
 	return _torchDuration;
 }
 
-void Party::healShip(unsigned int pts) {
+void Party::healShip(uint pts) {
 	_saveGame->_shipHull += pts;
 	if (_saveGame->_shipHull > 50)
 		_saveGame->_shipHull = 50;

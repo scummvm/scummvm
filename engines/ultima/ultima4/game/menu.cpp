@@ -222,7 +222,7 @@ MenuItem *Menu::getItemById(int id) {
 	_current = getById(id);
 	if (_current != _items.end())
 		return *_current;
-	return NULL;
+	return nullptr;
 }
 
 void Menu::activateItem(int id, MenuEvent::Type action) {

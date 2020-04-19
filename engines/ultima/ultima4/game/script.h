@@ -181,7 +181,7 @@ public:
 	/**
 	 * Executes the subscript 'script' of the main script
 	 */
-	ReturnCode execute(Shared::XMLNode *script, Shared::XMLNode *currentItem = NULL, Common::String *output = NULL);
+	ReturnCode execute(Shared::XMLNode *script, Shared::XMLNode *currentItem = nullptr, Common::String *output = nullptr);
 
 	/**
 	 * Continues the script from where it left off, or where the last script indicated

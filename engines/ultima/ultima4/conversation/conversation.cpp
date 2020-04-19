@@ -40,7 +40,7 @@ const ResponsePart ResponsePart::STARTMUSIC_LB("<STARTMUSIC_LB>", "", true);
 const ResponsePart ResponsePart::STARTMUSIC_HW("<STARTMUSIC_HW>", "", true);
 const ResponsePart ResponsePart::STOPMUSIC("<STOPMUSIC>", "", true);
 const ResponsePart ResponsePart::HAWKWIND("<HAWKWIND>", "", true);
-const unsigned int Conversation::BUFFERLEN = 16;
+const uint Conversation::BUFFERLEN = 16;
 
 Response::Response(const Common::String &response) : _references(0) {
 	add(response);
@@ -94,7 +94,7 @@ bool ResponsePart::isCommand() const {
 DynamicResponse::DynamicResponse(Response * (*generator)(const DynamicResponse *), const Common::String &param) :
 	Response(""), _param(param) {
 	_generator = generator;
-	_currentResponse = NULL;
+	_currentResponse = nullptr;
 }
 
 DynamicResponse::~DynamicResponse() {
@@ -162,10 +162,10 @@ bool Dialogue::Keyword::operator==(const Common::String &kw) const {
  */
 
 Dialogue::Dialogue()
-	: _intro(NULL)
-	, _longIntro(NULL)
-	, _defaultAnswer(NULL)
-	, _question(NULL) {
+	: _intro(nullptr)
+	, _longIntro(nullptr)
+	, _defaultAnswer(nullptr)
+	, _question(nullptr) {
 }
 
 Dialogue::~Dialogue() {
@@ -194,7 +194,7 @@ Dialogue::Keyword *Dialogue::operator[](const Common::String &kw) {
 				return i->_value;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 const ResponsePart &Dialogue::getAction() const {

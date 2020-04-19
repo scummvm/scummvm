@@ -42,13 +42,13 @@ void Object::setMap(class Map *m) {
 
 Map *Object::getMap() {
 	if (_maps.empty())
-		return NULL;
+		return nullptr;
 	return _maps.back();
 }
 
 void Object::remove() {
-	unsigned int size = _maps.size();
-	for (unsigned int i = 0; i < size; i++) {
+	uint size = _maps.size();
+	for (uint i = 0; i < size; i++) {
 		if (i == size - 1)
 			_maps[i]->removeObject(this);
 		else _maps[i]->removeObject(this, false);

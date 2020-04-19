@@ -47,7 +47,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Std::map<Map::Type, MapLoader *, MapType_Hash> *MapLoader::loaderMap = NULL;
+Std::map<Map::Type, MapLoader *, MapType_Hash> *MapLoader::loaderMap = nullptr;
 
 MapLoader *CityMapLoader::_instance = MapLoader::registerLoader(new CityMapLoader, Map::CITY);
 MapLoader *ConMapLoader::_instance = MapLoader::registerLoader(MapLoader::registerLoader(new ConMapLoader, Map::COMBAT), Map::SHRINE);
@@ -55,14 +55,14 @@ MapLoader *DngMapLoader::_instance = MapLoader::registerLoader(new DngMapLoader,
 MapLoader *WorldMapLoader::_instance = MapLoader::registerLoader(new WorldMapLoader, Map::WORLD);
 
 MapLoader *MapLoader::getLoader(Map::Type type) {
-	ASSERT(loaderMap != NULL, "ImageLoader::getLoader loaderMap not initialized");
+	ASSERT(loaderMap != nullptr, "ImageLoader::getLoader loaderMap not initialized");
 	if (loaderMap->find(type) == loaderMap->end())
-		return NULL;
+		return nullptr;
 	return (*loaderMap)[type];
 }
 
 MapLoader *MapLoader::registerLoader(MapLoader *loader, Map::Type type) {
-	if (loaderMap == NULL)
+	if (loaderMap == nullptr)
 		loaderMap = new Std::map<Map::Type, MapLoader *, MapType_Hash>();
 
 	if (loaderMap->find(type) != loaderMap->end())
@@ -73,7 +73,7 @@ MapLoader *MapLoader::registerLoader(MapLoader *loader, Map::Type type) {
 }
 
 bool MapLoader::loadData(Map *map, U4FILE *f) {
-	unsigned int x, xch, y, ych;
+	uint x, xch, y, ych;
 
 	/* allocate the space we need for the map data */
 	map->_data.clear();
@@ -130,7 +130,7 @@ bool MapLoader::isChunkCompressed(Map *map, int chunk) {
 bool CityMapLoader::load(Map *map) {
 	City *city = dynamic_cast<City *>(map);
 
-	unsigned int i, j;
+	uint i, j;
 	Person *people[CITY_MAX_PERSONS];
 	Dialogue *dialogues[CITY_MAX_PERSONS];
 	DialogueLoader *dlgLoader = DialogueLoaders::getLoader("application/x-u4tlk");
@@ -164,7 +164,7 @@ bool CityMapLoader::load(Map *map) {
 		u4fgetc(ult);           /* read redundant startx/starty */
 
 	for (i = 0; i < CITY_MAX_PERSONS; i++) {
-		unsigned char c = u4fgetc(ult);
+		byte c = u4fgetc(ult);
 		if (c == 0)
 			people[i]->setMovementBehavior(MOVEMENT_FIXED);
 		else if (c == 1)
@@ -177,7 +177,7 @@ bool CityMapLoader::load(Map *map) {
 			return false;
 	}
 
-	unsigned char conv_idx[CITY_MAX_PERSONS];
+	byte conv_idx[CITY_MAX_PERSONS];
 	for (i = 0; i < CITY_MAX_PERSONS; i++) {
 		conv_idx[i] = u4fgetc(ult);
 	}
@@ -221,9 +221,9 @@ bool CityMapLoader::load(Map *map) {
 		for (current = city->_personRoles.begin(); current != city->_personRoles.end(); current++) {
 			if ((unsigned)(*current)->_id == (i + 1)) {
 				if ((*current)->_role == NPC_LORD_BRITISH)
-					people[i]->setDialogue(DialogueLoaders::getLoader("application/x-u4lbtlk")->load(NULL));
+					people[i]->setDialogue(DialogueLoaders::getLoader("application/x-u4lbtlk")->load(nullptr));
 				else if ((*current)->_role == NPC_HAWKWIND)
-					people[i]->setDialogue(DialogueLoaders::getLoader("application/x-u4hwtlk")->load(NULL));
+					people[i]->setDialogue(DialogueLoaders::getLoader("application/x-u4hwtlk")->load(nullptr));
 				people[i]->setNpcType(static_cast<PersonNpcType>((*current)->_role));
 			}
 		}
@@ -294,9 +294,9 @@ bool DngMapLoader::load(Map *map) {
 	ASSERT(dungeon->_height == DNG_HEIGHT, "map height is %d, should be %d", dungeon->_height, DNG_HEIGHT);
 
 	/* load the dungeon map */
-	unsigned int i, j;
+	uint i, j;
 	for (i = 0; i < (DNG_HEIGHT * DNG_WIDTH * dungeon->_levels); i++) {
-		unsigned char mapData = u4fgetc(dng);
+		byte mapData = u4fgetc(dng);
 		MapTile tile = map->translateFromRawTileIndex(mapData);
 
 		/* determine what type of tile it is */
@@ -309,7 +309,7 @@ bool DngMapLoader::load(Map *map) {
 	dungeon->_rooms = new DngRoom[dungeon->_nRooms];
 
 	for (i = 0; i < dungeon->_nRooms; i++) {
-		unsigned char room_tiles[121];
+		byte room_tiles[121];
 
 		for (j = 0; j < DNGROOM_NTRIGGERS; j++) {
 			int tmp;
@@ -361,7 +361,7 @@ bool DngMapLoader::load(Map *map) {
 		// dungeon room fixup
 		//
 		if (map->_id == MAP_HYTHLOTH) {
-			// A couple rooms in hythloth have NULL player start positions,
+			// A couple rooms in hythloth have nullptr player start positions,
 			// which causes the entire party to appear in the upper-left
 			// tile when entering the dungeon room.
 			//
@@ -373,25 +373,25 @@ bool DngMapLoader::load(Map *map) {
 			//
 			if (i == 0x7) {
 				// update party start positions when entering from the east
-				const unsigned char x1[8] = { 0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA, 0xA },
+				const byte x1[8] = { 0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA, 0xA },
 				                            y1[8] = { 0x3, 0x2, 0x3, 0x2, 0x1, 0x3, 0x2, 0x1 };
 				memcpy(dungeon->_rooms[i]._partyEastStartX, x1, sizeof(x1));
 				memcpy(dungeon->_rooms[i]._partyEastStartY, y1, sizeof(y1));
 
 				// update party start positions when entering from the south
-				const unsigned char x2[8] = { 0x3, 0x2, 0x3, 0x2, 0x1, 0x3, 0x2, 0x1 },
+				const byte x2[8] = { 0x3, 0x2, 0x3, 0x2, 0x1, 0x3, 0x2, 0x1 },
 				                            y2[8] = { 0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA, 0xA };
 				memcpy(dungeon->_rooms[i]._partySouthStartX, x2, sizeof(x2));
 				memcpy(dungeon->_rooms[i]._partySouthStartY, y2, sizeof(y2));
 			} else if (i == 0x9) {
 				// update the starting position of monsters 7, 8, and 9
-				const unsigned char x1[3] = { 0x4, 0x6, 0x5 },
+				const byte x1[3] = { 0x4, 0x6, 0x5 },
 				                            y1[3] = { 0x5, 0x5, 0x6 };
 				memcpy(dungeon->_rooms[i]._creatureStartX + 7, x1, sizeof(x1));
 				memcpy(dungeon->_rooms[i]._creatureStartY + 7, y1, sizeof(y1));
 
 				// update party start positions when entering from the west
-				const unsigned char x2[8] = { 0x2, 0x2, 0x1, 0x1, 0x1, 0x0, 0x0, 0x0 },
+				const byte x2[8] = { 0x2, 0x2, 0x1, 0x1, 0x1, 0x0, 0x0, 0x0 },
 				                            y2[8] = { 0x9, 0x8, 0x9, 0x8, 0x7, 0x9, 0x8, 0x7 };
 				memcpy(dungeon->_rooms[i]._partyWestStartX, x2, sizeof(x2));
 				memcpy(dungeon->_rooms[i]._partyWestStartY, y2, sizeof(y2));

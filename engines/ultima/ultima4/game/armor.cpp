@@ -41,7 +41,7 @@ const Armor *Armor::get(ArmorType a) {
 	loadConf();
 
 	if (static_cast<unsigned>(a) >= _armors.size())
-		return NULL;
+		return nullptr;
 	return _armors[a];
 }
 
@@ -53,7 +53,7 @@ const Armor *Armor::get(const string &name) {
 		if (scumm_stricmp(name.c_str(), _armors[i]->_name.c_str()) == 0)
 			return _armors[i];
 	}
-	return NULL;
+	return nullptr;
 }
 
 Armor::Armor(const ConfigElement &conf) {
@@ -65,7 +65,7 @@ Armor::Armor(const ConfigElement &conf) {
 
 	vector<ConfigElement> contraintConfs = conf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = contraintConfs.begin(); i != contraintConfs.end(); i++) {
-		unsigned char useMask = 0;
+		byte useMask = 0;
 
 		if (i->getName() != "constraint")
 			continue;

@@ -26,7 +26,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-WaitController::WaitController(unsigned int c) : Controller(), _cycles(c), _current(0) {
+WaitController::WaitController(uint c) : Controller(), _cycles(c), _current(0) {
 }
 
 void WaitController::timerFired() {

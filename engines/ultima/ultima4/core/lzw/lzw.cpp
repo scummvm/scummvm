@@ -70,7 +70,7 @@ byte hashPosFound(int hashCode, byte root, int codeword, lzwDictionaryEntry *dic
  * Error: (long) -1
  */
 long lzwGetDecompressedSize(byte *compressedMem, long compressedSize) {
-	return (generalizedDecompress(&discardRoot, compressedMem, NULL, compressedSize));
+	return (generalizedDecompress(&discardRoot, compressedMem, nullptr, compressedSize));
 }
 
 /*

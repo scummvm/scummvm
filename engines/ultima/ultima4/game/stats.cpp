@@ -141,7 +141,7 @@ void StatsArea::update(Aura *observable, NoArg *arg) {
 }
 
 void StatsArea::update(Aura *aura) {
-	unsigned char mask = 0xff;
+	byte mask = 0xff;
 	for (int i = 0; i < VIRT_MAX; i++) {
 		if (g_ultima->_saveGame->_karma[i] == 0)
 			mask &= ~(1 << i);
@@ -209,7 +209,7 @@ void StatsArea::setTitle(const Common::String &s) {
 void StatsArea::showPartyView(bool avatarOnly) {
 	const char *format = "%d%c%-9.8s%3d%s";
 
-	PartyMember *p = NULL;
+	PartyMember *p = nullptr;
 	int activePlayer = g_context->_party->getActivePlayer();
 
 	ASSERT(g_context->_party->size() <= 8, "party members out of range: %d", g_context->_party->size());

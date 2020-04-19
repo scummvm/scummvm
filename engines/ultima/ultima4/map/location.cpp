@@ -269,7 +269,7 @@ Location *locationPush(Location *stack, Location *loc) {
 Location *locationPop(Location **stack) {
 	Location *loc = *stack;
 	*stack = (*stack)->_prev;
-	loc->_prev = NULL;
+	loc->_prev = nullptr;
 	return loc;
 }
 

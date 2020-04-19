@@ -337,7 +337,7 @@ public:
 	/**
 	 * Damages the party's ship
 	 */
-	void damageShip(unsigned int pts);
+	void damageShip(uint pts);
 
 	/**
 	 * Donates 'quantity' gold. Returns true if the donation succeeded,
@@ -363,7 +363,7 @@ public:
 	/**
 	 * Heals the ship's hull strength by 'pts' points
 	 */
-	void healShip(unsigned int pts);
+	void healShip(uint pts);
 
 	/**
 	 * Returns true if the balloon is currently in the air

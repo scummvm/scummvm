@@ -243,8 +243,8 @@ Map::Map() {
 	_chunkHeight = 0;
 	_offset = 0;
 	_id = 0;
-	_tileset = NULL;
-	_tilemap = NULL;
+	_tileset = nullptr;
+	_tilemap = nullptr;
 }
 
 Map::~Map() {
@@ -260,7 +260,7 @@ Common::String Map::getName() {
 Object *Map::objectAt(const Coords &coords) {
 	/* FIXME: return a list instead of one object */
 	ObjectDeque::const_iterator i;
-	Object *objAt = NULL;
+	Object *objAt = nullptr;
 
 	for (i = _objects.begin(); i != _objects.end(); i++) {
 		Object *obj = *i;
@@ -287,7 +287,7 @@ const Portal *Map::portalAt(const Coords &coords, int actionFlags) {
 		        ((*i)->_triggerAction & actionFlags))
 			return *i;
 	}
-	return NULL;
+	return nullptr;
 }
 
 MapTile *Map::getTileFromData(const Coords &coords) {
@@ -337,7 +337,7 @@ bool Map::isWorldMap() {
 }
 
 bool Map::isEnclosed(const Coords &party) {
-	unsigned int x, y;
+	uint x, y;
 	int *path_data;
 
 	if (_borderBehavior != BORDER_WRAP)
@@ -451,9 +451,9 @@ ObjectDeque::iterator Map::removeObject(ObjectDeque::iterator rem, bool deleteOb
 }
 
 Creature *Map::moveObjects(MapCoords avatar) {
-	Creature *attacker = NULL;
+	Creature *attacker = nullptr;
 
-	for (unsigned int i = 0; i < _objects.size(); i++) {
+	for (uint i = 0; i < _objects.size(); i++) {
 		Creature *m = dynamic_cast<Creature *>(_objects[i]);
 
 		if (m) {
@@ -771,12 +771,12 @@ bool Map::fillMonsterTable() {
 }
 
 MapTile Map::translateFromRawTileIndex(int raw) const {
-	ASSERT(_tilemap != NULL, "tilemap hasn't been set");
+	ASSERT(_tilemap != nullptr, "tilemap hasn't been set");
 
 	return _tilemap->translate(raw);
 }
 
-unsigned int Map::translateToRawTileIndex(MapTile &tile) const {
+uint Map::translateToRawTileIndex(MapTile &tile) const {
 	return _tilemap->untranslate(tile);
 }
 

@@ -47,16 +47,16 @@ struct ItemLocation {
 	void (*_putItemInInventory)(int item);
 	void (*_useItem)(int item);
 	int _data;
-	unsigned char _conditions;
+	byte _conditions;
 };
 
-typedef void (*DestroyAllCreaturesCallback)(void);
+typedef void (*DestroyAllCreaturesCallback)();
 
 void itemSetDestroyAllCreaturesCallback(DestroyAllCreaturesCallback callback);
 
 /**
  * Returns an item location record if a searchable object exists at
- * the given location. NULL is returned if nothing is there.
+ * the given location. nullptr is returned if nothing is there.
  */
 const ItemLocation *itemAtLocation(const Map *map, const Coords &coords);
 

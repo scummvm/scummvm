@@ -37,7 +37,7 @@ public:
 	ReadChoiceController(const Common::String &choices);
 	bool keyPressed(int key) override;
 
-	static char get(const Common::String &choices, EventHandler *eh = NULL);
+	static char get(const Common::String &choices, EventHandler *eh = nullptr);
 
 protected:
 	Common::String _choices;

@@ -61,7 +61,7 @@ extern void gameDestroyAllCreatures();
  */
 bool isCombatMap(Map *punknown) {
 	CombatMap *ps;
-	if ((ps = dynamic_cast<CombatMap *>(punknown)) != NULL)
+	if ((ps = dynamic_cast<CombatMap *>(punknown)) != nullptr)
 		return true;
 	else
 		return false;
@@ -72,31 +72,31 @@ bool isCombatMap(Map *punknown) {
  * passed, or a CombatMap pointer to the current map
  * if no arguments were passed.
  *
- * Returns NULL if the map provided (or current map)
+ * Returns nullptr if the map provided (or current map)
  * is not a combat map.
  */
 CombatMap *getCombatMap(Map *punknown) {
 	Map *m = punknown ? punknown : g_context->_location->_map;
 	if (!isCombatMap(m))
-		return NULL;
+		return nullptr;
 	else return dynamic_cast<CombatMap *>(m);
 }
 
 /**
  * CombatController class implementation
  */
-CombatController::CombatController() : _map(NULL) {
+CombatController::CombatController() : _map(nullptr) {
 	g_context->_party->addObserver(this);
 }
 
 CombatController::CombatController(CombatMap *m) : _map(m) {
-	g_game->setMap(_map, true, NULL, this);
+	g_game->setMap(_map, true, nullptr, this);
 	g_context->_party->addObserver(this);
 }
 
 CombatController::CombatController(MapId id) {
 	_map = getCombatMap(mapMgr->get(id));
-	g_game->setMap(_map, true, NULL, this);
+	g_game->setMap(_map, true, nullptr, this);
 	g_context->_party->addObserver(this);
 	_forceStandardEncounterSize = false;
 }
@@ -115,7 +115,7 @@ bool CombatController::isWinOrLose() const                  {
 Direction CombatController::getExitDir() const              {
 	return _exitDir;
 }
-unsigned char CombatController::getFocus() const            {
+byte CombatController::getFocus() const            {
 	return _focus;
 }
 CombatMap *CombatController::getMap() const                 {
@@ -148,7 +148,7 @@ void CombatController::init(class Creature *m) {
 	int i;
 
 	_creature = m;
-	_placeCreaturesOnMap = (m == NULL) ? false : true;
+	_placeCreaturesOnMap = (m == nullptr) ? false : true;
 	_placePartyOnMap = true;
 	_winOrLose = true;
 	_map->setDungeonRoom(false);
@@ -158,11 +158,11 @@ void CombatController::init(class Creature *m) {
 
 	/* initialize creature info */
 	for (i = 0; i < AREA_CREATURES; i++) {
-		creatureTable[i] = NULL;
+		creatureTable[i] = nullptr;
 	}
 
 	for (i = 0; i < AREA_PLAYERS; i++) {
-		_party.push_back(NULL);
+		_party.push_back(nullptr);
 	}
 
 	/* fill the creature table if a creature was provided to create */
@@ -174,14 +174,13 @@ void CombatController::init(class Creature *m) {
 
 void CombatController::initDungeonRoom(int room, Direction from) {
 	int offset, i;
-	init(NULL);
+	init(nullptr);
 
 	ASSERT(g_context->_location->_prev->_context & CTX_DUNGEON, "Error: called initDungeonRoom from non-dungeon context");
 	{
 		Dungeon *dng = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);
-		unsigned char
-		*party_x = &dng->_rooms[room]._partyNorthStartX[0],
-		 *party_y = &dng->_rooms[room]._partyNorthStartY[0];
+		byte *party_x = &dng->_rooms[room]._partyNorthStartX[0],
+			*party_y = &dng->_rooms[room]._partyNorthStartY[0];
 
 		/* load the dungeon room properties */
 		_winOrLose = false;
@@ -381,7 +380,7 @@ void CombatController::end(bool adjustKarma) {
 void CombatController::fillCreatureTable(const Creature *creature) {
 	int i, j;
 
-	if (creature != NULL) {
+	if (creature != nullptr) {
 		const Creature *baseCreature = creature, *current;
 		int numCreatures = initialNumberOfCreatures(creature);
 
@@ -394,7 +393,7 @@ void CombatController::fillCreatureTable(const Creature *creature) {
 			/* find a free spot in the creature table */
 			do {
 				j = xu4_random(AREA_CREATURES) ;
-			} while (creatureTable[j] != NULL);
+			} while (creatureTable[j] != nullptr);
 
 			/* see if creature is a leader or leader's leader */
 			if (creatureMgr->getById(baseCreature->getLeader()) != baseCreature && /* leader is a different creature */
@@ -461,7 +460,7 @@ void CombatController::moveCreatures() {
 	// XXX: this iterator is rather complex; but the vector::iterator can
 	// break and crash if we delete elements while iterating it, which we do
 	// if a jinxed monster kills another
-	for (unsigned int i = 0; i < _map->getCreatures().size(); i++) {
+	for (uint i = 0; i < _map->getCreatures().size(); i++) {
 		m = _map->getCreatures().at(i);
 		//GameController::doScreenAnimationsWhilePausing(1);
 		m->act(this);
@@ -541,8 +540,8 @@ void CombatController::awardLoot() {
 }
 
 bool CombatController::attackHit(Creature *attacker, Creature *defender) {
-	ASSERT(attacker != NULL, "attacker must not be NULL");
-	ASSERT(defender != NULL, "defender must not be NULL");
+	ASSERT(attacker != nullptr, "attacker must not be nullptr");
+	ASSERT(defender != nullptr, "defender must not be nullptr");
 
 	int attackValue = xu4_random(0x100) + attacker->getAttackBonus();
 	int defenseValue = defender->getDefense();
@@ -589,7 +588,7 @@ bool CombatController::attackAt(const Coords &coords, PartyMember *attacker, int
 
 		/* apply the damage to the creature */
 		if (!attacker->dealDamage(creature, attacker->getDamage())) {
-			creature = NULL;
+			creature = nullptr;
 			GameController::flashTile(coords, hittile, 1);
 		}
 	}
@@ -1084,7 +1083,7 @@ void CombatController::attack() {
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL,
 	                           attacker->getCoords(), 1, range,
-	                           weapon->canAttackThroughObjects() ? NULL : &Tile::canAttackOverTile,
+	                           weapon->canAttackThroughObjects() ? nullptr : &Tile::canAttackOverTile,
 	                           false);
 
 	bool foundTarget = false;
@@ -1165,7 +1164,7 @@ PartyMember *CombatMap::partyMemberAt(Coords coords) {
 		if ((*i)->getCoords() == coords)
 			return *i;
 	}
-	return NULL;
+	return nullptr;
 }
 
 Creature *CombatMap::creatureAt(Coords coords) {
@@ -1176,7 +1175,7 @@ Creature *CombatMap::creatureAt(Coords coords) {
 		if ((*i)->getCoords() == coords)
 			return *i;
 	}
-	return NULL;
+	return nullptr;
 }
 
 MapId CombatMap::mapForTile(const Tile *groundTile, const Tile *transport, Object *obj) {

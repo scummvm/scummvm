@@ -52,10 +52,10 @@ public:
 	map<Common::String, ImageInfo *> _info;
 };
 
-ImageMgr *ImageMgr::_instance = NULL;
+ImageMgr *ImageMgr::_instance = nullptr;
 
 ImageMgr *ImageMgr::getInstance() {
-	if (_instance == NULL) {
+	if (_instance == nullptr) {
 		_instance = new ImageMgr();
 		_instance->init();
 	}
@@ -63,9 +63,9 @@ ImageMgr *ImageMgr::getInstance() {
 }
 
 void ImageMgr::destroy() {
-	if (_instance != NULL) {
+	if (_instance != nullptr) {
 		delete _instance;
-		_instance = NULL;
+		_instance = nullptr;
 	}
 }
 
@@ -146,7 +146,7 @@ ImageSet *ImageMgr::loadImageSetFromConf(const ConfigElement &conf) {
 
 ImageInfo *ImageMgr::loadImageInfoFromConf(const ConfigElement &conf) {
 	ImageInfo *info;
-	static const char *fixupEnumStrings[] = { "none", "intro", "abyss", "abacus", "dungns", "blackTransparencyHack", "fmtownsscreen", NULL };
+	static const char *fixupEnumStrings[] = { "none", "intro", "abyss", "abacus", "dungns", "blackTransparencyHack", "fmtownsscreen", nullptr };
 
 	info = new ImageInfo();
 	info->_name = conf.getString("name");
@@ -162,7 +162,7 @@ ImageInfo *ImageMgr::loadImageInfoFromConf(const ConfigElement &conf) {
 
 	info->_xu4Graphic = conf.getBool("xu4Graphic");
 	info->_fixup = static_cast<ImageFixup>(conf.getEnum("fixup", fixupEnumStrings));
-	info->_image = NULL;
+	info->_image = nullptr;
 
 	vector<ConfigElement> children = conf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
@@ -210,7 +210,7 @@ SubImage *ImageMgr::loadSubImageFromConf(const ImageInfo *info, const ConfigElem
 }
 
 void ImageMgr::fixupIntro(Image *im, int prescale) {
-	const unsigned char *sigData;
+	const byte *sigData;
 	int i, x, y;
 	bool alpha = im->isAlphaOn();
 	RGBA color;
@@ -331,7 +331,7 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 			errorFatal("ERROR 1001: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_BORDERS, settings._game.c_str());
 
 		delete borderInfo->_image;
-		borderInfo->_image = NULL;
+		borderInfo->_image = nullptr;
 		borderInfo = imageMgr->get(BKGD_BORDERS, true);
 
 		im->setPaletteFromImage(borderInfo->_image);
@@ -356,7 +356,7 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 		borderInfo->_image->alphaOn();
 
 		delete borderInfo->_image;
-		borderInfo->_image = NULL;
+		borderInfo->_image = nullptr;
 	}
 
 	/* -----------------------------
@@ -399,28 +399,28 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 }
 
 void ImageMgr::fixupAbyssVision(Image *im, int prescale) {
-	static unsigned int *data = NULL;
+	static uint *data = nullptr;
 
 	/*
 	 * Each VGA vision components must be XORed with all the previous
 	 * vision components to get the actual image.
 	 */
-	if (data != NULL) {
+	if (data != nullptr) {
 		for (int y = 0; y < im->height(); y++) {
 			for (int x = 0; x < im->width(); x++) {
-				unsigned int index;
+				uint index;
 				im->getPixelIndex(x, y, index);
 				index ^= data[y * im->width() + x];
 				im->putPixelIndex(x, y, index);
 			}
 		}
 	} else {
-		data = new unsigned int[im->width() * im->height()];
+		data = new uint[im->width() * im->height()];
 	}
 
 	for (int y = 0; y < im->height(); y++) {
 		for (int x = 0; x < im->width(); x++) {
-			unsigned int index;
+			uint index;
 			im->getPixelIndex(x, y, index);
 			data[y * im->width() + x] = index;
 		}
@@ -448,7 +448,7 @@ void ImageMgr::fixupAbacus(Image *im, int prescale) {
 void ImageMgr::fixupDungNS(Image *im, int prescale) {
 	for (int y = 0; y < im->height(); y++) {
 		for (int x = 0; x < im->width(); x++) {
-			unsigned int index;
+			uint index;
 			im->getPixelIndex(x, y, index);
 			if (index == 1)
 				im->putPixelIndex(x, y, 2);
@@ -461,7 +461,7 @@ void ImageMgr::fixupDungNS(Image *im, int prescale) {
 void ImageMgr::fixupFMTowns(Image *im, int prescale) {
 	for (int y = 20; y < im->height(); y++) {
 		for (int x = 0; x < im->width(); x++) {
-			unsigned int index;
+			uint index;
 			im->getPixelIndex(x, y, index);
 			im->putPixelIndex(x, y - 20, index);
 		}
@@ -473,7 +473,7 @@ ImageSet *ImageMgr::getSet(const Common::String &setname) {
 	if (i != _imageSets.end())
 		return i->_value;
 	else
-		return NULL;
+		return nullptr;
 }
 
 ImageInfo *ImageMgr::getInfo(const Common::String &name) {
@@ -482,7 +482,7 @@ ImageInfo *ImageMgr::getInfo(const Common::String &name) {
 
 ImageInfo *ImageMgr::getInfoFromSet(const Common::String &name, ImageSet *imageset) {
 	if (!imageset)
-		return NULL;
+		return nullptr;
 
 	/* if the image set contains the image we want, AND IT EXISTS we are done */
 	Std::map<Common::String, ImageInfo *>::iterator i = imageset->_info.find(name);
@@ -497,7 +497,7 @@ ImageInfo *ImageMgr::getInfoFromSet(const Common::String &name, ImageSet *images
 	}
 
 	//errorWarning("Searched recursively from imageset %s through to %s and couldn't find %s", baseSet->name.c_str(), imageset->name.c_str(), name.c_str());
-	return NULL;
+	return nullptr;
 }
 
 Common::String ImageMgr::guessFileType(const Common::String &filename) {
@@ -538,9 +538,9 @@ U4FILE *ImageMgr::getImageFile(ImageInfo *info) {
 	}
 
 	if (filename == "")
-		return NULL;
+		return nullptr;
 
-	U4FILE *file = NULL;
+	U4FILE *file = nullptr;
 	if (info->_xu4Graphic) {
 		Common::String pathname(u4find_graphics(filename));
 
@@ -556,20 +556,20 @@ U4FILE *ImageMgr::getImageFile(ImageInfo *info) {
 ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 	ImageInfo *info = getInfo(name);
 	if (!info)
-		return NULL;
+		return nullptr;
 
 	/* return if already loaded */
-	if (info->_image != NULL)
+	if (info->_image != nullptr)
 		return info;
 
 	U4FILE *file = getImageFile(info);
-	Image *unscaled = NULL;
+	Image *unscaled = nullptr;
 	if (file) {
 		if (info->_filetype.empty())
 			info->_filetype = guessFileType(info->_filename);
 		Common::String filetype = info->_filetype;
 		ImageLoader *loader = g_ultima->_imageLoaders->getLoader(filetype);
-		if (loader == NULL)
+		if (loader == nullptr)
 			errorWarning("can't find loader to load image \"%s\" with type \"%s\"", info->_filename.c_str(), filetype.c_str());
 		else {
 			unscaled = loader->load(file, info->_width, info->_height, info->_depth);
@@ -583,11 +583,11 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 		u4fclose(file);
 	} else {
 		errorWarning("Failed to open file %s for reading.", info->_filename.c_str());
-		return NULL;
+		return nullptr;
 	}
 
-	if (unscaled == NULL)
-		return NULL;
+	if (unscaled == nullptr)
+		return nullptr;
 
 	if (info->_transparentIndex != -1)
 		unscaled->setTransparentIndex(info->_transparentIndex);
@@ -658,7 +658,7 @@ SubImage *ImageMgr::getSubImage(const Common::String &name) {
 
 	ImageSet *set = _baseSet;
 
-	while (set != NULL) {
+	while (set != nullptr) {
 		for (Std::map<Common::String, ImageInfo *>::iterator i = set->_info.begin(); i != set->_info.end(); i++) {
 			ImageInfo *info = (ImageInfo *) i->_value;
 			Std::map<Common::String, SubImage *>::iterator j = info->_subImages.find(name);
@@ -669,7 +669,7 @@ SubImage *ImageMgr::getSubImage(const Common::String &name) {
 		set = getSet(set->_extends);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void ImageMgr::freeIntroBackgrounds() {
@@ -677,9 +677,9 @@ void ImageMgr::freeIntroBackgrounds() {
 		ImageSet *set = i->_value;
 		for (Std::map<Common::String, ImageInfo *>::iterator j = set->_info.begin(); j != set->_info.end(); j++) {
 			ImageInfo *info = j->_value;
-			if (info->_image != NULL && info->_introOnly) {
+			if (info->_image != nullptr && info->_introOnly) {
 				delete info->_image;
-				info->_image = NULL;
+				info->_image = nullptr;
 			}
 		}
 	}
@@ -708,7 +708,7 @@ ImageSet::~ImageSet() {
 ImageInfo::~ImageInfo() {
 	for (Std::map<Common::String, SubImage *>::iterator i = _subImages.begin(); i != _subImages.end(); i++)
 		delete i->_value;
-	if (_image != NULL)
+	if (_image != nullptr)
 		delete _image;
 }
 

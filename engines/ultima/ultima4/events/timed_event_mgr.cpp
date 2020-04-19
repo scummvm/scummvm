@@ -41,7 +41,7 @@ void TimedEventMgr::poll() {
 	}
 }
 
-void TimedEventMgr::reset(unsigned int interval) {
+void TimedEventMgr::reset(uint interval) {
 	_baseInterval = interval;
 	stop();
 	start();
@@ -51,7 +51,7 @@ void TimedEventMgr::stop() {
 #ifdef TODO
 	if (id) {
 		SDL_RemoveTimer(static_cast<SDL_TimerID>(id));
-		id = NULL;
+		id = nullptr;
 	}
 #endif
 }

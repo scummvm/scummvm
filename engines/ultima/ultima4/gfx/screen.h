@@ -214,7 +214,7 @@ public:
 	/**
 	 * Re-initializes the screen and implements any changes made in settings
 	 */
-	void screenReInit(void);
+	void screenReInit();
 	void screenWait(int numberOfAnimationFrames);
 
 	/**
@@ -223,20 +223,20 @@ public:
 	void screenDrawImage(const Common::String &name, int x = 0, int y = 0);
 	void screenDrawImageInMapArea(const Common::String &bkgd);
 
-	void screenCycle(void);
-	void screenEraseMapArea(void);
+	void screenCycle();
+	void screenEraseMapArea();
 	void screenEraseTextArea(int x, int y, int width, int height);
-	void screenGemUpdate(void);
+	void screenGemUpdate();
 
 	void screenMessage(const char *fmt, ...);
-	void screenPrompt(void);
-	void screenRedrawMapArea(void);
+	void screenPrompt();
+	void screenRedrawMapArea();
 	void screenRedrawTextArea(int x, int y, int width, int height);
 
 	/**
 	 * Scroll the text in the message area up one position.
 	 */
-	void screenScrollMessageArea(void);
+	void screenScrollMessageArea();
 
 	/**
 	 * Do the tremor spell effect where the screen shakes.
@@ -261,15 +261,15 @@ public:
 	 * neither is set, the map area is left untouched.
 	 */
 	void screenUpdate(TileView *view, bool showmap, bool blackout);
-	void screenUpdateCursor(void);
-	void screenUpdateMoons(void);
-	void screenUpdateWind(void);
-	Std::vector<MapTile> screenViewportTile(unsigned int width, unsigned int height, int x, int y, bool &focus);
+	void screenUpdateCursor();
+	void screenUpdateMoons();
+	void screenUpdateWind();
+	Std::vector<MapTile> screenViewportTile(uint width, uint height, int x, int y, bool &focus);
 
-	void screenShowCursor(void);
-	void screenHideCursor(void);
-	void screenEnableCursor(void);
-	void screenDisableCursor(void);
+	void screenShowCursor();
+	void screenHideCursor();
+	void screenEnableCursor();
+	void screenDisableCursor();
 	void screenSetCursorPos(int x, int y);
 
 	/**

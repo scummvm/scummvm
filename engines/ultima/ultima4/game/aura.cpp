@@ -30,20 +30,20 @@ Aura::Aura() : _type(NONE), _duration(0) {}
 void Aura::setDuration(int d) {
 	_duration = d;
 	setChanged();
-	notifyObservers(NULL);
+	notifyObservers(nullptr);
 }
 
 void Aura::set(Type t, int d) {
 	_type = t;
 	_duration = d;
 	setChanged();
-	notifyObservers(NULL);
+	notifyObservers(nullptr);
 }
 
 void Aura::setType(Type t) {
 	_type = t;
 	setChanged();
-	notifyObservers(NULL);
+	notifyObservers(nullptr);
 }
 
 void Aura::passTurn() {
@@ -54,7 +54,7 @@ void Aura::passTurn() {
 			_type = NONE;
 
 			setChanged();
-			notifyObservers(NULL);
+			notifyObservers(nullptr);
 		}
 	}
 }

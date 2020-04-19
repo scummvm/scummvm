@@ -48,14 +48,14 @@ Tile::Tile(Tileset *tileset)
 	, _h(0)
 	, _frames(0)
 	, _scale(1)
-	, _anim(NULL)
+	, _anim(nullptr)
 	, _opaque(false)
 	, _foreground()
 	, _waterForeground()
-	, rule(NULL)
+	, rule(nullptr)
 	, _imageName()
 	, _looksLike()
-	, _image(NULL)
+	, _image(nullptr)
 	, _tiledInDungeon(false)
 	, _directions()
 	, _animationRule("") {
@@ -82,7 +82,7 @@ void Tile::loadProperties(const ConfigElement &conf) {
 	   if there is no rule specified, it defaults to the "default" rule */
 	if (conf.exists("rule")) {
 		rule = TileRule::findByName(conf.getString("rule"));
-		if (rule == NULL)
+		if (rule == nullptr)
 			rule = TileRule::findByName("default");
 	} else rule = TileRule::findByName("default");
 
@@ -126,7 +126,7 @@ void Tile::loadImage() {
 	if (!_image) {
 		_scale = settings._scale;
 
-		SubImage *subimage = NULL;
+		SubImage *subimage = nullptr;
 
 		ImageInfo *info = imageMgr->get(_imageName);
 		if (!info) {
@@ -169,10 +169,10 @@ void Tile::loadImage() {
 		}
 
 		if (_animationRule.size() > 0) {
-			_anim = NULL;
+			_anim = nullptr;
 			if (g_screen->_tileAnims)
 				_anim = g_screen->_tileAnims->getByName(_animationRule);
-			if (_anim == NULL)
+			if (_anim == nullptr)
 				errorWarning("Warning: animation style '%s' not found", _animationRule.c_str());
 		}
 
@@ -187,7 +187,7 @@ void Tile::loadImage() {
 void Tile::deleteImage() {
 	if (_image) {
 		delete _image;
-		_image = NULL;
+		_image = nullptr;
 	}
 	_scale = settings._scale;
 }

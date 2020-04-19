@@ -39,7 +39,7 @@ public:
 	}
 	bool keyPressed(int key) override;
 
-	static int get(char lastValidLetter, const Common::String &prompt, EventHandler *eh = NULL);
+	static int get(char lastValidLetter, const Common::String &prompt, EventHandler *eh = nullptr);
 
 private:
 	char _lastValidLetter;

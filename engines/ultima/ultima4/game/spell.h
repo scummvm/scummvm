@@ -98,15 +98,15 @@ struct Spell {
 typedef void (*SpellEffectCallback)(int spell, int player, Sound sound);
 
 void spellSetEffectCallback(SpellEffectCallback callback);
-const char *spellGetName(unsigned int spell);
-int spellGetRequiredMP(unsigned int spell);
-LocationContext spellGetContext(unsigned int spell);
-TransportContext spellGetTransportContext(unsigned int spell);
-Common::String spellGetErrorMessage(unsigned int spell, SpellCastError error);
-int spellMix(unsigned int spell, const Ingredients *ingredients);
-Spell::Param spellGetParamType(unsigned int spell);
-SpellCastError spellCheckPrerequisites(unsigned int spell, int character);
-bool spellCast(unsigned int spell, int character, int param, SpellCastError *error, bool spellEffect);
+const char *spellGetName(uint spell);
+int spellGetRequiredMP(uint spell);
+LocationContext spellGetContext(uint spell);
+TransportContext spellGetTransportContext(uint spell);
+Common::String spellGetErrorMessage(uint spell, SpellCastError error);
+int spellMix(uint spell, const Ingredients *ingredients);
+Spell::Param spellGetParamType(uint spell);
+SpellCastError spellCheckPrerequisites(uint spell, int character);
+bool spellCast(uint spell, int character, int param, SpellCastError *error, bool spellEffect);
 const Spell *getSpell(int i);
 
 } // End of namespace Ultima4

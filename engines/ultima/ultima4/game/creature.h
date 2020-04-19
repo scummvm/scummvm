@@ -199,7 +199,7 @@ public:
 	int getEncounterSize() const {
 		return _encounterSize;
 	}
-	unsigned char getResists() const {
+	byte getResists() const {
 		return _resists;
 	}
 
@@ -373,14 +373,14 @@ protected:
 	int            _hp;
 	StatusList     _status;
 	int            _xp;
-	unsigned char  _ranged;
+	byte  _ranged;
 	Common::String _worldRangedTile;
 	bool           _leavesTile;
 	CreatureAttrib _mAttr;
 	CreatureMovementAttrib _movementAttr;
 	SlowedType     _slowedType;
 	int            _encounterSize;
-	unsigned char  _resists;
+	byte  _resists;
 	CreatureId     _spawn;
 };
 
@@ -395,20 +395,20 @@ public:
 
 	/**
 	 * Returns a creature using a tile to find which one to create
-	 * or NULL if a creature with that tile cannot be found
+	 * or nullptr if a creature with that tile cannot be found
 	 */
 	Creature *getByTile(MapTile tile);
 
 	/**
 	 * Returns the creature that has the corresponding id
-	 * or returns NULL if no creature with that id could
+	 * or returns nullptr if no creature with that id could
 	 * be found.
 	 */
 	Creature *getById(CreatureId id);
 
 	/**
 	 * Returns the creature that has the corresponding name
-	 * or returns NULL if no creature can be found with
+	 * or returns nullptr if no creature can be found with
 	 * that name (case insensitive)
 	 */
 	Creature *getByName(Common::String name);

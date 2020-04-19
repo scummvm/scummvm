@@ -32,7 +32,7 @@ namespace Ultima4 {
 void innTimer(void *data);
 
 InnController::InnController() {
-	_map = NULL;
+	_map = nullptr;
 	/*
 	 * Normally in cities, only one opponent per encounter; inn's
 	 * override this to get the regular encounter size.
@@ -161,7 +161,7 @@ void InnController::maybeAmbush() {
 
 
 		_map = getCombatMap(mapMgr->get(mapid));
-		g_game->setMap(_map, true, NULL, this);
+		g_game->setMap(_map, true, nullptr, this);
 
 		init(creature);
 		showCombatMessage(showMessage);

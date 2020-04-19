@@ -40,7 +40,7 @@ namespace Ultima4 {
  * The A class can be any additional information to pass to observers.
  * Observables that don't need to pass an argument when they update
  * observers should use the default "NoArg" class for the second
- * template parameter and pass NULL to notifyObservers.
+ * template parameter and pass nullptr to notifyObservers.
  */
 template <class O, class A = NoArg *>
 class Observable {

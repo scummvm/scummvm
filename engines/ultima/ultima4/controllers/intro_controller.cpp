@@ -52,7 +52,7 @@ using namespace std;
 Common::String profileName;
 bool useProfile;
 
-IntroController *intro = NULL;
+IntroController *intro = nullptr;
 
 #define INTRO_MAP_HEIGHT 5
 #define INTRO_MAP_WIDTH 19
@@ -101,11 +101,11 @@ void IntroController::AnimElement::shufflePlotData() {
 }
 
 IntroBinData::IntroBinData() :
-	_sigData(NULL),
-	_scriptTable(NULL),
-	_baseTileTable(NULL),
-	_beastie1FrameTable(NULL),
-	_beastie2FrameTable(NULL) {
+	_sigData(nullptr),
+	_scriptTable(nullptr),
+	_baseTileTable(nullptr),
+	_beastie1FrameTable(nullptr),
+	_beastie2FrameTable(nullptr) {
 }
 
 IntroBinData::~IntroBinData() {
@@ -142,7 +142,7 @@ bool IntroBinData::load() {
 
 	if (_sigData)
 		delete _sigData;
-	_sigData = new unsigned char[533];
+	_sigData = new byte[533];
 	u4fseek(title, INTRO_FIXUPDATA_OFFSET, SEEK_SET);
 	u4fread(_sigData, 1, 533, title);
 
@@ -153,7 +153,7 @@ bool IntroBinData::load() {
 		_introMap[i] = TileMap::get("base")->translate(u4fgetc(title));
 
 	u4fseek(title, INTRO_SCRIPT_TABLE_OFFSET, SEEK_SET);
-	_scriptTable = new unsigned char[INTRO_SCRIPT_TABLE_SIZE];
+	_scriptTable = new byte[INTRO_SCRIPT_TABLE_SIZE];
 	for (i = 0; i < INTRO_SCRIPT_TABLE_SIZE; i++)
 		_scriptTable[i] = u4fgetc(title);
 
@@ -167,7 +167,7 @@ bool IntroBinData::load() {
 	/* --------------------------
 	   load beastie frame table 1
 	   -------------------------- */
-	_beastie1FrameTable = new unsigned char[BEASTIE1_FRAMES];
+	_beastie1FrameTable = new byte[BEASTIE1_FRAMES];
 	u4fseek(title, BEASTIE_FRAME_TABLE_OFFSET + BEASTIE1_FRAMES_OFFSET, SEEK_SET);
 	for (i = 0; i < BEASTIE1_FRAMES; i++) {
 		_beastie1FrameTable[i] = u4fgetc(title);
@@ -176,7 +176,7 @@ bool IntroBinData::load() {
 	/* --------------------------
 	   load beastie frame table 2
 	   -------------------------- */
-	_beastie2FrameTable = new unsigned char[BEASTIE2_FRAMES];
+	_beastie2FrameTable = new byte[BEASTIE2_FRAMES];
 	u4fseek(title, BEASTIE_FRAME_TABLE_OFFSET + BEASTIE2_FRAMES_OFFSET, SEEK_SET);
 	for (i = 0; i < BEASTIE2_FRAMES; i++) {
 		_beastie2FrameTable[i] = u4fgetc(title);
@@ -194,7 +194,7 @@ IntroController::IntroController() :
 	_extendedMenuArea(2 * CHAR_WIDTH, 10 * CHAR_HEIGHT, 36, 13),
 	_questionArea(INTRO_TEXT_X * CHAR_WIDTH, INTRO_TEXT_Y * CHAR_HEIGHT, INTRO_TEXT_WIDTH, INTRO_TEXT_HEIGHT),
 	_mapArea(BORDER_WIDTH, (TILE_HEIGHT * 6) + BORDER_HEIGHT, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, "base"),
-	_binData(NULL),
+	_binData(nullptr),
 	_titles(),                   // element list
 	_title(_titles.begin()),      // element iterator
 	_transparentIndex(13),       // palette index for transparency
@@ -358,16 +358,16 @@ bool IntroController::hasInitiatedNewGame() {
 
 void IntroController::deleteIntro() {
 	delete _binData;
-	_binData = NULL;
+	_binData = nullptr;
 
 	delete [] _objectStateTable;
-	_objectStateTable = NULL;
+	_objectStateTable = nullptr;
 
 	imageMgr->freeIntroBackgrounds();
 }
 
-unsigned char *IntroController::getSigData() {
-	ASSERT(_binData->_sigData != NULL, "intro sig data not loaded");
+byte *IntroController::getSigData() {
+	ASSERT(_binData->_sigData != nullptr, "intro sig data not loaded");
 	return _binData->_sigData;
 }
 
@@ -440,7 +440,7 @@ bool IntroController::keyPressed(int key) {
 		return true;
 	}
 
-	return valid || KeyHandler::defaultHandler(key, NULL);
+	return valid || KeyHandler::defaultHandler(key, nullptr);
 }
 
 void IntroController::drawMap() {
@@ -449,8 +449,8 @@ void IntroController::drawMap() {
 		drawMapAnimated();
 		_sleepCycles--;
 	} else {
-		unsigned char commandNibble;
-		unsigned char dataNibble;
+		byte commandNibble;
+		byte dataNibble;
 
 		do {
 			commandNibble = _binData->_scriptTable[_scrPos] >> 4;
@@ -1371,13 +1371,13 @@ void IntroController::initPlayers(SaveGame *saveGame) {
 		}
 	}
 
-	PartyMember player(NULL, &saveGame->_players[0]);
+	PartyMember player(nullptr, &saveGame->_players[0]);
 	saveGame->_players[0]._hp = saveGame->_players[0]._hpMax = player.getMaxLevel() * 100;
 	saveGame->_players[0]._mp = player.getMaxMp();
 
 	p = 1;
 	for (i = 0; i < VIRT_MAX; i++) {
-		player = PartyMember(NULL, &saveGame->_players[i]);
+		player = PartyMember(nullptr, &saveGame->_players[i]);
 
 		/* Initial setup for party members that aren't in your group yet... */
 		if (i != saveGame->_players[0]._class) {
@@ -1446,8 +1446,8 @@ void IntroController::addTitle(int x, int y, int w, int h, AnimType method, int 
 		0,                  // timeBase
 		delay,              // delay before rendering begins
 		duration,           // total animation time
-		NULL,               // storage for the source image
-		NULL,               // storage for the animation frame
+		nullptr,               // storage for the source image
+		nullptr,               // storage for the animation frame
 		Std::vector<AnimPlot>(),
 		false
 	};             // prescaled
@@ -1455,8 +1455,8 @@ void IntroController::addTitle(int x, int y, int w, int h, AnimType method, int 
 }
 
 void IntroController::getTitleSourceData() {
-	unsigned int r, g, b, a;        // color values
-	unsigned char *srcData;         // plot data
+	uint r, g, b, a;        // color values
+	byte *srcData;         // plot data
 	const int BLUE[16] = {
 		255, 250, 226, 226, 210, 194, 161, 161,
 		129,  97,  97,  64,  64,  32,  32,   0
@@ -1908,7 +1908,7 @@ bool IntroController::updateTitle() {
 void IntroController::compactTitle() {
 	if (_title->_srcImage) {
 		delete _title->_srcImage;
-		_title->_srcImage = NULL;
+		_title->_srcImage = nullptr;
 	}
 	_title->_plotData.clear();
 }
@@ -1933,7 +1933,7 @@ void IntroController::drawTitle() {
 
 	if (!_title->_prescaled) {
 		delete scaled;
-		scaled = NULL;
+		scaled = nullptr;
 	}
 }
 

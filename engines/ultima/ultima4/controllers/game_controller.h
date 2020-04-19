@@ -74,7 +74,7 @@ public:
 	void init();
 	void initScreen();
 	void initScreenWithoutReloadingState();
-	void setMap(Map *map, bool saveLocation, const Portal *portal, TurnCompleter *turnCompleter = NULL);
+	void setMap(Map *map, bool saveLocation, const Portal *portal, TurnCompleter *turnCompleter = nullptr);
 
 	/**
 	 * Exits the current map and location and returns to its parent location

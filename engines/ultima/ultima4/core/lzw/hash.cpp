@@ -26,13 +26,13 @@ namespace Ultima {
 namespace Ultima4 {
 namespace LZW {
 
-int probe1(unsigned char root, int codeword) {
+int probe1(byte root, int codeword) {
 	int newHashCode = ((root << 4) ^ codeword) & 0xfff;
 	return (newHashCode);
 }
 
 /* The secondary probe uses some assembler instructions that aren't easily translated to C. */
-int probe2(unsigned char root, int codeword) {
+int probe2(byte root, int codeword) {
 	/* registers[0] == AX, registers[1] == DX */
 	long registers[2], temp;
 	long carry, oldCarry;

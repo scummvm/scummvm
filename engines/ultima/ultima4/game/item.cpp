@@ -53,7 +53,7 @@ void itemSetDestroyAllCreaturesCallback(DestroyAllCreaturesCallback callback) {
 }
 
 int needStoneNames = 0;
-unsigned char stoneMask = 0;
+byte stoneMask = 0;
 
 bool isRuneInInventory(int virt);
 void putRuneInInventory(int virt);
@@ -80,20 +80,20 @@ void itemHandleStones(const Common::String &color);
 
 static const ItemLocation ITEMS[] = {
 	{
-		"Mandrake Root", NULL, "mandrake1",
-		&isReagentInInventory, &putReagentInInventory, NULL, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY
+		"Mandrake Root", nullptr, "mandrake1",
+		&isReagentInInventory, &putReagentInInventory, nullptr, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY
 	},
 	{
-		"Mandrake Root", NULL, "mandrake2",
-		&isReagentInInventory, &putReagentInInventory, NULL, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY
+		"Mandrake Root", nullptr, "mandrake2",
+		&isReagentInInventory, &putReagentInInventory, nullptr, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY
 	},
 	{
-		"Nightshade", NULL, "nightshade1",
-		&isReagentInInventory, &putReagentInInventory, NULL, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY
+		"Nightshade", nullptr, "nightshade1",
+		&isReagentInInventory, &putReagentInInventory, nullptr, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY
 	},
 	{
-		"Nightshade", NULL, "nightshade2",
-		&isReagentInInventory, &putReagentInInventory, NULL, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY
+		"Nightshade", nullptr, "nightshade2",
+		&isReagentInInventory, &putReagentInInventory, nullptr, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY
 	},
 	{
 		"the Bell of Courage", "bell", "bell",
@@ -153,58 +153,58 @@ static const ItemLocation ITEMS[] = {
 	},
 
 	/* handlers for using generic objects */
-	{ NULL, "stone",  NULL, &isStoneInInventory, NULL, &useStone, -1, 0 },
-	{ NULL, "stones", NULL, &isStoneInInventory, NULL, &useStone, -1, 0 },
-	{ NULL, "key",    NULL, &isItemInInventory, NULL, &useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0 },
-	{ NULL, "keys",   NULL, &isItemInInventory, NULL, &useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0 },
+	{ nullptr, "stone",  nullptr, &isStoneInInventory, nullptr, &useStone, -1, 0 },
+	{ nullptr, "stones", nullptr, &isStoneInInventory, nullptr, &useStone, -1, 0 },
+	{ nullptr, "key",    nullptr, &isItemInInventory, nullptr, &useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0 },
+	{ nullptr, "keys",   nullptr, &isItemInInventory, nullptr, &useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0 },
 
 	/* Lycaeum telescope */
-	{ NULL, NULL, "telescope", NULL, &useTelescope, NULL, 0, 0 },
+	{ nullptr, nullptr, "telescope", nullptr, &useTelescope, nullptr, 0, 0 },
 
 	{
-		"Mystic Armor", NULL, "mysticarmor",
-		&isMysticInInventory, &putMysticInInventory, NULL, ARMR_MYSTICROBES, SC_FULLAVATAR
+		"Mystic Armor", nullptr, "mysticarmor",
+		&isMysticInInventory, &putMysticInInventory, nullptr, ARMR_MYSTICROBES, SC_FULLAVATAR
 	},
 	{
-		"Mystic Swords", NULL, "mysticswords",
-		&isMysticInInventory, &putMysticInInventory, NULL, WEAP_MYSTICSWORD, SC_FULLAVATAR
+		"Mystic Swords", nullptr, "mysticswords",
+		&isMysticInInventory, &putMysticInInventory, nullptr, WEAP_MYSTICSWORD, SC_FULLAVATAR
 	},
 	{
-		"the sulfury remains of an ancient Sosarian Laser Gun. It turns to ash in your fingers", NULL, "lasergun", // lol, where'd that come from?
+		"the sulfury remains of an ancient Sosarian Laser Gun. It turns to ash in your fingers", nullptr, "lasergun", // lol, where'd that come from?
 		//Looks like someone was experimenting with "maps.xml". It effectively increments sulfur ash by one due to '16' being an invalid weapon index.
-		&isWeaponInInventory, &putWeaponInInventory, NULL, 16, 0
+		&isWeaponInInventory, &putWeaponInInventory, nullptr, 16, 0
 	},
 	{
-		"the rune of Honesty", NULL, "honestyrune",
-		&isRuneInInventory, &putRuneInInventory, NULL, RUNE_HONESTY, 0
+		"the rune of Honesty", nullptr, "honestyrune",
+		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_HONESTY, 0
 	},
 	{
-		"the rune of Compassion", NULL, "compassionrune",
-		&isRuneInInventory, &putRuneInInventory, NULL, RUNE_COMPASSION, 0
+		"the rune of Compassion", nullptr, "compassionrune",
+		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_COMPASSION, 0
 	},
 	{
-		"the rune of Valor", NULL, "valorrune",
-		&isRuneInInventory, &putRuneInInventory, NULL, RUNE_VALOR, 0
+		"the rune of Valor", nullptr, "valorrune",
+		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_VALOR, 0
 	},
 	{
-		"the rune of Justice", NULL, "justicerune",
-		&isRuneInInventory, &putRuneInInventory, NULL, RUNE_JUSTICE, 0
+		"the rune of Justice", nullptr, "justicerune",
+		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_JUSTICE, 0
 	},
 	{
-		"the rune of Sacrifice", NULL, "sacrificerune",
-		&isRuneInInventory, &putRuneInInventory, NULL, RUNE_SACRIFICE, 0
+		"the rune of Sacrifice", nullptr, "sacrificerune",
+		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_SACRIFICE, 0
 	},
 	{
-		"the rune of Honor", NULL, "honorrune",
-		&isRuneInInventory, &putRuneInInventory, NULL, RUNE_HONOR, 0
+		"the rune of Honor", nullptr, "honorrune",
+		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_HONOR, 0
 	},
 	{
-		"the rune of Spirituality", NULL, "spiritualityrune",
-		&isRuneInInventory, &putRuneInInventory, NULL, RUNE_SPIRITUALITY, 0
+		"the rune of Spirituality", nullptr, "spiritualityrune",
+		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_SPIRITUALITY, 0
 	},
 	{
-		"the rune of Humility", NULL, "humilityrune",
-		&isRuneInInventory, &putRuneInInventory, NULL, RUNE_HUMILITY, 0
+		"the rune of Humility", nullptr, "humilityrune",
+		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_HUMILITY, 0
 	}
 };
 
@@ -448,12 +448,12 @@ void useSkull(int item) {
  */
 void useStone(int item) {
 	MapCoords coords;
-	unsigned char stone = static_cast<unsigned char>(item);
+	byte stone = static_cast<byte>(item);
 
-	static unsigned char truth   = STONE_WHITE | STONE_PURPLE | STONE_GREEN  | STONE_BLUE;
-	static unsigned char love    = STONE_WHITE | STONE_YELLOW | STONE_GREEN  | STONE_ORANGE;
-	static unsigned char courage = STONE_WHITE | STONE_RED    | STONE_PURPLE | STONE_ORANGE;
-	static unsigned char *attr   = NULL;
+	static byte truth   = STONE_WHITE | STONE_PURPLE | STONE_GREEN  | STONE_BLUE;
+	static byte love    = STONE_WHITE | STONE_YELLOW | STONE_GREEN  | STONE_ORANGE;
+	static byte courage = STONE_WHITE | STONE_RED    | STONE_PURPLE | STONE_ORANGE;
+	static byte *attr   = nullptr;
 
 	g_context->_location->getCurrentPosition(&coords);
 
@@ -677,7 +677,7 @@ void useTelescope(int notused) {
 	if (choice == -1)
 		return;
 
-	gamePeerCity(choice, NULL);
+	gamePeerCity(choice, nullptr);
 }
 
 bool isReagentInInventory(int reag) {
@@ -698,7 +698,7 @@ void putReagentInInventory(int reag) {
 /**
  * Returns true if the specified conditions are met to be able to get the item
  */
-bool itemConditionsMet(unsigned char conditions) {
+bool itemConditionsMet(byte conditions) {
 	int i;
 
 	if ((conditions & SC_NEWMOONS) &&
@@ -720,7 +720,7 @@ bool itemConditionsMet(unsigned char conditions) {
 }
 
 const ItemLocation *itemAtLocation(const Map *map, const Coords &coords) {
-	unsigned int i;
+	uint i;
 	for (i = 0; i < N_ITEMS; i++) {
 		if (!ITEMS[i]._locationLabel)
 			continue;
@@ -728,12 +728,12 @@ const ItemLocation *itemAtLocation(const Map *map, const Coords &coords) {
 		        itemConditionsMet(ITEMS[i]._conditions))
 			return &(ITEMS[i]);
 	}
-	return NULL;
+	return nullptr;
 }
 
 void itemUse(const Common::String &shortname) {
-	unsigned int i;
-	const ItemLocation *item = NULL;
+	uint i;
+	const ItemLocation *item = nullptr;
 
 	for (i = 0; i < N_ITEMS; i++) {
 		if (ITEMS[i]._shortName &&

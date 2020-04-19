@@ -36,7 +36,7 @@ const char Path::delim = '/';
 #endif
 
 Path::Path(const Common::String &p) : path(p) {
-	unsigned int pos;
+	uint pos;
 	bool _exists = false, isDir = false;
 
 	/* determine if the path really exists */

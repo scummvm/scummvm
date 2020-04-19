@@ -42,7 +42,7 @@ TileRule *TileRule::findByName(const Common::String &name) {
 	TileRuleMap::iterator i = _rules.find(name);
 	if (i != _rules.end())
 		return i->_value;
-	return NULL;
+	return nullptr;
 }
 
 void TileRule::load() {
@@ -55,16 +55,16 @@ void TileRule::load() {
 		TileRule::_rules[rule->_name] = rule;
 	}
 
-	if (TileRule::findByName("default") == NULL)
+	if (TileRule::findByName("default") == nullptr)
 		errorFatal("no 'default' rule found in tile rules");
 }
 
 bool TileRule::initFromConf(const ConfigElement &conf) {
-	unsigned int i;
+	uint i;
 
 	static const struct {
 		const char *name;
-		unsigned int mask;
+		uint mask;
 	} booleanAttributes[] = {
 		{ "dispel", MASK_DISPEL },
 		{ "talkover", MASK_TALKOVER },
@@ -85,15 +85,15 @@ bool TileRule::initFromConf(const ConfigElement &conf) {
 
 	static const struct {
 		const char *name;
-		unsigned int mask;
+		uint mask;
 	} movementBooleanAttr[] = {
 		{ "swimable", MASK_SWIMABLE },
 		{ "sailable", MASK_SAILABLE },
 		{ "unflyable", MASK_UNFLYABLE },
 		{ "creatureunwalkable", MASK_CREATURE_UNWALKABLE }
 	};
-	static const char *speedEnumStrings[] = { "fast", "slow", "vslow", "vvslow", NULL };
-	static const char *effectsEnumStrings[] = { "none", "fire", "sleep", "poison", "poisonField", "electricity", "lava", NULL };
+	static const char *speedEnumStrings[] = { "fast", "slow", "vslow", "vvslow", nullptr };
+	static const char *effectsEnumStrings[] = { "none", "fire", "sleep", "poison", "poisonField", "electricity", "lava", nullptr };
 
 	this->_mask = 0;
 	this->_movementMask = 0;
@@ -215,7 +215,7 @@ void Tileset::unloadAllImages() {
 Tileset *Tileset::get(const Common::String &name) {
 	if (tilesets.find(name) != tilesets.end())
 		return tilesets[name];
-	else return NULL;
+	else return nullptr;
 }
 
 Tile *Tileset::findTileByName(const Common::String &name) {
@@ -226,7 +226,7 @@ Tile *Tileset::findTileByName(const Common::String &name) {
 			return t;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Tile *Tileset::findTileById(TileId id) {
@@ -237,7 +237,7 @@ Tile *Tileset::findTileById(TileId id) {
 			return t;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void Tileset::load(const ConfigElement &tilesetConf) {
@@ -246,7 +246,7 @@ void Tileset::load(const ConfigElement &tilesetConf) {
 		_imageName = tilesetConf.getString("imageName");
 	if (tilesetConf.exists("extends"))
 		_extends = Tileset::get(tilesetConf.getString("extends"));
-	else _extends = NULL;
+	else _extends = nullptr;
 
 	int index = 0;
 	vector<ConfigElement> children = tilesetConf.getChildren();
@@ -292,7 +292,7 @@ Tile *Tileset::get(TileId id) {
 		return _tiles[id];
 	else if (_extends)
 		return _extends->get(id);
-	return NULL;
+	return nullptr;
 }
 
 Tile *Tileset::getByName(const Common::String &name) {
@@ -300,7 +300,7 @@ Tile *Tileset::getByName(const Common::String &name) {
 		return _nameMap[name];
 	else if (_extends)
 		return _extends->getByName(name);
-	else return NULL;
+	else return nullptr;
 }
 
 Common::String Tileset::getImageName() const {
@@ -309,11 +309,11 @@ Common::String Tileset::getImageName() const {
 	else return _imageName;
 }
 
-unsigned int Tileset::numTiles() const {
+uint Tileset::numTiles() const {
 	return _tiles.size();
 }
 
-unsigned int Tileset::numFrames() const {
+uint Tileset::numFrames() const {
 	return _totalFrames;
 }
 

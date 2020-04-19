@@ -41,7 +41,7 @@ bool AlphaActionController::keyPressed(int key) {
 	} else {
 		g_screen->screenMessage("\n%s", _prompt.c_str());
 		g_screen->update();
-		return KeyHandler::defaultHandler(key, NULL);
+		return KeyHandler::defaultHandler(key, nullptr);
 	}
 	return true;
 }

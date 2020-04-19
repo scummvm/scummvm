@@ -231,7 +231,7 @@ void Screen::screenReInit() {
 
 void Screen::screenTextAt(int x, int y, const char *fmt, ...) {
 	char buffer[BUFFER_SIZE];
-	unsigned int i;
+	uint i;
 
 	va_list args;
 	va_start(args, fmt);
@@ -257,7 +257,7 @@ void Screen::screenMessage(const char *fmt, ...) {
 	if (!g_context)
 		return; //Because some cases (like the intro) don't have the context initiated.
 	char buffer[BUFFER_SIZE];
-	unsigned int i;
+	uint i;
 	int wordlen;
 
 	va_list args;
@@ -398,7 +398,7 @@ Layout *Screen::screenLoadLayoutFromConf(const ConfigElement &conf) {
 }
 
 
-Std::vector<MapTile> Screen::screenViewportTile(unsigned int width, unsigned int height, int x, int y, bool &focus) {
+Std::vector<MapTile> Screen::screenViewportTile(uint width, uint height, int x, int y, bool &focus) {
 	MapCoords center = g_context->_location->_coords;
 	static MapTile grass = g_context->_location->_map->_tileset->getByName("grass")->getId();
 
@@ -1164,7 +1164,7 @@ void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus,
 	if (!looks_like.empty())
 		t = map->_tileset->getByName(looks_like)->getId();
 
-	unsigned int tile = map->translateToRawTileIndex(t);
+	uint tile = map->translateToRawTileIndex(t);
 
 	if (map->_type == Map::DUNGEON) {
 		ASSERT(_charSetInfo, "charset not initialized");
@@ -1334,7 +1334,7 @@ void Screen::screenWait(int numberOfAnimationFrames) {
 Image *Screen::screenScale(Image *src, int scale, int n, int filter) {
 	Image *dest = nullptr;
 	bool isTransparent;
-	unsigned int transparentIndex;
+	uint transparentIndex;
 	bool alpha = src->isAlphaOn();
 
 	if (n == 0)
@@ -1373,7 +1373,7 @@ Image *Screen::screenScaleDown(Image *src, int scale) {
 	int x, y;
 	Image *dest;
 	bool isTransparent;
-	unsigned int transparentIndex;
+	uint transparentIndex;
 	bool alpha = src->isAlphaOn();
 
 	isTransparent = src->getTransparentIndex(transparentIndex);
@@ -1392,7 +1392,7 @@ Image *Screen::screenScaleDown(Image *src, int scale) {
 
 	for (y = 0; y < src->height(); y += scale) {
 		for (x = 0; x < src->width(); x += scale) {
-			unsigned int index;
+			uint index;
 			src->getPixelIndex(x, y, index);
 			dest->putPixelIndex(x / scale, y / scale, index);
 		}

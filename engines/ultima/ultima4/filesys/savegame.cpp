@@ -75,7 +75,7 @@ void SaveGame::save(Common::WriteStream *stream) {
 	 * Write dungeon info
 	 */
 	if (g_context->_location && g_context->_location->_context & CTX_DUNGEON) {
-		unsigned int x, y, z;
+		uint x, y, z;
 
 		typedef Std::map<const Creature *, int, Std::PointerHash> DngCreatureIdMap;
 		static DngCreatureIdMap id_map;
@@ -104,7 +104,7 @@ void SaveGame::save(Common::WriteStream *stream) {
 		for (z = 0; z < g_context->_location->_map->_levels; z++) {
 			for (y = 0; y < g_context->_location->_map->_height; y++) {
 				for (x = 0; x < g_context->_location->_map->_width; x++) {
-					unsigned char tile = g_context->_location->_map->translateToRawTileIndex(*g_context->_location->_map->getTileFromData(MapCoords(x, y, z)));
+					byte tile = g_context->_location->_map->translateToRawTileIndex(*g_context->_location->_map->getTileFromData(MapCoords(x, y, z)));
 					Object *obj = g_context->_location->_map->objectAt(MapCoords(x, y, z));
 
 					/**
@@ -164,7 +164,7 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 	}
 
 	// set the map to the world map
-	g_game->setMap(mapMgr->get(MAP_WORLD), 0, NULL);
+	g_game->setMap(mapMgr->get(MAP_WORLD), 0, nullptr);
 	g_context->_location->_map->clearObjects();
 
 	// initialize our start location
@@ -172,7 +172,7 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 
 	// if our map is not the world map, then load our map
 	if (map->_type != Map::WORLD)
-		g_game->setMap(map, 1, NULL);
+		g_game->setMap(map, 1, nullptr);
 	else
 		// initialize the moons (must be done from the world map)
 		g_game->initMoons();

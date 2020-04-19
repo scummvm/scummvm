@@ -45,7 +45,7 @@ EventHandler *EventHandler::getInstance() {
 	return _instance;
 }
 
-void EventHandler::wait_msecs(unsigned int msecs) {
+void EventHandler::wait_msecs(uint msecs) {
 	int msecs_per_cycle = (1000 / settings._gameCyclesPerSecond);
 	int cycles = msecs / msecs_per_cycle;
 
@@ -58,7 +58,7 @@ void EventHandler::wait_msecs(unsigned int msecs) {
 	EventHandler::sleep(msecs % msecs_per_cycle);
 }
 
-void EventHandler::wait_cycles(unsigned int cycles) {
+void EventHandler::wait_cycles(uint cycles) {
 	WaitController waitCtrl(cycles);
 	getInstance()->pushController(&waitCtrl);
 	waitCtrl.wait();

@@ -85,7 +85,7 @@ inline void AdjustValue(unsigned short &v, int val, int max, int min) {
 /**
  * Seed the random number generator.
  */
-void xu4_srandom(void);
+void xu4_srandom();
 
 /**
  * Generate a random number between 0 and (upperRange - 1)

@@ -293,13 +293,13 @@ public:
 	InputType getInputRequired(int *bufferLen);
 
 	/* Static variables */
-	static const unsigned int BUFFERLEN;    /**< The default maxixum length of input */
+	static const uint BUFFERLEN;    /**< The default maxixum length of input */
 
 public:
 	State _state;                /**< The state of the conversation */
 	Common::String _playerInput;         /**< A Common::String holding the text the player inputs */
 	Common::List<Common::String> _reply;         /**< What the talker says */
-	class Script *_script;       /**< A script that this person follows during the conversation (may be NULL) */
+	class Script *_script;       /**< A script that this person follows during the conversation (may be nullptr) */
 	Dialogue::Question *_question; /**< The current question the player is being asked */
 	int _quant;                  /**< For vendor transactions */
 	int _player;                 /**< For vendor transactions */

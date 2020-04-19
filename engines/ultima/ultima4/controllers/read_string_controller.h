@@ -45,8 +45,8 @@ public:
 	ReadStringController(int maxlen, TextView *view, const Common::String &accepted_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 \n\r\010");
 	bool keyPressed(int key) override;
 
-	static Common::String get(int maxlen, int screenX, int screenY, EventHandler *eh = NULL);
-	static Common::String get(int maxlen, TextView *view, EventHandler *eh = NULL);
+	static Common::String get(int maxlen, int screenX, int screenY, EventHandler *eh = nullptr);
+	static Common::String get(int maxlen, TextView *view, EventHandler *eh = nullptr);
 #ifdef IOS
 	void setValue(const Common::String &utf8StringValue) {
 		value = utf8StringValue;

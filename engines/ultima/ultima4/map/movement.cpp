@@ -360,7 +360,7 @@ void movePartyMember(MoveEvent &event) {
 
 			ct->setExitDir(event._dir);
 			g_context->_location->_map->removeObject((*party)[member]);
-			(*party)[member] = NULL;
+			(*party)[member] = nullptr;
 			event._result = (MoveResult)(MOVE_EXIT_TO_PARENT | MOVE_MAP_CHANGE | MOVE_SUCCEEDED | MOVE_END_TURN);
 			return;
 		} else {

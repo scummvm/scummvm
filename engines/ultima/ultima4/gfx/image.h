@@ -38,7 +38,7 @@ typedef Graphics::ManagedSurface *BackendSurface;
 struct RGBA {
 	RGBA(int red, int green, int blue, int alpha) : r(red), g(green), b(blue), a(alpha) {}
 	RGBA() : r(0), g(0), b(0), a(255) {}
-	unsigned int r, g, b, a;
+	uint r, g, b, a;
 
 	operator uint32() const {
 		return r | (g << 8) | (b << 16) | (0xff << 24);
@@ -54,7 +54,7 @@ struct SubImage {
 	int x, y, width, height;
 };
 
-#define IM_OPAQUE (unsigned int) 255
+#define IM_OPAQUE (uint) 255
 #define IM_TRANSPARENT 0
 
 /**
@@ -122,9 +122,9 @@ public:
 	 * Copies the palette from another image.
 	 */
 	void setPaletteFromImage(const Image *src);
-	bool getTransparentIndex(unsigned int &index) const;
-	void performTransparencyHack(unsigned int colorValue, unsigned int numFrames, unsigned int currentFrameIndex, unsigned int haloWidth, unsigned int haloOpacityIncrementByPixelDistance);
-	void setTransparentIndex(unsigned int index);
+	bool getTransparentIndex(uint &index) const;
+	void performTransparencyHack(uint colorValue, uint numFrames, uint currentFrameIndex, uint haloWidth, uint haloOpacityIncrementByPixelDistance);
+	void setTransparentIndex(uint index);
 
 	/**
 	 * Sets the specified font colors
@@ -149,7 +149,7 @@ public:
 	/**
 	 * Sets the specified palette index to the specified RGB color
 	 */
-	bool setPaletteIndex(unsigned int index, RGBA color);
+	bool setPaletteIndex(uint index, RGBA color);
 
 	/**
 	 * Returns the palette index of the specified RGB color
@@ -170,7 +170,7 @@ public:
 	void makeBackgroundColorTransparent(int haloSize = 0,  int shadowOpacity = 255);
 
 
-	//void finalizeAlphaSurface(RGBA * key = NULL);
+	//void finalizeAlphaSurface(RGBA * key = nullptr);
 
 	/* writing to image */
 
@@ -184,7 +184,7 @@ public:
 	 * indexed mode, then the index is simply the palette entry number.
 	 * If the image is RGB, it is a packed RGB triplet.
 	 */
-	void putPixelIndex(int x, int y, unsigned int index);
+	void putPixelIndex(int x, int y, uint index);
 
 	/**
 	 * Fills a rectangle in the image with a given color.
@@ -197,21 +197,21 @@ public:
 	/**
 	 * Gets the color of a single pixel.
 	 */
-	void getPixel(int x, int y, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a) const;
+	void getPixel(int x, int y, uint &r, uint &g, uint &b, uint &a) const;
 
 	/**
 	 * Gets the palette index of a single pixel.  If the image is in
 	 * indexed mode, then the index is simply the palette entry number.
 	 * If the image is RGB, it is a packed RGB triplet.
 	 */
-	void getPixelIndex(int x, int y, unsigned int &index) const;
+	void getPixelIndex(int x, int y, uint &index) const;
 
 	/* image drawing methods */
 	/**
 	 * Draws the entire image onto the screen at the given offset.
 	 */
 	void draw(int x, int y) const {
-		drawOn(NULL, x, y);
+		drawOn(nullptr, x, y);
 	}
 
 	/**
@@ -220,7 +220,7 @@ public:
 	 * rw, rh.
 	 */
 	void drawSubRect(int x, int y, int rx, int ry, int rw, int rh) const {
-		drawSubRectOn(NULL, x, y, rx, ry, rw, rh);
+		drawSubRectOn(nullptr, x, y, rx, ry, rw, rh);
 	}
 
 	/**
@@ -229,7 +229,7 @@ public:
 	 * rw, rh.
 	 */
 	void drawSubRectInverted(int x, int y, int rx, int ry, int rw, int rh) const {
-		drawSubRectInvertedOn(NULL, x, y, rx, ry, rw, rh);
+		drawSubRectInvertedOn(nullptr, x, y, rx, ry, rw, rh);
 	}
 
 	/* image drawing methods for drawing onto another image instead of the screen */

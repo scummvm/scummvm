@@ -23,12 +23,14 @@
 #ifndef ULTIMA4_CORE_LZW_HASH_H
 #define ULTIMA4_CORE_LZW_HASH_H
 
+#include "common/scummsys.h"
+
 namespace Ultima {
 namespace Ultima4 {
 namespace LZW {
 
-int probe1(unsigned char root, int codeword);
-int probe2(unsigned char root, int codeword);
+int probe1(byte root, int codeword);
+int probe2(byte root, int codeword);
 int probe3(int hashCode);
 
 } // End of namespace LZW

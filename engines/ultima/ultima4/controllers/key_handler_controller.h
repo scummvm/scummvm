@@ -53,7 +53,7 @@ public:
 	} GetChoice;
 
 	/* Constructors */
-	KeyHandler(Callback func, void *data = NULL, bool asyncronous = true);
+	KeyHandler(Callback func, void *data = nullptr, bool asyncronous = true);
 
 	/* Static functions */
 	static int setKeyRepeat(int delay, int interval);

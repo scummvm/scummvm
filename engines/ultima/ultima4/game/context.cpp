@@ -27,7 +27,7 @@ namespace Ultima4 {
 
 Context *g_context;
 
-Context::Context() : _party(NULL), _location(NULL) {
+Context::Context() : _party(nullptr), _location(nullptr) {
 	g_context = this;
 }
 

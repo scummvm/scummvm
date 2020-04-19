@@ -37,7 +37,7 @@ class SoundManager {
 public:
 	~SoundManager();
 	static SoundManager *getInstance();
-	int init(void);
+	int init();
 	void play(Sound sound, bool onlyOnce = true, int specificDurationInTicks = -1);
 	void stop(int channel = 1);
 private:

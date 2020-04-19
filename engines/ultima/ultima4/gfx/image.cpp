@@ -207,7 +207,7 @@ bool Image::setFontColorBG(ColorBG bg) {
 	return true;
 }
 
-bool Image::setPaletteIndex(unsigned int index, RGBA color) {
+bool Image::setPaletteIndex(uint index, RGBA color) {
 	if (!_paletted)
 		return false;
 
@@ -218,7 +218,7 @@ bool Image::setPaletteIndex(unsigned int index, RGBA color) {
 	return true;
 }
 
-bool Image::getTransparentIndex(unsigned int &index) const {
+bool Image::getTransparentIndex(uint &index) const {
 	if (!_paletted || !_surface->hasTransparentColor())
 		return false;
 
@@ -280,24 +280,24 @@ void Image::makeBackgroundColorTransparent(int haloSize, int shadowOpacity) {
 }
 
 //TODO Separate functionalities found in here
-void Image::performTransparencyHack(unsigned int colorValue, unsigned int numFrames,
-                                    unsigned int currentFrameIndex, unsigned int haloWidth,
-                                    unsigned int haloOpacityIncrementByPixelDistance) {
-	Common::List<Std::pair<unsigned int, unsigned int> > opaqueXYs;
-	unsigned int x, y;
+void Image::performTransparencyHack(uint colorValue, uint numFrames,
+                                    uint currentFrameIndex, uint haloWidth,
+                                    uint haloOpacityIncrementByPixelDistance) {
+	Common::List<Std::pair<uint, uint> > opaqueXYs;
+	uint x, y;
 	byte t_r, t_g, t_b;
 
 	_surface->format.colorToRGB(colorValue, t_r, t_g, t_b);
 
-	unsigned int frameHeight = _surface->h / numFrames;
+	uint frameHeight = _surface->h / numFrames;
 	//Min'd so that they never go out of range (>=h)
-	unsigned int top = MIN(_surface->h, (uint16)(currentFrameIndex * frameHeight));
-	unsigned int bottom = MIN(_surface->h, (uint16)(top + frameHeight));
+	uint top = MIN(_surface->h, (uint16)(currentFrameIndex * frameHeight));
+	uint bottom = MIN(_surface->h, (uint16)(top + frameHeight));
 
 	for (y = top; y < bottom; y++) {
 
 		for (x = 0; x < _surface->w; x++) {
-			unsigned int r, g, b, a;
+			uint r, g, b, a;
 			getPixel(x, y, r, g, b, a);
 			if (r == t_r &&
 			        g == t_g &&
@@ -306,27 +306,27 @@ void Image::performTransparencyHack(unsigned int colorValue, unsigned int numFra
 			} else {
 				putPixel(x, y, r, g, b, a);
 				if (haloWidth)
-					opaqueXYs.push_back(Std::pair<unsigned int, unsigned int>(x, y));
+					opaqueXYs.push_back(Std::pair<uint, uint>(x, y));
 			}
 		}
 	}
 	int ox, oy;
-	for (Common::List<Std::pair<unsigned int, unsigned int> >::iterator xy = opaqueXYs.begin();
+	for (Common::List<Std::pair<uint, uint> >::iterator xy = opaqueXYs.begin();
 	        xy != opaqueXYs.end();
 	        ++xy) {
 		ox = xy->first;
 		oy = xy->second;
 		int span = int(haloWidth);
-		unsigned int x_start = MAX(0, ox - span);
-		unsigned int x_finish = MIN(int(_surface->w), ox + span + 1);
+		uint x_start = MAX(0, ox - span);
+		uint x_finish = MIN(int(_surface->w), ox + span + 1);
 		for (x = x_start; x < x_finish; ++x) {
-			unsigned int y_start = MAX(int(top), oy - span);
-			unsigned int y_finish = MIN(int(bottom), oy + span + 1);
+			uint y_start = MAX(int(top), oy - span);
+			uint y_finish = MIN(int(bottom), oy + span + 1);
 			for (y = y_start; y < y_finish; ++y) {
 
 				int divisor = 1 + span * 2 - abs(int(ox - x)) - abs(int(oy - y));
 
-				unsigned int r, g, b, a;
+				uint r, g, b, a;
 				getPixel(x, y, r, g, b, a);
 				if (a != IM_OPAQUE) {
 					putPixel(x, y, r, g, b, MIN(IM_OPAQUE, a + haloOpacityIncrementByPixelDistance / divisor));
@@ -338,12 +338,12 @@ void Image::performTransparencyHack(unsigned int colorValue, unsigned int numFra
 
 }
 
-void Image::setTransparentIndex(unsigned int index) {
+void Image::setTransparentIndex(uint index) {
 	if (_paletted)
 		_surface->setTransparentColor(index);
 }
 
-void Image::putPixelIndex(int x, int y, unsigned int index) {
+void Image::putPixelIndex(int x, int y, uint index) {
 	int bpp;
 	byte *p;
 
@@ -373,8 +373,8 @@ void Image::fillRect(int x, int y, int w, int h, int r, int g, int b, int a) {
 	_surface->fillRect(Common::Rect(x, y, x + w, y + h), color);
 }
 
-void Image::getPixel(int x, int y, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a) const {
-	unsigned int index;
+void Image::getPixel(int x, int y, uint &r, uint &g, uint &b, uint &a) const {
+	uint index;
 	byte r1, g1, b1, a1;
 
 	getPixelIndex(x, y, index);
@@ -394,7 +394,7 @@ void Image::getPixel(int x, int y, unsigned int &r, unsigned int &g, unsigned in
 	}
 }
 
-void Image::getPixelIndex(int x, int y, unsigned int &index) const {
+void Image::getPixelIndex(int x, int y, uint &index) const {
 	int bpp = _surface->format.bytesPerPixel;
 
 	byte *p = (byte *)_surface->getBasePtr(x, y);

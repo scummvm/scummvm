@@ -40,7 +40,7 @@ namespace Ultima {
 namespace Ultima4 {
 
 void DebuggerActions::summonCreature(const Common::String &name) {
-	const Creature *m = NULL;
+	const Creature *m = nullptr;
 	Common::String creatureName = name;
 
 	creatureName.trim();
@@ -50,7 +50,7 @@ void DebuggerActions::summonCreature(const Common::String &name) {
 	}
 
 	/* find the creature by its id and spawn it */
-	unsigned int id = atoi(creatureName.c_str());
+	uint id = atoi(creatureName.c_str());
 	if (id > 0)
 		m = creatureMgr->getById(id);
 
@@ -113,7 +113,7 @@ bool DebuggerActions::attackAt(const Coords &coords) {
 
 	m = dynamic_cast<Creature *>(g_context->_location->_map->objectAt(coords));
 	/* nothing attackable: move on to next tile */
-	if (m == NULL || !m->isAttackable())
+	if (m == nullptr || !m->isAttackable())
 		return false;
 
 	/* attack successful */
@@ -336,7 +336,7 @@ bool DebuggerActions::openAt(const Coords &coords) {
 	return true;
 }
 
-void DebuggerActions::gameCastSpell(unsigned int spell, int caster, int param) {
+void DebuggerActions::gameCastSpell(uint spell, int caster, int param) {
 	SpellCastError spellError;
 	Common::String msg;
 

@@ -86,7 +86,7 @@ private:
 bool u4isUpgradeAvailable() {
 	bool avail = false;
 	U4FILE *pal;
-	if ((pal = u4fopen("u4vga.pal")) != NULL) {
+	if ((pal = u4fopen("u4vga.pal")) != nullptr) {
 		avail = true;
 		u4fclose(pal);
 	}
@@ -98,7 +98,7 @@ bool u4isUpgradeAvailable() {
  * (switch.bat or setup.bat has been run)
  */
 bool u4isUpgradeInstalled() {
-	U4FILE *u4f = NULL;
+	U4FILE *u4f = nullptr;
 	long int filelength;
 	bool result = false;
 
@@ -140,19 +140,19 @@ const Common::String &U4ZipPackage::translate(const Common::String &name) const 
 		return name;
 }
 
-U4ZipPackageMgr *U4ZipPackageMgr::_instance = NULL;
+U4ZipPackageMgr *U4ZipPackageMgr::_instance = nullptr;
 
 U4ZipPackageMgr *U4ZipPackageMgr::getInstance() {
-	if (_instance == NULL) {
+	if (_instance == nullptr) {
 		_instance = new U4ZipPackageMgr();
 	}
 	return _instance;
 }
 
 void U4ZipPackageMgr::destroy() {
-	if (_instance != NULL) {
+	if (_instance != nullptr) {
 		delete _instance;
-		_instance = NULL;
+		_instance = nullptr;
 	}
 }
 
@@ -386,13 +386,13 @@ U4FILE *U4FILE_zip::open(const Common::String &fname, const U4ZipPackage *packag
 
 	f = unzOpen(package->getFilename().c_str());
 	if (!f)
-		return NULL;
+		return nullptr;
 
 	Common::String pathname = package->getInternalPath() + package->translate(fname);
 
 	if (unzLocateFile(f, pathname.c_str(), 2) == UNZ_END_OF_LIST_OF_FILE) {
 		unzClose(f);
-		return NULL;
+		return nullptr;
 	}
 	unzOpenCurrentFile(f);
 
@@ -460,7 +460,7 @@ size_t U4FILE_zip::read(void *ptr, size_t size, size_t nmemb) {
 int U4FILE_zip::getc() {
 #ifdef TODO
 	int retval;
-	unsigned char c;
+	byte c;
 
 	if (unzReadCurrentFile(zfile, &c, 1) > 0)
 		retval = c;
@@ -483,9 +483,9 @@ long U4FILE_zip::length() {
 	unz_file_info fileinfo;
 
 	unzGetCurrentFileInfo(zfile, &fileinfo,
-	                      NULL, 0,
-	                      NULL, 0,
-	                      NULL, 0);
+	                      nullptr, 0,
+	                      nullptr, 0,
+	                      nullptr, 0);
 	return fileinfo.uncompressed_size;
 #else
 	return 0;
@@ -496,7 +496,7 @@ long U4FILE_zip::length() {
  * Open a data file from the Ultima 4 for DOS installation
  */
 U4FILE *u4fopen(const Common::String &fname) {
-	U4FILE *u4f = NULL;
+	U4FILE *u4f = nullptr;
 
 	debug(1, "looking for %s\n", fname.c_str());
 #ifdef TODO
@@ -518,7 +518,7 @@ U4FILE *u4fopen(const Common::String &fname) {
 
 	if (!fname.empty()) {
 		u4f = U4FILE_stdio::openForReading(fname);
-		if (u4f != NULL)
+		if (u4f != nullptr)
 			debug(1, "%s successfully opened\n", fname.c_str());
 	}
 
@@ -608,7 +608,7 @@ vector<Common::String> u4read_stringtable(U4FILE *f, long offset, int nstrings) 
 
 Common::String u4find_path(const Common::String &fname, Common::List<Common::String> specificSubPaths) {
 #ifdef TODO
-	FILE *f = NULL;
+	FILE *f = nullptr;
 
 	// Try absolute first
 	char path[2048]; // Sometimes paths get big.
@@ -618,7 +618,7 @@ Common::String u4find_path(const Common::String &fname, Common::List<Common::Str
 		strcpy(path, fname.c_str());
 
 	// Try 'file://' protocol if specified
-	if (f == NULL) {
+	if (f == nullptr) {
 		const Common::String file_url_prefix("file://");
 
 		if (fname.compare(0, file_url_prefix.length(), file_url_prefix) == 0) {
@@ -631,7 +631,7 @@ Common::String u4find_path(const Common::String &fname, Common::List<Common::Str
 	}
 
 	// Try paths
-	if (f == NULL) {
+	if (f == nullptr) {
 		for (Common::List<Common::String>::iterator rootItr = u4Path.rootResourcePaths.begin();
 		        rootItr != u4Path.rootResourcePaths.end() && !f;
 		        ++rootItr) {
@@ -644,13 +644,13 @@ Common::String u4find_path(const Common::String &fname, Common::List<Common::Str
 				if (verbose) {
 					debug("trying to open %s\n", path);
 				}
-				if ((f = fopen(path, "rb")) != NULL)
+				if ((f = fopen(path, "rb")) != nullptr)
 					break;
 			}
 		}
 	}
 #if defined(IOS)
-	if (f == NULL) {
+	if (f == nullptr) {
 		Common::String base = fname;
 		Common::String ext = "";
 		Common::String dir = "";
@@ -677,7 +677,7 @@ Common::String u4find_path(const Common::String &fname, Common::List<Common::Str
 #endif
 
 	if (verbose) {
-		if (f != NULL)
+		if (f != nullptr)
 			debug("%s successfully found\n", path);
 		else
 			debug("%s not found\n", fname.c_str());

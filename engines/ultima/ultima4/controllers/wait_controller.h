@@ -34,7 +34,7 @@ namespace Ultima4 {
  */
 class WaitController : public Controller {
 public:
-	WaitController(unsigned int cycles);
+	WaitController(uint cycles);
 	bool keyPressed(int key) override;
 	void timerFired() override;
 
@@ -42,8 +42,8 @@ public:
 	void setCycles(int c);
 
 private:
-	unsigned int _cycles;
-	unsigned int _current;
+	uint _cycles;
+	uint _current;
 };
 
 } // End of namespace Ultima4

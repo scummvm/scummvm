@@ -121,7 +121,7 @@ public:
 	 */
 	bool openAt(const Coords &coords);
 
-	void gameCastSpell(unsigned int spell, int caster, int param);
+	void gameCastSpell(uint spell, int caster, int param);
 
 
 	/**

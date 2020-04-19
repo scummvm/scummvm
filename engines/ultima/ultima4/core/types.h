@@ -24,14 +24,15 @@
 #define ULTIMA4_CORE_TYPEDEFS_H
 
 #include "ultima/ultima4/map/direction.h"
+#include "common/scummsys.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 class Tile;
 
-typedef unsigned int TileId;
-typedef unsigned char MapId;
+typedef uint TileId;
+typedef byte MapId;
 
 enum TileSpeed {
 	FAST,
@@ -67,13 +68,13 @@ enum TileAnimationStyle {
 class MapTile {
 public:
 	MapTile() : _id(0), _frame(0) {}
-	MapTile(const TileId &i, unsigned char f = 0) : _id(i), _frame(f), _freezeAnimation(false) {}
+	MapTile(const TileId &i, byte f = 0) : _id(i), _frame(f), _freezeAnimation(false) {}
 	MapTile(const MapTile &t) : _id(t._id), _frame(t._frame), _freezeAnimation(t._freezeAnimation) {}
 
 	TileId getId() const            {
 		return _id;
 	}
-	unsigned char getFrame() const  {
+	byte getFrame() const  {
 		return _frame;
 	}
 	bool getFreezeAnimation() const {
@@ -106,7 +107,7 @@ public:
 
 	// Properties
 	TileId _id;
-	unsigned char _frame;
+	byte _frame;
 	bool _freezeAnimation;
 };
 

@@ -70,7 +70,7 @@ private:
 
 	ArmorType _type;
 	string _name;
-	unsigned char _canUse;
+	byte _canUse;
 	int _defense;
 	unsigned short _mask;
 };

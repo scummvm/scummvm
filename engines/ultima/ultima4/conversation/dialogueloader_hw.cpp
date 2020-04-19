@@ -59,7 +59,7 @@ vector<Common::String> hawkwindText;
 Dialogue *U4HWDialogueLoader::load(void *source) {
 	U4FILE *avatar = u4fopen("avatar.exe");
 	if (!avatar)
-		return NULL;
+		return nullptr;
 
 	hawkwindText = u4read_stringtable(avatar, 74729, 53);
 

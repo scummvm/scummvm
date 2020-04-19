@@ -48,11 +48,11 @@ namespace Ultima4 {
 #define REVIVE_CASTLE_Y 8
 
 int timerCount;
-unsigned int timerMsg;
+uint timerMsg;
 int deathSequenceRunning = 0;
 
 void deathTimer(void *data);
-void deathRevive(void);
+void deathRevive();
 
 const struct {
 	int timeout;                /* pause in seconds */
@@ -112,7 +112,7 @@ void deathTimer(void *data) {
 }
 
 void deathRevive() {
-	while (!g_context->_location->_map->isWorldMap() && g_context->_location->_prev != NULL) {
+	while (!g_context->_location->_map->isWorldMap() && g_context->_location->_prev != nullptr) {
 		g_game->exitToParentMap();
 	}
 
@@ -126,7 +126,7 @@ void deathRevive() {
 
 	/* Now, move the avatar into the castle and put him
 	   in front of Lord British */
-	g_game->setMap(mapMgr->get(100), 1, NULL);
+	g_game->setMap(mapMgr->get(100), 1, nullptr);
 	g_context->_location->_coords.x = REVIVE_CASTLE_X;
 	g_context->_location->_coords.y = REVIVE_CASTLE_Y;
 	g_context->_location->_coords.z = 0;
