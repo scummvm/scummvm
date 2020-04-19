@@ -46,7 +46,7 @@ namespace Ultima4 {
 #define DEFAULT_SCALE                   2
 #define DEFAULT_FULLSCREEN              0
 #define DEFAULT_FILTER                  "Scale2x"
-#define DEFAULT_VIDEO_TYPE              "new"
+#define DEFAULT_VIDEO_TYPE              (g_ultima->isEnhanced() ? "new" : "EGA")
 #define DEFAULT_GEM_LAYOUT              "Standard"
 #define DEFAULT_LINEOFSIGHT             "DOS"
 #define DEFAULT_SCREEN_SHAKES           1
@@ -168,11 +168,6 @@ class Settings : public SettingsData, public Observable<Settings *> {
 
 public:
 	/* Methods */
-
-	/**
-	 * Initialize the settings.
-	 */
-	void init();
 
 	/**
 	 * Return the global instance of settings.

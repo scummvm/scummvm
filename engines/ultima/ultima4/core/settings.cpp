@@ -87,14 +87,6 @@ bool SettingsData::operator!=(const SettingsData &s) const {
 /*-------------------------------------------------------------------*/
 
 Settings::Settings() {
-	init();
-
-	_battleDiffs.push_back("Normal");
-	_battleDiffs.push_back("Hard");
-	_battleDiffs.push_back("Expert");
-}
-
-void Settings::init() {
 	read();
 }
 
@@ -168,6 +160,12 @@ bool Settings::read() {
 	_logging = DEFAULT_LOGGING;
 	_game = "Ultima IV";
 
+	_battleDiffs.push_back("Normal");
+	_battleDiffs.push_back("Hard");
+	_battleDiffs.push_back("Expert");
+
+	if (ConfMan.hasKey("video"))
+		_videoType = ConfMan.get("video");
 	if (ConfMan.hasKey("gemLayout"))
 		_gemLayout = ConfMan.get("gemLayout");
 	if (ConfMan.hasKey("lineOfSight"))
@@ -261,6 +259,7 @@ bool Settings::read() {
 }
 
 bool Settings::write() {
+	ConfMan.set("video", _videoType);
 	ConfMan.set("gemLayout", _gemLayout);
 	ConfMan.set("lineOfSight", _lineOfSight);
 	ConfMan.setBool("screenShakes", _screenShakes);
