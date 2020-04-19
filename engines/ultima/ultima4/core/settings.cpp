@@ -247,7 +247,7 @@ bool Settings::read() {
 
 	// graphics enhancements options
 	if (ConfMan.hasKey("renderTileTransparency"))
-		_enhancementsOptions._u4TileTransparencyHack = ConfMan.getBool("");
+		_enhancementsOptions._u4TileTransparencyHack = ConfMan.getBool("renderTileTransparency");
 	if (ConfMan.hasKey("transparentTilePixelShadowOpacity"))
 		_enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity =
 			ConfMan.getInt("transparentTilePixelShadowOpacity");
