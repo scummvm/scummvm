@@ -647,7 +647,6 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	uint uVar7;
 	uint16 uVar8;
 	TalkDialogEntry *talkDialogEntry;
-	uint16 local_430 [80];
 	uint16 local_390[5];
 	uint16 local_386 [195];
 	uint16 asStack512 [200];
@@ -661,10 +660,6 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	uint16 *_dat_80083104;
 
 	talkDialogEntry = nullptr;
-	for (int i = 0; i < 0x24; i++) {
-		local_430[i] = 0x20;
-	}
-	local_430[0x24] = 0;
 
 	uVar8 = 0;
 	local_60 = 0;
