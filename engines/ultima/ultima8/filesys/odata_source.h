@@ -79,7 +79,7 @@ protected:
 		// Reallocate the buffer
 		if (_loc > _allocated) {
 			// The old pointer position
-			uint32 pos = static_cast<uint32>(_bufPtr - _buf);
+			uint32 position = static_cast<uint32>(_bufPtr - _buf);
 
 			// The new buffer and size (2 times what is needed)
 			_allocated = _loc * 2;
@@ -89,7 +89,7 @@ protected:
 			delete [] _buf;
 
 			_buf = new_buf;
-			_bufPtr = _buf + pos;
+			_bufPtr = _buf + position;
 		}
 
 		// Update size
@@ -120,25 +120,25 @@ public:
 		return len;
 	};
 
-	bool seek(int32 pos, int whence = SEEK_SET) override {
+	bool seek(int32 position, int whence = SEEK_SET) override {
 		assert(whence == SEEK_SET);
 		// No seeking past the end of the buffer
-		if (pos <= static_cast<int32>(_size)) _loc = pos;
+		if (position <= static_cast<int32>(_size)) _loc = position;
 		else _loc = _size;
 
 		_bufPtr = const_cast<unsigned char *>(_buf) + _loc;
 		return true;
 	};
 
-	void skip(int32 pos) override {
+	void skip(int32 position) override {
 		// No seeking past the end
-		if (pos >= 0) {
-			_loc += pos;
+		if (position >= 0) {
+			_loc += position;
 			if (_loc > _size) _loc = _size;
 		}
 		// No seeking past the start
 		else {
-			uint32 invpos = -pos;
+			uint32 invpos = -position;
 			if (invpos > _loc) invpos = _loc;
 			_loc -= invpos;
 		}
