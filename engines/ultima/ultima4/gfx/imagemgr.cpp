@@ -522,20 +522,6 @@ bool ImageMgr::imageExists(ImageInfo *info) {
 Common::File *ImageMgr::getImageFile(ImageInfo *info) {
 	Common::String filename = info->_filename;
 
-	/*
-	 * If the u4 VGA upgrade is installed (i.e. setup has been run and
-	 * the u4dos files have been renamed), we need to use VGA names
-	 * for EGA and vice versa, but *only* when the upgrade file has a
-	 * .old extention.  The charset and tiles have a .vga extention
-	 * and are not renamed in the upgrade installation process
-	 */
-	if (u4isUpgradeInstalled() && getInfoFromSet(info->_name, getSet("VGA"))->_filename.find(".old") != Common::String::npos) {
-		if (settings._videoType == "EGA")
-			filename = getInfoFromSet(info->_name, getSet("VGA"))->_filename;
-		else
-			filename = getInfoFromSet(info->_name, getSet("EGA"))->_filename;
-	}
-
 	if (filename == "")
 		return nullptr;
 

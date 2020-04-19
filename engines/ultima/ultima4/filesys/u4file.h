@@ -31,24 +31,27 @@ namespace Ultima {
 namespace Ultima4 {
 
 /**
- * Returns true if the upgrade is present.
+ * Open a data file
  */
-extern bool u4isUpgradeAvailable();
+extern Common::File *u4fopen(const Common::String &fname);
 
 /**
- * Returns true if the upgrade is not only present, but is installed
- * (switch.bat or setup.bat has been run)
+ * Closes a data file from the Ultima 4 for DOS installation.
  */
-extern bool u4isUpgradeInstalled();
+extern void u4fclose(Common::File *&f);
 
-extern Common::File *u4fopen(const Common::String &fname);
-extern void u4fclose(Common::File *f);
 extern int u4fseek(Common::File *f, long offset, int whence);
 extern long u4ftell(Common::File *f);
 extern size_t u4fread(void *ptr, size_t size, size_t nmemb, Common::File *f);
 extern int u4fgetc(Common::File *f);
 extern int u4fgetshort(Common::File *f);
 extern long u4flength(Common::File *f);
+
+/**
+ * Read a series of zero terminated strings from a file.  The strings
+ * are read from the given offset, or the current file position if
+ * offset is -1.
+ */
 extern Std::vector<Common::String> u4read_stringtable(Common::File *f, long offset, int nstrings);
 
 extern Common::String u4find_music(const Common::String &fname);

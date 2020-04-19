@@ -94,11 +94,6 @@ void Screen::init() {
 
 	debug(1, "using %s scaler\n", settings._filter.c_str());
 
-	/* if we can't use vga, reset to default:ega */
-	if (!u4isUpgradeAvailable() && settings._videoType == "VGA")
-		settings._videoType = "EGA";
-
-
 	KeyHandler::setKeyRepeat(settings._keydelay, settings._keyinterval);
 
 	/* find the tile animations for our tileset */

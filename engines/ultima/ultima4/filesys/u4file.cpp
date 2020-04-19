@@ -31,42 +31,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Std::map;
-using Common::String;
-using Std::vector;
-
-bool u4isUpgradeAvailable() {
-	Common::File *pal = u4fopen("u4vga.pal");
-	bool avail = pal != nullptr;
-	delete pal;
-
-	return avail;
-}
-
-bool u4isUpgradeInstalled() {
-	int filelength;
-	bool result = false;
-
-	Common::File *u4f = u4fopen("ega.drv");
-	if (u4f) {
-		filelength = u4f->size();
-		u4fclose(u4f);
-
-		// See if (ega.drv > 5k).  If so, the upgrade is installed
-		if (filelength > (5 * 1024))
-			result = true;
-	}
-
-	debug(1, "u4isUpgradeInstalled %d\n", (int) result);
-
-	return result;
-}
-
-/*-------------------------------------------------------------------*/
-
-/**
- * Open a data file
- */
 Common::File *u4fopen(const Common::String &fname) {
 	Common::File *u4f = nullptr;
 
@@ -83,12 +47,10 @@ Common::File *u4fopen(const Common::String &fname) {
 	return u4f;
 }
 
-/**
- * Closes a data file from the Ultima 4 for DOS installation.
- */
-void u4fclose(Common::File *f) {
+void u4fclose(Common::File *&f) {
 	f->close();
 	delete f;
+	f = nullptr;
 }
 
 int u4fseek(Common::File *f, long offset, int whence) {
@@ -112,22 +74,14 @@ int u4fgetshort(Common::File *f) {
 	return f->readUint16LE();
 }
 
-/**
- * Returns the length in bytes of a file.
- */
 long u4flength(Common::File *f) {
 	return f->size();
 }
 
-/**
- * Read a series of zero terminated strings from a file.  The strings
- * are read from the given offset, or the current file position if
- * offset is -1.
- */
-vector<Common::String> u4read_stringtable(Common::File *f, long offset, int nstrings) {
+Std::vector<Common::String> u4read_stringtable(Common::File *f, long offset, int nstrings) {
 	Common::String buffer;
 	int i;
-	vector<Common::String> strs;
+	Std::vector<Common::String> strs;
 
 	ASSERT(offset < u4flength(f), "offset begins beyond end of file");
 
