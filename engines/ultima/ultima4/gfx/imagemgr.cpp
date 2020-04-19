@@ -522,19 +522,19 @@ bool ImageMgr::imageExists(ImageInfo *info) {
 Common::File *ImageMgr::getImageFile(ImageInfo *info) {
 	Common::String filename = info->_filename;
 
-	if (filename == "")
+	if (filename.empty())
 		return nullptr;
 
 	Common::File *file = nullptr;
-	if (info->_xu4Graphic) {
-		Common::String pathname(u4find_graphics(filename));
-
-		if (!pathname.empty())
-			file = u4fopen(pathname);
-	} else {
-		filename = u4find_graphics(filename);
+	if (!info->_xu4Graphic) {
+		// It's a file in the game folder
 		file = u4fopen(filename);
+		if (file)
+			return file;
 	}
+
+	Common::String pathname = u4find_graphics(filename);
+	file = u4fopen(pathname);
 
 	return file;
 }
@@ -555,9 +555,9 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 			info->_filetype = guessFileType(info->_filename);
 		Common::String filetype = info->_filetype;
 		ImageLoader *loader = g_ultima->_imageLoaders->getLoader(filetype);
-		if (loader == nullptr)
+		if (loader == nullptr) {
 			warning("can't find loader to load image \"%s\" with type \"%s\"", info->_filename.c_str(), filetype.c_str());
-		else {
+		} else {
 			unscaled = loader->load(file, info->_width, info->_height, info->_depth);
 			if (info->_width == -1) {
 				// Write in the values for later use.
@@ -566,6 +566,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 				// ###            info->depth = ???
 			}
 		}
+
 		u4fclose(file);
 	} else {
 		warning("Failed to open file %s for reading.", info->_filename.c_str());
