@@ -101,7 +101,7 @@ namespace LC {
 	void c_tell();
 	void c_telldone();
 	void c_exitRepeat();
-	Datum compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2);
+	Datum compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, bool location = false, bool value = false);
 	Datum eqData(Datum d1, Datum d2);
 	void c_eq();
 	Datum neqData(Datum d1, Datum d2);
