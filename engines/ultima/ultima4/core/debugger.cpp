@@ -896,9 +896,9 @@ bool Debugger::cmdSearch(int argc, const char **argv) {
 
 		const ItemLocation *item = itemAtLocation(g_context->_location->_map, g_context->_location->_coords);
 		if (item) {
-			if (*item->_isItemInInventory != nullptr && (*item->_isItemInInventory)(item->_data))
+			if (item->_isItemInInventory && (*item->_isItemInInventory)(item->_data)) {
 				print("%cNothing Here!%c", FG_GREY, FG_WHITE);
-			else {
+			} else {
 				if (item->_name)
 					print("You find...\n%s!", item->_name);
 				(*item->_putItemInInventory)(item->_data);
