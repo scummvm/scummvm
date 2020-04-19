@@ -31,6 +31,7 @@
 #include "director/frame.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -601,7 +602,9 @@ int Datum::compareTo(Datum d) {
 
 int Datum::compareToIgnoreCase(Datum d) {
 	if (type == STRING && d.type == STRING) {
-		return u.s->compareToIgnoreCase(*d.u.s);
+		Common::String *s1 = toLowercaseMac(u.s);
+		Common::String *s2 = toLowercaseMac(d.u.s);
+		return s1->compareTo(*s2);
 	}
 	return compareTo(d);
 }
