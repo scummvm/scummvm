@@ -52,6 +52,12 @@ namespace Director {
 		return; \
 	}
 
+#define TYPECHECK2(datum, t1, t2)	\
+	if ((datum).type != (t1) && (datum).type != (t2)) { \
+		warning("%s: %s arg should be of type %s or %s, not %s", __FUNCTION__, #datum, #t1, #t2, (datum).type2str()); \
+		return; \
+	}
+
 #define ARRBOUNDSCHECK(idx,array) \
 	if ((idx)-1 < 0 || (idx) > (array).u.farr->size()) { \
 		warning("%s: index out of bounds (%d of %d)", __FUNCTION__, (idx), (array).u.farr->size()); \
@@ -582,14 +588,30 @@ void LB::b_addAt(int nargs) {
 	Datum list = g_lingo->pop();
 
 	TYPECHECK(index, INT);
+	if (index.type == FLOAT)
+		index.makeInt();
 	TYPECHECK(list, ARRAY);
 
+	if (!((uint)index.u.i < list.u.farr->size())) {
+		for (uint i = 0; i < index.u.i-list.u.farr->size()-1; i++)
+			list.u.farr->push_back(Datum(0));
+	}
 	list.u.farr->insert_at(index.u.i-1, value);
 }
 
 void LB::b_addProp(int nargs) {
-	g_lingo->printSTUBWithArglist("b_addProp", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(3);
+
+	Datum value = g_lingo->pop();
+	Datum prop = g_lingo->pop();
+	Datum list = g_lingo->pop();
+
+	TYPECHECK(list, PARRAY);
+	if (prop.type == REFERENCE)
+		prop = g_lingo->varFetch(prop);
+
+	PCell cell = PCell(prop, value);
+	list.u.parr->push_back(cell);
 }
 
 void LB::b_append(int nargs) {
@@ -607,12 +629,20 @@ void LB::b_count(int nargs) {
 	ARGNUMCHECK(1);
 
 	Datum list = g_lingo->pop();
-
-	TYPECHECK(list, ARRAY);
-
 	Datum result;
 	result.type = INT;
-	result.u.i = list.u.farr->size();
+
+	switch (list.type) {
+	case ARRAY:
+		result.u.i = list.u.farr->size();
+		break;
+	case PARRAY:
+		result.u.i = list.u.parr->size();
+		break;
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
+
 	g_lingo->push(result);
 }
 
@@ -621,31 +651,111 @@ void LB::b_deleteAt(int nargs) {
 
 	Datum index = g_lingo->pop();
 	Datum list = g_lingo->pop();
-
+	if (index.type == FLOAT)
+		index.makeInt();
 	TYPECHECK(index, INT);
-	TYPECHECK(list, ARRAY);
 
-	list.u.farr->remove_at(index.u.i-1);
+	switch (list.type) {
+	case ARRAY:
+		list.u.farr->remove_at(index.u.i-1);
+		break;
+	case PARRAY:
+		list.u.parr->remove_at(index.u.i-1);
+		break;
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
 }
 
 void LB::b_deleteProp(int nargs) {
-	g_lingo->printSTUBWithArglist("b_deleteProp", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(2);
+
+	Datum prop = g_lingo->pop();
+	Datum list = g_lingo->pop();
+
+	switch (list.type) {
+	case ARRAY:
+		g_lingo->push(list);
+		g_lingo->push(prop);
+		b_deleteAt(nargs);
+		break;
+	case PARRAY: {
+		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
+		if (index > 0) {
+			list.u.parr->remove_at(index-1);
+		}
+		break;
+	}
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
 }
 
 void LB::b_findPos(int nargs) {
-	g_lingo->printSTUBWithArglist("b_findPos", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(2);
+
+	Datum prop = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	Datum d(0);
+	TYPECHECK(list, PARRAY);
+
+	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
+	if (index > 0) {
+		d.type = INT;
+		d.u.i = index;
+	}
+
+	g_lingo->push(d);
 }
 
 void LB::b_findPosNear(int nargs) {
-	g_lingo->printSTUBWithArglist("b_findPosNear", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(2);
+
+	Datum prop = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	Datum d(0);
+	TYPECHECK(list, PARRAY);
+
+	// FIXME: Integrate with compareTo framework
+	prop = prop.makeString();
+	prop.u.s->toLowercase();
+
+	for (uint i = 0; i < list.u.parr->size(); i++) {
+		Datum p = *list.u.parr->operator[](i).p;
+		p.makeString();
+		p.u.s->toLowercase();
+		if (p.u.s->find(prop.u.s->c_str()) == 0) {
+			d.u.i = i+1;
+			break;
+		}
+	}
+
+	g_lingo->push(d);
 }
 
 void LB::b_getaProp(int nargs) {
-	g_lingo->printSTUBWithArglist("b_getaProp", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(2);
+	Datum prop = g_lingo->pop();
+	Datum list = g_lingo->pop();
+
+	switch (list.type) {
+	case ARRAY:
+		g_lingo->push(list);
+		g_lingo->push(prop);
+		b_getAt(nargs);
+		break;
+	case PARRAY: {
+		Datum d;
+		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
+		if (index > 0) {
+			d = *list.u.parr->operator[](index-1).v;
+		}
+		g_lingo->push(d);
+		break;
+	}
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
 }
 
 void LB::b_getAt(int nargs) {
@@ -655,38 +765,131 @@ void LB::b_getAt(int nargs) {
 	Datum list = g_lingo->pop();
 	if (index.type == FLOAT)
 		index.makeInt();
-
 	TYPECHECK(index, INT);
-	TYPECHECK(list, ARRAY);
-	ARRBOUNDSCHECK(index.u.i, list);
 
-	Datum result = list.u.farr->operator[](index.u.i-1);
-	g_lingo->push(result);
+	switch (list.type) {
+	case ARRAY:
+		ARRBOUNDSCHECK(index.u.i, list);
+		g_lingo->push(list.u.farr->operator[](index.u.i-1));
+		break;
+	case PARRAY:
+		ARRBOUNDSCHECK(index.u.i, list);
+		g_lingo->push(*list.u.parr->operator[](index.u.i-1).v);
+		break;
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
 }
 
 void LB::b_getLast(int nargs) {
-	g_lingo->printSTUBWithArglist("b_getLast", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(1);
+
+	Datum list = g_lingo->pop();
+	switch (list.type) {
+	case ARRAY:
+		g_lingo->push(list.u.farr->back());
+		break;
+	case PARRAY:
+		g_lingo->push(*list.u.parr->back().v);
+		break;
+	default:
+		TYPECHECK(list, ARRAY);
+	}
 }
 
 void LB::b_getOne(int nargs) {
-	g_lingo->printSTUBWithArglist("b_getOne", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(2);
+	Datum val = g_lingo->pop();
+	Datum list = g_lingo->pop();
+
+	switch (list.type) {
+	case ARRAY:
+		g_lingo->push(list);
+		g_lingo->push(val);
+		b_getPos(nargs);
+		break;
+	case PARRAY: {
+		Datum d;
+		int index = LC::compareArrays(LC::eqData, list, val, true, true).u.i;
+		if (index > 0) {
+			d = *list.u.parr->operator[](index-1).p;
+		}
+		g_lingo->push(d);
+		break;
+	}
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
 }
 
 void LB::b_getPos(int nargs) {
-	g_lingo->printSTUBWithArglist("b_getPos", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(2);
+	Datum val = g_lingo->pop();
+	Datum list = g_lingo->pop();
+
+	switch (list.type) {
+	case ARRAY: {
+		if (val.type == FLOAT)
+			val.makeInt();
+		TYPECHECK(val, INT);
+		Datum d(0);
+		int index = LC::compareArrays(LC::eqData, list, val, true).u.i;
+		if (index > 0) {
+			d.u.i = index;
+		}
+		g_lingo->push(d);
+		break;
+	}
+	case PARRAY: {
+		Datum d(0);
+		int index = LC::compareArrays(LC::eqData, list, val, true, true).u.i;
+		if (index > 0) {
+			d.u.i = index;
+		}
+		g_lingo->push(d);
+		break;
+	}
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
 }
 
 void LB::b_getProp(int nargs) {
-	g_lingo->printSTUBWithArglist("b_getProp", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(2);
+	Datum prop = g_lingo->pop();
+	Datum list = g_lingo->pop();
+
+	switch (list.type) {
+	case ARRAY:
+		g_lingo->push(list);
+		g_lingo->push(prop);
+		b_getPos(nargs);
+		break;
+	case PARRAY: {
+		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
+		if (index > 0) {
+			g_lingo->push(*list.u.parr->operator[](index-1).v);
+		} else {
+			error("b_getProp: Property %s not found", prop.makeString()->c_str());
+		}
+		break;
+	}
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
 }
 
 void LB::b_getPropAt(int nargs) {
-	g_lingo->printSTUBWithArglist("b_getPropAt", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(2);
+	Datum index = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	TYPECHECK(list, PARRAY);
+
+	if (index.type == FLOAT)
+		index.makeInt();
+	TYPECHECK(index, INT);
+
+	g_lingo->push(*list.u.parr->operator[](index.u.i-1).p);
 }
 
 void LB::b_list(int nargs) {
@@ -701,8 +904,13 @@ void LB::b_list(int nargs) {
 }
 
 void LB::b_listP(int nargs) {
-	g_lingo->printSTUBWithArglist("b_listP", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(1);
+	Datum list = g_lingo->pop();
+	Datum d(0);
+	if (list.type == ARRAY || list.type == PARRAY) {
+		d.u.i = 1;
+	}
+	g_lingo->push(d);
 }
 
 void LB::b_max(int nargs) {
@@ -772,18 +980,75 @@ void LB::b_min(int nargs) {
 }
 
 void LB::b_setaProp(int nargs) {
-	g_lingo->printSTUBWithArglist("b_setaProp", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(3);
+	Datum value = g_lingo->pop();
+	Datum prop = g_lingo->pop();
+	Datum list = g_lingo->pop();
+
+	switch (list.type) {
+	case ARRAY:
+		g_lingo->push(list);
+		g_lingo->push(prop);
+		g_lingo->push(value);
+		b_setAt(nargs);
+		break;
+	case PARRAY: {
+		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
+		if (index > 0) {
+			*list.u.parr->operator[](index-1).v = value;
+		} else {
+			PCell cell = PCell(prop, value);
+			list.u.parr->push_back(cell);
+		}
+		break;
+	}
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
 }
 
 void LB::b_setAt(int nargs) {
-	g_lingo->printSTUBWithArglist("b_setAt", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(3);
+	Datum value = g_lingo->pop();
+	Datum index = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	if (index.type == FLOAT)
+		index.makeInt();
+	TYPECHECK(index, INT);
+
+	switch (list.type) {
+	case ARRAY:
+		if ((uint)index.u.i < list.u.farr->size()) {
+			list.u.farr->operator[](index.u.i-1) = value;
+		} else {
+			// TODO: Extend the list if we request an index beyond it
+			ARRBOUNDSCHECK(index.u.i, list);
+		}
+		break;
+	case PARRAY:
+		ARRBOUNDSCHECK(index.u.i, list);
+		*list.u.parr->operator[](index.u.i-1).v = value;
+		break;
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
 }
 
 void LB::b_setProp(int nargs) {
-	g_lingo->printSTUBWithArglist("b_setProp", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(3);
+	Datum value = g_lingo->pop();
+	Datum prop = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	TYPECHECK(list, PARRAY);
+	if (prop.type == REFERENCE)
+		prop = g_lingo->varFetch(prop);
+
+	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
+	if (index > 0) {
+		*list.u.parr->operator[](index-1).v = value;
+	} else {
+		warning("b_setProp: Property not found");
+	}
 }
 
 void LB::b_sort(int nargs) {
