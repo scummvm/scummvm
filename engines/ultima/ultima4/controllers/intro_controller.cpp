@@ -186,19 +186,23 @@ bool IntroBinData::load() {
 	return true;
 }
 
-IntroController::IntroController() :
-	Controller(1),
-	_backgroundArea(),
-	_menuArea(1 * CHAR_WIDTH, 13 * CHAR_HEIGHT, 38, 11),
-	_extendedMenuArea(2 * CHAR_WIDTH, 10 * CHAR_HEIGHT, 36, 13),
-	_questionArea(INTRO_TEXT_X * CHAR_WIDTH, INTRO_TEXT_Y * CHAR_HEIGHT, INTRO_TEXT_WIDTH, INTRO_TEXT_HEIGHT),
-	_mapArea(BORDER_WIDTH, (TILE_HEIGHT * 6) + BORDER_HEIGHT, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, "base"),
-	_binData(nullptr),
-	_titles(),                   // element list
-	_title(_titles.begin()),      // element iterator
-	_transparentIndex(13),       // palette index for transparency
-	_transparentColor(),         // palette color for transparency
-	_bSkipTitles(false) {
+IntroController::IntroController() : Controller(1),
+		_backgroundArea(),
+		_menuArea(1 * CHAR_WIDTH, 13 * CHAR_HEIGHT, 38, 11),
+		_extendedMenuArea(2 * CHAR_WIDTH, 10 * CHAR_HEIGHT, 36, 13),
+		_questionArea(INTRO_TEXT_X * CHAR_WIDTH, INTRO_TEXT_Y * CHAR_HEIGHT, INTRO_TEXT_WIDTH, INTRO_TEXT_HEIGHT),
+		_mapArea(BORDER_WIDTH, (TILE_HEIGHT * 6) + BORDER_HEIGHT, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, "base"),
+		_binData(nullptr), _mode(INTRO_TITLES), _answerInd(0), _questionRound(0),
+		_beastie1Cycle(0), _beastie2Cycle(0), _beastieOffset(0),
+		_beastiesVisible(false), _sleepCycles(0), _scrPos(0),
+		_objectStateTable(nullptr), _justInitiatedNewGame(false),
+		_titles(),                   // element list
+		_title(_titles.begin()),     // element iterator
+		_transparentIndex(13),       // palette index for transparency
+		_transparentColor(),         // palette color for transparency
+		_bSkipTitles(false) {
+	Common::fill(&_questionTree[0], &_questionTree[15], -1);
+
 	// initialize menus
 	_confMenu.setTitle("XU4 Configuration:", 0, 0);
 	_confMenu.add(MI_CONF_VIDEO,               "\010 Video Options",              2,  2,/*'v'*/  2);
@@ -578,7 +582,7 @@ void IntroController::drawCard(int pos, int card) {
 	};
 
 	ASSERT(pos == 0 || pos == 1, "invalid pos: %d", pos);
-	ASSERT(card < 8, "invalid card: %d", card);
+	ASSERT(card >= 0 && card < 8, "invalid card: %d", card);
 
 	_backgroundArea.draw(cardNames[card], pos ? 218 : 12, 12);
 }
@@ -796,7 +800,7 @@ void IntroController::startQuestions() {
 	_questionRound = 0;
 	initQuestionTree();
 
-	while (1) {
+	while (!shouldQuit()) {
 		// draw the abacus background, if necessary
 		if (_questionRound == 0)
 			_backgroundArea.draw(BKGD_ABACUS);
@@ -1242,25 +1246,20 @@ void IntroController::updateInterfaceMenu(MenuEvent &event) {
 }
 
 void IntroController::initQuestionTree() {
-	int i, tmp, r;
+	int i, r;
 
 	for (i = 0; i < 8; i++)
 		_questionTree[i] = i;
 
 	for (i = 0; i < 8; i++) {
 		r = xu4_random(8);
-		tmp = _questionTree[r];
-		_questionTree[r] = _questionTree[i];
-		_questionTree[i] = tmp;
+		SWAP(_questionTree[r], _questionTree[i]);
 	}
 	_answerInd = 8;
 
 	if (_questionTree[0] > _questionTree[1]) {
-		tmp = _questionTree[0];
-		_questionTree[0] = _questionTree[1];
-		_questionTree[1] = tmp;
+		SWAP(_questionTree[0], _questionTree[1]);
 	}
-
 }
 
 bool IntroController::doQuestion(int answer) {
@@ -1279,9 +1278,8 @@ bool IntroController::doQuestion(int answer) {
 		return true;
 
 	if (_questionTree[_questionRound * 2] > _questionTree[_questionRound * 2 + 1]) {
-		int tmp = _questionTree[_questionRound * 2];
-		_questionTree[_questionRound * 2] = _questionTree[_questionRound * 2 + 1];
-		_questionTree[_questionRound * 2 + 1] = tmp;
+		SWAP(_questionTree[_questionRound * 2],
+			_questionTree[_questionRound * 2 + 1]);
 	}
 
 	return false;

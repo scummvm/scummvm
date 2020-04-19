@@ -41,7 +41,12 @@ void xu4_srandom() {
 }
 
 int xu4_random(int upperRange) {
-	return g_ultima->getRandomNumber(upperRange);
+	if (upperRange == 0) {
+		warning("No upper range specified");
+		return 0;
+	}
+
+	return g_ultima->getRandomNumber(upperRange - 1);
 }
 
 Common::String &trim(Common::String &val, const Common::String &chars_to_trim) {

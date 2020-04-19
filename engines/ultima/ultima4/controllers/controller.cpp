@@ -22,6 +22,7 @@
 
 #include "ultima/ultima4/controllers/controller.h"
 #include "ultima/ultima4/events/event.h"
+#include "engines/engine.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -56,6 +57,10 @@ void Controller::timerFired() {
 void Controller::timerCallback(void *data) {
 	Controller *controller = static_cast<Controller *>(data);
 	controller->timerFired();
+}
+
+bool Controller::shouldQuit() const {
+	return g_engine->shouldQuit();
 }
 
 void Controller_startWait() {

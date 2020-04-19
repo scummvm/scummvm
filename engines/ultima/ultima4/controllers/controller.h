@@ -82,6 +82,10 @@ public:
 	 */
 	virtual void timerFired();
 
+	/**
+	 * Returns true if game should quit
+	 */
+	bool shouldQuit() const;
 private:
 	int _timerInterval;
 };
