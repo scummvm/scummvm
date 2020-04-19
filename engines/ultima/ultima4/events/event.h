@@ -75,13 +75,23 @@ typedef void(*updateScreenCallback)();
  * A class for handling game events.
  */
 class EventHandler {
-public:
-	/* Typedefs */
 	typedef Common::List<const MouseArea *> MouseAreaList;
-
-	/* Constructors */
+private:
+	static EventHandler *_instance;
+private:
+	void handleMouseMotionEvent(const Common::Event &event);
+	void handleMouseButtonDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen);
+	void handleKeyDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen);
+protected:
+	static bool _controllerDone;
+	static bool _ended;
+	TimedEventMgr _timer;
+	Std::vector<Controller *> _controllers;
+	MouseAreaList _mouseAreaSets;
+	updateScreenCallback _updateScreen;
+public:
 	/**
-	 * Constructs an event handler object.
+	 * Constructor
 	 */
 	EventHandler();
 
@@ -167,17 +177,6 @@ public:
 	const MouseArea *getMouseAreaSet() const;
 
 	const MouseArea *mouseAreaForPoint(int x, int y);
-
-protected:
-	static bool _controllerDone;
-	static bool _ended;
-	TimedEventMgr _timer;
-	Std::vector<Controller *> _controllers;
-	MouseAreaList _mouseAreaSets;
-	updateScreenCallback _updateScreen;
-
-private:
-	static EventHandler *_instance;
 };
 
 } // End of namespace Ultima4
