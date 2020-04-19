@@ -29,14 +29,14 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Image *PngImageLoader::load(U4FILE *file, int width, int height, int bpp) {
+Image *PngImageLoader::load(Common::File *file, int width, int height, int bpp) {
 	if (width != -1 || height != -1 || bpp != -1) {
 		warning("dimensions set for PNG image, will be ignored");
 	}
 
-	size_t fileSize = file->length();
+	size_t fileSize = file->size();
 	byte *buffer = (byte *)malloc(fileSize);
-	file->read(buffer, fileSize, 1);
+	file->read(buffer, fileSize);
 	Common::MemoryReadStream src(buffer, fileSize, DisposeAfterUse::YES);
 
 	::Image::PNGDecoder decoder;

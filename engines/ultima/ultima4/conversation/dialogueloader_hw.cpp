@@ -57,7 +57,7 @@ vector<Common::String> hawkwindText;
  * A special case dialogue loader for Hawkwind.
  */
 Dialogue *U4HWDialogueLoader::load(void *source) {
-	U4FILE *avatar = u4fopen("avatar.exe");
+	Common::File *avatar = u4fopen("avatar.exe");
 	if (!avatar)
 		return nullptr;
 

@@ -32,17 +32,17 @@ namespace Ultima4 {
 
 using Std::vector;
 
-Image *FMTOWNSImageLoader::load(U4FILE *file, int width, int height, int bpp) {
+Image *FMTOWNSImageLoader::load(Common::File *file, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
 		error("dimensions not set for fmtowns image");
 	}
 
 	ASSERT((bpp == 16) | (bpp == 4), "invalid bpp: %d", bpp);
 
-	long rawLen = file->length() - _offset;
+	long rawLen = file->size() - _offset;
 	file->seek(_offset, 0);
 	byte *raw = (byte *) malloc(rawLen);
-	file->read(raw, 1, rawLen);
+	file->read(raw, rawLen);
 
 	long requiredLength = (width * height * bpp / 8);
 	if (rawLen < requiredLength) {

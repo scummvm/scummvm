@@ -73,7 +73,7 @@ protected:
 	/**
 	 * Loads raw data from the given file.
 	 */
-	static bool loadData(Map *map, U4FILE *f);
+	static bool loadData(Map *map, Common::File *f);
 	static bool isChunkCompressed(Map *map, int chunk);
 
 private:

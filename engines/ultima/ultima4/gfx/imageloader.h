@@ -69,7 +69,7 @@ protected:
 public:
 	ImageLoader() {}
 	virtual ~ImageLoader() {}
-	virtual Image *load(U4FILE *file, int width, int height, int bpp) = 0;
+	virtual Image *load(Common::File *file, int width, int height, int bpp) = 0;
 };
 
 } // End of namespace Ultima4

@@ -137,7 +137,7 @@ public:
 	 */
 	void freeIntroBackgrounds();
 	const Std::vector<Common::String> &getSetNames();
-	U4FILE *getImageFile(ImageInfo *info);
+	Common::File *getImageFile(ImageInfo *info);
 	bool imageExists(ImageInfo *info);
 
 private:

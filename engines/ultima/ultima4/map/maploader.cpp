@@ -71,7 +71,7 @@ MapLoader *MapLoader::registerLoader(MapLoader *loader, Map::Type type) {
 	return loader;
 }
 
-bool MapLoader::loadData(Map *map, U4FILE *f) {
+bool MapLoader::loadData(Map *map, Common::File *f) {
 	uint x, xch, y, ych;
 
 	/* allocate the space we need for the map data */
@@ -134,8 +134,8 @@ bool CityMapLoader::load(Map *map) {
 	Dialogue *dialogues[CITY_MAX_PERSONS];
 	DialogueLoader *dlgLoader = DialogueLoaders::getLoader("application/x-u4tlk");
 
-	U4FILE *ult = u4fopen(city->_fname);
-	U4FILE *tlk = u4fopen(city->_tlkFname);
+	Common::File *ult = u4fopen(city->_fname);
+	Common::File *tlk = u4fopen(city->_tlkFname);
 	if (!ult || !tlk)
 		error("unable to load map data");
 
@@ -247,7 +247,7 @@ bool CityMapLoader::load(Map *map) {
 bool ConMapLoader::load(Map *map) {
 	int i;
 
-	U4FILE *con = u4fopen(map->_fname);
+	Common::File *con = u4fopen(map->_fname);
 	if (!con)
 		error("unable to load map data");
 
@@ -284,7 +284,7 @@ bool ConMapLoader::load(Map *map) {
 bool DngMapLoader::load(Map *map) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(map);
 
-	U4FILE *dng = u4fopen(dungeon->_fname);
+	Common::File *dng = u4fopen(dungeon->_fname);
 	if (!dng)
 		error("unable to load map data");
 
@@ -436,7 +436,7 @@ void DngMapLoader::initDungeonRoom(Dungeon *dng, int room) {
 }
 
 bool WorldMapLoader::load(Map *map) {
-	U4FILE *world = u4fopen(map->_fname);
+	Common::File *world = u4fopen(map->_fname);
 	if (!world)
 		error("unable to load map data");
 

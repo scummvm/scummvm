@@ -43,7 +43,7 @@ Response *lordBritishGetIntro(const DynamicResponse *resp);
  * current party status.
  */
 Dialogue *U4LBDialogueLoader::load(void *source) {
-	U4FILE *avatar = u4fopen("avatar.exe");
+	Common::File *avatar = u4fopen("avatar.exe");
 	if (!avatar)
 		return nullptr;
 

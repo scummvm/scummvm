@@ -61,7 +61,7 @@ Std::vector<Common::String> codexEndgameText2;
  * Initializes the Chamber of the Codex sequence (runs from codexStart())
  */
 int codexInit() {
-	U4FILE *avatar;
+	Common::File *avatar;
 
 	avatar = u4fopen("avatar.exe");
 	if (!avatar)

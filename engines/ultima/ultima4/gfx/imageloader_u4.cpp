@@ -37,16 +37,16 @@ RGBA *U4PaletteLoader::_bwPalette = nullptr;
 RGBA *U4PaletteLoader::_egaPalette = nullptr;
 RGBA *U4PaletteLoader::_vgaPalette = nullptr;
 
-Image *U4RawImageLoader::load(U4FILE *file, int width, int height, int bpp) {
+Image *U4RawImageLoader::load(Common::File *file, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
 		error("dimensions not set for u4raw image");
 	}
 
 	ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
-	long rawLen = file->length();
-	byte *raw = (byte *) malloc(rawLen);
-	file->read(raw, 1, rawLen);
+	long rawLen = file->size();
+	byte *raw = (byte *)malloc(rawLen);
+	file->read(raw, rawLen);
 
 	long requiredLength = (width * height * bpp / 8);
 	if (rawLen < requiredLength) {
@@ -82,16 +82,16 @@ Image *U4RawImageLoader::load(U4FILE *file, int width, int height, int bpp) {
  * Loads in the rle-compressed image and apply the standard U4 16 or
  * 256 color palette.
  */
-Image *U4RleImageLoader::load(U4FILE *file, int width, int height, int bpp) {
+Image *U4RleImageLoader::load(Common::File *file, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
 		error("dimensions not set for u4rle image");
 	}
 
 	ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
-	long compressedLen = file->length();
+	long compressedLen = file->size();
 	byte *compressed = (byte *) malloc(compressedLen);
-	file->read(compressed, 1, compressedLen);
+	file->read(compressed, compressedLen);
 
 	byte *raw = nullptr;
 	long rawLen = rleDecompressMemory(compressed, compressedLen, (void **) &raw);
@@ -129,16 +129,16 @@ Image *U4RleImageLoader::load(U4FILE *file, int width, int height, int bpp) {
  * Loads in the lzw-compressed image and apply the standard U4 16 or
  * 256 color palette.
  */
-Image *U4LzwImageLoader::load(U4FILE *file, int width, int height, int bpp) {
+Image *U4LzwImageLoader::load(Common::File *file, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
 		error("dimensions not set for u4lzw image");
 	}
 
 	ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
-	long compressedLen = file->length();
+	long compressedLen = file->size();
 	byte *compressed = (byte *) malloc(compressedLen);
-	file->read(compressed, 1, compressedLen);
+	file->read(compressed, compressedLen);
 
 	byte *raw = nullptr;
 	long rawLen = LZW::decompress_u4_memory(compressed, compressedLen, (void **) &raw);
@@ -222,7 +222,7 @@ RGBA *U4PaletteLoader::loadEgaPalette() {
  */
 RGBA *U4PaletteLoader::loadVgaPalette() {
 	if (_vgaPalette == nullptr) {
-		U4FILE *pal = u4fopen("u4vga.pal");
+		Common::File *pal = u4fopen("u4vga.pal");
 		if (!pal)
 			return nullptr;
 

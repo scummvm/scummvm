@@ -34,82 +34,24 @@ using Std::map;
 using Common::String;
 using Std::vector;
 
-/**
- * A specialization of U4FILE that uses C stdio internally.
- */
-class U4FILE_stdio : public U4FILE {
-private:
-	Common::SeekableReadStream *_in;
-	Common::WriteStream *_out;
-public:
-	static U4FILE *openForReading(const Common::String &fname);
-	static U4FILE *openForWriting(const Common::String &fname);
-
-	U4FILE_stdio(Common::SeekableReadStream *rs) : _in(rs), _out(nullptr) {}
-	U4FILE_stdio(Common::WriteStream *ws) : _in(nullptr), _out(ws) {}
-	virtual ~U4FILE_stdio() {
-		close();
-	}
-
-	void close() override;
-	int seek(long offset, int whence) override;
-	long tell() override;
-	size_t read(void *ptr, size_t size, size_t nmemb) override;
-	int getc() override;
-	int putc(int c) override;
-	long length() override;
-};
-
-/**
- * A specialization of U4FILE that reads files out of zip archives
- * automatically.
- */
-class U4FILE_zip : public U4FILE {
-public:
-	static U4FILE *open(const Common::String &fname, const U4ZipPackage *package);
-
-	virtual void close();
-	virtual int seek(long offset, int whence);
-	virtual long tell();
-	virtual size_t read(void *ptr, size_t size, size_t nmemb);
-	virtual int getc();
-	virtual int putc(int c);
-	virtual long length();
-
-private:
-	Common::SeekableReadStream *_file;
-};
-
-/**
- * Returns true if the upgrade is present.
- */
 bool u4isUpgradeAvailable() {
-	bool avail = false;
-	U4FILE *pal;
-	if ((pal = u4fopen("u4vga.pal")) != nullptr) {
-		avail = true;
-		u4fclose(pal);
-	}
+	Common::File *pal = u4fopen("u4vga.pal");
+	bool avail = pal != nullptr;
+	delete pal;
+
 	return avail;
 }
 
-/**
- * Returns true if the upgrade is not only present, but is installed
- * (switch.bat or setup.bat has been run)
- */
 bool u4isUpgradeInstalled() {
-	U4FILE *u4f = nullptr;
-	long int filelength;
+	int filelength;
 	bool result = false;
 
-	/* FIXME: Is there a better way to determine this? */
-	u4f = u4fopen("ega.drv");
+	Common::File *u4f = u4fopen("ega.drv");
 	if (u4f) {
-
-		filelength = u4f->length();
+		filelength = u4f->size();
 		u4fclose(u4f);
 
-		/* see if (ega.drv > 5k).  If so, the upgrade is installed */
+		// See if (ega.drv > 5k).  If so, the upgrade is installed
 		if (filelength > (5 * 1024))
 			result = true;
 	}
@@ -315,71 +257,13 @@ U4ZipPackageMgr::~U4ZipPackageMgr() {
 		delete *i;
 }
 
-int U4FILE::getshort() {
-	int byteLow = getc();
-	return byteLow | (getc() << 8);
-}
-
-U4FILE *U4FILE_stdio::openForReading(const Common::String &fname) {
-	Common::File *f = new Common::File();
-
-	if (!f->open(fname)) {
-		delete f;
-		return nullptr;
-	}
-
-	return new U4FILE_stdio(f);
-}
-
-U4FILE *U4FILE_stdio::openForWriting(const Common::String &fname) {
-	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(fname);
-
-	if (!saveFile)
-		return nullptr;
-
-	return new U4FILE_stdio(saveFile);
-}
-
-void U4FILE_stdio::close() {
-	delete _in;
-	delete _out;
-	_in = nullptr;
-	_out = nullptr;
-}
-
-int U4FILE_stdio::seek(long offset, int whence) {
-	assert(_in);
-	return _in->seek(offset, whence);
-}
-
-long U4FILE_stdio::tell() {
-	return _in->pos();
-}
-
-size_t U4FILE_stdio::read(void *ptr, size_t size, size_t nmemb) {
-	uint bytesRead = _in->read(ptr, size * nmemb);
-	return bytesRead / size;
-}
-
-int U4FILE_stdio::getc() {
-	return _in->eos() ? EOF : _in->readByte();
-}
-
-int U4FILE_stdio::putc(int c) {
-	_out->writeByte(c);
-	return 1;
-}
-
-long U4FILE_stdio::length() {
-	return _in->size();
-}
-
 /*------------------------------------------------------------------------*/
+#ifdef TODO
 
 /**
  * Opens a file from within a zip archive.
  */
-U4FILE *U4FILE_zip::open(const Common::String &fname, const U4ZipPackage *package) {
+Common::File *U4FILE_zip::open(const Common::String &fname, const U4ZipPackage *package) {
 #ifdef TODO
 	U4FILE_zip *u4f;
 	unzFile f;
@@ -492,11 +376,13 @@ long U4FILE_zip::length() {
 #endif
 }
 
+#endif
+
 /**
- * Open a data file from the Ultima 4 for DOS installation
+ * Open a data file
  */
-U4FILE *u4fopen(const Common::String &fname) {
-	U4FILE *u4f = nullptr;
+Common::File *u4fopen(const Common::String &fname) {
+	Common::File *u4f = nullptr;
 
 	debug(1, "looking for %s\n", fname.c_str());
 #ifdef TODO
@@ -517,66 +403,65 @@ U4FILE *u4fopen(const Common::String &fname) {
 #endif
 
 	if (!fname.empty()) {
-		u4f = U4FILE_stdio::openForReading(fname);
-		if (u4f != nullptr)
+		u4f = new Common::File();
+		if (u4f->open(fname)) {
 			debug(1, "%s successfully opened\n", fname.c_str());
+		} else {
+			delete u4f;
+			u4f = nullptr;
+		}
 	}
 
 	return u4f;
 }
 
 /**
- * Opens a file with the standard C stdio facilities and wrap it in a
- * U4FILE.
- */
-U4FILE *u4fopen_stdio(const Common::String &fname) {
-	return U4FILE_stdio::openForReading(fname);
-}
-
-/**
  * Opens a file from a zipfile and wraps it in a U4FILE.
  */
-U4FILE *u4fopen_zip(const Common::String &fname, U4ZipPackage *package) {
-	return U4FILE_zip::open(fname, package);
+Common::File *u4fopen_zip(const Common::String &fname, Common::Archive *archive) {
+	Common::File *f = new Common::File();
+
+	if (f->open(fname, *archive))
+		return f;
+
+	delete f;
+	return nullptr;
 }
 
 /**
  * Closes a data file from the Ultima 4 for DOS installation.
  */
-void u4fclose(U4FILE *f) {
+void u4fclose(Common::File *f) {
 	f->close();
 	delete f;
 }
 
-int u4fseek(U4FILE *f, long offset, int whence) {
+int u4fseek(Common::File *f, long offset, int whence) {
 	return f->seek(offset, whence);
 }
 
-long u4ftell(U4FILE *f) {
-	return f->tell();
+long u4ftell(Common::File *f) {
+	return f->pos();
 }
 
-size_t u4fread(void *ptr, size_t size, size_t nmemb, U4FILE *f) {
-	return f->read(ptr, size, nmemb);
+size_t u4fread(void *ptr, size_t size, size_t nmemb, Common::File *f) {
+	int count = f->read(ptr, size * nmemb);
+	return count / size;
 }
 
-int u4fgetc(U4FILE *f) {
-	return f->getc();
+int u4fgetc(Common::File *f) {
+	return f->readByte();
 }
 
-int u4fgetshort(U4FILE *f) {
-	return f->getshort();
-}
-
-int u4fputc(int c, U4FILE *f) {
-	return f->putc(c);
+int u4fgetshort(Common::File *f) {
+	return f->readUint16LE();
 }
 
 /**
  * Returns the length in bytes of a file.
  */
-long u4flength(U4FILE *f) {
-	return f->length();
+long u4flength(Common::File *f) {
+	return f->size();
 }
 
 /**
@@ -584,7 +469,7 @@ long u4flength(U4FILE *f) {
  * are read from the given offset, or the current file position if
  * offset is -1.
  */
-vector<Common::String> u4read_stringtable(U4FILE *f, long offset, int nstrings) {
+vector<Common::String> u4read_stringtable(Common::File *f, long offset, int nstrings) {
 	Common::String buffer;
 	int i;
 	vector<Common::String> strs;
@@ -597,7 +482,7 @@ vector<Common::String> u4read_stringtable(U4FILE *f, long offset, int nstrings) 
 		char c;
 		buffer.clear();
 
-		while ((c = f->getc()) != '\0')
+		while ((c = f->readByte()) != '\0')
 			buffer += c;
 
 		strs.push_back(buffer);

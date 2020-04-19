@@ -23,6 +23,7 @@
 #ifndef ULTIMA4_FILE_H
 #define ULTIMA4_FILE_H
 
+#include "common/file.h"
 #include "common/hash-str.h"
 #include "ultima/shared/std/containers.h"
 
@@ -84,43 +85,32 @@ private:
 #endif
 
 /**
- * An abstract interface for file access.
+ * Returns true if the upgrade is present.
  */
-class U4FILE {
-public:
-	virtual ~U4FILE() {}
+extern bool u4isUpgradeAvailable();
 
-	virtual void close() = 0;
-	virtual int seek(long offset, int whence) = 0;
-	virtual long tell() = 0;
-	virtual size_t read(void *ptr, size_t size, size_t nmemb) = 0;
-	virtual int getc() = 0;
-	virtual int putc(int c) = 0;
-	virtual long length() = 0;
+/**
+ * Returns true if the upgrade is not only present, but is installed
+ * (switch.bat or setup.bat has been run)
+ */
+extern bool u4isUpgradeInstalled();
 
-	int getshort();
-};
+extern Common::File *u4fopen(const Common::String &fname);
+extern Common::File *u4fopen_zip(const Common::String &fname, Common::Archive *archive);
+extern void u4fclose(Common::File *f);
+extern int u4fseek(Common::File *f, long offset, int whence);
+extern long u4ftell(Common::File *f);
+extern size_t u4fread(void *ptr, size_t size, size_t nmemb, Common::File *f);
+extern int u4fgetc(Common::File *f);
+extern int u4fgetshort(Common::File *f);
+extern long u4flength(Common::File *f);
+extern Std::vector<Common::String> u4read_stringtable(Common::File *f, long offset, int nstrings);
 
-bool u4isUpgradeAvailable();
-bool u4isUpgradeInstalled();
-U4FILE *u4fopen(const Common::String &fname);
-U4FILE *u4fopen_stdio(const Common::String &fname);
-U4FILE *u4fopen_zip(const Common::String &fname, U4ZipPackage *package);
-void u4fclose(U4FILE *f);
-int u4fseek(U4FILE *f, long offset, int whence);
-long u4ftell(U4FILE *f);
-size_t u4fread(void *ptr, size_t size, size_t nmemb, U4FILE *f);
-int u4fgetc(U4FILE *f);
-int u4fgetshort(U4FILE *f);
-int u4fputc(int c, U4FILE *f);
-long u4flength(U4FILE *f);
-Std::vector<Common::String> u4read_stringtable(U4FILE *f, long offset, int nstrings);
-
-Common::String u4find_path(const Common::String &fname, Common::List<Common::String> specificSubPaths);
-Common::String u4find_music(const Common::String &fname);
-Common::String u4find_sound(const Common::String &fname);
-Common::String u4find_conf(const Common::String &fname);
-Common::String u4find_graphics(const Common::String &fname);
+extern Common::String u4find_path(const Common::String &fname, Common::List<Common::String> specificSubPaths);
+extern Common::String u4find_music(const Common::String &fname);
+extern Common::String u4find_sound(const Common::String &fname);
+extern Common::String u4find_conf(const Common::String &fname);
+extern Common::String u4find_graphics(const Common::String &fname);
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

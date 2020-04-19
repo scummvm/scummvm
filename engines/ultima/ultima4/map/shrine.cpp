@@ -106,7 +106,7 @@ void Shrine::setMantra(Common::String m)    {
 
 void Shrine::enter() {
 	if (shrineAdvice.empty()) {
-		U4FILE *avatar = u4fopen("avatar.exe");
+		Common::File *avatar = u4fopen("avatar.exe");
 		if (!avatar)
 			return;
 		shrineAdvice = u4read_stringtable(avatar, 93682, 24);

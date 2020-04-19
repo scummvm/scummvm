@@ -127,7 +127,7 @@ IntroBinData::~IntroBinData() {
 bool IntroBinData::load() {
 	int i;
 
-	U4FILE *title = u4fopen("title.exe");
+	Common::File *title = u4fopen("title.exe");
 	if (!title)
 		return false;
 

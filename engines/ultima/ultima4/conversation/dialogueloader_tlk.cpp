@@ -34,7 +34,7 @@ using Common::String;
  * A dialogue loader for standard u4dos .tlk files.
  */
 Dialogue *U4TlkDialogueLoader::load(void *source) {
-	U4FILE *file = static_cast<U4FILE *>(source);
+	Common::File *file = static_cast<Common::File *>(source);
 
 	enum QTrigger {
 		NONE = 0,

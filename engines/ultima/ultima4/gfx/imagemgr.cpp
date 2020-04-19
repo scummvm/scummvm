@@ -510,7 +510,7 @@ Common::String ImageMgr::guessFileType(const Common::String &filename) {
 bool ImageMgr::imageExists(ImageInfo *info) {
 	if (info->_filename == "") //If it is an abstract image like "screen"
 		return true;
-	U4FILE *file = getImageFile(info);
+	Common::File *file = getImageFile(info);
 	if (file) {
 		u4fclose(file);
 		return true;
@@ -519,7 +519,7 @@ bool ImageMgr::imageExists(ImageInfo *info) {
 }
 
 
-U4FILE *ImageMgr::getImageFile(ImageInfo *info) {
+Common::File *ImageMgr::getImageFile(ImageInfo *info) {
 	Common::String filename = info->_filename;
 
 	/*
@@ -539,16 +539,17 @@ U4FILE *ImageMgr::getImageFile(ImageInfo *info) {
 	if (filename == "")
 		return nullptr;
 
-	U4FILE *file = nullptr;
+	Common::File *file = nullptr;
 	if (info->_xu4Graphic) {
 		Common::String pathname(u4find_graphics(filename));
 
 		if (!pathname.empty())
-			file = u4fopen_stdio(pathname);
+			file = u4fopen(pathname);
 	} else {
 		filename = u4find_graphics(filename);
 		file = u4fopen(filename);
 	}
+
 	return file;
 }
 
@@ -561,7 +562,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 	if (info->_image != nullptr)
 		return info;
 
-	U4FILE *file = getImageFile(info);
+	Common::File *file = getImageFile(info);
 	Image *unscaled = nullptr;
 	if (file) {
 		if (info->_filetype.empty())
