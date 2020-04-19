@@ -995,38 +995,62 @@ void LC::c_not() {
 	g_lingo->push(d);
 }
 
-Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2) {
+Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, bool location, bool value) {
 	// At least one of d1 and d2 must be an array
 	uint arraySize;
 	if (d1.type == ARRAY && d2.type == ARRAY) {
 		arraySize = MIN(d1.u.farr->size(), d2.u.farr->size());
+	} else if (d1.type == PARRAY && d2.type == PARRAY) {
+		arraySize = MIN(d1.u.parr->size(), d2.u.parr->size());
 	} else if (d1.type == ARRAY) {
 		arraySize = d1.u.farr->size();
-	} else {
+	} else if (d1.type == PARRAY) {
+		arraySize = d1.u.parr->size();
+	} else if (d2.type == ARRAY) {
 		arraySize = d2.u.farr->size();
+	} else if (d2.type == PARRAY) {
+		arraySize = d2.u.parr->size();
 	}
+
 	Datum res;
 	res.type = INT;
-	res.u.i = 1;
+	res.u.i = location ? -1 : 1;
 	Datum a = d1;
 	Datum b = d2;
 	for (uint i = 0; i < arraySize; i++) {
 		if (d1.type == ARRAY) {
 			a = d1.u.farr->operator[](i);
+		} else if (d1.type == PARRAY) {
+			PCell t = d1.u.parr->operator[](i);
+			a = value ? *t.v : *t.p;
 		}
+
 		if (d2.type == ARRAY) {
 			b = d2.u.farr->operator[](i);
+		} else if (d2.type == PARRAY) {
+			PCell t = d2.u.parr->operator[](i);
+			b = value ? *t.v : *t.p;
 		}
+
 		res = compareFunc(a, b);
-		if (res.u.i == 0) {
-			break;
+		if (!location) {
+			if (res.u.i == 0) {
+				break;
+			}
+		} else {
+			if (res.u.i == 1) {
+				// Lingo indexing starts at 1
+				res.u.i = (int)i + 1;
+				break;
+			}
 		}
 	}
 	return res;
 }
 
 Datum LC::eqData(Datum d1, Datum d2) {
-	if (d1.type == ARRAY || d2.type == ARRAY) {
+	if (d1.type == ARRAY || d2.type == ARRAY ||
+			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::eqData, d1, d2);
 	}
 	d1.u.i = (d1.compareTo(d2, true) == 0) ? 1 : 0;

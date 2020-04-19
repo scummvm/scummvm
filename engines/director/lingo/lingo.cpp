@@ -349,10 +349,10 @@ void Lingo::restartLingo() {
 int Lingo::alignTypes(Datum &d1, Datum &d2) {
 	int opType = VOID;
 
-	if (d1.type == REFERENCE)
+	if (d1.type == REFERENCE || d1.type == SYMBOL)
 		d1.makeString();
 
-	if (d2.type == REFERENCE)
+	if (d2.type == REFERENCE || d2.type == SYMBOL)
 		d2.makeString();
 
 	if (d1.type == STRING) {
@@ -609,7 +609,14 @@ const char *Datum::type2str(bool isk) {
 
 int Datum::compareTo(Datum d, bool ignoreCase) {
 	if (type == STRING && d.type == STRING) {
-		return ignoreCase ? u.s->compareToIgnoreCase(*d.u.s) : u.s->compareTo(*d.u.s);
+		if (ignoreCase) {
+			return toLowercaseMac(u.s)->compareTo(*toLowercaseMac(d.u.s));
+		} else {
+			return u.s->compareTo(*d.u.s);
+		}
+	} else if (type == SYMBOL && d.type == SYMBOL) {
+		// TODO: Implement union comparisons
+		return ignoreCase ? u.sym->name.compareToIgnoreCase(d.u.sym->name) : u.sym->name.compareTo(d.u.sym->name);
 	} else if (g_lingo->alignTypes(*this, d) == FLOAT) {
 		if (u.f < d.u.f) {
 			return -1;
