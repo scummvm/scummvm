@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/game/menu.h"
 #include "ultima/ultima4/game/menuitem.h"
 #include "ultima/ultima4/core/settings.h"
@@ -148,7 +147,7 @@ void StringMenuItem::activate(MenuEvent &event) {
 	    find(_validSettings.begin(), _validSettings.end(), *_val);
 
 	if (current == _validSettings.end())
-		errorFatal("Error: menu Common::String '%s' not a valid choice", _val->c_str());
+		error("Error: menu Common::String '%s' not a valid choice", _val->c_str());
 
 	if (event.getType() == MenuEvent::INCREMENT || event.getType() == MenuEvent::ACTIVATE) {
 		/* move to the next valid choice, wrapping if necessary */

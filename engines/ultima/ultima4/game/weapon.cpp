@@ -22,7 +22,6 @@
 
 #include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/game/names.h"
 
 namespace Ultima {
@@ -84,7 +83,7 @@ Weapon::Weapon(const ConfigElement &conf)
 			_flags |= WEAP_ABSOLUTERANGE;
 	}
 	if (range.empty())
-		errorFatal("malformed weapons.xml file: range or absolute_range not found for weapon %s", _name.c_str());
+		error("malformed weapons.xml file: range or absolute_range not found for weapon %s", _name.c_str());
 
 	_range = atoi(range.c_str());
 
@@ -122,7 +121,7 @@ Weapon::Weapon(const ConfigElement &conf)
 		if (mask == 0 && scumm_stricmp(i->getString("class").c_str(), "all") == 0)
 			mask = 0xFF;
 		if (mask == 0) {
-			errorFatal("malformed weapons.xml file: constraint has unknown class %s",
+			error("malformed weapons.xml file: constraint has unknown class %s",
 			           i->getString("class").c_str());
 		}
 		if (i->getBool("canuse"))

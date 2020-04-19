@@ -162,7 +162,6 @@ MODULE_OBJS := \
 	ultima4/core/config.o \
 	ultima4/core/debugger.o \
 	ultima4/core/debugger_actions.o \
-	ultima4/core/error.o \
 	ultima4/core/settings.o \
 	ultima4/core/utils.o \
 	ultima4/events/event.o \

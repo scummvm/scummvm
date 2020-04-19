@@ -28,7 +28,6 @@
 #include "ultima/ultima4/game/menu.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/filesys/savegame.h"
@@ -1468,14 +1467,12 @@ void IntroController::getTitleSourceData() {
 	// individually.  Afterward, the BKGD_INTRO image
 	// will be scaled appropriately.
 	ImageInfo *info = imageMgr->get(BKGD_INTRO, true);
-	if (!info) {
-		errorFatal("ERROR 1007: Unable to load the image \"%s\".\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_INTRO, settings._game.c_str());
-	}
+	if (!info)
+		error("ERROR 1007: Unable to load the image \"%s\"", BKGD_INTRO);
 
-	if (info->_width / info->_prescale != 320 || info->_height / info->_prescale != 200) {
-		// the image appears to have been scaled already
-		errorWarning("ERROR 1008: The title image (\"%s\") has been scaled too early!\t\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_INTRO);
-	}
+	if (info->_width / info->_prescale != 320 || info->_height / info->_prescale != 200)
+		// The image appears to have been scaled already
+		warning("ERROR 1008: The title image (\"%s\") has been scaled too early", BKGD_INTRO);
 
 	// get the transparent color
 	_transparentColor = info->_image->getPaletteColor(_transparentIndex);

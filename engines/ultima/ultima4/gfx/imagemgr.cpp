@@ -25,7 +25,6 @@
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/controllers/intro_controller.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/ultima4.h"
@@ -328,7 +327,7 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 		ImageInfo *borderInfo = imageMgr->get(BKGD_BORDERS, true);
 //        ImageInfo *charsetInfo = imageMgr->get(BKGD_CHARSET);
 		if (!borderInfo)
-			errorFatal("ERROR 1001: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_BORDERS, settings._game.c_str());
+			error("ERROR 1001: Unable to load the \"%s\" data file", BKGD_BORDERS);
 
 		delete borderInfo->_image;
 		borderInfo->_image = nullptr;
@@ -496,7 +495,7 @@ ImageInfo *ImageMgr::getInfoFromSet(const Common::String &name, ImageSet *images
 		return getInfoFromSet(name, imageset);
 	}
 
-	//errorWarning("Searched recursively from imageset %s through to %s and couldn't find %s", baseSet->name.c_str(), imageset->name.c_str(), name.c_str());
+	//warning("Searched recursively from imageset %s through to %s and couldn't find %s", baseSet->name.c_str(), imageset->name.c_str(), name.c_str());
 	return nullptr;
 }
 
@@ -570,7 +569,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 		Common::String filetype = info->_filetype;
 		ImageLoader *loader = g_ultima->_imageLoaders->getLoader(filetype);
 		if (loader == nullptr)
-			errorWarning("can't find loader to load image \"%s\" with type \"%s\"", info->_filename.c_str(), filetype.c_str());
+			warning("can't find loader to load image \"%s\" with type \"%s\"", info->_filename.c_str(), filetype.c_str());
 		else {
 			unscaled = loader->load(file, info->_width, info->_height, info->_depth);
 			if (info->_width == -1) {
@@ -582,7 +581,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 		}
 		u4fclose(file);
 	} else {
-		errorWarning("Failed to open file %s for reading.", info->_filename.c_str());
+		warning("Failed to open file %s for reading.", info->_filename.c_str());
 		return nullptr;
 	}
 
@@ -643,7 +642,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 		int orig_scale = settings._scale;
 		settings._scale = info->_prescale;
 		settings.write();
-		errorFatal("image %s is prescaled to an incompatible size: %d\nResetting the scale to %d. Sorry about the inconvenience, please restart.", info->_filename.c_str(), orig_scale, settings._scale);
+		error("image %s is prescaled to an incompatible size: %d\nResetting the scale to %d. Sorry about the inconvenience, please restart.", info->_filename.c_str(), orig_scale, settings._scale);
 	}
 	imageScale /= info->_prescale;
 

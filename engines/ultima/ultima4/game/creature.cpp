@@ -26,7 +26,6 @@
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/filesys/savegame.h"
@@ -918,7 +917,7 @@ Creature *CreatureMgr::getByTile(MapTile tile) {
 	}
 
 //    if (tile.id)
-//      errorWarning("Did not find creature for tile %d", tile.id);
+//      warning("Did not find creature for tile %d", tile.id);
 	return nullptr;
 }
 
@@ -974,8 +973,6 @@ Creature *CreatureMgr::randomForTile(const Tile *tile) {
 }
 
 Creature *CreatureMgr::randomForDungeon(int dngLevel) {
-	// Based on u4dos observations, see:
-	//  https://sourceforge.net/p/xu4/patches/37/
 	int adjustedDngLevel = dngLevel + 1;
 	size_t range = adjustedDngLevel < 5 ? 3 : 4;
 	CreatureId monster = STORM_ID + adjustedDngLevel + xu4_random(range);

@@ -28,7 +28,6 @@
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader.h"
 #include "ultima/ultima4/map/dungeon.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/maploader.h"
@@ -66,7 +65,7 @@ MapLoader *MapLoader::registerLoader(MapLoader *loader, Map::Type type) {
 		loaderMap = new Std::map<Map::Type, MapLoader *, MapType_Hash>();
 
 	if (loaderMap->find(type) != loaderMap->end())
-		errorFatal("map loader already registered for type %d", type);
+		error("map loader already registered for type %d", type);
 
 	(*loaderMap)[type] = loader;
 	return loader;
@@ -138,7 +137,7 @@ bool CityMapLoader::load(Map *map) {
 	U4FILE *ult = u4fopen(city->_fname);
 	U4FILE *tlk = u4fopen(city->_tlkFname);
 	if (!ult || !tlk)
-		errorFatal("unable to load map data");
+		error("unable to load map data");
 
 	/* the map must be 32x32 to be read from an .ULT file */
 	ASSERT(city->_width == CITY_WIDTH, "map width is %d, should be %d", city->_width, CITY_WIDTH);
@@ -250,7 +249,7 @@ bool ConMapLoader::load(Map *map) {
 
 	U4FILE *con = u4fopen(map->_fname);
 	if (!con)
-		errorFatal("unable to load map data");
+		error("unable to load map data");
 
 	/* the map must be 11x11 to be read from an .CON file */
 	ASSERT(map->_width == CON_WIDTH, "map width is %d, should be %d", map->_width, CON_WIDTH);
@@ -287,7 +286,7 @@ bool DngMapLoader::load(Map *map) {
 
 	U4FILE *dng = u4fopen(dungeon->_fname);
 	if (!dng)
-		errorFatal("unable to load map data");
+		error("unable to load map data");
 
 	/* the map must be 11x11 to be read from an .CON file */
 	ASSERT(dungeon->_width == DNG_WIDTH, "map width is %d, should be %d", dungeon->_width, DNG_WIDTH);
@@ -439,7 +438,7 @@ void DngMapLoader::initDungeonRoom(Dungeon *dng, int room) {
 bool WorldMapLoader::load(Map *map) {
 	U4FILE *world = u4fopen(map->_fname);
 	if (!world)
-		errorFatal("unable to load map data");
+		error("unable to load map data");
 
 	if (!loadData(map, world))
 		return false;

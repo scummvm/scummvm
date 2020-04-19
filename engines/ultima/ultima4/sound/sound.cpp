@@ -22,7 +22,6 @@
 
 #include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/core/settings.h"

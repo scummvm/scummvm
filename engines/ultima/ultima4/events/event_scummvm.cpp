@@ -23,7 +23,6 @@
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/core/settings.h"

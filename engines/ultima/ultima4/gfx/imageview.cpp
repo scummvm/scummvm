@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/gfx/imageview.h"
@@ -56,7 +55,7 @@ void ImageView::draw(const Common::String &imageName, int x, int y) {
 		}
 	}
 
-	errorFatal("ERROR 1005: Unable to load the image \"%s\"", imageName.c_str());
+	error("ERROR 1005: Unable to load the image \"%s\"", imageName.c_str());
 }
 
 } // End of namespace Ultima4

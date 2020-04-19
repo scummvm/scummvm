@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/core/utils.h"

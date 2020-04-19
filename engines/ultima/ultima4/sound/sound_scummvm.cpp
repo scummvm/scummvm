@@ -23,7 +23,6 @@
 #include "ultima/ultima4/sound/sound_p.h"
 #include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/filesys/u4file.h"
@@ -35,7 +34,7 @@ bool SoundManager::load_sys(Sound sound, const Common::String &pathname) {
 #ifdef TODO
 	soundChunk[sound] = Mix_LoadWAV(pathname.c_str());
 	if (!soundChunk[sound]) {
-		errorWarning("Unable to load sound effect file %s: %s", soundFilenames[sound].c_str(), Mix_GetError());
+		warning("Unable to load sound effect file %s: %s", soundFilenames[sound].c_str(), Mix_GetError());
 		return false;
 	}
 #endif

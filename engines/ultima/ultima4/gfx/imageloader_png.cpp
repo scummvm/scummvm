@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imageloader_png.h"
@@ -32,7 +31,7 @@ namespace Ultima4 {
 
 Image *PngImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 	if (width != -1 || height != -1 || bpp != -1) {
-		errorWarning("dimensions set for PNG image, will be ignored");
+		warning("dimensions set for PNG image, will be ignored");
 	}
 
 	size_t fileSize = file->length();

@@ -22,7 +22,6 @@
 
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/map/tile.h"
@@ -56,7 +55,7 @@ void TileRule::load() {
 	}
 
 	if (TileRule::findByName("default") == nullptr)
-		errorFatal("no 'default' rule found in tile rules");
+		error("no 'default' rule found in tile rules");
 }
 
 bool TileRule::initFromConf(const ConfigElement &conf) {

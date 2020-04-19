@@ -24,7 +24,6 @@
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/creature.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/gfx/screen.h"
@@ -100,7 +99,7 @@ void Tile::loadProperties(const ConfigElement &conf) {
 	if (conf.exists("directions")) {
 		Common::String dirs = conf.getString("directions");
 		if (dirs.size() != (unsigned) _frames)
-			errorFatal("Error: %ld directions for tile but only %d frames", (long) dirs.size(), _frames);
+			error("Error: %ld directions for tile but only %d frames", (long) dirs.size(), _frames);
 		for (unsigned i = 0; i < dirs.size(); i++) {
 			if (dirs[i] == 'w')
 				_directions.push_back(DIR_WEST);
@@ -111,7 +110,7 @@ void Tile::loadProperties(const ConfigElement &conf) {
 			else if (dirs[i] == 's')
 				_directions.push_back(DIR_SOUTH);
 			else
-				errorFatal("Error: unknown direction specified by %c", dirs[i]);
+				error("Error: unknown direction specified by %c", dirs[i]);
 		}
 	}
 }
@@ -135,7 +134,7 @@ void Tile::loadImage() {
 				info = imageMgr->get(subimage->_srcImageName);
 		}
 		if (!info) { //IF still no info loaded
-			errorWarning("Error: couldn't load image for tile '%s'", _name.c_str());
+			warning("Error: couldn't load image for tile '%s'", _name.c_str());
 			return;
 		}
 
@@ -173,7 +172,7 @@ void Tile::loadImage() {
 			if (g_screen->_tileAnims)
 				_anim = g_screen->_tileAnims->getByName(_animationRule);
 			if (_anim == nullptr)
-				errorWarning("Warning: animation style '%s' not found", _animationRule.c_str());
+				warning("Warning: animation style '%s' not found", _animationRule.c_str());
 		}
 
 		/* if we have animations, we always used 'animated' to draw from */

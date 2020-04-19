@@ -29,7 +29,6 @@
 #include "ultima/ultima4/map/tileanim.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/shared/std/misc.h"
 
 namespace Ultima {

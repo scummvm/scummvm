@@ -22,7 +22,6 @@
 
 #include "ultima/ultima4/game/armor.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/map/tile.h"
 #include "common/algorithm.h"
@@ -77,7 +76,7 @@ Armor::Armor(const ConfigElement &conf) {
 		if (useMask == 0 && scumm_stricmp(i->getString("class").c_str(), "all") == 0)
 			useMask = 0xFF;
 		if (useMask == 0) {
-			errorFatal("malformed armor.xml file: constraint has unknown class %s",
+			error("malformed armor.xml file: constraint has unknown class %s",
 			           i->getString("class").c_str());
 		}
 		if (i->getBool("canuse"))

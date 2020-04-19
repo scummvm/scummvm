@@ -25,7 +25,6 @@
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/controllers/inn_controller.h"
 #include "ultima/ultima4/conversation/conversation.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event.h"
@@ -244,8 +243,8 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
 			debug("\n<Loaded subscript '%s' where id='%s' for script '%s'>\n", subNodeName.c_str(), subNodeId.c_str(), baseId.c_str());
 	} else {
 		if (subNodeName.empty())
-			errorFatal("Couldn't find script '%s' in %s", baseId.c_str(), filename.c_str());
-		else errorFatal("Couldn't find subscript '%s' where id='%s' in script '%s' in %s", subNodeName.c_str(), subNodeId.c_str(), baseId.c_str(), filename.c_str());
+			error("Couldn't find script '%s' in %s", baseId.c_str(), filename.c_str());
+		else error("Couldn't find subscript '%s' where id='%s' in script '%s' in %s", subNodeName.c_str(), subNodeId.c_str(), baseId.c_str(), filename.c_str());
 	}
 
 	_state = STATE_UNLOADED;
@@ -273,7 +272,7 @@ void Script::run(const Common::String &script) {
 	scriptNode = find(_scriptNode, script, search_id);
 
 	if (!scriptNode)
-		errorFatal("Script '%s' not found in vendorScript.xml", script.c_str());
+		error("Script '%s' not found in vendorScript.xml", script.c_str());
 
 	execute(scriptNode);
 }
@@ -535,7 +534,7 @@ void Script::translate(Common::String *text) {
 			             close = current.findFirstOf("}");
 
 			if (close == current.size())
-				errorFatal("Error: no closing } found in script.");
+				error("Error: no closing } found in script.");
 
 			if (open < close) {
 				num_embedded++;
@@ -682,7 +681,7 @@ void Script::translate(Common::String *text) {
 				/* perform the <math> function on the content */
 				if (funcName == "math") {
 					if (content.empty())
-						errorWarning("Error: empty math() function");
+						warning("Error: empty math() function");
 
 					prop = xu4_to_string(mathValue(content));
 				}
@@ -897,7 +896,7 @@ Script::ReturnCode Script::redirect(Shared::XMLNode *script, Shared::XMLNode *cu
 
 	Shared::XMLNode *newScript = find(_scriptNode, target, search_id);
 	if (!newScript)
-		errorFatal("Error: redirect failed -- could not find target script '%s' with %s=\"%s\"", target.c_str(), _idPropName.c_str(), search_id.c_str());
+		error("Error: redirect failed -- could not find target script '%s' with %s=\"%s\"", target.c_str(), _idPropName.c_str(), search_id.c_str());
 
 	if (_debug) {
 		debugN("Redirected to <%s", target.c_str());
@@ -916,7 +915,7 @@ Script::ReturnCode Script::include(Shared::XMLNode *script, Shared::XMLNode *cur
 
 	Shared::XMLNode *newScript = find(_scriptNode, scriptName, id);
 	if (!newScript)
-		errorFatal("Error: include failed -- could not find target script '%s' with %s=\"%s\"", scriptName.c_str(), _idPropName.c_str(), id.c_str());
+		error("Error: include failed -- could not find target script '%s' with %s=\"%s\"", scriptName.c_str(), _idPropName.c_str(), id.c_str());
 
 	if (_debug) {
 		debugN("Included script <%s", scriptName.c_str());
@@ -1020,7 +1019,7 @@ Script::ReturnCode Script::pay(Shared::XMLNode *script, Shared::XMLNode *current
 	Common::String cantpay = getPropAsStr(current, "cantpay");
 
 	if (price < 0)
-		errorFatal("Error: could not find price for item");
+		error("Error: could not find price for item");
 
 	if (_debug) {
 		debug("Pay: price(%d) quantity(%d)", price, quant);
@@ -1168,7 +1167,7 @@ Script::ReturnCode Script::add(Shared::XMLNode *script, Shared::XMLNode *current
 			g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);
 			g_context->_stats->resetReagentsMenu();
 		} else {
-			errorWarning("Error: reagent '%s' not found", subtype.c_str());
+			warning("Error: reagent '%s' not found", subtype.c_str());
 		}
 	}
 
@@ -1450,7 +1449,7 @@ int Script::math(int lval, int rval, Common::String &op) {
 	else if (op == "<=")
 		return lval <= rval;
 	else
-		errorFatal("Error: invalid 'math' operation attempted in vendorScript.xml");
+		error("Error: invalid 'math' operation attempted in vendorScript.xml");
 
 	return 0;
 }
@@ -1529,7 +1528,7 @@ void Script::funcParse(const Common::String &str, Common::String *funcName, Comm
 		*contents = str.substr(pos + 1);
 		pos = contents->findFirstOf(")");
 		if (pos >= contents->size())
-			errorWarning("Error: No closing ) in function %s()", funcName->c_str());
+			warning("Error: No closing ) in function %s()", funcName->c_str());
 		else
 			*contents = contents->substr(0, pos);
 	} else {

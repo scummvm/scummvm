@@ -23,7 +23,6 @@
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event.h"
@@ -280,14 +279,14 @@ void Music::setMusicVolume_sys(int volume) {
 void Music::fadeIn_sys(int msecs, bool loadFromMap) {
 #ifdef TODO
 	if (Mix_FadeInMusic(playing, NLOOPS, msecs) == -1)
-		errorWarning("Mix_FadeInMusic: %s\n", Mix_GetError());
+		warning("Mix_FadeInMusic: %s\n", Mix_GetError());
 #endif
 }
 
 void Music::fadeOut_sys(int msecs) {
 #ifdef TODO
 	if (Mix_FadeOutMusic(msecs) == -1)
-		errorWarning("Mix_FadeOutMusic: %s\n", Mix_GetError());
+		warning("Mix_FadeOutMusic: %s\n", Mix_GetError());
 #endif
 }
 

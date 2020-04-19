@@ -20,7 +20,6 @@
  *
  */
 
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/core/types.h"
@@ -35,7 +34,7 @@ MoongateList gates;
 
 void moongateAdd(int phase, const Coords &coords) {
 	if (gates.contains(phase))
-		errorFatal("Error: A moongate for phase %d already exists", phase);
+		error("Error: A moongate for phase %d already exists", phase);
 
 	gates[phase] = coords;
 }

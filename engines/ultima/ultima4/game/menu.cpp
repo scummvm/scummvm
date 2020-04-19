@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima4/game/menu.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/game/textview.h"
 
@@ -235,7 +234,7 @@ void Menu::activateItem(int id, MenuEvent::Type action) {
 	else mi = *getCurrent();
 
 	if (!mi)
-		errorFatal("Error: Unable to find menu item with id '%d'", id);
+		error("Error: Unable to find menu item with id '%d'", id);
 
 	/* make sure the action given will activate the menu item */
 	if (mi->getClosesMenu())

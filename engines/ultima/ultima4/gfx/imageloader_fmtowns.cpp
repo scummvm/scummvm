@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"
@@ -35,7 +34,7 @@ using Std::vector;
 
 Image *FMTOWNSImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
-		errorFatal("dimensions not set for fmtowns image");
+		error("dimensions not set for fmtowns image");
 	}
 
 	ASSERT((bpp == 16) | (bpp == 4), "invalid bpp: %d", bpp);
@@ -49,7 +48,7 @@ Image *FMTOWNSImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 	if (rawLen < requiredLength) {
 		if (raw)
 			free(raw);
-		errorWarning("FMTOWNS Image of size %d does not fit anticipated size %d", rawLen, requiredLength);
+		warning("FMTOWNS Image of size %d does not fit anticipated size %d", rawLen, requiredLength);
 		return nullptr;
 	}
 
@@ -65,7 +64,7 @@ Image *FMTOWNSImageLoader::load(U4FILE *file, int width, int height, int bpp) {
 		image->setPalette(pal.loadEgaPalette(), 16);
 		setFromRawData(image, width, height, bpp, raw);
 //      if (width % 2)
-//          errorFatal("FMTOWNS 4bit images cannot handle widths not divisible by 2!");
+//          error("FMTOWNS 4bit images cannot handle widths not divisible by 2!");
 //      byte nibble_mask = 0x0F;
 //        for (int y = 0; y < height; y++)
 //        {

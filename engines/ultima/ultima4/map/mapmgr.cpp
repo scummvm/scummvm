@@ -25,7 +25,6 @@
 #include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/map/dungeon.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/maploader.h"
 #include "ultima/ultima4/map/mapmgr.h"
@@ -133,7 +132,7 @@ Map *MapMgr::get(MapId id) {
 	if (!_mapList[id]->_data.size()) {
 		MapLoader *loader = MapLoader::getLoader(_mapList[id]->_type);
 		if (loader == nullptr)
-			errorFatal("can't load map of type \"%d\"", _mapList[id]->_type);
+			error("can't load map of type \"%d\"", _mapList[id]->_type);
 
 		loader->load(_mapList[id]);
 	}
@@ -145,7 +144,7 @@ void MapMgr::registerMap(Map *map) {
 		_mapList.resize(map->_id + 1, nullptr);
 
 	if (_mapList[map->_id] != nullptr)
-		errorFatal("Error: A map with id '%d' already exists", map->_id);
+		error("Error: A map with id '%d' already exists", map->_id);
 
 	_mapList[map->_id] = map;
 }
@@ -278,7 +277,7 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 	else if (prop == "exit_west")
 		portal->_triggerAction = ACTION_EXIT_WEST;
 	else
-		errorFatal("unknown trigger_action: %s", prop.c_str());
+		error("unknown trigger_action: %s", prop.c_str());
 
 	prop = portalConf.getString("condition");
 	if (!prop.empty()) {
@@ -287,7 +286,7 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 		else if (prop == "abyss")
 			portal->_portalConditionsMet = &isAbyssOpened;
 		else
-			errorFatal("unknown portalConditionsMet: %s", prop.c_str());
+			error("unknown portalConditionsMet: %s", prop.c_str());
 	}
 
 	portal->_saveLocation = portalConf.getBool("savelocation");
@@ -300,7 +299,7 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 	else if (prop == "footorhorse")
 		portal->_portalTransportRequisites = TRANSPORT_FOOT_OR_HORSE;
 	else
-		errorFatal("unknown transport: %s", prop.c_str());
+		error("unknown transport: %s", prop.c_str());
 
 	portal->_exitPortal = portalConf.getBool("exits");
 

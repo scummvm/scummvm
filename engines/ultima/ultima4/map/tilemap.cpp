@@ -23,7 +23,6 @@
 #include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/map/tileset.h"
 
 namespace Ultima {
@@ -91,7 +90,7 @@ void TileMap::load(const ConfigElement &tilemapConf) {
 		/* find the tile this references */
 		Tile *t = Tileset::get(tileset)->getByName(tile);
 		if (!t)
-			errorFatal("Error: tile '%s' from '%s' was not found in tileset %s", tile.c_str(), name.c_str(), tileset.c_str());
+			error("Error: tile '%s' from '%s' was not found in tileset %s", tile.c_str(), name.c_str(), tileset.c_str());
 
 		if (i->exists("index"))
 			index = i->getInt("index");

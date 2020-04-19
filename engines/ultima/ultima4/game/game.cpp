@@ -32,7 +32,6 @@
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/debugger.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event.h"

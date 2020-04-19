@@ -22,7 +22,6 @@
 
 #include "ultima/ultima4/controllers/intro_controller.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/error.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/events/event.h"
@@ -61,7 +60,7 @@ Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1),
 		_continueScreenRefresh(true) {
 	g_screen = this;
 	Common::fill(&_mouseCursors[0], &_mouseCursors[5], (MouseCursorSurface *)nullptr);
-	Common::fill(&_los[0][0], &_los[VIEWPORT_W][0], 0);
+	Common::fill(&_los[0][0], &_los[0][0] + (VIEWPORT_W * VIEWPORT_H), 0);
 
 	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	Common::Point size(SCREEN_WIDTH * settings._scale, SCREEN_HEIGHT * settings._scale);
@@ -110,7 +109,7 @@ void Screen::init() {
 			_tileAnims = set;
 	}
 	if (!_tileAnims)
-		errorFatal("unable to find tile animations for \"%s\" video mode in graphics.xml", settings._videoType.c_str());
+		error("unable to find tile animations for \"%s\" video mode in graphics.xml", settings._videoType.c_str());
 
 	_dungeonTileChars.clear();
 	_dungeonTileChars["brick_floor"] = CHARSET_FLOOR;
@@ -161,7 +160,7 @@ void Screen::loadMouseCursors() {
 
 	_filterScaler = scalerGet(settings._filter);
 	if (!_filterScaler)
-		errorFatal("%s is not a valid filter", settings._filter.c_str());
+		error("%s is not a valid filter", settings._filter.c_str());
 }
 
 void Screen::setMouseCursor(MouseCursor cursor) {
@@ -212,7 +211,7 @@ MouseCursorSurface *Screen::loadMouseCursor(Shared::File &src) {
 
 	// Read in the hotspot position
 	line = src.readLine();
-	sscanf(line.c_str(), "%d,%d", &hotX, &hotY);
+	(void)sscanf(line.c_str(), "%d,%d", &hotX, &hotY);
 	c->_hotspot.x = hotX;
 	c->_hotspot.y = hotY;
 
@@ -370,7 +369,7 @@ void Screen::screenLoadGraphicsFromConf() {
 		}
 	}
 	if (!_gemLayout)
-		errorFatal("no gem layout named %s found!\n", settings._gemLayout.c_str());
+		error("no gem layout named %s found!\n", settings._gemLayout.c_str());
 }
 
 Layout *Screen::screenLoadLayoutFromConf(const ConfigElement &conf) {
@@ -524,7 +523,7 @@ void Screen::screenDrawImage(const Common::String &name, int x, int y) {
 			return;
 		}
 	}
-	errorFatal("ERROR 1006: Unable to load the image \"%s\".\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", name.c_str(), settings._game.c_str());
+	error("ERROR 1006: Unable to load the image \"%s\"", name.c_str());
 }
 
 void Screen::screenDrawImageInMapArea(const Common::String &name) {
@@ -532,19 +531,19 @@ void Screen::screenDrawImageInMapArea(const Common::String &name) {
 
 	info = imageMgr->get(name);
 	if (!info)
-		errorFatal("ERROR 1004: Unable to load data files.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", settings._game.c_str());
+		error("ERROR 1004: Unable to load data files");
 
 	info->_image->drawSubRect(BORDER_WIDTH * settings._scale, BORDER_HEIGHT * settings._scale,
-	                          BORDER_WIDTH * settings._scale, BORDER_HEIGHT * settings._scale,
-	                          VIEWPORT_W * TILE_WIDTH * settings._scale,
-	                          VIEWPORT_H * TILE_HEIGHT * settings._scale);
+	    BORDER_WIDTH * settings._scale, BORDER_HEIGHT * settings._scale,
+	    VIEWPORT_W * TILE_WIDTH * settings._scale,
+	    VIEWPORT_H * TILE_HEIGHT * settings._scale);
 }
 
 void Screen::screenTextColor(int color) {
 	if (_charSetInfo == nullptr) {
 		_charSetInfo = imageMgr->get(BKGD_CHARSET);
 		if (!_charSetInfo)
-			errorFatal("ERROR 1003: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_CHARSET, settings._game.c_str());
+			error("ERROR 1003: Unable to load the \"%s\" data file", BKGD_CHARSET);
 	}
 
 	if (!settings._enhancements || !settings._enhancementsOptions._textColorization) {
@@ -715,7 +714,7 @@ void Screen::screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_
 	else if (settings._lineOfSight == "Enhanced")
 		screenFindLineOfSightEnhanced(viewportTiles);
 	else
-		errorFatal("unknown line of sight style %s!\n", settings._lineOfSight.c_str());
+		error("unknown line of sight style %s!\n", settings._lineOfSight.c_str());
 }
 
 void Screen::screenFindLineOfSightDOS(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
@@ -1181,7 +1180,7 @@ void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus,
 		if (_gemTilesInfo == nullptr) {
 			_gemTilesInfo = imageMgr->get(BKGD_GEMTILES);
 			if (!_gemTilesInfo)
-				errorFatal("ERROR 1002: Unable to load the \"%s\" data file.\t\n\nIs %s installed?\n\nVisit the XU4 website for additional information.\n\thttp://xu4.sourceforge.net/", BKGD_GEMTILES, settings._game.c_str());
+				error("ERROR 1002: Unable to load the \"%s\" data file", BKGD_GEMTILES);
 		}
 
 		if (tile < 128) {
@@ -1211,7 +1210,7 @@ Layout *Screen::screenGetGemLayout(const Map *map) {
 			if (layout->_type == LAYOUT_DUNGEONGEM)
 				return layout;
 		}
-		errorFatal("no dungeon gem layout found!\n");
+		error("no dungeon gem layout found!\n");
 		return nullptr;
 	} else
 		return _gemLayout;
