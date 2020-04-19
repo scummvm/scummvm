@@ -773,6 +773,7 @@ void MohawkEngine_Myst::doAction(MystEventAction action) {
 		}
 		break;
 	case kMystActionNone:
+	default:
 		break;
 	}
 }
