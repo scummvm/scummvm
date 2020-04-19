@@ -455,6 +455,9 @@ void LB::b_chars(int nargs) {
 	Datum from = g_lingo->pop();
 	Datum s = g_lingo->pop();
 
+	if (s.type == REFERENCE)
+		s.makeString();
+
 	TYPECHECK(s, STRING);
 
 	to.makeInt();
@@ -464,13 +467,17 @@ void LB::b_chars(int nargs) {
 	int f = MAX(0, MIN(len, from.u.i - 1));
 	int t = MAX(0, MIN(len, to.u.i));
 
-	Common::String *res = new Common::String(&(s.u.s->c_str()[f]), &(s.u.s->c_str()[t]));
+	Common::String *res;
+	if (f > t) {
+		res = new Common::String("");
+	} else {
+		res = new Common::String(&(s.u.s->c_str()[f]), &(s.u.s->c_str()[t]));
+	}
 
-	delete s.u.s;
-
-	s.u.s = res;
-	s.type = STRING;
-	g_lingo->push(s);
+	Datum ret;
+	ret.type = STRING;
+	ret.u.s = res;
+	g_lingo->push(ret);
 }
 
 void LB::b_charToNum(int nargs) {
