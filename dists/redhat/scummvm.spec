@@ -92,7 +92,7 @@ fi
 %{_datadir}/pixmaps/scummvm.xpm
 %{_datadir}/icons/hicolor/48x48/apps/scummvm.png
 %{_datadir}/icons/hicolor/scalable/apps/scummvm.svg
-%{_datadir}/appdata/scummvm.appdata.xml
+%{_datadir}/metainfo/scummvm.appdata.xml
 %{_datadir}/scummvm/*
 %{_mandir}/man6/scummvm.6*
 
