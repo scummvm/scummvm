@@ -35,6 +35,7 @@
 #include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/graphics/palette_fader_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -60,6 +61,7 @@ void StartU8Process::run() {
 
 	// Try to load the save game, if succeeded this pointer will no longer be valid
 	if (_saveSlot >= 0 &&Ultima8Engine::get_instance()->loadGameState(_saveSlot).getCode() == Common::kNoError) {
+		PaletteFaderProcess::I_fadeFromBlack(0, 0);
 		return;
 	}
 
