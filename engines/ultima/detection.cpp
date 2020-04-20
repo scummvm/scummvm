@@ -95,14 +95,14 @@ int UltimaMetaEngine::getMaximumSaveSlot() const {
 
 const char *UltimaMetaEngine::getSavegamePattern(const char *target) const {
 	static char buffer[100];
-	snprintf(buffer, 200, "%s.###", target == nullptr ? getEngineId() : target);
+	snprintf(buffer, 100, "%s.###", target == nullptr ? getEngineId() : target);
 
 	return buffer;
 }
 
 const char *UltimaMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
 	static char buffer[100];
-	snprintf(buffer, 200, "%s.%.3d", target == nullptr ? getEngineId() : target, saveGameIdx);
+	snprintf(buffer, 100, "%s.%.3d", target == nullptr ? getEngineId() : target, saveGameIdx);
 
 	return buffer;
 }
