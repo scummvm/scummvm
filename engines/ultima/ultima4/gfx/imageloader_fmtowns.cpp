@@ -39,12 +39,12 @@ Image *FMTOWNSImageLoader::load(Common::File *file, int width, int height, int b
 
 	ASSERT((bpp == 16) | (bpp == 4), "invalid bpp: %d", bpp);
 
-	long rawLen = file->size() - _offset;
+	int rawLen = file->size() - _offset;
 	file->seek(_offset, 0);
 	byte *raw = (byte *) malloc(rawLen);
 	file->read(raw, rawLen);
 
-	long requiredLength = (width * height * bpp / 8);
+	int requiredLength = (width * height * bpp / 8);
 	if (rawLen < requiredLength) {
 		if (raw)
 			free(raw);
@@ -108,12 +108,10 @@ Image *FMTOWNSImageLoader::load(Common::File *file, int width, int height, int b
 				int b = byte1 & high6;
 				b <<= 1;
 
-
-
-
-				image->putPixel(x, y,
-				                g, b, r,
-				                lastbit & byte1 ? IM_TRANSPARENT : IM_OPAQUE);
+				// TODO: Previously r & b were reversed. See if this proper
+				// order is correct, and if not properly swap value calculations
+				image->putPixel(x, y, r, g, b,
+					lastbit & byte1 ? IM_TRANSPARENT : IM_OPAQUE);
 			}
 		}
 	}

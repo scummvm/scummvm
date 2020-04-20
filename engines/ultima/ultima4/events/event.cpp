@@ -260,8 +260,6 @@ void EventHandler::handleMouseButtonDownEvent(const Common::Event &event, Contro
 	if (!settings._mouseOptions._enabled)
 		return;
 
-	if (button > 2)
-		button = 0;
 	const MouseArea *area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
 	if (!area || area->_command[button] == 0)
 		return;

@@ -358,9 +358,9 @@ bool DebuggerActions::talkAt(const Coords &coords) {
 	}
 
 	city = dynamic_cast<City *>(g_context->_location->_map);
-	Person *talker = city->personAt(coords);
+	Person *talker = city ? city->personAt(coords) : nullptr;
 
-	/* make sure we have someone we can talk with */
+	// Make sure we have someone we can talk with
 	if (!talker || !talker->canConverse())
 		return false;
 
@@ -370,7 +370,7 @@ bool DebuggerActions::talkAt(const Coords &coords) {
 		talker->getId() != PYTHON_ID)
 		return false;
 
-	/* if we're talking to Lord British and the avatar is dead, LB resurrects them! */
+	// If we're talking to Lord British and the avatar is dead, LB resurrects them!
 	if (talker->getNpcType() == NPC_LORD_BRITISH &&
 		g_context->_party->member(0)->getStatus() == STAT_DEAD) {
 		g_screen->screenMessage("%s, Thou shalt live again!\n", g_context->_party->member(0)->getName().c_str());
