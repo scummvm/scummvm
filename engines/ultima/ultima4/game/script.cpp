@@ -1412,8 +1412,8 @@ void Script::parseOperation(const Common::String &str, Common::String *left, Com
 		*op = ops[i];
 	}
 
-	*left = str.substr(0, pos),
-	 *right = str.substr(pos + ops[i].size());
+	*left = str.substr(0, pos);
+	*right = str.substr(pos + ops[i].size());
 }
 
 int Script::mathValue(const Common::String &str) {

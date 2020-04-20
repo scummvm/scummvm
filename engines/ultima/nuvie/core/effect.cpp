@@ -1137,7 +1137,8 @@ bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 		}
 		if (pixels[rnum] != color) {
 			pixels[rnum] = color;
-			++colored, ++colored_total; // another pixel was set
+			++colored;
+			++colored_total; // another pixel was set
 		}
 		++p;
 	}
