@@ -37,7 +37,7 @@ public:
 	/**
 	 * Play the specified music
 	 */
-	void play(byte *data, size_t size, int seqNo);
+	void play(byte *data, size_t size, int seqNo, int trackNo, bool speedHack);
 
 	/**
 	 * Sets whether the music should loop

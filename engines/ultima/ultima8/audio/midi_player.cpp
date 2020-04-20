@@ -51,7 +51,7 @@ MidiPlayer::~MidiPlayer() {
 	_driver->close();
 }
 
-void MidiPlayer::play(byte *data, size_t size, int seqNo) {
+void MidiPlayer::play(byte *data, size_t size, int seqNo, int trackNo, bool speedHack) {
 	if (!_driver)
 		return;
 
@@ -71,9 +71,11 @@ void MidiPlayer::play(byte *data, size_t size, int seqNo) {
 		if (!_parser->loadMusic(data, size))
 			error("play() wrong music resource");
 
-		_parser->setTrack(0);
+		_parser->setTrack(trackNo);
 		_parser->setMidiDriver(this);
 		_parser->setTimerRate(_driver->getBaseTempo());
+		if (speedHack)
+			_parser->setTempo(_driver->getBaseTempo() * 2);
 		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 

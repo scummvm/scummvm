@@ -147,18 +147,14 @@ void MusicProcess::playMusic_internal(int track) {
 		}
 
 		// Now get the transition midi
-		byte *data = nullptr;
 		uint32 size = 0;
 		int xmidi_index = _midiPlayer->isFMSynth() ? 260 : 258;
-		data = GameData::get_instance()->getMusic()->getRawObject(xmidi_index, &size);
+		byte *data = GameData::get_instance()->getMusic()->getRawObject(xmidi_index, &size);
 
 		//warning("Doing a MIDI transition! trans: %d xmidi: %d speedhack: %d", trans, xmidi_index, speed_hack);
 
 		if (data) {
-			_midiPlayer->play(data, size, 1);
-			// TODO: Handle speed hack under scummvm
-			//if (speed_hack)
-			//	_midiPlayer->setSequenceSpeed(1, 200);
+			_midiPlayer->play(data, size, 1, trans, speed_hack);
 		} else {
 			_midiPlayer->stop();
 		}
@@ -204,10 +200,20 @@ void MusicProcess::run() {
 		}
 
 		if (data) {
+#ifdef TODO
+			// TODO: support branches in tracks.
+			// Not clear how to do this with the scummvm xmidi parser..
+			if (song_branches[wanted_track] != -1)
+			 {
+				 XMidiEvent *event = list->findBranchEvent(song_branches[wanted_track]);
+				 if (!event) song_branches[wanted_track] = 0;
+			 }
+#endif
+
 			if (_midiPlayer) {
 				// if there's a track queued, only play this one once
 				bool repeat = (_trackState._queued == 0);
-				_midiPlayer->play(data, size, 0);
+				_midiPlayer->play(data, size, 0, 0, false);
 				_midiPlayer->setLooping(repeat);
 			}
 
