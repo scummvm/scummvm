@@ -592,7 +592,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 		damage_type = hitter->getDamageType();
 	}
 
-	if (other == 1 && attacker->getLastAnim() != Animation::kick) {
+	if (other == 1 && attacker && attacker->getLastAnim() != Animation::kick) {
 		// _strength for kicks is accumulated in AvatarMoverProcess
 		MainActor *av = getMainActor();
 		av->accumulateStr(damage / 4);
