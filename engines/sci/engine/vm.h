@@ -149,6 +149,7 @@ enum GlobalVar {
 	kGlobalVarPreviousRoomNo = 12,
 	kGlobalVarNewRoomNo      = 13,
 	kGlobalVarScore          = 15,
+	kGlobalVarVersion        = 27,
 	kGlobalVarGK2MusicVolume = 76, // 0 to 127
 	kGlobalVarPhant2SecondaryVolume = 76, // 0 to 127
 	kGlobalVarFastCast             = 84, // SCI16

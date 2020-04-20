@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "sci/sci.h"
@@ -29,10 +30,15 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
+#ifdef ENABLE_SCI32
+#include "sci/engine/guest_additions.h"
+#endif
+#include "sci/engine/savegame.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/cursor32.h"
+#include "sci/graphics/frameout.h"
 #endif
 #include "sci/graphics/maciconbar.h"
 #include "sci/console.h"
@@ -570,32 +576,118 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 }
 
 #ifdef ENABLE_SCI32
+// kMacKq7InitializeSave is a subop of kMacPlatform32.
+//  KQ7 Mac would display a native Save dialog with the prompt "Who's game?"
+//  and store the result in a global variable inside the interpreter
+//  for subsequent calls to kMacKq7SaveGame.
+reg_t kMacKq7InitializeSave(EngineState *s) {
+	s->_kq7MacSaveGameId = g_sci->_guestAdditions->runSaveRestore(true, s->_kq7MacSaveGameDescription);
+	s->_kq7MacSaveGameId = shiftSciToScummVMSaveId(s->_kq7MacSaveGameId);
+	return (s->_kq7MacSaveGameId != -1) ? TRUE_REG : NULL_REG;
+}
+
+// kMacKq7SaveGame is a subop of kMacPlatform32.
+//  Saves the game using the current save id and description that's set
+//  when initializing or restoring a saved game.
+reg_t kMacKq7SaveGame(EngineState *s) {
+	if (s->_kq7MacSaveGameId == -1) {
+		error("kMacKq7SaveGame: save game hasn't been initialized");
+	}
+
+	const reg_t version = s->variables[VAR_GLOBAL][kGlobalVarVersion];
+	const Common::String versionString = s->_segMan->getString(version);
+	if (gamestate_save(s, s->_kq7MacSaveGameId, s->_kq7MacSaveGameDescription, versionString)) {
+		return TRUE_REG;
+	}
+	return NULL_REG;
+}
+
+// kMacKq7RestoreGame is a subop of kMacPlatform32.
+//  KQ7 Mac would display a native Open dialog with the prompt "Who's game?"
+//  and store the result in a global variable inside the interpreter to
+//  use in subsequent calls to kMacKq7SaveGame before restoring.
+reg_t kMacKq7RestoreGame(EngineState *s) {
+	s->_kq7MacSaveGameId = g_sci->_guestAdditions->runSaveRestore(false, s->_kq7MacSaveGameDescription);
+	s->_kq7MacSaveGameId = shiftSciToScummVMSaveId(s->_kq7MacSaveGameId);
+	if (s->_kq7MacSaveGameId == -1) {
+		return NULL_REG;
+	}
+
+	// gamestate_restore() resets s->_kq7MacSaveGameId and 
+	//  s->_kq7MacSaveGameDescription so save and restore them.
+	int kq7MacSaveGameId = s->_kq7MacSaveGameId;
+	Common::String kq7MacSaveGameDescription = s->_kq7MacSaveGameDescription;
+	bool success = gamestate_restore(s, s->_kq7MacSaveGameId);
+	s->_kq7MacSaveGameId = kq7MacSaveGameId;
+	s->_kq7MacSaveGameDescription = kq7MacSaveGameDescription;
+
+	return success ? TRUE_REG : NULL_REG;
+}
+
+// kMacShiversInitializeSave is a subop of kMacPlatform32.
+reg_t kMacShiversInitializeSave(EngineState *s, int argc, reg_t *argv) {
+	return TRUE_REG; // NULL_REG if i/o errors
+}
+
+// kMacShiversSaveGame is a subop of kMacPlatform32.
+reg_t kMacShiversSaveGame(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxFrameout->kernelFrameOut(true); // see kSaveGame32
+
+	const int saveId = shiftSciToScummVMSaveId(argv[1].toUint16());
+	const Common::String description = s->_segMan->getString(argv[2]);
+	const reg_t version = s->variables[VAR_GLOBAL][kGlobalVarVersion];
+	const Common::String versionString = s->_segMan->getString(version);
+	if (gamestate_save(s, saveId, description, versionString)) {
+		return TRUE_REG;
+	}
+	return NULL_REG;
+}
+
+// kMacShiversRestoreGame is a subop of kMacPlatform32.
+reg_t kMacShiversRestoreGame(EngineState *s, int argc, reg_t *argv) {
+	const int saveId = shiftSciToScummVMSaveId(argv[1].toUint16());
+	if (gamestate_restore(s, saveId)) {
+		return TRUE_REG;
+	}
+	return NULL_REG;
+}
+
 reg_t kMacPlatform32(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case 0: // build cursor view map
 		g_sci->_gfxCursor32->setMacCursorRemapList(argc - 1, argv + 1);
-		break;
+		return s->r_acc;
 
 	case 1: // compact/purge mac memory
 	case 2: // hands-off/hands-on for mac menus
-		break;
+		return s->r_acc;
 
-	// TODO: Save game handling in KQ7, Shivers, and Lighthouse.
-	// - KQ7 uses all three with no parameters; the interpreter would
-	//   remember the current save file.
-	// - Shivers uses all three but passes parameters in a similar
-	//   manner as the normal kSave\kRestore calls.
-	// - Lighthouse goes insane and only uses subop 3 but adds sub-subops
-	//   which appear to do the three operations.
-	// Temporarily stubbing these out with success values so that KQ7 can start.
-	case 3: // initialize save game file
-		warning("Unimplemented kMacPlatform32(%d): Initialize save game file", argv[0].toUint16());
-		return TRUE_REG;
-	case 4: // save game
-		warning("Unimplemented kMacPlatform32(%d): Save game", argv[0].toUint16());
-		return TRUE_REG;
-	case 5: // restore game
-		warning("Unimplemented kMacPlatform32(%d): Restore game", argv[0].toUint16());
+	// Subops 3-5 are used for custom saving and restoring but they
+	//  changed completely between each game that uses them.
+	//
+	//  KQ7:        3-5 with no parameters
+	//  Shivers:    3-5 with parameters
+	//  Lighthouse: 3 with sub-subops: -1, 0, and 1 (TODO)
+	case 3:
+		if (argc == 1) {
+			return kMacKq7InitializeSave(s);
+		} else if (argc == 3) {
+			return kMacShiversInitializeSave(s, argc - 1, argv + 1);
+		} 
+		break;
+	case 4:
+		if (argc == 1) {
+			return kMacKq7SaveGame(s);
+		} else if (argc == 4) {
+			return kMacShiversSaveGame(s, argc - 1, argv + 1);
+		}
+		break;
+	case 5:
+		if (argc == 1) {
+			return kMacKq7RestoreGame(s);
+		} else if (argc == 3) {
+			return kMacShiversRestoreGame(s, argc - 1, argv + 1);
+		}
 		break;
 
 	// TODO: Mother Goose save game handling
@@ -605,18 +697,18 @@ reg_t kMacPlatform32(EngineState *s, int argc, reg_t *argv) {
 	case 9:
 	case 10:
 	case 11:
-		error("Unimplemented kMacPlatform32(%d) save game operation", argv[0].toUint16());
 		break;
 
 	// TODO: Phantasmagoria music volume adjustment [ 0-15 ]
 	case 12:
 		warning("Unimplemented kMacPlatform32(%d): Set volume: %d", argv[0].toUint16(), argv[1].toUint16());
-		break;
+		return s->r_acc;
 
 	default:
-		error("Unknown kMacPlatform32(%d)", argv[0].toUint16());
+		break;
 	}
 
+	error("Unknown kMacPlatform32(%d)", argv[0].toUint16());
 	return s->r_acc;
 }
 #endif

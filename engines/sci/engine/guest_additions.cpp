@@ -25,6 +25,7 @@
 #include "common/gui_options.h"
 #include "common/savefile.h"
 #include "sci/engine/features.h"
+#include "sci/engine/file.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
@@ -789,10 +790,24 @@ bool GuestAdditions::restoreFromLauncher() const {
 			reg_t args[] = { make_reg(0, _state->_delayedRestoreGameId - kSaveIdShift) };
 			invokeSelector(g_sci->getGameObject(), SELECTOR(restore), 1, args);
 		} else {
+			int saveId = _state->_delayedRestoreGameId;
+
 			// When `Game::restore` is invoked, it will call to `Restore::doit`
 			// which will automatically return the `_delayedRestoreGameId` instead
 			// of prompting the user for a save game
 			invokeSelector(g_sci->getGameObject(), SELECTOR(restore));
+
+			// initialize KQ7 Mac's global save state by recording the save id
+			//  and description. this is necessary for subsequent saves to work
+			//  after restoring from launcher.
+			if (g_sci->getGameId() == GID_KQ7 || g_sci->getPlatform() == Common::kPlatformMacintosh) {
+				_state->_kq7MacSaveGameId = saveId;
+
+				SavegameDesc savegameDesc;
+				if (fillSavegameDesc(g_sci->getSavegameName(saveId), savegameDesc)) {
+					_state->_kq7MacSaveGameDescription = savegameDesc.name;
+				}
+			}
 
 			// The normal save game system resets _delayedRestoreGameId with a
 			// call to `EngineState::reset`, but RAMA uses a custom save game

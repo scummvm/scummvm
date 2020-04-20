@@ -446,6 +446,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_KQ7,          2450,  2450,  0,       "maliciaComes", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when malicia appears at the southeast exit of the main chamber near the end of chapter 2
 	{ GID_KQ7,          5300,  5302,  0,          "putOnMask", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // in chapter 3, after using the mask on Valanice, click the jackalope hair in inventory - bug Trac#9759
 	{ GID_KQ7,          6060, 64964,  0,              "DPath", "init",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // after entering the harp crystal in chapter 5
+	{ GID_KQ7,            -1, 64994, -1,               "Game", "restore",                         NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when restoring from ScummVM launcher in Mac version
 	{ GID_LAURABOW,       37,     0,  0,                "CB1", "doit",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when going up the stairs - bug #5084
 	{ GID_LAURABOW,       -1,   967,  0,             "myIcon", "cycle",                           NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // having any portrait conversation coming up - initial bug #4971
 	{ GID_LAURABOW2,      -1,    24,  0,              "gcWin", "open",                            NULL,     5,     5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
