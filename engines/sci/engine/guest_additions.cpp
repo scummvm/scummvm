@@ -669,12 +669,28 @@ reg_t GuestAdditions::promptSaveRestoreRama(EngineState *s, int argc, reg_t *arg
 	return make_reg(0, saveIndex);
 }
 
-int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, const int forcedSaveNo) const {
-	int saveNo;
-	Common::String descriptionString;
+int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, const int forcedSaveId) const {
+	assert(!(isSave && outDescription.isNull()));
 
-	if (!isSave && forcedSaveNo != -1) {
-		saveNo = forcedSaveNo;
+	Common::String descriptionString;
+	int saveId = runSaveRestore(isSave, descriptionString, forcedSaveId);
+
+	if (!outDescription.isNull()) {
+		if (_segMan->isObject(outDescription)) {
+			outDescription = readSelector(_segMan, outDescription, SELECTOR(data));
+		}
+		SciArray &description = *_segMan->lookupArray(outDescription);
+		description.fromString(descriptionString);
+	}
+
+	return saveId;
+}
+
+int GuestAdditions::runSaveRestore(const bool isSave, Common::String &outDescription, const int forcedSaveId) const {
+	int saveId;
+
+	if (!isSave && forcedSaveId != -1) {
+		saveId = forcedSaveId;
 	} else {
 		const char *title;
 		const char *action;
@@ -687,22 +703,13 @@ int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, cons
 		}
 
 		GUI::SaveLoadChooser dialog(title, action, isSave);
-		saveNo = dialog.runModalWithCurrentTarget();
-		if (saveNo != -1) {
-			descriptionString = dialog.getResultString();
-			if (descriptionString.empty()) {
-				descriptionString = dialog.createDefaultSaveDescription(saveNo - 1);
+		saveId = dialog.runModalWithCurrentTarget();
+		if (saveId != -1) {
+			outDescription = dialog.getResultString();
+			if (outDescription.empty()) {
+				outDescription = dialog.createDefaultSaveDescription(saveId - 1);
 			}
 		}
-	}
-
-	assert(!isSave || !outDescription.isNull());
-	if (!outDescription.isNull()) {
-		if (_segMan->isObject(outDescription)) {
-			outDescription = readSelector(_segMan, outDescription, SELECTOR(data));
-		}
-		SciArray &description = *_segMan->lookupArray(outDescription);
-		description.fromString(descriptionString);
 	}
 
 	// The autosave slot in ScummVM takes up slot 0, but in SCI the first
@@ -710,13 +717,9 @@ int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, cons
 	// number here to match what would come from the normal SCI save/restore
 	// dialog. Wrap slot 0 around to kMaxShiftedSaveId so that it remains
 	// a legal SCI value.
-	if (saveNo > 0) {
-		saveNo -= kSaveIdShift;
-	} else if (saveNo == 0) {
-		saveNo = kMaxShiftedSaveId;
-	}
+	saveId = shiftScummVMToSciSaveId(saveId);
 
-	return saveNo;
+	return saveId;
 }
 
 reg_t GuestAdditions::promptSaveRestoreHoyle5(EngineState *s, int argc, reg_t *argv) const {

@@ -1196,6 +1196,33 @@ void SegManager::reconstructClones() {
 
 #pragma mark -
 
+bool gamestate_save(EngineState *s, int saveId, const Common::String &savename, const Common::String &version) {
+	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+	const Common::String filename = g_sci->getSavegameName(saveId);
+
+	Common::OutSaveFile *saveStream = saveFileMan->openForSaving(filename);
+	if (saveStream == nullptr) {
+		warning("Error opening savegame \"%s\" for writing", filename.c_str());
+		return false;
+	}
+
+	if (!gamestate_save(s, saveStream, savename, version)) {
+		warning("Saving the game failed");
+		saveStream->finalize();
+		delete saveStream;
+		return false;
+	}
+
+	saveStream->finalize();
+	if (saveStream->err()) {
+		warning("Writing the savegame failed");
+		delete saveStream;
+		return false;
+	}
+
+	delete saveStream;
+	return true;
+}
 
 bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
 	Common::Serializer ser(nullptr, fh);
@@ -1343,6 +1370,23 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 	default:
 		break;
 	}
+}
+
+bool gamestate_restore(EngineState *s, int saveId) {
+	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+	const Common::String filename = g_sci->getSavegameName(saveId);
+	Common::SeekableReadStream *saveStream = saveFileMan->openForLoading(filename);
+
+	if (saveStream == nullptr) {
+		warning("Savegame #%d not found", saveId);
+		return false;
+	}
+
+	gamestate_restore(s, saveStream);
+	delete saveStream;
+
+	gamestate_afterRestoreFixUp(s, saveId);
+	return true;
 }
 
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {

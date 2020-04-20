@@ -445,6 +445,24 @@ Common::MemoryReadStream *makeCatalogue(const uint maxNumSaves, const uint gameN
 
 	return new Common::MemoryReadStream(data, dataSize, DisposeAfterUse::YES);
 }
+
+int shiftSciToScummVMSaveId(int saveId) {
+	if (saveId == kMaxShiftedSaveId) {
+		return 0;
+	} else if (saveId >= 0) {
+		return saveId + kSaveIdShift;
+	}
+	return saveId;
+}
+
+int shiftScummVMToSciSaveId(int saveId) {
+	if (saveId == 0) {
+		return kMaxShiftedSaveId;
+	} else if (saveId > 0) {
+		return saveId - kSaveIdShift;
+	}
+	return saveId;
+}
 #endif
 
 FileHandle::FileHandle() : _in(0), _out(0) {

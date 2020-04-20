@@ -177,6 +177,9 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc);
  * compatible with game scripts' game catalogue readers.
  */
 Common::MemoryReadStream *makeCatalogue(const uint maxNumSaves, const uint gameNameSize, const Common::String &fileNamePattern, const bool ramaFormat);
+
+int shiftSciToScummVMSaveId(int saveId);
+int shiftScummVMToSciSaveId(int saveId);
 #endif
 
 } // End of namespace Sci

@@ -1151,31 +1151,10 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		s->_lastSaveNewId = savegameId;
 	}
 
-	s->r_acc = NULL_REG;
-
-	Common::String filename = g_sci->getSavegameName(savegameId);
-	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
-	Common::OutSaveFile *out;
-
-	out = saveFileMan->openForSaving(filename);
-	if (!out) {
-		warning("Error opening savegame \"%s\" for writing", filename.c_str());
-	} else {
-		if (!gamestate_save(s, out, game_description, version)) {
-			warning("Saving the game failed");
-		} else {
-			s->r_acc = TRUE_REG; // save successful
-		}
-
-		out->finalize();
-		if (out->err()) {
-			warning("Writing the savegame failed");
-			s->r_acc = NULL_REG; // write failure
-		}
-		delete out;
+	if (gamestate_save(s, savegameId, game_description, version)) {
+		return TRUE_REG;
 	}
-
-	return s->r_acc;
+	return NULL_REG;
 }
 
 reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
@@ -1221,23 +1200,8 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	if (findSavegame(saves, savegameId) == -1) {
 		s->r_acc = TRUE_REG;
 		warning("Savegame ID %d not found", savegameId);
-	} else {
-		Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
-		Common::String filename = g_sci->getSavegameName(savegameId);
-		Common::SeekableReadStream *in;
-
-		in = saveFileMan->openForLoading(filename);
-		if (in) {
-			// found a savegame file
-			gamestate_restore(s, in);
-			delete in;
-
-			gamestate_afterRestoreFixUp(s, savegameId);
-
-		} else {
-			s->r_acc = TRUE_REG;
-			warning("Savegame #%d not found", savegameId);
-		}
+	} else if (!gamestate_restore(s, savegameId)) {
+		s->r_acc = TRUE_REG; // signals failure
 	}
 
 	if (!s->r_acc.isNull()) {
@@ -1370,10 +1334,8 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 			// Autosave slot 1 is a "new game" save
 			saveNo = kNewGameId;
 		}
-	} else if (saveNo == kMaxShiftedSaveId) {
-		saveNo = 0;
 	} else {
-		saveNo += kSaveIdShift;
+		saveNo = shiftSciToScummVMSaveId(saveNo);
 	}
 
 	if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && s->callInStack(g_sci->getGameObject(), SELECTOR(bookMark))) {
@@ -1394,31 +1356,10 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->freeArray(autoSaveNameId);
 	}
 
-	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
-	const Common::String filename = g_sci->getSavegameName(saveNo);
-	Common::OutSaveFile *saveStream = saveFileMan->openForSaving(filename);
-
-	if (saveStream == nullptr) {
-		warning("Error opening savegame \"%s\" for writing", filename.c_str());
-		return NULL_REG;
+	if (gamestate_save(s, saveNo, saveDescription, gameVersion)) {
+		return TRUE_REG;
 	}
-
-	if (!gamestate_save(s, saveStream, saveDescription, gameVersion)) {
-		warning("Saving the game failed");
-		saveStream->finalize();
-		delete saveStream;
-		return NULL_REG;
-	}
-
-	saveStream->finalize();
-	if (saveStream->err()) {
-		warning("Writing the savegame failed");
-		delete saveStream;
-		return NULL_REG;
-	}
-
-	delete saveStream;
-	return TRUE_REG;
+	return NULL_REG;
 }
 
 reg_t kRestoreGame32(EngineState *s, int argc, reg_t *argv) {
@@ -1444,26 +1385,14 @@ reg_t kRestoreGame32(EngineState *s, int argc, reg_t *argv) {
 			// Autosave slot 1 is a "new game" save
 			saveNo = kNewGameId;
 		}
-	} else if (saveNo == kMaxShiftedSaveId) {
-		saveNo = 0;
 	} else {
-		saveNo += kSaveIdShift;
+		saveNo = shiftSciToScummVMSaveId(saveNo);
 	}
 
-	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
-	const Common::String filename = g_sci->getSavegameName(saveNo);
-	Common::SeekableReadStream *saveStream = saveFileMan->openForLoading(filename);
-
-	if (saveStream == nullptr) {
-		warning("Savegame #%d not found", saveNo);
-		return NULL_REG;
+	if (gamestate_restore(s, saveNo)) {
+		return TRUE_REG;
 	}
-
-	gamestate_restore(s, saveStream);
-	delete saveStream;
-
-	gamestate_afterRestoreFixUp(s, saveNo);
-	return TRUE_REG;
+	return NULL_REG;
 }
 
 reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
@@ -1475,10 +1404,8 @@ reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
 		if (saveNo == 1) {
 			saveNo = kNewGameId;
 		}
-	} else if (saveNo == kMaxShiftedSaveId) {
-		saveNo = 0;
 	} else {
-		saveNo += kSaveIdShift;
+		saveNo = shiftSciToScummVMSaveId(saveNo);
 	}
 
 	SavegameDesc save;
