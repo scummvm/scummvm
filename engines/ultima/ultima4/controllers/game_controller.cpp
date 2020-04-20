@@ -680,6 +680,9 @@ void GameController::timerFired() {
 
 		g_screen->screenCycle();
 
+		// Do game udpates to the screen, like tile animations
+		gameUpdateScreen();
+
 		/*
 		 * force pass if no commands within last 20 seconds
 		 */
