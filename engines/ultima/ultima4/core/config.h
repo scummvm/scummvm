@@ -30,9 +30,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-
-#define CLOCKS_PER_SEC 50
-
 /* info for loading city data from *.ult and *.tlk */
 #define CITY_HEIGHT 32
 #define CITY_WIDTH 32
