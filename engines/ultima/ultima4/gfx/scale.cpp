@@ -414,7 +414,7 @@ Image *scaleScale2x(Image *src, int scale, int n) {
 				src->getPixel(x, y + yoff1, h.r, h.g, h.b, h.a);
 				src->getPixel(x + xoff1, y + yoff1, i.r, i.g, i.b, i.a);
 
-				// lissen diagonals (45°,135°,225°,315°)
+				// lissen diagonals (45Â°,135Â°,225Â°,315Â°)
 				// corner : if there is gradient towards a diagonal direction,
 				// take the color of surrounding points in this direction
 				e0 = colorEqual(d, b) && (!colorEqual(b, f)) && (!colorEqual(d, h)) ? d : e;
@@ -422,7 +422,7 @@ Image *scaleScale2x(Image *src, int scale, int n) {
 				e2 = colorEqual(d, h) && (!colorEqual(d, b)) && (!colorEqual(h, f)) ? d : e;
 				e3 = colorEqual(h, f) && (!colorEqual(d, h)) && (!colorEqual(b, f)) ? f : e;
 
-				// lissen eight more directions (22° or 67°, 112° or 157°...)
+				// lissen eight more directions (22Â° or 67Â°, 112Â° or 157Â°...)
 				// middle of side : if there is a gradient towards one of these directions (middle of side direction and of direction of either diagonal around this side),
 				// take the color of surrounding points in this direction
 				e4 = colorEqual(e0, c) ? e0 : colorEqual(e1, a) ? e1 : e;
