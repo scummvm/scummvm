@@ -50,6 +50,7 @@
 #include "sci/video/seq_decoder.h"       // for SEQDecoder
 #include "video/avi_decoder.h"           // for AVIDecoder
 #include "video/coktel_decoder.h"        // for AdvancedVMDDecoder
+#include "video/qt_decoder.h"            // for QuickTimeDecoder
 #include "sci/graphics/video32.h"
 
 namespace Graphics { struct Surface; }
@@ -502,6 +503,41 @@ uint16 AVIPlayer::getDuration() const {
 	}
 
 	return _decoder->getFrameCount();
+}
+
+#pragma mark -
+#pragma mark QuickTimePlayer
+
+QuickTimePlayer::QuickTimePlayer(EventManager *eventMan) :
+	VideoPlayer(eventMan) {}
+
+void QuickTimePlayer::play(const Common::String& fileName) {
+	_decoder.reset(new Video::QuickTimeDecoder());
+	
+	if (!VideoPlayer::open(fileName)) {
+		_decoder.reset();
+		return;
+	}
+
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
+
+	const int16 scaledWidth = (_decoder->getWidth() * Ratio(screenWidth, scriptWidth)).toInt();
+	const int16 scaledHeight = (_decoder->getHeight() * Ratio(screenHeight, scriptHeight)).toInt();
+
+	_drawRect.left = (screenWidth - scaledWidth) / 2;
+	_drawRect.top = (screenHeight - scaledHeight) / 2;
+	_drawRect.setWidth(scaledWidth);
+	_drawRect.setHeight(scaledHeight);
+
+	startHQVideo();
+	playUntilEvent(kEventFlagMouseDown | kEventFlagEscapeKey);
+	endHQVideo();
+
+	g_system->fillScreen(0);
+	_decoder.reset();
 }
 
 #pragma mark -
