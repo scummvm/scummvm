@@ -62,7 +62,8 @@ enum {
 	kWMModeAutohideMenu 	= (1 << 1),
 	kWMModalMenuMode 		= (1 << 2),
 	kWMModeForceBuiltinFonts= (1 << 3),
-	kWMModeUnicode			= (1 << 4)
+	kWMModeUnicode			= (1 << 4),
+	kWMModeManualDrawWidgets= (1 << 5)
 };
 
 }
