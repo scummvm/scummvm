@@ -139,6 +139,11 @@ private:
 	bool cmdIgnite(int argc, const char **argv);
 
 	/**
+	 * Generic interaction
+	 */
+	bool cmdInteract(int argc, const char **argv);
+
+	/**
 	 * Jimmy lock
 	 */
 	bool cmdJimmy(int argc, const char **argv);

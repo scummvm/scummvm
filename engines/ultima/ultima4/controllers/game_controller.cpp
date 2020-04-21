@@ -340,89 +340,10 @@ void GameController::keybinder(KeybindingAction action) {
 }
 
 bool GameController::keyPressed(int key) {
-	bool valid = true;
-	int endTurn = 1;
-	Object *obj;
-	MapTile *tile;
+	// Manually redraw the text prompt
+	g_screen->screenPrompt();
 
-	/* Translate context-sensitive action key into a useful command */
-	if (key == U4_ENTER && settings._enhancements && settings._enhancementsOptions._smartEnterKey) {
-		/* Attempt to guess based on the character's surroundings etc, what
-		   action they want */
-
-		/* Do they want to board something? */
-		if (g_context->_transportContext == TRANSPORT_FOOT) {
-			obj = g_context->_location->_map->objectAt(g_context->_location->_coords);
-			if (obj && (obj->getTile().getTileType()->isShip() ||
-			            obj->getTile().getTileType()->isHorse() ||
-			            obj->getTile().getTileType()->isBalloon()))
-				key = 'b';
-		}
-		/* Klimb/Descend Balloon */
-		else if (g_context->_transportContext == TRANSPORT_BALLOON) {
-			if (g_context->_party->isFlying())
-				key = 'd';
-			else {
-#ifdef IOS
-				U4IOS::IOSSuperButtonHelper superHelper;
-				key = ReadChoiceController::get("xk \033\n");
-#else
-				key = 'k';
-#endif
-			}
-		}
-		/* X-it transport */
-		else key = 'x';
-
-		/* Klimb? */
-		if ((g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_KLIMB) != nullptr))
-			key = 'k';
-		/* Descend? */
-		else if ((g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_DESCEND) != nullptr))
-			key = 'd';
-
-		if (g_context->_location->_context == CTX_DUNGEON) {
-			Dungeon *dungeon = static_cast<Dungeon *>(g_context->_location->_map);
-			bool up = dungeon->ladderUpAt(g_context->_location->_coords);
-			bool down = dungeon->ladderDownAt(g_context->_location->_coords);
-			if (up && down) {
-#ifdef IOS
-				U4IOS::IOSClimbHelper climbHelper;
-				key = ReadChoiceController::get("kd \033\n");
-#else
-				key = 'k'; // This is consistent with the previous code. Ideally, I would have a UI here as well.
-#endif
-			} else if (up) {
-				key = 'k';
-			} else {
-				key = 'd';
-			}
-		}
-
-		/* Enter? */
-		if (g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_ENTER) != nullptr)
-			key = 'e';
-
-		/* Get Chest? */
-		if (!g_context->_party->isFlying()) {
-			tile = g_context->_location->_map->tileAt(g_context->_location->_coords, WITH_GROUND_OBJECTS);
-
-			if (tile->getTileType()->isChest()) key = 'g';
-		}
-
-		/* None of these? Default to search */
-		if (key == U4_ENTER) key = 's';
-	}
-
-	if (valid && endTurn) {
-		if (eventHandler->getController() == g_game)
-			g_context->_location->_turnCompleter->finishTurn();
-	} else if (!endTurn) {
-		/* if our turn did not end, then manually redraw the text prompt */
-		g_screen->screenPrompt();
-	}
-
-	return valid || KeyHandler::defaultHandler(key, nullptr);
+	return KeyHandler::defaultHandler(key, nullptr);
 }
 
 void GameController::initMoons() {

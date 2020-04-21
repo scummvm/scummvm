@@ -39,6 +39,7 @@ struct KeybindingRecord {
 };
 
 static const KeybindingRecord KEYS[] = {
+	{ KEYBIND_INTERACT, "INTERACT", "Interact", "interact", "RETURN", nullptr },
 	{ KEYBIND_UP, "UP", "Up", "move up", "UP", nullptr },
 	{ KEYBIND_DOWN, "DOWN", "Down", "move down", "DOWN", nullptr },
 	{ KEYBIND_LEFT, "LEFT", "Left", "move left", "LEFT", nullptr },

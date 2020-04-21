@@ -64,6 +64,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("get", WRAP_METHOD(Debugger, cmdGet));
 	registerCmd("hole", WRAP_METHOD(Debugger, cmdHoleUp));
 	registerCmd("ignite", WRAP_METHOD(Debugger, cmdIgnite));
+	registerCmd("interact", WRAP_METHOD(Debugger, cmdInteract));
 	registerCmd("jimmy", WRAP_METHOD(Debugger, cmdJimmy));
 	registerCmd("locate", WRAP_METHOD(Debugger, cmdLocate));
 	registerCmd("mix", WRAP_METHOD(Debugger, cmdMixReagents));
@@ -635,6 +636,77 @@ bool Debugger::cmdIgnite(int argc, const char **argv) {
 	}
 
 	return isDebuggerActive();
+}
+
+bool Debugger::cmdInteract(int argc, const char **argv) {
+	if (!settings._enhancements || !settings._enhancementsOptions._smartEnterKey)
+		return isDebuggerActive();
+
+	// Attempt to guess based on the character's surroundings
+
+	if (g_context->_transportContext == TRANSPORT_FOOT) {
+		// When on foot, check for boarding
+		Object *obj = g_context->_location->_map->objectAt(g_context->_location->_coords);
+		if (obj && (obj->getTile().getTileType()->isShip() ||
+				obj->getTile().getTileType()->isHorse() ||
+				obj->getTile().getTileType()->isBalloon()))
+			return cmdBoard(argc, argv);
+	} else if (g_context->_transportContext == TRANSPORT_BALLOON) {
+		// Climb/Descend Balloon
+		if (g_context->_party->isFlying()) {
+			return cmdDescend(argc, argv);
+		} else {
+#ifdef IOS
+			U4IOS::IOSSuperButtonHelper superHelper;
+			key = ReadChoiceController::get("xk \033\n");
+#else
+			return cmdClimb(argc, argv);
+#endif
+		}
+	} else {
+		// For all other transports, exit the transport
+		return cmdExit(argc, argv);
+	}
+
+	if ((g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_KLIMB) != nullptr))
+		// Climb
+		return cmdClimb(argc, argv);
+	else if ((g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_DESCEND) != nullptr))
+		// Descend
+		return cmdDescend(argc, argv);
+
+	if (g_context->_location->_context == CTX_DUNGEON) {
+		Dungeon *dungeon = static_cast<Dungeon *>(g_context->_location->_map);
+		bool up = dungeon->ladderUpAt(g_context->_location->_coords);
+		bool down = dungeon->ladderDownAt(g_context->_location->_coords);
+		if (up && down) {
+#ifdef IOS
+			U4IOS::IOSClimbHelper climbHelper;
+			key = ReadChoiceController::get("kd \033\n");
+#else
+			return cmdClimb(argc, argv);
+#endif
+		} else if (up) {
+			return cmdClimb(argc, argv);
+		} else {
+			return cmdDescend(argc, argv);
+		}
+	}
+
+	if (g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_ENTER) != nullptr)
+		// Enter?
+		return cmdEnter(argc, argv);
+
+	if (!g_context->_party->isFlying()) {
+		// Get Chest?
+		MapTile *tile = g_context->_location->_map->tileAt(g_context->_location->_coords, WITH_GROUND_OBJECTS);
+
+		if (tile->getTileType()->isChest())
+			return cmdGet(argc, argv);
+	}
+
+	// Otherwise default to search
+	return cmdSearch(argc, argv);
 }
 
 bool Debugger::cmdJimmy(int argc, const char **argv) {
