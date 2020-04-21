@@ -1074,7 +1074,7 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 		targetSurface.transBlitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top), _vm->getPaletteColorCount() - 1);
 		break;
 	case kInkTypeBackgndTrans:
-		drawBackgndTransSprite(targetSurface, spriteSurface, drawRect);
+		drawBackgndTransSprite(targetSurface, spriteSurface, drawRect, spriteId);
 		break;
 	case kInkTypeMatte:
 		drawMatteSprite(targetSurface, spriteSurface, drawRect);
@@ -1092,8 +1092,8 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 	}
 }
 
-void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
-	uint8 skipColor = _vm->getPaletteColorCount() - 1; // FIXME is it always white (last entry in pallette) ?
+void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect, int spriteId) {
+	byte skipColor = _sprites[spriteId]->_backColor;
 	Common::Rect srcRect(sprite.w, sprite.h);
 
 	if (!target.clip(srcRect, drawRect))
