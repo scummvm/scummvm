@@ -43,9 +43,9 @@
 #ifdef ENABLE_SCI32
 #include "graphics/thumbnail.h"
 #include "sci/engine/guest_additions.h"
+#endif
 #include "sci/engine/message.h"
 #include "sci/resource.h"
-#endif
 
 namespace Sci {
 
@@ -1108,15 +1108,15 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 			case GID_QFG3: {
 				// Auto-save system used by QFG3
 				reg_t autoSaveNameId;
-				SciArray &autoSaveName = *s->_segMan->allocateArray(kArrayTypeString, kMaxSaveNameLength, &autoSaveNameId);
+				s->_segMan->allocDynmem(kMaxSaveNameLength, "kSaveGame", &autoSaveNameId);
 				MessageTuple autoSaveNameTuple(0, 0, 16, 1);
 				s->_msgState->getMessage(0, autoSaveNameTuple, autoSaveNameId);
-
-				if (game_description == autoSaveName.toString()) {
+				Common::String autoSaveName = s->_segMan->getString(autoSaveNameId);
+				if (game_description == autoSaveName) {
 					savegameId = kAutoSaveId;
 				}
 
-				s->_segMan->freeArray(autoSaveNameId);
+				s->_segMan->freeDynmem(autoSaveNameId);
 				break;
 			}
 			case GID_FANMADE: {

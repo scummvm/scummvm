@@ -40,7 +40,6 @@ enum {
 	kMaxNumSaveGames = 20 ///< Maximum number of savegames
 };
 
-#ifdef ENABLE_SCI32
 enum {
 	kAutoSaveId = 0,  ///< The save game slot number for autosaves
 	kNewGameId = 999, ///< The save game slot number for a "new game" save
@@ -53,7 +52,6 @@ enum {
 	kSaveIdShift = 1,
 	kMaxShiftedSaveId = 99
 };
-#endif
 
 enum {
 	kVirtualFileHandleStart = 32000,
