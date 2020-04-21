@@ -414,9 +414,6 @@ bool GameController::keyPressed(int key) {
 		if (key == U4_ENTER) key = 's';
 	}
 
-	if ((g_context->_location->_context & CTX_DUNGEON) && strchr("abefjlotxy", key))
-		g_screen->screenMessage("%cNot here!%c\n", FG_GREY, FG_WHITE);
-
 	if (valid && endTurn) {
 		if (eventHandler->getController() == g_game)
 			g_context->_location->_turnCompleter->finishTurn();

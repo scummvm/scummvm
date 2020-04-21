@@ -148,6 +148,24 @@ void Debugger::printN(const char *fmt, ...) {
 }
 
 bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
+	static const char *DUNGEON_DISALLOWED[] = {
+		"attack", "board", "enter", "fire", "jimmy", "locate",
+		"open", "talk", "exit", "yell", nullptr
+	};
+
+	if (g_context && (g_context->_location->_context & CTX_DUNGEON)) {
+		Common::String method = argv[0];
+
+		for (const char *const *mth = DUNGEON_DISALLOWED; *mth; ++mth) {
+			if (method.equalsIgnoreCase(*mth)) {
+				print("%cNot here!%c", FG_GREY, FG_WHITE);
+				g_game->finishTurn();
+				keepRunning = false;
+				return true;
+			}
+		}
+	}
+
 	bool result = Shared::Debugger::handleCommand(argc, argv, keepRunning);
 
 	if (result) {
