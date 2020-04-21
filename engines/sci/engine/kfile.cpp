@@ -1105,6 +1105,20 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 				// Jones has one save slot only
 				savegameId = 0;
 				break;
+			case GID_QFG3: {
+				// Auto-save system used by QFG3
+				reg_t autoSaveNameId;
+				SciArray &autoSaveName = *s->_segMan->allocateArray(kArrayTypeString, kMaxSaveNameLength, &autoSaveNameId);
+				MessageTuple autoSaveNameTuple(0, 0, 16, 1);
+				s->_msgState->getMessage(0, autoSaveNameTuple, autoSaveNameId);
+
+				if (game_description == autoSaveName.toString()) {
+					savegameId = kAutoSaveId;
+				}
+
+				s->_segMan->freeArray(autoSaveNameId);
+				break;
+			}
 			case GID_FANMADE: {
 				// Fanmade game, try to identify the game
 				const char *gameName = g_sci->getGameObjectName();
