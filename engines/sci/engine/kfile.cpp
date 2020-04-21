@@ -400,7 +400,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 			// of the filename
 			const int skip = name.firstChar() < '0' || name.firstChar() > '9';
 
-			if (sscanf(name.c_str() + skip, "%i.DTA", &saveNo) != 1) {
+			if (sscanf(name.c_str() + skip, "%d.DTA", &saveNo) != 1) {
 				warning("Could not parse game filename %s", name.c_str());
 			}
 
@@ -453,7 +453,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		int saveNo = -1;
 		if (name == "911.sg" || name == "autorama.sg") {
 			saveNo = kAutoSaveId;
-		} else if (sscanf(name.c_str(), "ramasg.%i", &saveNo) == 1) {
+		} else if (sscanf(name.c_str(), "ramasg.%d", &saveNo) == 1) {
 			saveNo += kSaveIdShift;
 		}
 
@@ -679,8 +679,8 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 		// Special cases for KQ7 & RAMA, basically identical to the SQ4 case
 		// above, where the game hardcodes its save game names
 		int saveNo;
-		if (sscanf(name.c_str(), "kq7cdsg.%i", &saveNo) == 1 ||
-			sscanf(name.c_str(), "ramasg.%i", &saveNo) == 1) {
+		if (sscanf(name.c_str(), "kq7cdsg.%d", &saveNo) == 1 ||
+			sscanf(name.c_str(), "ramasg.%d", &saveNo) == 1) {
 
 			name = g_sci->getSavegameName(saveNo + kSaveIdShift);
 		} else if (g_sci->getGameId() == GID_RAMA && (name == "911.sg" || name == "autorama.sg")) {
@@ -835,7 +835,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		// the native save/load dialogue
 		if (name == "autorama.sg") {
 			findSaveNo = kAutoSaveId;
-		} else if (sscanf(name.c_str(), "ramasg.%i", &findSaveNo) == 1) {
+		} else if (sscanf(name.c_str(), "ramasg.%d", &findSaveNo) == 1) {
 			findSaveNo += kSaveIdShift;
 		}
 	}
