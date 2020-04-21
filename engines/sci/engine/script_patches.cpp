@@ -5251,10 +5251,35 @@ static const uint16 kq7SnakeOilSalesmanPatch[] = {
 	PATCH_END
 };
 
+// KQ7 allows a maximum of 10 save games but English version 2.00 introduced a
+//  script bug which removed the check that enforces this. We add the missing
+//  check so that the game doesn't break. Sierra later released English version
+//  2.00b whose only change was to fix this.
+//
+// Applies to: English PC 2.00
+// Responsible method: startBut:doVerb
+static const uint16 kq7TooManySavesSignature[] = {
+	0x47, 0x15, 0x00, SIG_UINT16(0x0000),   // calle proc21_0 [ get save count ]
+	0xa5, 0x00,                             // sat 00 [ unused ]
+	SIG_MAGICDWORD,
+	0x35, 0x00,                             // ldi 00
+	0x31, 0x16,                             // bnt 16 [ allow save ]
+	SIG_END
+};
+
+static const uint16 kq7TooManySavesPatch[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x36,                                   // push
+	0x35, 0x0a,                             // ldi 0a
+	0x20,                                   // ge? [ save count >= 10 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
 	{  true,     0, "remove hardcoded spin loop",                  1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
+	{  true,    30, "fix allowing too many saves",                 1, kq7TooManySavesSignature,                 kq7TooManySavesPatch },
 	{  true,  5300, "fix snake oil salesman disposal",             1, kq7SnakeOilSalesmanSignature,             kq7SnakeOilSalesmanPatch },
 	{  true,  6100, "fix extra ambrosia",                          1, kq7ExtraAmbrosiaSignature,                kq7ExtraAmbrosiaPatch },
 	{  true,    31, "enable subtitles (1/3)",                      1, kq7SubtitleFixSignature1,                 kq7SubtitleFixPatch1 },
