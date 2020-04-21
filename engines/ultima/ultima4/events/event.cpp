@@ -80,14 +80,15 @@ void EventHandler::setControllerDone(bool done) {
 	if (done)
 		controllerStopped_helper();
 #endif
-}     /**< Sets the controller exit flag for the event handler */
+}
 
-bool EventHandler::getControllerDone()         {
-	return _controllerDone;    /**< Returns the current value of the global exit flag */
+bool EventHandler::getControllerDone() {
+	return _controllerDone;
 }
 
 void EventHandler::end() {
-	_ended = true;    /**< End all event processing */
+	// End all event processing
+	_ended = true;
 }
 
 TimedEventMgr *EventHandler::getTimer()  {
@@ -261,9 +262,10 @@ void EventHandler::handleMouseButtonDownEvent(const Common::Event &event, Contro
 		return;
 
 	const MouseArea *area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
-	if (!area || area->_command[button] == 0)
+	if (!area || area->_command[button] == KEYBIND_NONE)
 		return;
-	controller->keyPressed(area->_command[button]);
+	controller->keybinder((KeybindingAction)area->_command[button]);
+
 	if (updateScreen)
 		(*updateScreen)();
 	g_screen->update();
@@ -299,7 +301,7 @@ void EventHandler::handleKeyDownEvent(const Common::Event &event, Controller *co
 	debug(1, "key event: sym = %d, mod = %d; translated = %d",
 		event.kbd.keycode, event.kbd.flags, key);
 
-	/* handle the keypress */
+	// handle the keypress
 	processed = controller->notifyKeyPressed(key);
 
 	if (processed) {

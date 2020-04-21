@@ -116,6 +116,10 @@ public:
 	static void wait_cycles(uint cycles);
 
 	static void setControllerDone(bool exit = true);
+
+	/**
+	 * Returns the current value of the global exit flag
+	 */
 	static bool getControllerDone();
 	static void end();
 
