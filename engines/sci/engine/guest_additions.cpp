@@ -800,7 +800,7 @@ bool GuestAdditions::restoreFromLauncher() const {
 			// initialize KQ7 Mac's global save state by recording the save id
 			//  and description. this is necessary for subsequent saves to work
 			//  after restoring from launcher.
-			if (g_sci->getGameId() == GID_KQ7 || g_sci->getPlatform() == Common::kPlatformMacintosh) {
+			if (g_sci->getGameId() == GID_KQ7 && g_sci->getPlatform() == Common::kPlatformMacintosh) {
 				_state->_kq7MacSaveGameId = saveId;
 
 				SavegameDesc savegameDesc;
