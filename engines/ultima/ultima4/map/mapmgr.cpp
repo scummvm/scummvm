@@ -70,7 +70,7 @@ MapMgr::MapMgr() {
 	for (Std::vector<ConfigElement>::iterator i = maps.begin(); i != maps.end(); i++) {
 		map = initMapFromConf(*i);
 
-		/* map actually gets loaded later, when it's needed */
+		// Map actually gets loaded later, when it's needed
 		registerMap(map);
 	}
 }
@@ -128,7 +128,7 @@ Map *MapMgr::initMap(Map::Type type) {
 }
 
 Map *MapMgr::get(MapId id) {
-	/* if the map hasn't been loaded yet, load it! */
+	// if the map hasn't been loaded yet, load it!
 	if (!_mapList[id]->_data.size()) {
 		MapLoader *loader = MapLoader::getLoader(_mapList[id]->_type);
 		if (loader == nullptr)

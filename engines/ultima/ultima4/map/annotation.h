@@ -48,37 +48,72 @@ public:
 	void debug_output() const;
 
 	// Getters
+	/**
+	 * Returns the coordinates of the annotation
+	 */
 	const Coords &getCoords() const {
-		return _coords;    /**< Returns the coordinates of the annotation */
+		return _coords;
 	}
-	MapTile &getTile()              {
-		return _tile;      /**< Returns the annotation's tile */
+
+	/**
+	 * Returns the annotation's tile
+	 */
+	MapTile &getTile() {
+		return _tile;
 	}
+
+	/**
+	 * Returns true for visual-only annotations
+	 */
 	bool isVisualOnly() const {
-		return _visual;    /**< Returns true for visual-only annotations */
+		return _visual;
 	}
-	int getTTL() const        {
-		return _ttl;       /**< Returns the number of turns the annotation has left to live */
+
+	/**
+	 * Returns the number of turns the annotation has left to live
+	 */
+	int getTTL() const {
+		return _ttl;
 	}
-	bool isCoverUp()                {
+
+	bool isCoverUp() const {
 		return _coverUp;
 	}
 
 	// Setters
+	/**
+	 * Sets the coordinates for the annotation
+	 */
 	void setCoords(const Coords &c) {
-		_coords = c;       /**< Sets the coordinates for the annotation */
+		_coords = c;
 	}
-	void setTile(const MapTile &t)  {
-		_tile = t;         /**< Sets the tile for the annotation */
+
+	/**
+	 * Sets the tile for the annotation
+	 */
+	void setTile(const MapTile &t) {
+		_tile = t;
 	}
-	void setVisualOnly(bool v)      {
-		_visual = v;       /**< Sets whether or not the annotation is visual-only */
+
+	/**
+	 * Sets whether or not the annotation is visual-only
+	 */
+	void setVisualOnly(bool v) {
+		_visual = v;
 	}
-	void setTTL(int turns)          {
-		_ttl = turns;      /**< Sets the number of turns the annotation will live */
+
+	/**
+	 * Sets the number of turns the annotation will live
+	 */
+	void setTTL(int turns) {
+		_ttl = turns;
 	}
-	void passTurn()                 {
-		if (_ttl > 0) _ttl--;    /**< Passes a turn for the annotation */
+
+	/**
+	 * Passes a turn for the annotation
+	 */
+	void passTurn() {
+		if (_ttl > 0) _ttl--;
 	}
 
 	bool operator==(const Annotation &) const;

@@ -83,6 +83,9 @@ public:
 	Location *_prev;
 };
 
+/**
+ * Pop a location from the stack and free the memory
+ */
 void locationFree(Location **stack);
 
 } // End of namespace Ultima4

@@ -92,9 +92,7 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 		error("Unknown type");
 	}
 
-	/**
-	 * See if the transform is performed randomely
-	 */
+	// See if the transform is performed randomly
 	if (conf.exists("random"))
 		transform->_random = conf.getInt("random");
 	else
@@ -237,9 +235,7 @@ TileAnimContext *TileAnimContext::create(const ConfigElement &conf) {
 		break;
 	}
 
-	/**
-	 * Add the transforms to the context
-	 */
+	// Add the transforms to the context
 	if (context) {
 		vector<ConfigElement> children = conf.getChildren();
 
@@ -270,9 +266,8 @@ bool TileAnimPlayerDirContext::isInContext(Tile *t, MapTile &mapTile, Direction 
 	return (d == _dir);
 }
 
-/**
- * TileAnimSet
- */
+/*-------------------------------------------------------------------*/
+
 TileAnimSet::TileAnimSet(const ConfigElement &conf) {
 	_name = conf.getString("name");
 
@@ -316,15 +311,13 @@ void TileAnim::draw(Image *dest, Tile *tile, MapTile &mapTile, Direction dir) {
 	Std::vector<TileAnimContext *>::const_iterator c;
 	bool drawn = false;
 
-	/* nothing to do, draw the tile and return! */
+	// Nothing to do, draw the tile and return!
 	if ((_random && xu4_random(100) > _random) || (!_transforms.size() && !_contexts.size()) || mapTile._freezeAnimation) {
 		tile->getImage()->drawSubRectOn(dest, 0, 0, 0, mapTile._frame * tile->getHeight(), tile->getWidth(), tile->getHeight());
 		return;
 	}
 
-	/**
-	 * Do global transforms
-	 */
+	// Do global transforms
 	for (t = _transforms.begin(); t != _transforms.end(); t++) {
 		TileAnimTransform *transform = *t;
 
@@ -336,9 +329,7 @@ void TileAnim::draw(Image *dest, Tile *tile, MapTile &mapTile, Direction dir) {
 		}
 	}
 
-	/**
-	 * Do contextual transforms
-	 */
+	// Do contextual transforms
 	for (c = _contexts.begin(); c != _contexts.end(); c++) {
 		if ((*c)->isInContext(tile, mapTile, dir)) {
 			TileAnimContext::TileAnimTransformList ctx_transforms = (*c)->getTransforms();

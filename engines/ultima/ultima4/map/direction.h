@@ -53,10 +53,36 @@ Direction dirReverse(Direction dir);
 Direction dirFromMask(int dir_mask);
 Direction dirRotateCW(Direction dir);
 Direction dirRotateCCW(Direction dir);
+
+/**
+ * Returns the a mask containing the broadsides directions for a given direction.
+ * For instance, dirGetBroadsidesDirs(DIR_NORTH) returns:
+ * (MASK_DIR(DIR_WEST) | MASK_DIR(DIR_EAST))
+ */
 int dirGetBroadsidesDirs(Direction dir);
+
+/**
+ * Returns a random direction from a provided mask of available
+ * directions.
+ */
 Direction dirRandomDir(int valid_directions_mask);
+
+/**
+ * Normalizes the direction based on the orientation given
+ * (if facing west, and 'up' is pressed, the 'up' is translated
+ *  into DIR_NORTH -- this function tranlates that direction
+ *  to DIR_WEST, the correct direction in this case).
+ */
 Direction dirNormalize(Direction orientation, Direction dir);
+
+/**
+ * Translates a keyboard code into a direction
+ */
 Direction keyToDirection(int key);
+
+/**
+ * Translates a direction into a keyboard code
+ */
 int directionToKey(Direction dir);
 
 } // End of namespace Ultima4

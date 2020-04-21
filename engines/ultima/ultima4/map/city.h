@@ -81,6 +81,10 @@ public:
 	Std::vector<Dialogue *> _extraDialogues;
 };
 
+/**
+ * Returns true if the Map pointed to by 'punknown'
+ * is a City map
+ */
 bool isCity(Map *punknown);
 
 } // End of namespace Ultima4

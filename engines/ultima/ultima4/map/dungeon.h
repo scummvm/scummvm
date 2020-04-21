@@ -170,11 +170,29 @@ enum FieldType {
 	FIELD_SLEEP                 = 0x3
 };
 
+/**
+ * Handles 's'earching while in dungeons
+ */
 void dungeonSearch();
+
+/**
+ * Drink from the fountain at the current location
+ */
 void dungeonDrinkFountain();
+
+/**
+ * Touch the magical ball at the current location
+ */
 void dungeonTouchOrb();
+
+/**
+ * Handles dungeon traps
+ */
 bool dungeonHandleTrap(TrapType trap);
 
+/**
+ * Returns true if 'map' points to a dungeon map
+ */
 bool isDungeon(Map *punknown);
 
 } // End of namespace Ultima4

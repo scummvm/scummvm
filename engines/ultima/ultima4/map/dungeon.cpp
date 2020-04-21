@@ -36,9 +36,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-/**
- * Returns true if 'map' points to a dungeon map
- */
 bool isDungeon(Map *punknown) {
 	Dungeon *pd;
 	if ((pd = dynamic_cast<Dungeon *>(punknown)) != nullptr)
@@ -82,10 +79,6 @@ DungeonToken Dungeon::currentToken() {
 	return tokenAt(g_context->_location->_coords);
 }
 
-/**
- * Return the dungeon sub-token associated with the given dungeon tile.
- *
- */
 byte Dungeon::currentSubToken() {
 	return subTokenAt(g_context->_location->_coords);
 }
@@ -99,9 +92,6 @@ byte Dungeon::subTokenAt(MapCoords coords) {
 	return _dataSubTokens[index];
 }
 
-/**
- * Handles 's'earching while in dungeons
- */
 void dungeonSearch(void) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
 	DungeonToken token = dungeon->currentToken();
@@ -141,9 +131,6 @@ void dungeonSearch(void) {
 	}
 }
 
-/**
- * Drink from the fountain at the current location
- */
 void dungeonDrinkFountain() {
 	g_screen->screenMessage("You find a Fountain.\nWho drinks? ");
 	int player = gameGetPlayer(false, false);
@@ -194,9 +181,6 @@ void dungeonDrinkFountain() {
 	}
 }
 
-/**
- * Touch the magical ball at the current location
- */
 void dungeonTouchOrb() {
 	g_screen->screenMessage("You find a Magical Ball...\nWho touches? ");
 	int player = gameGetPlayer(false, false);
@@ -259,9 +243,6 @@ void dungeonTouchOrb() {
 	g_context->_location->_map->_annotations->add(g_context->_location->_coords, replacementTile);
 }
 
-/**
- * Handles dungeon traps
- */
 bool dungeonHandleTrap(TrapType trap) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
 	switch ((TrapType)dungeon->currentSubToken()) {

@@ -34,12 +34,12 @@
 namespace Ultima {
 namespace Ultima4 {
 
+DungeonView *DungeonView::_instance = nullptr;
+
 DungeonView::DungeonView(int x, int y, int columns, int rows) : TileView(x, y, rows, columns)
 	, screen3dDungeonViewEnabled(true) {
 }
 
-
-DungeonView *DungeonView::_instance(nullptr);
 DungeonView *DungeonView::getInstance() {
 	if (!_instance)     {
 		_instance = new DungeonView(BORDER_WIDTH, BORDER_HEIGHT, VIEWPORT_W, VIEWPORT_H);
@@ -50,9 +50,9 @@ DungeonView *DungeonView::getInstance() {
 void DungeonView::display(Context *c, TileView *view) {
 	int x, y;
 
-	/* 1st-person perspective */
+	// 1st-person perspective
 	if (screen3dDungeonViewEnabled) {
-		//Note: This shouldn't go above 4, unless we check opaque tiles each step of the way.
+		// Note: This shouldn't go above 4, unless we check opaque tiles each step of the way.
 		const int farthest_non_wall_tile_visibility = 4;
 
 		Std::vector<MapTile> tiles;
@@ -62,7 +62,7 @@ void DungeonView::display(Context *c, TileView *view) {
 			for (y = 3; y >= 0; y--) {
 				DungeonGraphicType type;
 
-				//FIXME: Maybe this should be in a loop
+				// FIXME: Maybe this should be in a loop
 				tiles = getTiles(y, -1);
 				type = tilesToGraphic(tiles);
 				drawWall(-1, y, (Direction)g_ultima->_saveGame->_orientation, type);
@@ -75,7 +75,7 @@ void DungeonView::display(Context *c, TileView *view) {
 				type = tilesToGraphic(tiles);
 				drawWall(0, y, (Direction)g_ultima->_saveGame->_orientation, type);
 
-				//This only checks that the tile at y==3 is opaque
+				// This only checks that the tile at y==3 is opaque
 				if (y == 3 && !tiles.front().getTileType()->isOpaque()) {
 					for (int y_obj = farthest_non_wall_tile_visibility; y_obj > y; y_obj--) {
 						Std::vector<MapTile> distant_tiles = getTiles(y_obj     , 0);
@@ -91,7 +91,7 @@ void DungeonView::display(Context *c, TileView *view) {
 		}
 	}
 
-	/* 3rd-person perspective */
+	// 3rd-person perspective
 	else {
 		Std::vector<MapTile> tiles;
 
@@ -102,7 +102,7 @@ void DungeonView::display(Context *c, TileView *view) {
 			for (x = 0; x < VIEWPORT_W; x++) {
 				tiles = getTiles((VIEWPORT_H / 2) - y, x - (VIEWPORT_W / 2));
 
-				/* Only show blackness if there is no light */
+				// Only show blackness if there is no light
 				if (c->_party->getTorchDuration() <= 0)
 					view->drawTile(black, false, x, y);
 				else if (x == VIEWPORT_W / 2 && y == VIEWPORT_H / 2)
@@ -141,9 +141,9 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
 
 	const int *dscale = tiledWall ? lscale : nscale;
 
-	//Clear scratchpad and set a background color
+	// Clear scratchpad and set a background color
 	_animated->initializeToBackgroundColor();
-	//Put tile on animated scratchpad
+	// Put tile on animated scratchpad
 	if (tile->getAnim()) {
 		MapTile mt = tile->getId();
 		tile->getAnim()->draw(_animated, tile, mt, orientation);
@@ -151,8 +151,8 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
 		tile->getImage()->drawOn(_animated, 0, 0);
 	}
 	_animated->makeBackgroundColorTransparent();
-	//This process involving the background color is only required for drawing in the dungeon.
-	//It will not play well with semi-transparent graphics.
+	// This process involving the background color is only required for drawing in the dungeon.
+	// It will not play well with semi-transparent graphics.
 
 	/* scale is based on distance; 1 means half size, 2 regular, 4 means scale by 2x, etc. */
 	if (dscale[distance] == 0)
@@ -174,25 +174,15 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
 		for (int x = i_x; x < f_x; x += d_x)
 			for (int y = i_y; y < f_y; y += d_y)
 				_animated->drawSubRectOn(this->_screen,
-				                         x,
-				                         y,
-				                         0,
-				                         0,
-				                         f_x - x,
-				                         f_y - y
-				                        );
+					x, y, 0, 0, f_x - x, f_y - y);
 	} else {
 		int y_offset = MAX(0, (dscale[distance] - offset_adj) * offset_multiplier);
 		int x = SCALED((VIEWPORT_W * _tileWidth / 2) + this->_x) - (scaled->width() / 2);
 		int y = SCALED((VIEWPORT_H * _tileHeight / 2) + this->_y + y_offset) - (scaled->height() / 8);
 
-		scaled->drawSubRectOn(this->_screen,
-		                      x,
-		                      y,
-		                      0,
-		                      0,
-		                      SCALED(_tileWidth * VIEWPORT_W + this->_x) - x ,
-		                      SCALED(_tileHeight * VIEWPORT_H + this->_y) - y);
+		scaled->drawSubRectOn(this->_screen, x, y, 0, 0,
+			SCALED(_tileWidth * VIEWPORT_W + this->_x) - x ,
+			SCALED(_tileHeight * VIEWPORT_H + this->_y) - y);
 	}
 
 	delete scaled;
@@ -218,7 +208,7 @@ int DungeonView::graphicIndex(int xoffset, int distance, Direction orientation, 
 		       (distance * 2) +
 		       (DIR_IN_MASK(orientation, MASK_DIR_SOUTH | MASK_DIR_NORTH) ? 1 : 0);
 
-	/* FIXME */
+	// FIXME
 	if (type != DNGGRAPHIC_WALL && type != DNGGRAPHIC_DOOR)
 		return -1;
 
@@ -336,7 +326,7 @@ const struct {
 	int ega_x2, ega_y2;
 	int vga_x2, vga_y2;
 	const char *subimage2;
-} dngGraphicInfo[] = {
+} DNG_GRAPHIC_INFO[] = {
 	{ "dung0_lft_ew", -1, -1, -1, -1, nullptr },
 	{ "dung0_lft_ns", -1, -1, -1, -1, nullptr },
 	{ "dung0_mid_ew", -1, -1, -1, -1, nullptr },
@@ -429,25 +419,25 @@ void DungeonView::drawWall(int xoffset, int distance, Direction orientation, Dun
 		return;
 
 	int x = 0, y = 0;
-	SubImage *subimage = imageMgr->getSubImage(dngGraphicInfo[index].subimage);
+	SubImage *subimage = imageMgr->getSubImage(DNG_GRAPHIC_INFO[index].subimage);
 	if (subimage) {
 		x = subimage->x;
 		y = subimage->y;
 	}
 
-	g_screen->screenDrawImage(dngGraphicInfo[index].subimage, (BORDER_WIDTH + x) * settings._scale,
+	g_screen->screenDrawImage(DNG_GRAPHIC_INFO[index].subimage, (BORDER_WIDTH + x) * settings._scale,
 	                (BORDER_HEIGHT + y) * settings._scale);
 
-	if (dngGraphicInfo[index].subimage2 != nullptr) {
+	if (DNG_GRAPHIC_INFO[index].subimage2 != nullptr) {
 		// FIXME: subimage2 is a horrible hack, needs to be cleaned up
 		if (settings._videoType == "EGA")
-			g_screen->screenDrawImage(dngGraphicInfo[index].subimage2,
-			                (8 + dngGraphicInfo[index].ega_x2) * settings._scale,
-			                (8 + dngGraphicInfo[index].ega_y2) * settings._scale);
+			g_screen->screenDrawImage(DNG_GRAPHIC_INFO[index].subimage2,
+				(8 + DNG_GRAPHIC_INFO[index].ega_x2) * settings._scale,
+				(8 + DNG_GRAPHIC_INFO[index].ega_y2) * settings._scale);
 		else
-			g_screen->screenDrawImage(dngGraphicInfo[index].subimage2,
-			                (8 + dngGraphicInfo[index].vga_x2) * settings._scale,
-			                (8 + dngGraphicInfo[index].vga_y2) * settings._scale);
+			g_screen->screenDrawImage(DNG_GRAPHIC_INFO[index].subimage2,
+			    (8 + DNG_GRAPHIC_INFO[index].vga_x2) * settings._scale,
+			    (8 + DNG_GRAPHIC_INFO[index].vga_y2) * settings._scale);
 	}
 }
 

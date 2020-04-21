@@ -30,12 +30,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-/**
- * Annotation class implementation
- */
-/**
- * Constructors
- */
 Annotation::Annotation(const Coords &pos, MapTile t, bool v, bool coverUp) :
 	_coords(pos),
 	_tile(t),
@@ -44,9 +38,6 @@ Annotation::Annotation(const Coords &pos, MapTile t, bool v, bool coverUp) :
 	_coverUp(coverUp) {
 }
 
-/**
- * Members
- */
 void Annotation::debug_output() const {
 	debug(1, "x: %d\n", _coords.x);
 	debug(1, "y: %d\n", _coords.y);
@@ -55,9 +46,6 @@ void Annotation::debug_output() const {
 	debug(1, "visual: %s\n", _visual ? "Yes" : "No");
 }
 
-/**
- * Operators
- */
 bool Annotation::operator==(const Annotation &a) const {
 	return ((_coords == a.getCoords()) && (_tile == a._tile)) ? true : false;
 }
@@ -67,7 +55,7 @@ bool Annotation::operator==(const Annotation &a) const {
 AnnotationMgr::AnnotationMgr() {}
 
 Annotation *AnnotationMgr::add(Coords coords, MapTile tile, bool visual, bool isCoverUp) {
-	/* new annotations go to the front so they're handled "on top" */
+	// New annotations go to the front so they're handled "on top"
 	_annotations.push_front(Annotation(coords, tile, visual, isCoverUp));
 	return &_annotations.front();
 }

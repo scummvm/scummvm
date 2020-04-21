@@ -36,8 +36,25 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Location *locationPush(Location *stack, Location *loc);
-Location *locationPop(Location **stack);
+/**
+ * Push a location onto the stack
+ */
+static Location *locationPush(Location *stack, Location *loc) {
+	loc->_prev = stack;
+	return loc;
+}
+
+/**
+ * Pop a location off the stack
+ */
+static Location *locationPop(Location **stack) {
+	Location *loc = *stack;
+	*stack = (*stack)->_prev;
+	loc->_prev = nullptr;
+	return loc;
+}
+
+/*-------------------------------------------------------------------*/
 
 Location::Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx,
                    TurnCompleter *turnCompleter, Location *prev) {
@@ -61,7 +78,7 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 
 	bool avatar = this->_coords == coords;
 
-	/* Do not return objects for VIEW_GEM mode, show only the avatar and tiles */
+	// Do not return objects for VIEW_GEM mode, show only the avatar and tiles
 	if (_viewMode == VIEW_GEM && (!settings._enhancements || !settings._enhancementsOptions._peerShowsObjects)) {
 		// When viewing a gem, always show the avatar regardless of whether or not
 		// it is shown in our normal view
@@ -73,11 +90,11 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 		return tiles;
 	}
 
-	/* Add the avatar to gem view */
+	// Add the avatar to gem view
 	if (avatar && _viewMode == VIEW_GEM)
 		tiles.push_back(g_context->_party->getTransport());
 
-	/* Add visual-only annotations to the list */
+	// Add visual-only annotations to the list
 	for (i = a.begin(); i != a.end(); i++) {
 		if ((*i)->isVisualOnly()) {
 			tiles.push_back((*i)->getTile());
@@ -91,17 +108,17 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 		}
 	}
 
-	/* then the avatar is drawn (unless on a ship) */
+	// then the avatar is drawn (unless on a ship)
 	if ((_map->_flags & SHOW_AVATAR) && (g_context->_transportContext != TRANSPORT_SHIP) && avatar)
 		//tiles.push_back(map->tileset->getByName("avatar")->id);
 		tiles.push_back(g_context->_party->getTransport());
 
-	/* then camouflaged creatures that have a disguise */
+	// then camouflaged creatures that have a disguise
 	if (obj && (obj->getType() == Object::CREATURE) && !obj->isVisible() && (!m->getCamouflageTile().empty())) {
 		focus = focus || obj->hasFocus();
 		tiles.push_back(_map->_tileset->getByName(m->getCamouflageTile())->getId());
 	}
-	/* then visible creatures and objects */
+	// then visible creatures and objects
 	else if (obj && obj->isVisible()) {
 		focus = focus || obj->hasFocus();
 		MapTile visibleCreatureAndObjectTile = obj->getTile();
@@ -111,11 +128,11 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 		tiles.push_back(visibleCreatureAndObjectTile);
 	}
 
-	/* then the party's ship (because twisters and whirlpools get displayed on top of ships) */
+	// then the party's ship (because twisters and whirlpools get displayed on top of ships)
 	if ((_map->_flags & SHOW_AVATAR) && (g_context->_transportContext == TRANSPORT_SHIP) && avatar)
 		tiles.push_back(g_context->_party->getTransport());
 
-	/* then permanent annotations */
+	// then permanent annotations
 	for (i = a.begin(); i != a.end(); i++) {
 		if (!(*i)->isVisualOnly()) {
 			tiles.push_back((*i)->getTile());
@@ -129,7 +146,7 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 		}
 	}
 
-	/* finally the base tile */
+	// finally the base tile
 	MapTile tileFromMapData = *_map->getTileFromData(coords);
 	const Tile *tileType = _map->getTileFromData(coords)->getTileType();
 	if (tileType->isLivingObject()) {
@@ -138,7 +155,7 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 	}
 	tiles.push_back(tileFromMapData);
 
-	/* But if the base tile requires a background, we must find it */
+	// But if the base tile requires a background, we must find it
 	if (tileType->isLandForeground()    ||
 	        tileType->isWaterForeground()   ||
 	        tileType->isLivingObject()) {
@@ -206,10 +223,10 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 
 			return winner;
 		}
-		/* loop_count is an ugly hack to temporarily fix infinite loop */
+		// loop_count is an ugly hack to temporarily fix infinite loop
 	} while (++loop_count < 128 && searchQueue.size() > 0 && searchQueue.size() < 64);
 
-	/* couldn't find a tile, give it the classic default */
+	// couldn't find a tile, give it the classic default
 	return _map->_tileset->getByName("brick_floor")->getId();
 }
 
@@ -248,29 +265,8 @@ MoveResult Location::move(Direction dir, bool userEvent) {
 }
 
 
-/**
- * Pop a location from the stack and free the memory
- */
 void locationFree(Location **stack) {
 	delete locationPop(stack);
-}
-
-/**
- * Push a location onto the stack
- */
-Location *locationPush(Location *stack, Location *loc) {
-	loc->_prev = stack;
-	return loc;
-}
-
-/**
- * Pop a location off the stack
- */
-Location *locationPop(Location **stack) {
-	Location *loc = *stack;
-	*stack = (*stack)->_prev;
-	loc->_prev = nullptr;
-	return loc;
 }
 
 } // End of namespace Ultima4

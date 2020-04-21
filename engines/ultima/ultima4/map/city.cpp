@@ -36,7 +36,6 @@ using Common::String;
 City::City() : Map() {
 }
 
-
 City::~City() {
 	for (PersonList::iterator i = _persons.begin(); i != _persons.end(); i++)
 		delete *i;
@@ -56,7 +55,7 @@ Person *City::addPerson(Person *person) {
 	// forgotten the next time you visit :)
 	Person *p = new Person(person);
 
-	/* set the start coordinates for the person */
+	// Set the start coordinates for the person
 	p->setMap(this);
 	p->goToStartLocation();
 
@@ -99,10 +98,7 @@ Person *City::personAt(const Coords &coords) {
 		return nullptr;
 }
 
-/**
- * Returns true if the Map pointed to by 'punknown'
- * is a City map
- */
+
 bool isCity(Map *punknown) {
 	City *pCity;
 	if ((pCity = dynamic_cast<City *>(punknown)) != nullptr)

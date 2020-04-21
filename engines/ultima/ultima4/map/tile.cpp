@@ -64,14 +64,14 @@ void Tile::loadProperties(const ConfigElement &conf) {
 	if (conf.getName() != "tile")
 		return;
 
-	_name = conf.getString("name"); /* get the name of the tile */
+	_name = conf.getString("name");	// Get the name of the tile
 
-	/* get the animation for the tile, if one is specified */
+	// Get the animation for the tile, if one is specified
 	if (conf.exists("animation")) {
 		_animationRule = conf.getString("animation");
 	}
 
-	/* see if the tile is opaque */
+	// See if the tile is opaque
 	_opaque = conf.getBool("opaque");
 
 	_foreground = conf.getBool("usesReplacementTileAsBackground");
@@ -85,10 +85,10 @@ void Tile::loadProperties(const ConfigElement &conf) {
 			rule = TileRule::findByName("default");
 	} else rule = TileRule::findByName("default");
 
-	/* get the number of frames the tile has */
+	// Get the number of frames the tile has
 	_frames = conf.getInt("frames", 1);
 
-	/* get the name of the image that belongs to this tile */
+	// Get the name of the image that belongs to this tile
 	if (conf.exists("image"))
 		_imageName = conf.getString("image");
 	else
@@ -133,7 +133,7 @@ void Tile::loadImage() {
 			if (subimage)
 				info = imageMgr->get(subimage->_srcImageName);
 		}
-		if (!info) { //IF still no info loaded
+		if (!info) { // IF still no info loaded
 			warning("Error: couldn't load image for tile '%s'", _name.c_str());
 			return;
 		}
@@ -160,7 +160,7 @@ void Tile::loadImage() {
 
 			//info->image->alphaOff();
 
-			/* draw the tile from the image we found to our tile image */
+			// Draw the tile from the image we found to our tile image
 			if (subimage) {
 				Image *tiles = info->_image;
 				tiles->drawSubRectOn(_image, 0, 0, subimage->x * _scale, subimage->y * _scale, subimage->width * _scale, subimage->height * _scale);
@@ -196,7 +196,7 @@ Direction MapTile::getDirection() const {
 }
 
 bool MapTile::setDirection(Direction d) {
-	/* if we're already pointing the right direction, do nothing! */
+	// if we're already pointing the right direction, do nothing!
 	if (getDirection() == d)
 		return false;
 

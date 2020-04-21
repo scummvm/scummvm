@@ -52,9 +52,6 @@ using Std::vector;
 int cycles, completedCycles;
 Std::vector<Common::String> shrineAdvice;
 
-/**
- * Returns true if the player can use the portal to the shrine
- */
 bool shrineCanEnter(const Portal *p) {
 	Shrine *shrine = dynamic_cast<Shrine *>(mapMgr->get(p->_destid));
 	if (!g_context->_party->canEnterShrine(shrine->getVirtue())) {
@@ -64,9 +61,6 @@ bool shrineCanEnter(const Portal *p) {
 	return 1;
 }
 
-/**
- * Returns true if 'map' points to a Shrine map
- */
 bool isShrine(Map *punknown) {
 	Shrine *ps;
 	if ((ps = dynamic_cast<Shrine *>(punknown)) != nullptr)
@@ -75,9 +69,7 @@ bool isShrine(Map *punknown) {
 		return false;
 }
 
-/**
- * Shrine class implementation
- */
+
 Shrine::Shrine() {}
 
 Common::String Shrine::getName() {
@@ -88,19 +80,19 @@ Common::String Shrine::getName() {
 	return _name;
 }
 
-Virtue Shrine::getVirtue() const    {
+Virtue Shrine::getVirtue() const {
 	return _virtue;
 }
 
-Common::String Shrine::getMantra() const    {
+Common::String Shrine::getMantra() const {
 	return _mantra;
 }
 
-void Shrine::setVirtue(Virtue v)    {
+void Shrine::setVirtue(Virtue v) {
 	_virtue = v;
 }
 
-void Shrine::setMantra(Common::String m)    {
+void Shrine::setMantra(Common::String m) {
 	_mantra = m;
 }
 
@@ -169,7 +161,7 @@ void Shrine::enter() {
 }
 
 void Shrine::enhancedSequence() {
-	/* replace the 'static' avatar tile with grass */
+	// Replace the 'static' avatar tile with grass
 	_annotations->add(Coords(5, 6, g_context->_location->_coords.z), _tileset->getByName("grass")->getId(), false, true);
 
 	g_screen->screenDisableCursor();
@@ -203,7 +195,7 @@ void Shrine::enhancedSequence() {
 }
 
 void Shrine::meditationCycle() {
-	/* find our interval for meditation */
+	// Find our interval for meditation
 	int interval = (settings._shrineTime * 1000) / MEDITATION_MANTRAS_PER_CYCLE;
 	interval -= (interval % settings._eventTimerGranularity);
 	interval /= settings._eventTimerGranularity;

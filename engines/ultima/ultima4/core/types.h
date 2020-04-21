@@ -71,30 +71,30 @@ public:
 	MapTile(const TileId &i, byte f = 0) : _id(i), _frame(f), _freezeAnimation(false) {}
 	MapTile(const MapTile &t) : _id(t._id), _frame(t._frame), _freezeAnimation(t._freezeAnimation) {}
 
-	TileId getId() const            {
+	TileId getId() const {
 		return _id;
 	}
-	byte getFrame() const  {
+	byte getFrame() const {
 		return _frame;
 	}
 	bool getFreezeAnimation() const {
 		return _freezeAnimation;
 	}
 
-	bool operator==(const MapTile &m) const  {
+	bool operator==(const MapTile &m) const {
 		return _id == m._id;
 	}
-	bool operator==(const TileId &i) const   {
+	bool operator==(const TileId &i) const {
 		return _id == i;
 	}
-	bool operator!=(const MapTile &m) const  {
+	bool operator!=(const MapTile &m) const {
 		return _id != m._id;
 	}
-	bool operator!=(const TileId &i) const   {
+	bool operator!=(const TileId &i) const {
 		return _id != i;
 	}
-	bool operator<(const MapTile &m) const   {
-		return _id < m._id;    /* for Std::less */
+	bool operator<(const MapTile &m) const {
+		return _id < m._id;    // for Std::less
 	}
 
 	/**

@@ -39,17 +39,17 @@ void TileMap::loadAll() {
 	const Config *config = Config::getInstance();
 	vector<ConfigElement> conf;
 
-	/* FIXME: make sure tilesets are loaded by now */
+	// FIXME: make sure tilesets are loaded by now
 	unloadAll();
 
-	/* open the filename for the tileset and parse it! */
+	// Open the filename for the tileset and parse it!
 	conf = config->getElement("tilesets").getChildren();
 
-	/* load all of the tilemaps */
+	// Load all of the tilemaps
 	for (Std::vector<ConfigElement>::iterator i = conf.begin(); i != conf.end(); i++) {
 		if (i->getName() == "tilemap") {
 
-			/* load the tilemap ! */
+			// Load the tilemap !
 			load(*i);
 		}
 	}
@@ -58,13 +58,11 @@ void TileMap::loadAll() {
 void TileMap::unloadAll() {
 	TileIndexMapMap::iterator map;
 
-	/* free all the memory for the tile maps */
+	// Free all the memory for the tile maps
 	for (map = _tileMaps.begin(); map != _tileMaps.end(); map++)
 		delete map->_value;
 
-	/* Clear the map so we don't attempt to delete the memory again
-	 * next time.
-	 */
+	// Clear the map so we don't attempt to delete the memory again next time
 	_tileMaps.clear();
 }
 
@@ -81,13 +79,12 @@ void TileMap::load(const ConfigElement &tilemapConf) {
 		if (i->getName() != "mapping")
 			continue;
 
-		/* we assume tiles have already been loaded at this point,
-		   so let's do some translations! */
-
+		// We assume tiles have already been loaded at this point,
+		// so let's do some translations!
 		int frames = 1;
 		Common::String tile = i->getString("tile");
 
-		/* find the tile this references */
+		// Find the tile this references
 		Tile *t = Tileset::get(tileset)->getByName(tile);
 		if (!t)
 			error("Error: tile '%s' from '%s' was not found in tileset %s", tile.c_str(), name.c_str(), tileset.c_str());
@@ -97,11 +94,11 @@ void TileMap::load(const ConfigElement &tilemapConf) {
 		if (i->exists("frames"))
 			frames = i->getInt("frames");
 
-		/* insert the tile into the tile map */
+		// Insert the tile into the tile map
 		for (int idx = 0; idx < frames; idx++) {
 			if (idx < t->getFrames())
 				tm->_tileMap[index + idx] = MapTile(t->getId(), idx);
-			/* frame fell out of the scope of the tile -- frame is set to 0 */
+			// Frame fell out of the scope of the tile -- frame is set to 0
 			else
 				tm->_tileMap[index + idx] = MapTile(t->getId(), 0);
 		}
@@ -109,7 +106,7 @@ void TileMap::load(const ConfigElement &tilemapConf) {
 		index += frames;
 	}
 
-	/* add the tilemap to our list */
+	// Add the tilemap to our list
 	_tileMaps[name] = tm;
 }
 

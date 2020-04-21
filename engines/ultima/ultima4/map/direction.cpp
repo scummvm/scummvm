@@ -74,11 +74,6 @@ Direction dirRotateCCW(Direction dir) {
 	return dir;
 }
 
-/**
- * Returns the a mask containing the broadsides directions for a given direction.
- * For instance, dirGetBroadsidesDirs(DIR_NORTH) returns:
- * (MASK_DIR(DIR_WEST) | MASK_DIR(DIR_EAST))
- */
 int dirGetBroadsidesDirs(Direction dir) {
 	int dirmask = MASK_DIR_ALL;
 	dirmask = DIR_REMOVE_FROM_MASK(dir, dirmask);
@@ -87,10 +82,6 @@ int dirGetBroadsidesDirs(Direction dir) {
 	return dirmask;
 }
 
-/**
- * Returns a random direction from a provided mask of available
- * directions.
- */
 Direction dirRandomDir(int valid_directions_mask) {
 	int i, n;
 	Direction d[4];
@@ -109,12 +100,6 @@ Direction dirRandomDir(int valid_directions_mask) {
 	return d[xu4_random(n)];
 }
 
-/**
- * Normalizes the direction based on the orientation given
- * (if facing west, and 'up' is pressed, the 'up' is translated
- *  into DIR_NORTH -- this function tranlates that direction
- *  to DIR_WEST, the correct direction in this case).
- */
 Direction dirNormalize(Direction orientation, Direction dir) {
 	Direction temp = orientation,
 	          realDir = dir;
@@ -127,9 +112,6 @@ Direction dirNormalize(Direction orientation, Direction dir) {
 	return realDir;
 }
 
-/**
- * Translates a keyboard code into a direction
- */
 Direction keyToDirection(int key) {
 	switch (key) {
 	case U4_UP:
@@ -145,9 +127,6 @@ Direction keyToDirection(int key) {
 	}
 }
 
-/**
- * Translates a direction into a keyboard code
- */
 int directionToKey(Direction dir) {
 	switch (dir) {
 	case DIR_WEST:

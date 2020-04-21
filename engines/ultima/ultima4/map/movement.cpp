@@ -59,7 +59,7 @@ void moveAvatar(MoveEvent &event) {
 	else if (g_context->_transportContext == TRANSPORT_BALLOON)
 		slowedType = SLOWED_BY_NOTHING;
 
-	/* if you're on ship, you must turn first! */
+	// If you're on ship, you must turn first!
 	if (g_context->_transportContext == TRANSPORT_SHIP) {
 		if (g_context->_party->getDirection() != event._dir) {
 			g_context->_party->setDirection(event._dir);
@@ -68,17 +68,17 @@ void moveAvatar(MoveEvent &event) {
 		}
 	}
 
-	/* change direction of horse, if necessary */
+	// Change direction of horse, if necessary
 	if (g_context->_transportContext == TRANSPORT_HORSE) {
 		if ((event._dir == DIR_WEST || event._dir == DIR_EAST) && (g_context->_party->getDirection() != event._dir))
 			g_context->_party->setDirection(event._dir);
 	}
 
-	/* figure out our new location we're trying to move to */
+	// Figure out our new location we're trying to move to
 	newCoords = g_context->_location->_coords;
 	newCoords.move(event._dir, g_context->_location->_map);
 
-	/* see if we moved off the map */
+	// See if we moved off the map
 	if (MAP_IS_OOB(g_context->_location->_map, newCoords)) {
 		event._result = (MoveResult)(MOVE_MAP_CHANGE | MOVE_EXIT_TO_PARENT | MOVE_SUCCEEDED);
 		return;
@@ -86,13 +86,13 @@ void moveAvatar(MoveEvent &event) {
 
 	if (!g_debugger->_collisionOverride && !g_context->_party->isFlying()) {
 		int movementMask = g_context->_location->_map->getValidMoves(g_context->_location->_coords, g_context->_party->getTransport());
-		/* See if movement was blocked */
+		// See if movement was blocked
 		if (!DIR_IN_MASK(event._dir, movementMask)) {
 			event._result = (MoveResult)(MOVE_BLOCKED | MOVE_END_TURN);
 			return;
 		}
 
-		/* Are we slowed by terrain or by wind direction? */
+		// Are we slowed by terrain or by wind direction?
 		switch (slowedType) {
 		case SLOWED_BY_TILE:
 			// TODO: CHEST: Make a user option to not make chests always fast to
@@ -113,7 +113,7 @@ void moveAvatar(MoveEvent &event) {
 		}
 	}
 
-	/* move succeeded */
+	// Move succeeded
 	g_context->_location->_coords = newCoords;
 
 	/* if the avatar moved onto a creature (whirlpool, twister), then do the creature's special effect (this current code does double damage according to changeset 2753.
@@ -138,23 +138,23 @@ void moveAvatarInDungeon(MoveEvent &event) {
 	    retreating = realDir == dirReverse((Direction)g_ultima->_saveGame->_orientation);
 	MapTile *tile;
 
-	/* we're not in a dungeon, failed! */
+	// We're not in a dungeon, failed!
 	ASSERT(g_context->_location->_context & CTX_DUNGEON, "moveAvatarInDungeon() called outside of dungeon, failed!");
 
-	/* you must turn first! */
+	// You must turn first!
 	if (!advancing && !retreating) {
 		g_ultima->_saveGame->_orientation = realDir;
 		event._result = MOVE_TURNED;
 		return;
 	}
 
-	/* figure out our new location */
+	// Figure out our new location
 	newCoords = g_context->_location->_coords;
 	newCoords.move(realDir, g_context->_location->_map);
 
 	tile = g_context->_location->_map->tileAt(newCoords, WITH_OBJECTS);
 
-	/* see if we moved off the map (really, this should never happen in a dungeon) */
+	// See if we moved off the map (really, this should never happen in a dungeon)
 	if (MAP_IS_OOB(g_context->_location->_map, newCoords)) {
 		event._result = (MoveResult)(MOVE_MAP_CHANGE | MOVE_EXIT_TO_PARENT | MOVE_SUCCEEDED);
 		return;
@@ -174,25 +174,19 @@ void moveAvatarInDungeon(MoveEvent &event) {
 		}
 	}
 
-	/* move succeeded */
+	// Move succeeded
 	g_context->_location->_coords = newCoords;
 
 	event._result = (MoveResult)(MOVE_SUCCEEDED | MOVE_END_TURN);
 }
 
-/**
- * Moves an object on the map according to its movement behavior
- * Returns 1 if the object was moved successfully, 0 if slowed,
- * tile direction changed, or object simply cannot move
- * (fixed objects, nowhere to go, etc.)
- */
 int moveObject(Map *map, Creature *obj, MapCoords avatar) {
 	int dirmask = DIR_NONE;
 	Direction dir;
 	MapCoords new_coords = obj->getCoords();
 	int slowed = 0;
 
-	/* determine a direction depending on the object's movement behavior */
+	// Determine a direction depending on the object's movement behavior
 	dir = DIR_NONE;
 	switch (obj->getMovementBehavior()) {
 	case MOVEMENT_FIXED:
@@ -221,18 +215,18 @@ int moveObject(Map *map, Creature *obj, MapCoords avatar) {
 		break;
 	}
 
-	/* now, get a new x and y for the object */
+	// Now, get a new x and y for the object
 	if (dir)
 		new_coords.move(dir, g_context->_location->_map);
 	else
 		return 0;
 
-	/* figure out what method to use to tell if the object is getting slowed */
+	// Figure out what method to use to tell if the object is getting slowed
 	SlowedType slowedType = SLOWED_BY_TILE;
 	if (obj->getType() == Object::CREATURE)
 		slowedType = obj->getSlowedType();
 
-	/* is the object slowed by terrain or by wind direction? */
+	// Is the object slowed by terrain or by wind direction?
 	switch (slowedType) {
 	case SLOWED_BY_TILE:
 		slowed = slowedByTile(map->tileTypeAt(new_coords, WITHOUT_OBJECTS));
@@ -247,11 +241,11 @@ int moveObject(Map *map, Creature *obj, MapCoords avatar) {
 
 	obj->setPrevCoords(obj->getCoords());
 
-	/* see if the object needed to turn instead of move */
+	// See if the object needed to turn instead of move
 	if (obj->setDirection(dir))
 		return 0;
 
-	/* was the object slowed? */
+	// Was the object slowed?
 	if (slowed)
 		return 0;
 
@@ -265,9 +259,6 @@ int moveObject(Map *map, Creature *obj, MapCoords avatar) {
 	return 1;
 }
 
-/**
- * Moves an object in combat according to its chosen combat action
- */
 int moveCombatObject(int act, Map *map, Creature *obj, MapCoords target) {
 	MapCoords new_coords = obj->getCoords();
 	int valid_dirs = map->getValidMoves(new_coords, obj->getTile());
@@ -276,12 +267,12 @@ int moveCombatObject(int act, Map *map, Creature *obj, MapCoords target) {
 	SlowedType slowedType = SLOWED_BY_TILE;
 	int slowed = 0;
 
-	/* fixed objects cannot move */
+	// Fixed objects cannot move
 	if (obj->getMovementBehavior() == MOVEMENT_FIXED)
 		return 0;
 
 	if (action == CA_FLEE) {
-		/* run away from our target instead! */
+		// Run away from our target instead!
 		dir = new_coords.pathAway(target, valid_dirs);
 
 	} else {
@@ -304,11 +295,11 @@ int moveCombatObject(int act, Map *map, Creature *obj, MapCoords target) {
 	else
 		return 0;
 
-	/* figure out what method to use to tell if the object is getting slowed */
+	// Figure out what method to use to tell if the object is getting slowed
 	if (obj->getType() == Object::CREATURE)
 		slowedType = obj->getSlowedType();
 
-	/* is the object slowed by terrain or by wind direction? */
+	// Is the object slowed by terrain or by wind direction?
 	switch (slowedType) {
 	case SLOWED_BY_TILE:
 		slowed = slowedByTile(map->tileTypeAt(new_coords, WITHOUT_OBJECTS));
@@ -321,7 +312,7 @@ int moveCombatObject(int act, Map *map, Creature *obj, MapCoords target) {
 		break;
 	}
 
-	/* if the object wan't slowed... */
+	// If the object wan't slowed...
 	if (!slowed) {
 		// Set the new coordinates
 		obj->setCoords(new_coords);
@@ -331,9 +322,6 @@ int moveCombatObject(int act, Map *map, Creature *obj, MapCoords target) {
 	return 0;
 }
 
-/**
- * Moves a party member during combat screens
- */
 void movePartyMember(MoveEvent &event) {
 	CombatController *ct = dynamic_cast<CombatController *>(eventHandler->getController());
 	CombatMap *cm = getCombatMap();
@@ -343,16 +331,16 @@ void movePartyMember(MoveEvent &event) {
 
 	event._result = MOVE_SUCCEEDED;
 
-	/* find our new location */
+	// Find our new location
 	newCoords = (*party)[member]->getCoords();
 	newCoords.move(event._dir, g_context->_location->_map);
 
 	if (MAP_IS_OOB(g_context->_location->_map, newCoords)) {
 		bool sameExit = (!cm->isDungeonRoom() || (ct->getExitDir() == DIR_NONE) || (event._dir == ct->getExitDir()));
 		if (sameExit) {
-			/* if in a win-or-lose battle and not camping, then it can be bad to flee while healthy */
+			// If in a win-or-lose battle and not camping, then it can be bad to flee while healthy
 			if (ct->isWinOrLose() && !ct->isCamping()) {
-				/* A fully-healed party member fled from an evil creature :( */
+				// A fully-healed party member fled from an evil creature :(
 				if (ct->getCreature() && ct->getCreature()->isEvil() &&
 				        g_context->_party->member(member)->getHp() == g_context->_party->member(member)->getMaxHp())
 					g_context->_party->adjustKarma(KA_HEALTHY_FLED_EVIL);
@@ -375,12 +363,12 @@ void movePartyMember(MoveEvent &event) {
 		return;
 	}
 
-	/* is the party member slowed? */
+	// is the party member slowed?
 	if (!slowedByTile(g_context->_location->_map->tileTypeAt(newCoords, WITHOUT_OBJECTS))) {
-		/* move succeeded */
+		// Move succeeded
 		(*party)[member]->setCoords(newCoords);
 
-		/* handle dungeon room triggers */
+		// Handle dungeon room triggers
 		if (cm->isDungeonRoom()) {
 			Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);
 			int i;
@@ -396,7 +384,7 @@ void movePartyMember(MoveEvent &event) {
 				   */
 				MapCoords trigger(triggers[i].x, triggers[i].y, g_context->_location->_coords.z);
 
-				/* see if we're on a trigger */
+				// See if we're on a trigger
 				if (newCoords == trigger) {
 					MapCoords change1(triggers[i]._changeX1, triggers[i]._changeY1, g_context->_location->_coords.z),
 					          change2(triggers[i].changeX2, triggers[i].changeY2, g_context->_location->_coords.z);
@@ -407,7 +395,7 @@ void movePartyMember(MoveEvent &event) {
 					g_context->_location->_map->_annotations->remove(g_context->_location->_map->_annotations->allAt(change1));
 					g_context->_location->_map->_annotations->remove(g_context->_location->_map->_annotations->allAt(change2));
 
-					/* change the tiles! */
+					// Change the tiles!
 					if (change1.x || change1.y) {
 						/*if (m) combatAddCreature(m, triggers[i].change_x1, triggers[i].change_y1, c->location->coords.z);
 						else*/ g_context->_location->_map->_annotations->add(change1, triggers[i]._tile, false, true);
@@ -425,10 +413,6 @@ void movePartyMember(MoveEvent &event) {
 	}
 }
 
-/**
- * Default handler for slowing movement.
- * Returns true if slowed, false if not slowed
- */
 bool slowedByTile(const Tile *tile) {
 	bool slow;
 
@@ -451,15 +435,11 @@ bool slowedByTile(const Tile *tile) {
 	return slow;
 }
 
-/**
- * Slowed depending on the direction of object with respect to wind direction
- * Returns true if slowed, false if not slowed
- */
 bool slowedByWind(int direction) {
-	/* 1 of 4 moves while trying to move into the wind succeeds */
+	// 1 of 4 moves while trying to move into the wind succeeds
 	if (direction == g_context->_windDirection)
 		return (g_ultima->_saveGame->_moves % 4) != 0;
-	/* 1 of 4 moves while moving directly away from wind fails */
+	// 1 of 4 moves while moving directly away from wind fails
 	else if (direction == dirReverse((Direction) g_context->_windDirection))
 		return (g_ultima->_saveGame->_moves % 4) == 3;
 	else

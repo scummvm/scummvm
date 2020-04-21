@@ -30,8 +30,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Std::vector;
-
 /**
  * TileRule Class Implementation
  */
@@ -46,7 +44,7 @@ TileRule *TileRule::findByName(const Common::String &name) {
 
 void TileRule::load() {
 	const Config *config = Config::getInstance();
-	vector<ConfigElement> rules = config->getElement("tileRules").getChildren();
+	Std::vector<ConfigElement> rules = config->getElement("tileRules").getChildren();
 
 	for (Std::vector<ConfigElement>::iterator i = rules.begin(); i != rules.end(); i++) {
 		TileRule *rule = new TileRule();
@@ -79,12 +77,11 @@ bool TileRule::initFromConf(const ConfigElement &conf) {
 		{ "foreground", MASK_FOREGROUND },
 		{ "onWaterOnlyReplacement", MASK_WATER_REPLACEMENT},
 		{ "livingthing", MASK_LIVING_THING }
-
 	};
 
 	static const struct {
-		const char *name;
-		uint mask;
+		const char *_name;
+		uint _mask;
 	} movementBooleanAttr[] = {
 		{ "swimable", MASK_SWIMABLE },
 		{ "sailable", MASK_SAILABLE },
@@ -94,84 +91,81 @@ bool TileRule::initFromConf(const ConfigElement &conf) {
 	static const char *speedEnumStrings[] = { "fast", "slow", "vslow", "vvslow", nullptr };
 	static const char *effectsEnumStrings[] = { "none", "fire", "sleep", "poison", "poisonField", "electricity", "lava", nullptr };
 
-	this->_mask = 0;
-	this->_movementMask = 0;
-	this->_speed = FAST;
-	this->_effect = EFFECT_NONE;
-	this->_walkOnDirs = MASK_DIR_ALL;
-	this->_walkOffDirs = MASK_DIR_ALL;
-	this->_name = conf.getString("name");
+	_mask = 0;
+	_movementMask = 0;
+	_speed = FAST;
+	_effect = EFFECT_NONE;
+	_walkOnDirs = MASK_DIR_ALL;
+	_walkOffDirs = MASK_DIR_ALL;
+	_name = conf.getString("name");
 
 	for (i = 0; i < sizeof(booleanAttributes) / sizeof(booleanAttributes[0]); i++) {
 		if (conf.getBool(booleanAttributes[i].name))
-			this->_mask |= booleanAttributes[i].mask;
+			_mask |= booleanAttributes[i].mask;
 	}
 
 	for (i = 0; i < sizeof(movementBooleanAttr) / sizeof(movementBooleanAttr[0]); i++) {
-		if (conf.getBool(movementBooleanAttr[i].name))
-			this->_movementMask |= movementBooleanAttr[i].mask;
+		if (conf.getBool(movementBooleanAttr[i]._name))
+			_movementMask |= movementBooleanAttr[i]._mask;
 	}
 
 	Common::String cantwalkon = conf.getString("cantwalkon");
 	if (cantwalkon == "all")
-		this->_walkOnDirs = 0;
+		_walkOnDirs = 0;
 	else if (cantwalkon == "west")
-		this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_WEST, this->_walkOnDirs);
+		_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_WEST, _walkOnDirs);
 	else if (cantwalkon == "north")
-		this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_NORTH, this->_walkOnDirs);
+		_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_NORTH, _walkOnDirs);
 	else if (cantwalkon == "east")
-		this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_EAST, this->_walkOnDirs);
+		_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_EAST, _walkOnDirs);
 	else if (cantwalkon == "south")
-		this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_SOUTH, this->_walkOnDirs);
+		_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_SOUTH, _walkOnDirs);
 	else if (cantwalkon == "advance")
-		this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_ADVANCE, this->_walkOnDirs);
+		_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_ADVANCE, _walkOnDirs);
 	else if (cantwalkon == "retreat")
-		this->_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_RETREAT, this->_walkOnDirs);
+		_walkOnDirs = DIR_REMOVE_FROM_MASK(DIR_RETREAT, _walkOnDirs);
 
 	Common::String cantwalkoff = conf.getString("cantwalkoff");
 	if (cantwalkoff == "all")
-		this->_walkOffDirs = 0;
+		_walkOffDirs = 0;
 	else if (cantwalkoff == "west")
-		this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_WEST, this->_walkOffDirs);
+		_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_WEST, _walkOffDirs);
 	else if (cantwalkoff == "north")
-		this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_NORTH, this->_walkOffDirs);
+		_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_NORTH, _walkOffDirs);
 	else if (cantwalkoff == "east")
-		this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_EAST, this->_walkOffDirs);
+		_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_EAST, _walkOffDirs);
 	else if (cantwalkoff == "south")
-		this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_SOUTH, this->_walkOffDirs);
+		_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_SOUTH, _walkOffDirs);
 	else if (cantwalkoff == "advance")
-		this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_ADVANCE, this->_walkOffDirs);
+		_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_ADVANCE, _walkOffDirs);
 	else if (cantwalkoff == "retreat")
-		this->_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_RETREAT, this->_walkOffDirs);
+		_walkOffDirs = DIR_REMOVE_FROM_MASK(DIR_RETREAT, _walkOffDirs);
 
-	this->_speed = static_cast<TileSpeed>(conf.getEnum("speed", speedEnumStrings));
-	this->_effect = static_cast<TileEffect>(conf.getEnum("effect", effectsEnumStrings));
+	_speed = static_cast<TileSpeed>(conf.getEnum("speed", speedEnumStrings));
+	_effect = static_cast<TileEffect>(conf.getEnum("effect", effectsEnumStrings));
 
 	return true;
 }
 
+/*-------------------------------------------------------------------*/
 
-/**
- * Tileset Class Implementation
- */
-
-/* static member variables */
+// Static member variables
 Tileset::TilesetMap Tileset::tilesets;
 
 void Tileset::loadAll() {
 	const Config *config = Config::getInstance();
-	vector<ConfigElement> conf;
+	Std::vector<ConfigElement> conf;
 
 	unloadAll();
 
-	// get the config element for all tilesets
+	// Get the config element for all tilesets
 	conf = config->getElement("tilesets").getChildren();
 
-	// load tile rules
+	// Load tile rules
 	if (!TileRule::_rules.size())
 		TileRule::load();
 
-	// load all of the tilesets
+	// Load all of the tilesets
 	for (Std::vector<ConfigElement>::iterator i = conf.begin(); i != conf.end(); i++) {
 		if (i->getName() == "tileset") {
 
@@ -182,14 +176,14 @@ void Tileset::loadAll() {
 		}
 	}
 
-	// load tile maps, including translations from index to id
+	// Load tile maps, including translations from index to id
 	TileMap::loadAll();
 }
 
 void Tileset::unloadAll() {
 	TilesetMap::iterator i;
 
-	// unload all tilemaps
+	// Unload all tilemaps
 	TileMap::unloadAll();
 
 	for (i = tilesets.begin(); i != tilesets.end(); i++) {
@@ -248,7 +242,7 @@ void Tileset::load(const ConfigElement &tilesetConf) {
 	else _extends = nullptr;
 
 	int index = 0;
-	vector<ConfigElement> children = tilesetConf.getChildren();
+	Std::vector<ConfigElement> children = tilesetConf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() != "tile")
 			continue;
@@ -256,7 +250,7 @@ void Tileset::load(const ConfigElement &tilesetConf) {
 		Tile *tile = new Tile(this);
 		tile->loadProperties(*i);
 
-		/* add the tile to our tileset */
+		// Add the tile to our tileset
 		_tiles[tile->getId()] = tile;
 		_nameMap[tile->getName()] = tile;
 
@@ -268,7 +262,7 @@ void Tileset::load(const ConfigElement &tilesetConf) {
 void Tileset::unloadImages() {
 	Tileset::TileIdMap::iterator i;
 
-	/* free all the image memory and nullify so that reloading can automatically take place lazily */
+	// Free all the image memory and nullify so that reloading can automatically take place lazily
 	for (i = _tiles.begin(); i != _tiles.end(); i++) {
 		i->_value->deleteImage();
 	}
@@ -277,7 +271,7 @@ void Tileset::unloadImages() {
 void Tileset::unload() {
 	Tileset::TileIdMap::iterator i;
 
-	/* free all the memory for the tiles */
+	// Free all the memory for the tiles
 	for (i = _tiles.begin(); i != _tiles.end(); i++)
 		delete i->_value;
 

@@ -61,7 +61,14 @@ private:
 	Common::String _mantra;
 };
 
+/**
+ * Returns true if the player can use the portal to the shrine
+ */
 bool shrineCanEnter(const struct _Portal *p);
+
+/**
+ * Returns true if 'map' points to a Shrine map
+ */
 bool isShrine(Map *punknown);
 
 } // End of namespace Ultima4

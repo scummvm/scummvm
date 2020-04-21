@@ -62,10 +62,35 @@ public:
 
 void moveAvatar(MoveEvent &event);
 void moveAvatarInDungeon(MoveEvent &event);
+
+/**
+ * Moves an object on the map according to its movement behavior
+ * Returns 1 if the object was moved successfully, 0 if slowed,
+ * tile direction changed, or object simply cannot move
+ * (fixed objects, nowhere to go, etc.)
+ */
 int moveObject(class Map *map, class Creature *obj, MapCoords avatar);
+
+/**
+ * Moves an object in combat according to its chosen combat action
+ */
 int moveCombatObject(int action, class Map *map, class Creature *obj, MapCoords target);
+
+/**
+ * Moves a party member during combat screens
+ */
 void movePartyMember(MoveEvent &event);
+
+/**
+ * Default handler for slowing movement.
+ * Returns true if slowed, false if not slowed
+ */
 bool slowedByTile(const Tile *tile);
+
+/**
+ * Slowed depending on the direction of object with respect to wind direction
+ * Returns true if slowed, false if not slowed
+ */
 bool slowedByWind(int direction);
 
 } // End of namespace Ultima4

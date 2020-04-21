@@ -74,7 +74,7 @@ MapLoader *MapLoader::registerLoader(MapLoader *loader, Map::Type type) {
 bool MapLoader::loadData(Map *map, Common::File *f) {
 	uint x, xch, y, ych;
 
-	/* allocate the space we need for the map data */
+	// Allocate the space we need for the map data
 	map->_data.clear();
 	map->_data.resize(map->_height * map->_width);
 
@@ -139,14 +139,14 @@ bool CityMapLoader::load(Map *map) {
 	if (!ult || !tlk)
 		error("unable to load map data");
 
-	/* the map must be 32x32 to be read from an .ULT file */
+	// The map must be 32x32 to be read from an .ULT file
 	ASSERT(city->_width == CITY_WIDTH, "map width is %d, should be %d", city->_width, CITY_WIDTH);
 	ASSERT(city->_height == CITY_HEIGHT, "map height is %d, should be %d", city->_height, CITY_HEIGHT);
 
 	if (!loadData(city, ult))
 		return false;
 
-	/* Properly construct people for the city */
+	// Properly construct people for the city
 	for (i = 0; i < CITY_MAX_PERSONS; i++)
 		people[i] = new Person(map->translateFromRawTileIndex(u4fgetc(ult)));
 
@@ -160,7 +160,7 @@ bool CityMapLoader::load(Map *map) {
 		people[i]->setPrevTile(map->translateFromRawTileIndex(u4fgetc(ult)));
 
 	for (i = 0; i < CITY_MAX_PERSONS * 2; i++)
-		u4fgetc(ult);           /* read redundant startx/starty */
+		u4fgetc(ult);           // Read redundant startx/starty
 
 	for (i = 0; i < CITY_MAX_PERSONS; i++) {
 		byte c = u4fgetc(ult);
@@ -251,7 +251,7 @@ bool ConMapLoader::load(Map *map) {
 	if (!con)
 		error("unable to load map data");
 
-	/* the map must be 11x11 to be read from an .CON file */
+	// The map must be 11x11 to be read from an .CON file
 	ASSERT(map->_width == CON_WIDTH, "map width is %d, should be %d", map->_width, CON_WIDTH);
 	ASSERT(map->_height == CON_HEIGHT, "map height is %d, should be %d", map->_height, CON_HEIGHT);
 
@@ -288,23 +288,23 @@ bool DngMapLoader::load(Map *map) {
 	if (!dng)
 		error("unable to load map data");
 
-	/* the map must be 11x11 to be read from an .CON file */
+	// The map must be 11x11 to be read from an .CON file
 	ASSERT(dungeon->_width == DNG_WIDTH, "map width is %d, should be %d", dungeon->_width, DNG_WIDTH);
 	ASSERT(dungeon->_height == DNG_HEIGHT, "map height is %d, should be %d", dungeon->_height, DNG_HEIGHT);
 
-	/* load the dungeon map */
+	// Load the dungeon map
 	uint i, j;
 	for (i = 0; i < (DNG_HEIGHT * DNG_WIDTH * dungeon->_levels); i++) {
 		byte mapData = u4fgetc(dng);
 		MapTile tile = map->translateFromRawTileIndex(mapData);
 
-		/* determine what type of tile it is */
+		// Determine what type of tile it is
 		dungeon->_data.push_back(tile);
 		dungeon->_dataSubTokens.push_back(mapData % 16);
 	}
 
-	/* read in the dungeon rooms */
-	/* FIXME: needs a cleanup function to free this memory later */
+	// Read in the dungeon rooms
+	// FIXME: needs a cleanup function to free this memory later
 	dungeon->_rooms = new DngRoom[dungeon->_nRooms];
 
 	for (i = 0; i < dungeon->_nRooms; i++) {
@@ -348,11 +348,11 @@ bool DngMapLoader::load(Map *map) {
 		u4fread(room_tiles, sizeof(room_tiles), 1, dng);
 		u4fread(dungeon->_rooms[i]._buffer, sizeof(dungeon->_rooms[i]._buffer), 1, dng);
 
-		/* translate each creature tile to a tile id */
+		// Translate each creature tile to a tile id
 		for (j = 0; j < sizeof(dungeon->_rooms[i]._creatureTiles); j++)
 			dungeon->_rooms[i]._creatureTiles[j] = TileMap::get("base")->translate(dungeon->_rooms[i]._creatureTiles[j])._id;
 
-		/* translate each map tile to a tile id */
+		// Translate each map tile to a tile id
 		for (j = 0; j < sizeof(room_tiles); j++)
 			dungeon->_rooms[i]._mapData.push_back(TileMap::get("base")->translate(room_tiles[j]));
 
@@ -383,13 +383,13 @@ bool DngMapLoader::load(Map *map) {
 				memcpy(dungeon->_rooms[i]._partySouthStartX, x2, sizeof(x2));
 				memcpy(dungeon->_rooms[i]._partySouthStartY, y2, sizeof(y2));
 			} else if (i == 0x9) {
-				// update the starting position of monsters 7, 8, and 9
+				// Update the starting position of monsters 7, 8, and 9
 				const byte x1[3] = { 0x4, 0x6, 0x5 },
 				                            y1[3] = { 0x5, 0x5, 0x6 };
 				memcpy(dungeon->_rooms[i]._creatureStartX + 7, x1, sizeof(x1));
 				memcpy(dungeon->_rooms[i]._creatureStartY + 7, y1, sizeof(y1));
 
-				// update party start positions when entering from the west
+				// Update party start positions when entering from the west
 				const byte x2[8] = { 0x2, 0x2, 0x1, 0x1, 0x1, 0x0, 0x0, 0x0 },
 				                            y2[8] = { 0x9, 0x8, 0x9, 0x8, 0x7, 0x9, 0x8, 0x7 };
 				memcpy(dungeon->_rooms[i]._partyWestStartX, x2, sizeof(x2));
