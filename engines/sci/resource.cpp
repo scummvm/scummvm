@@ -631,7 +631,7 @@ int ResourceManager::addAppropriateSources() {
 		ResourceSource *map = addExternalMap("resource.map");
 
 		Common::ArchiveMemberList files;
-		SearchMan.listMatchingMembers(files, "resource.0??");
+		SearchMan.listMatchingMembers(files, "resource.0##");
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			const Common::String name = (*x)->getName();
@@ -662,8 +662,8 @@ int ResourceManager::addAppropriateSources() {
 	} else {
 		// SCI2.1-SCI3 file naming scheme
 		Common::ArchiveMemberList mapFiles, files;
-		SearchMan.listMatchingMembers(mapFiles, "resmap.0??");
-		SearchMan.listMatchingMembers(files, "ressci.0??");
+		SearchMan.listMatchingMembers(mapFiles, "resmap.0##");
+		SearchMan.listMatchingMembers(files, "ressci.0##");
 
 		if (mapFiles.empty() || files.empty())
 			return 0;
@@ -1770,7 +1770,7 @@ void ResourceManager::readResourcePatches() {
 		szResType = getResourceTypeName((ResourceType)i);
 		// SCI0 naming - type.nnn
 		mask = szResType;
-		mask += ".???";
+		mask += ".###";
 		SearchMan.listMatchingMembers(files, mask);
 		// SCI1 and later naming - nnn.typ
 		mask = "*.";

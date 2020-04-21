@@ -672,7 +672,7 @@ void ResourceManager::setAudioLanguage(int language) {
 
 	// Search for audio volumes for this language and add them to the source list
 	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, filename + ".0??");
+	SearchMan.listMatchingMembers(files, filename + ".0##");
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		const Common::String name = (*x)->getName();
 		const char *dot = strrchr(name.c_str(), '.');
