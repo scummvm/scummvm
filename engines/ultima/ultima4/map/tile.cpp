@@ -191,25 +191,6 @@ void Tile::deleteImage() {
 	_scale = settings._scale;
 }
 
-Direction MapTile::getDirection() const {
-	return getTileType()->directionForFrame(_frame);
-}
-
-bool MapTile::setDirection(Direction d) {
-	// if we're already pointing the right direction, do nothing!
-	if (getDirection() == d)
-		return false;
-
-	const Tile *type = getTileType();
-
-	int new_frame = type->frameForDirection(d);
-	if (new_frame != -1) {
-		_frame = new_frame;
-		return true;
-	}
-	return false;
-}
-
 bool Tile::isDungeonFloor() const {
 	Tile *floor = _tileset->getByName("brick_floor");
 	if (_id == floor->_id)
@@ -238,11 +219,6 @@ int Tile::frameForDirection(Direction d) const {
 			return i;
 	}
 	return -1;
-}
-
-
-const Tile *MapTile::getTileType() const {
-	return Tileset::findTileById(_id);
 }
 
 } // End of namespace Ultima4

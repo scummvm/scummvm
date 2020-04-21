@@ -25,6 +25,7 @@
 
 #include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/map/map_tile.h"
 #include "common/list.h"
 
 namespace Ultima {

@@ -20,61 +20,68 @@
  *
  */
 
-#ifndef ULTIMA4_MAP_TILEMAP_H
-#define ULTIMA4_MAP_TILEMAP_H
+#ifndef ULTIMA4_MAP_MAP_TILE_H
+#define ULTIMA4_MAP_MAP_TILE_H
 
 #include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/map/map_tile.h"
-#include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/map/tile.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-class ConfigElement;
-
 /**
- * A tilemap maps the raw bytes in a map file to MapTiles.
+ * A MapTile is a specific instance of a Tile.
  */
-class TileMap {
+class MapTile {
 public:
-	typedef Std::map<Common::String, TileMap *> TileIndexMapMap;
+	MapTile() : _id(0), _frame(0) {
+	}
+	MapTile(const TileId &i, byte f = 0) : _id(i), _frame(f), _freezeAnimation(false) {
+	}
+	MapTile(const MapTile &t) : _id(t._id), _frame(t._frame), _freezeAnimation(t._freezeAnimation) {
+	}
+
+	TileId getId() const {
+		return _id;
+	}
+	byte getFrame() const {
+		return _frame;
+	}
+	bool getFreezeAnimation() const {
+		return _freezeAnimation;
+	}
+
+	bool operator==(const MapTile &m) const {
+		return _id == m._id;
+	}
+	bool operator==(const TileId &i) const {
+		return _id == i;
+	}
+	bool operator!=(const MapTile &m) const {
+		return _id != m._id;
+	}
+	bool operator!=(const TileId &i) const {
+		return _id != i;
+	}
+	bool operator<(const MapTile &m) const {
+		return _id < m._id;    // for Std::less
+	}
 
 	/**
-	 * Translates a raw index to a MapTile.
+	 * MapTile Class Implementation
 	 */
-	MapTile translate(uint index);
-	uint untranslate(MapTile &tile);
+	Direction getDirection() const;
+	bool setDirection(Direction d);
 
-	/**
-	 * Load all tilemaps from the specified xml file
-	 */
-	static void loadAll();
+	const Tile *getTileType() const;
 
-	/**
-	 * Delete all tilemaps
-	 */
-	static void unloadAll();
-
-	/**
-	 * Returns the Tile index map with the specified name
-	 */
-	static TileMap *get(Common::String name);
-
-private:
-	/**
-	 * Loads a tile map which translates between tile indices and tile
-	 * names.  Tile maps are useful to translate from dos tile indices to
-	 * xu4 tile ids.
-	 */
-	static void load(const ConfigElement &tilemapConf);
-	static TileIndexMapMap _tileMaps;
-
-	Std::map<uint, MapTile> _tileMap;
+	// Properties
+	TileId _id;
+	byte _frame;
+	bool _freezeAnimation;
 };
 
 } // End of namespace Ultima4
 } // End of namespace Ultima
 
 #endif
-
-

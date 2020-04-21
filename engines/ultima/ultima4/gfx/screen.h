@@ -29,6 +29,7 @@
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/gfx/scale.h"
 #include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/map/map_tile.h"
 #include "ultima/shared/core/file.h"
 
 namespace Ultima {

@@ -20,65 +20,33 @@
  *
  */
 
-#ifndef ULTIMA4_CORE_TYPES_H
-#define ULTIMA4_CORE_TYPES_H
-
-#include "ultima/ultima4/map/direction.h"
-#include "common/scummsys.h"
+#include "ultima/ultima4/map/map_tile.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-class Tile;
+Direction MapTile::getDirection() const {
+	return getTileType()->directionForFrame(_frame);
+}
 
-typedef uint TileId;
-typedef byte MapId;
+bool MapTile::setDirection(Direction d) {
+	// if we're already pointing the right direction, do nothing!
+	if (getDirection() == d)
+		return false;
 
-enum TileSpeed {
-	FAST,
-	SLOW,
-	VSLOW,
-	VVSLOW
-};
+	const Tile *type = getTileType();
 
-enum TileEffect {
-	EFFECT_NONE,
-	EFFECT_FIRE,
-	EFFECT_SLEEP,
-	EFFECT_POISON,
-	EFFECT_POISONFIELD,
-	EFFECT_ELECTRICITY,
-	EFFECT_LAVA
-};
+	int new_frame = type->frameForDirection(d);
+	if (new_frame != -1) {
+		_frame = new_frame;
+		return true;
+	}
+	return false;
+}
 
-enum TileAnimationStyle {
-	ANIM_NONE,
-	ANIM_SCROLL,
-	ANIM_CAMPFIRE,
-	ANIM_CITYFLAG,
-	ANIM_CASTLEFLAG,
-	ANIM_SHIPFLAG,
-	ANIM_LCBFLAG,
-	ANIM_FRAMES
-};
-
-/**
- * An Uncopyable has no default copy constructor of operator=.  A subclass may derive from
- * Uncopyable at any level of visibility, even private, and subclasses will not have a default copy
- * constructor or operator=. See also, boost::noncopyable Uncopyable (from the Boost project) and
- * Item 6 from Scott Meyers Effective C++.
- */
-class Uncopyable {
-protected:
-	Uncopyable() {}
-	~Uncopyable() {}
-
-private:
-	Uncopyable(const Uncopyable &);
-	const Uncopyable &operator=(const Uncopyable &);
-};
+const Tile *MapTile::getTileType() const {
+	return Tileset::findTileById(_id);
+}
 
 } // End of namespace Ultima4
 } // End of namespace Ultima
-
-#endif

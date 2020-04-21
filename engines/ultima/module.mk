@@ -206,6 +206,7 @@ MODULE_OBJS := \
 	ultima4/map/direction.o \
 	ultima4/map/dungeon.o \
 	ultima4/map/dungeonview.o \
+	ultima4/map/map_tile.o \
 	ultima4/map/movement.o \
 	ultima4/map/shrine.o \
 	ultima4/map/location.o \
