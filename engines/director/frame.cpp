@@ -1194,17 +1194,16 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 	// Searching white color in the corners
 	int whiteColor = -1;
 
-	for (int corner = 0; corner < 4; corner++) {
-		int x = (corner & 0x1) ? tmp.w - 1 : 0;
-		int y = (corner & 0x2) ? tmp.h - 1 : 0;
+	for (int y = 0; y < tmp.h; y++) {
+		for (int x = 0; x < tmp.w; x++) {
+			byte color = *(byte *)tmp.getBasePtr(x, y);
 
-		byte color = *(byte *)tmp.getBasePtr(x, y);
-
-		if (_vm->getPalette()[color * 3 + 0] == 0xff &&
-			_vm->getPalette()[color * 3 + 1] == 0xff &&
-			_vm->getPalette()[color * 3 + 2] == 0xff) {
-			whiteColor = color;
-			break;
+			if (_vm->getPalette()[color * 3 + 0] == 0xff &&
+				_vm->getPalette()[color * 3 + 1] == 0xff &&
+				_vm->getPalette()[color * 3 + 2] == 0xff) {
+				whiteColor = color;
+				break;
+			}
 		}
 	}
 
