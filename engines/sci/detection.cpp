@@ -552,6 +552,7 @@ static const char *directoryGlobs[] = {
 	"italian",
 	"msg",
 	"spanish",
+	"patches",
 	0
 };
 
