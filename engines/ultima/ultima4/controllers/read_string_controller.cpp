@@ -47,7 +47,7 @@ bool ReadStringController::keyPressed(int key) {
 	int valid = true, len = _value.size();
 	size_t pos = Common::String::npos;
 
-	if (key < U4_ALT)
+	if (key < 0x80)
 		pos = _accepted.findFirstOf(key);
 
 	if (pos != Common::String::npos) {

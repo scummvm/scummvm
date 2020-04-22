@@ -31,12 +31,12 @@ namespace Ultima4 {
 
 bool ZtatsController::keyPressed(int key) {
 	switch (key) {
-	case U4_UP:
-	case U4_LEFT:
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_LEFT:
 		g_context->_stats->prevItem();
 		return true;
-	case U4_DOWN:
-	case U4_RIGHT:
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_RIGHT:
 		g_context->_stats->nextItem();
 		return true;
 	case '1':
@@ -53,9 +53,9 @@ bool ZtatsController::keyPressed(int key) {
 	case '0':
 		g_context->_stats->setView(StatsView(STATS_WEAPONS));
 		return true;
-	case U4_ESC:
-	case U4_SPACE:
-	case U4_ENTER:
+	case Common::KEYCODE_ESCAPE:
+	case Common::KEYCODE_SPACE:
+	case Common::KEYCODE_RETURN:
 		g_context->_stats->setView(StatsView(STATS_PARTY_OVERVIEW));
 		doneWaiting();
 		return true;

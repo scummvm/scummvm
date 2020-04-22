@@ -41,20 +41,20 @@ bool MenuController::keyPressed(int key) {
 		_view->disableCursor();
 
 	switch (key) {
-	case U4_UP:
+	case Common::KEYCODE_UP:
 		_menu->prev();
 		break;
-	case U4_DOWN:
+	case Common::KEYCODE_DOWN:
 		_menu->next();
 		break;
-	case U4_LEFT:
-	case U4_RIGHT:
-	case U4_ENTER: {
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_RETURN: {
 		MenuEvent::Type action = MenuEvent::ACTIVATE;
 
-		if (key == U4_LEFT)
+		if (key == Common::KEYCODE_LEFT)
 			action = MenuEvent::DECREMENT;
-		else if (key == U4_RIGHT)
+		else if (key == Common::KEYCODE_RIGHT)
 			action = MenuEvent::INCREMENT;
 		_menu->activateItem(-1, action);
 	}

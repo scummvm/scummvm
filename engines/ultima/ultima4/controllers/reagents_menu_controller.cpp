@@ -41,13 +41,13 @@ bool ReagentsMenuController::keyPressed(int key) {
 		Menu::MenuItemList::iterator mi = _menu->getById(key - 'a');
 		if ((*mi)->isVisible()) {
 			_menu->setCurrent(_menu->getById(key - 'a'));
-			keyPressed(U4_SPACE);
+			keyPressed(Common::KEYCODE_SPACE);
 		}
 	}
 	break;
-	case U4_LEFT:
-	case U4_RIGHT:
-	case U4_SPACE:
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_SPACE:
 		if (_menu->isVisible()) {
 			MenuItem *item = *_menu->getCurrent();
 
@@ -60,11 +60,12 @@ bool ReagentsMenuController::keyPressed(int key) {
 				_ingredients->removeReagent((Reagent)item->getId());
 		}
 		break;
-	case U4_ENTER:
+
+	case Common::KEYCODE_RETURN:
 		eventHandler->setControllerDone();
 		break;
 
-	case U4_ESC:
+	case Common::KEYCODE_ESCAPE:
 		_ingredients->revert();
 		eventHandler->setControllerDone();
 		break;

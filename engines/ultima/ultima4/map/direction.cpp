@@ -114,13 +114,13 @@ Direction dirNormalize(Direction orientation, Direction dir) {
 
 Direction keyToDirection(int key) {
 	switch (key) {
-	case U4_UP:
+	case Common::KEYCODE_UP:
 		return DIR_NORTH;
-	case U4_DOWN:
+	case Common::KEYCODE_DOWN:
 		return DIR_SOUTH;
-	case U4_LEFT:
+	case Common::KEYCODE_LEFT:
 		return DIR_WEST;
-	case U4_RIGHT:
+	case Common::KEYCODE_RIGHT:
 		return DIR_EAST;
 	default:
 		return DIR_NONE;
@@ -130,13 +130,13 @@ Direction keyToDirection(int key) {
 int directionToKey(Direction dir) {
 	switch (dir) {
 	case DIR_WEST:
-		return U4_LEFT;
+		return Common::KEYCODE_LEFT;
 	case DIR_NORTH:
-		return U4_UP;
+		return Common::KEYCODE_UP;
 	case DIR_EAST:
-		return U4_RIGHT;
+		return Common::KEYCODE_RIGHT;
 	case DIR_SOUTH:
-		return U4_DOWN;
+		return Common::KEYCODE_DOWN;
 
 	case DIR_NONE:
 	case DIR_ADVANCE:

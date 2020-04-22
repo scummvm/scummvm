@@ -34,7 +34,8 @@ bool AlphaActionController::keyPressed(int key) {
 	if (key >= 'A' && key <= toupper(_lastValidLetter)) {
 		_value = key - 'A';
 		doneWaiting();
-	} else if (key == U4_SPACE || key == U4_ESC || key == U4_ENTER) {
+	} else if (key == Common::KEYCODE_SPACE || key == Common::KEYCODE_ESCAPE
+			|| key == Common::KEYCODE_RETURN) {
 		g_screen->screenMessage("\n");
 		_value = -1;
 		doneWaiting();
@@ -43,6 +44,7 @@ bool AlphaActionController::keyPressed(int key) {
 		g_screen->update();
 		return KeyHandler::defaultHandler(key, nullptr);
 	}
+
 	return true;
 }
 

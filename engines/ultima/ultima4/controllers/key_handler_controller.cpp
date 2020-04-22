@@ -48,21 +48,7 @@ int KeyHandler::setKeyRepeat(int delay, int interval) {
 }
 
 bool KeyHandler::globalHandler(int key) {
-	switch (key) {
-#if defined(MACOSX)
-	case U4_META + 'q': /* Cmd+q */
-	case U4_META + 'x': /* Cmd+x */
-#endif
-	case U4_ALT + 'x': /* Alt+x */
-#if defined(WIN32)
-	case U4_ALT + U4_FKEY + 3:
-#endif
-		g_ultima->quitGame();
-		EventHandler::end();
-		return true;
-	default:
-		return false;
-	}
+	return false;
 }
 
 bool KeyHandler::defaultHandler(int key, void *data) {
@@ -98,15 +84,15 @@ bool KeyHandler::handle(int key) {
 
 bool KeyHandler::isKeyIgnored(int key) {
 	switch (key) {
-	case U4_RIGHT_SHIFT:
-	case U4_LEFT_SHIFT:
-	case U4_RIGHT_CTRL:
-	case U4_LEFT_CTRL:
-	case U4_RIGHT_ALT:
-	case U4_LEFT_ALT:
-	case U4_RIGHT_META:
-	case U4_LEFT_META:
-	case U4_TAB:
+	case Common::KEYCODE_RSHIFT:
+	case Common::KEYCODE_LSHIFT:
+	case Common::KEYCODE_RCTRL:
+	case Common::KEYCODE_LCTRL:
+	case Common::KEYCODE_RALT:
+	case Common::KEYCODE_LALT:
+	case Common::KEYCODE_RMETA:
+	case Common::KEYCODE_LMETA:
+	case Common::KEYCODE_TAB:
 		return true;
 	default:
 		return false;

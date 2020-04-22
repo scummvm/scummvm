@@ -269,28 +269,10 @@ void EventHandler::handleKeyDownEvent(const Common::Event &event, Controller *co
 	int key;
 	bool processed;
 
-	if (event.kbd.keycode == Common::KEYCODE_UP)
-		key = U4_UP;
-	else if (event.kbd.keycode == Common::KEYCODE_DOWN)
-		key = U4_DOWN;
-	else if (event.kbd.keycode == Common::KEYCODE_LEFT)
-		key = U4_LEFT;
-	else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
-		key = U4_RIGHT;
-	else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE ||
-		event.kbd.keycode == Common::KEYCODE_DELETE)
-		key = U4_BACKSPACE;
-	else {
-		key = event.kbd.ascii;
-		if (!key)
-			return;
-
-		if (event.kbd.flags & Common::KBD_ALT)
-			key += U4_ALT;
-
-		if (event.kbd.flags & Common::KBD_META)
-			key += U4_META;
-	}
+	key = event.kbd.ascii;
+	if (!key)
+		return;
+	key += event.kbd.flags << 16;
 
 	debug(1, "key event: sym = %d, mod = %d; translated = %d",
 		event.kbd.keycode, event.kbd.flags, key);

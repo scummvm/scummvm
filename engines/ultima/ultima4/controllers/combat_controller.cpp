@@ -837,14 +837,14 @@ bool CombatController::keyPressed(int key) {
 	bool endTurn = true;
 
 	switch (key) {
-	case U4_UP:
-	case U4_DOWN:
-	case U4_LEFT:
-	case U4_RIGHT:
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_RIGHT:
 		g_context->_location->move(keyToDirection(key), true);
 		break;
 
-	case U4_ESC:
+	case Common::KEYCODE_ESCAPE:
 		if (settings._debug)
 			end(false);         /* don't adjust karma */
 		else g_screen->screenMessage("Bad command\n");
@@ -855,7 +855,7 @@ bool CombatController::keyPressed(int key) {
 		g_screen->screenMessage("Pass\n");
 		break;
 
-	case U4_FKEY: {
+	case Common::KEYCODE_F1: {
 		if (settings._debug)
 			gameDestroyAllCreatures();
 		else valid = false;
@@ -865,13 +865,13 @@ bool CombatController::keyPressed(int key) {
 	// Change the speed of battle
 	case '+':
 	case '-':
-	case U4_KEYPAD_ENTER: {
+	case Common::KEYCODE_KP_ENTER: {
 		int old_speed = settings._battleSpeed;
 		if (key == '+' && ++settings._battleSpeed > MAX_BATTLE_SPEED)
 			settings._battleSpeed = MAX_BATTLE_SPEED;
 		else if (key == '-' && --settings._battleSpeed == 0)
 			settings._battleSpeed = 1;
-		else if (key == U4_KEYPAD_ENTER)
+		else if (key == Common::KEYCODE_KP_ENTER)
 			settings._battleSpeed = DEFAULT_BATTLE_SPEED;
 
 		if (old_speed != settings._battleSpeed) {
@@ -923,7 +923,7 @@ bool CombatController::keyPressed(int key) {
 		break;
 
 #ifdef IOS
-	case U4_ENTER: // Fall through and get the chest.
+	case Common::KEYCODE_RETURN: // Fall through and get the chest.
 #endif
 	case 'g':
 		g_screen->screenMessage("Get Chest!\n");
