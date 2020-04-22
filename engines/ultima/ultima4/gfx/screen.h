@@ -91,7 +91,6 @@ struct MouseArea {
 		int x, y;
 	} _point[3];
 	MouseCursor _cursor;
-	int _command[3];
 };
 
 struct Layout {

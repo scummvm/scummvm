@@ -252,19 +252,13 @@ void EventHandler::handleMouseMotionEvent(const Common::Event &event) {
 }
 
 void EventHandler::handleMouseButtonDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen) {
-	int button = 0;
-	if (event.type == Common::EVENT_MBUTTONDOWN)
-		button = 1;
-	else if (event.type == Common::EVENT_RBUTTONDOWN)
-		button = 2;
-
-	if (!settings._mouseOptions._enabled)
+	if (!settings._mouseOptions._enabled || event.type != Common::EVENT_LBUTTONDOWN)
 		return;
 
 	const MouseArea *area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
-	if (!area || area->_command[button] == KEYBIND_NONE)
+	if (!area)
 		return;
-	controller->keybinder((KeybindingAction)area->_command[button]);
+	controller->keybinder(KEYBIND_INTERACT);
 
 	if (updateScreen)
 		(*updateScreen)();

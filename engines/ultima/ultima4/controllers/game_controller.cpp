@@ -48,11 +48,11 @@ using namespace std;
 GameController *g_game = nullptr;
 
 static const MouseArea MOUSE_AREAS[] = {
-	{ 3, { { 8, 8 }, { 8, 184 }, { 96, 96 } }, MC_WEST, { KEYBIND_INTERACT, KEYBIND_NONE, KEYBIND_LEFT } },
-	{ 3, { { 8, 8 }, { 184, 8 }, { 96, 96 } }, MC_NORTH, { KEYBIND_INTERACT, KEYBIND_NONE, KEYBIND_UP }  },
-	{ 3, { { 184, 8 }, { 184, 184 }, { 96, 96 } }, MC_EAST, { KEYBIND_INTERACT, KEYBIND_NONE, KEYBIND_RIGHT } },
-	{ 3, { { 8, 184 }, { 184, 184 }, { 96, 96 } }, MC_SOUTH, { KEYBIND_INTERACT, KEYBIND_NONE, KEYBIND_DOWN } },
-	{ 0, { { 0, 0 }, { 0, 0 }, { 0, 0 } }, MC_NORTH, { KEYBIND_NONE, KEYBIND_NONE, KEYBIND_NONE } }
+	{ 3, { { 8, 8 }, { 8, 184 }, { 96, 96 } }, MC_WEST },
+	{ 3, { { 8, 8 }, { 184, 8 }, { 96, 96 } }, MC_NORTH },
+	{ 3, { { 184, 8 }, { 184, 184 }, { 96, 96 } }, MC_EAST },
+	{ 3, { { 8, 184 }, { 184, 184 }, { 96, 96 } }, MC_SOUTH },
+	{ 0, { { 0, 0 }, { 0, 0 }, { 0, 0 } }, MC_NORTH }
 };
 
 GameController::GameController() : _mapArea(BORDER_WIDTH, BORDER_HEIGHT, VIEWPORT_W, VIEWPORT_H), _paused(false), _pausedTimer(0) {
