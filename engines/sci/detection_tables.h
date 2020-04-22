@@ -5354,6 +5354,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 //		AD_LISTEND},
 //		Common::IT_ITA, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_TORIN },
 
+	// fan made Hebrew translation, by "Hebrew Adventure" https://www.facebook.com/groups/200491360554968/
+	// distributed as zip package to be extracted over GOG.com version
+	// from ZvikaZ
+	{ "torin", "", {
+		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
+		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+		{"PATCHES/61101.p56", 0, "c179fa0c1f842c3076393939e1f29e48", 200121},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_TORIN },
+
+
 	// ---
 
 	// Torin's Passage - Multilingual EN/FR/DE w/ German audio Windows CD (from m_kiewitz)

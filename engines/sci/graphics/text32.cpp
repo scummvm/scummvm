@@ -22,6 +22,7 @@
 
 #include "common/util.h"
 #include "common/stack.h"
+#include "common/unicode-bidi.h"
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
@@ -340,10 +341,18 @@ void GfxText32::drawTextBox() {
 		uint length = getLongest(&nextCharIndex, textRectWidth);
 		int16 textWidth = getTextWidth(charIndex, length);
 
-		if (_alignment == kTextAlignCenter) {
-			_drawPosition.x += (textRectWidth - textWidth) / 2;
-		} else if (_alignment == kTextAlignRight) {
-			_drawPosition.x += textRectWidth - textWidth;
+		if (!g_sci->isLanguageRTL()) {
+			if (_alignment == kTextAlignCenter) {
+				_drawPosition.x += (textRectWidth - textWidth) / 2;
+			} else if (_alignment == kTextAlignRight) {
+				_drawPosition.x += textRectWidth - textWidth;
+			}
+		} else {
+			if (_alignment == kTextAlignCenter) {
+				_drawPosition.x += (textRectWidth - textWidth) / 2;
+			} else if (_alignment == kTextAlignLeft) {
+				_drawPosition.x += textRectWidth - textWidth;
+			}
 		}
 
 		drawText(charIndex, length);
@@ -364,7 +373,18 @@ void GfxText32::drawText(const uint index, uint length) {
 	// This draw loop implementation is somewhat different than the
 	// implementation in SSCI, but is accurate. Primarily the changes revolve
 	// around eliminating some extra temporaries and fixing the logic to match.
-	const char *text = _text.c_str() + index;
+
+	Common::String textString;
+	const char *text;
+	if (!g_sci->isLanguageRTL()) {
+		text = _text.c_str() + index;
+	} else {
+		const char *textOrig = _text.c_str() + index;
+		Common::String textLogical = Common::String(textOrig, (uint32)length);
+		textString = Common::convertBiDiString(textLogical, g_sci->getLanguage());
+		text = textString.c_str();
+	}
+
 	while (length-- > 0) {
 		char currentChar = *text++;
 
