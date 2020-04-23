@@ -54,7 +54,7 @@ public:
 
 #define CLASSDEF \
 	static ClassDef *_type; \
-	virtual ClassDef *getType() const { return _type; }
+	virtual ClassDef *getType() const override { return _type; }
 
 class CSaveableObject {
 	typedef CSaveableObject *(*CreateFunction)();
@@ -79,7 +79,9 @@ public:
 	 */
 	static CSaveableObject *createInstance(const Common::String &name);
 public:
-	CLASSDEF
+	static ClassDef *_type; \
+	virtual ClassDef *getType() const { return _type; }
+
 	virtual ~CSaveableObject() {}
 
 	bool isInstanceOf(const ClassDef *classDef) const;
