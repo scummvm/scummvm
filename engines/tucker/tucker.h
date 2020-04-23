@@ -747,7 +747,7 @@ protected:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	SavegameError writeSavegameHeader(Common::OutSaveFile *file, SavegameHeader &header);
 	virtual int getAutosaveSlot() const override { return kAutoSaveSlot; }
-	virtual Common::String getSaveStateName(int slot) const {
+	virtual Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("%s.%d", _targetName.c_str(), slot);
 	}
 
