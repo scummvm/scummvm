@@ -74,9 +74,6 @@ namespace Ultima4 {
 #define DEFAULT_TITLE_SPEED_RANDOM      150
 #define DEFAULT_TITLE_SPEED_OTHER       30
 
-#define DEFAULT_PAUSE_FOR_EACH_TURN     100
-#define DEFAULT_PAUSE_FOR_EACH_MOVEMENT 10
-
 //--Tile transparency stuff
 #define DEFAULT_SHADOW_PIXEL_OPACITY    64
 #define DEFAULT_SHADOW_PIXEL_SIZE       2
@@ -143,11 +140,6 @@ public:
 	bool _volumeFades;
 	int _titleSpeedRandom;
 	int _titleSpeedOther;
-
-	//Settings that aren't in file yet
-	int _pauseForEachTurn;
-	int _pauseForEachMovement;
-
 
 	int _eventTimerGranularity;
 	Common::String _filter;

@@ -133,9 +133,6 @@ bool Settings::read() {
 	_titleSpeedRandom      = DEFAULT_TITLE_SPEED_RANDOM;
 	_titleSpeedOther       = DEFAULT_TITLE_SPEED_OTHER;
 
-	_pauseForEachMovement  = DEFAULT_PAUSE_FOR_EACH_MOVEMENT;
-	_pauseForEachTurn      = DEFAULT_PAUSE_FOR_EACH_TURN;
-
 	// all specific minor enhancements default to "on", any major enhancements default to "off"
 	_enhancementsOptions._activePlayer     = true;
 	_enhancementsOptions._u5spellMixing    = true;
