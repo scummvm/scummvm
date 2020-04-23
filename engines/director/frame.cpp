@@ -717,7 +717,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	// Draw fill
 	Common::Rect fillRect((int)shapeRect.width(), (int)shapeRect.height());
-	Graphics::MacPlotData plotFill(&tmpSurface, nullptr, &_vm->getPatterns(), sp->getPattern(), -shapeRect.left, -shapeRect.top, 1, backColor);
+	Graphics::MacPlotData plotFill(&tmpSurface, &maskSurface, &_vm->getPatterns(), sp->getPattern(), -shapeRect.left, -shapeRect.top, 1, backColor);
 	switch (spriteType) {
 	case kRectangleSprite:
 		Graphics::drawFilledRect(fillRect, foreColor, Graphics::macDrawPixel, &plotFill);
@@ -737,7 +737,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	// Draw stroke
 	Common::Rect strokeRect(MAX((int)shapeRect.width() - lineSize, 0), MAX((int)shapeRect.height() - lineSize, 0));
-	Graphics::MacPlotData plotStroke(&tmpSurface, nullptr, &_vm->getPatterns(), 1, -shapeRect.left, -shapeRect.top, lineSize, backColor);
+	Graphics::MacPlotData plotStroke(&tmpSurface, &maskSurface, &_vm->getPatterns(), 1, -shapeRect.left, -shapeRect.top, lineSize, backColor);
 	switch (spriteType) {
 	case kLineTopBottomSprite:
 		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, foreColor, Graphics::macDrawPixel, &plotStroke);
@@ -766,7 +766,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	}
 
 	addDrawRect(spriteId, shapeRect);
-	inkBasedBlit(surface, tmpSurface, ink, shapeRect, spriteId);
+	inkBasedBlit(surface, &maskSurface, tmpSurface, ink, shapeRect, spriteId);
 }
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
@@ -899,7 +899,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		if (spriteId == score->_currentMouseDownSpriteId)
 			ink = kInkTypeReverse;
 
-		inkBasedBlit(surface, textCast->_widget->getSurface()->rawSurface(), ink, Common::Rect(x, y, x + width, y + height), spriteId);
+		inkBasedBlit(surface, nullptr, textCast->_widget->getSurface()->rawSurface(), ink, Common::Rect(x, y, x + width, y + height), spriteId);
 
 		return;
 	}
@@ -1032,7 +1032,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	if (spriteId == score->_currentMouseDownSpriteId)
 		ink = kInkTypeReverse;
 
-	inkBasedBlit(surface, textWithFeatures, ink, Common::Rect(x, y, x + width, y + height), spriteId);
+	inkBasedBlit(surface, nullptr, textWithFeatures, ink, Common::Rect(x, y, x + width, y + height), spriteId);
 }
 
 void Frame::renderBitmap(Graphics::ManagedSurface &surface, uint16 spriteId) {
@@ -1057,10 +1057,10 @@ void Frame::renderBitmap(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : sprite->_width;
 	Common::Rect drawRect(x, y, x + width, y + height);
 	addDrawRect(spriteId, drawRect);
-	inkBasedBlit(surface, *(bc->_surface), ink, drawRect, spriteId);
+	inkBasedBlit(surface, nullptr, *(bc->_surface), ink, drawRect, spriteId);
 }
 
-void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId) {
+void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::ManagedSurface *maskSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId) {
 	// drawRect could be bigger than the spriteSurface. Clip it
 	Common::Rect t(spriteSurface.w, spriteSurface.h);
 	t.moveTo(drawRect.left, drawRect.top);
@@ -1068,7 +1068,10 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 
 	switch (ink) {
 	case kInkTypeCopy:
-		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
+		if (maskSurface)
+			targetSurface.transBlitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top), *maskSurface);
+		else
+			targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
 		break;
 	case kInkTypeTransparent:
 		// FIXME: is it always white (last entry in pallette)?
