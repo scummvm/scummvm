@@ -708,10 +708,12 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		sp->_currentPoint.x + sp->_width,
 		sp->_currentPoint.y + sp->_height);
 
-	Graphics::ManagedSurface tmpSurface;
+	Graphics::ManagedSurface tmpSurface, maskSurface;
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
-	tmpSurface.clear(255);
+	tmpSurface.clear(backColor);
 
+	maskSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
+	maskSurface.clear(0);
 
 	// Draw fill
 	Common::Rect fillRect((int)shapeRect.width(), (int)shapeRect.height());
@@ -765,7 +767,6 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	addDrawRect(spriteId, shapeRect);
 	inkBasedBlit(surface, tmpSurface, ink, shapeRect, spriteId);
-
 }
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
