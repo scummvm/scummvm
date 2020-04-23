@@ -215,13 +215,13 @@ public:
 		return retVal;
 	}
 
-	Common::KeymapArray initKeymaps(const char *target) const {
+	Common::KeymapArray initKeymaps(const char *target) const override {
 		using namespace Common;
 
 		Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "wintermute", "Wintermute engine");
 
 		Action *act;
-		
+
 		act = new Action("LCLK", _("Left Click"));
 		act->setLeftClickEvent();
 		act->addDefaultInputMapping("MOUSE_LEFT"); // original mouse
