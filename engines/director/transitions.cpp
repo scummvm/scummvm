@@ -932,7 +932,7 @@ static void transZoom(TransParams &t, Score *score, Common::Rect &clipRect) {
 
 	t.steps += 2;
 
-	Graphics::MacPlotData pd(score->_backSurface, &g_director->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
+	Graphics::MacPlotData pd(score->_backSurface, nullptr, &g_director->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
 
 	for (uint16 i = 1; i < t.steps; i++) {
 		score->_backSurface->copyFrom(*score->_backSurface2);

@@ -715,7 +715,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	// Draw fill
 	Common::Rect fillRect((int)shapeRect.width(), (int)shapeRect.height());
-	Graphics::MacPlotData plotFill(&tmpSurface, &_vm->getPatterns(), sp->getPattern(), -shapeRect.left, -shapeRect.top, 1, backColor);
+	Graphics::MacPlotData plotFill(&tmpSurface, nullptr, &_vm->getPatterns(), sp->getPattern(), -shapeRect.left, -shapeRect.top, 1, backColor);
 	switch (spriteType) {
 	case kRectangleSprite:
 		Graphics::drawFilledRect(fillRect, foreColor, Graphics::macDrawPixel, &plotFill);
@@ -735,7 +735,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	// Draw stroke
 	Common::Rect strokeRect(MAX((int)shapeRect.width() - lineSize, 0), MAX((int)shapeRect.height() - lineSize, 0));
-	Graphics::MacPlotData plotStroke(&tmpSurface, &_vm->getPatterns(), 1, -shapeRect.left, -shapeRect.top, lineSize, backColor);
+	Graphics::MacPlotData plotStroke(&tmpSurface, nullptr, &_vm->getPatterns(), 1, -shapeRect.left, -shapeRect.top, lineSize, backColor);
 	switch (spriteType) {
 	case kLineTopBottomSprite:
 		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, foreColor, Graphics::macDrawPixel, &plotStroke);
@@ -823,7 +823,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	if (!invert)
 		renderText(surface, spriteId, &textRect);
 
-	Graphics::MacPlotData plotStroke(&surface, &_vm->getPatterns(), 1, -_rect.left, -_rect.top, 1, 0);
+	Graphics::MacPlotData plotStroke(&surface, nullptr, &_vm->getPatterns(), 1, -_rect.left, -_rect.top, 1, 0);
 
 	switch (buttonType) {
 	case kCheckboxSprite:
@@ -834,7 +834,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		break;
 	case kButtonSprite: {
 			_rect = Common::Rect(x, y, x + width, y + height + 3);
-			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 0, 0, 1, invert ? Graphics::kColorBlack : Graphics::kColorWhite);
+			Graphics::MacPlotData pd(&surface, nullptr, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 0, 0, 1, invert ? Graphics::kColorBlack : Graphics::kColorWhite);
 
 			Graphics::drawRoundRect(_rect, 4, 0, invert, Graphics::macDrawPixel, &pd);
 			addDrawRect(spriteId, _rect);

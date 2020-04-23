@@ -313,6 +313,9 @@ void macDrawPixel(int x, int y, int color, void *data) {
 			*((byte *)p->surface->getBasePtr(xu, yu)) =
 				(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ?
 					color : p->bgColor;
+
+			if (p->mask)
+				*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
 		}
 	} else {
 		int x1 = x;
@@ -328,6 +331,9 @@ void macDrawPixel(int x, int y, int color, void *data) {
 					*((byte *)p->surface->getBasePtr(xu, yu)) =
 						(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ?
 							color : p->bgColor;
+
+					if (p->mask)
+						*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
 				}
 	}
 }
@@ -335,7 +341,7 @@ void macDrawPixel(int x, int y, int color, void *data) {
 void MacWindowManager::drawDesktop() {
 	Common::Rect r(_screen->getBounds());
 
-	MacPlotData pd(_screen, &_patterns, kPatternCheckers, 0, 0, 1, _colorWhite);
+	MacPlotData pd(_screen, nullptr, &_patterns, kPatternCheckers, 0, 0, 1, _colorWhite);
 
 	Graphics::drawRoundRect(r, kDesktopArc, _colorBlack, true, macDrawPixel, &pd);
 
