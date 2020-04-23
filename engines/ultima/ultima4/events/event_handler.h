@@ -30,6 +30,7 @@
 #include "ultima/shared/std/containers.h"
 #include "common/events.h"
 #include "common/list.h"
+#include "common/rect.h"
 #include "common/str.h"
 
 namespace Ultima {
@@ -48,6 +49,39 @@ typedef void *UIEvent;
 #endif
 
 typedef void(*updateScreenCallback)();
+
+/**
+ * Encapsulates the logic for deciding how frequently to walk
+ * when holding down the right moues button in enhanced mode
+ */
+class WalkTrigger {
+private:
+	int _ticksCtr, _ticksPerWalk;
+	KeybindingAction _action;
+public:
+	/**
+	 * Constructor
+	 */
+	WalkTrigger() : _ticksCtr(0), _ticksPerWalk(0), _action(KEYBIND_NONE) {
+	}
+
+	/**
+	 * Resets the walker
+	 */
+	void reset();
+
+	/**
+	 * Sets the delta from the center of the map
+	 */
+	void setDelta(Direction dir, int distance);
+
+	/**
+	 * Checks for whether to walk, and if so, returns the direction
+	 */
+	KeybindingAction getAction();
+};
+
+
 /**
  * A class for handling game events.
  */
@@ -55,9 +89,12 @@ class EventHandler {
 	typedef Common::List<const MouseArea *> MouseAreaList;
 private:
 	static EventHandler *_instance;
+	WalkTrigger _walk;
+	bool _isRightButtonDown;
 private:
 	void handleMouseMotionEvent(const Common::Event &event);
 	void handleMouseButtonDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen);
+	void handleMouseButtonUpEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen);
 	void handleKeyDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen);
 protected:
 	static bool _controllerDone;
@@ -158,6 +195,13 @@ public:
 	const MouseArea *getMouseAreaSet() const;
 
 	const MouseArea *mouseAreaForPoint(int x, int y);
+
+	/**
+	 * Checks for whether to walk, and if so, returns the direction action
+	 */
+	KeybindingAction getAction() {
+		return _isRightButtonDown ? _walk.getAction() : KEYBIND_NONE;
+	}
 };
 
 } // End of namespace Ultima4

@@ -42,7 +42,8 @@ bool EventHandler::_ended = false;
 
 EventHandler *EventHandler::_instance = nullptr;
 
-EventHandler::EventHandler() : _timer(settings._eventTimerGranularity), _updateScreen(nullptr) {
+EventHandler::EventHandler() : _timer(settings._eventTimerGranularity),
+		_updateScreen(nullptr), _isRightButtonDown(false) {
 }
 
 EventHandler *EventHandler::getInstance() {
@@ -165,6 +166,12 @@ void EventHandler::run() {
 			handleMouseButtonDownEvent(event, getController(), _updateScreen);
 			break;
 
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
+		case Common::EVENT_MBUTTONUP:
+			handleMouseButtonUpEvent(event, getController(), _updateScreen);
+			break;
+
 		case Common::EVENT_MOUSEMOVE:
 			handleMouseMotionEvent(event);
 			continue;
@@ -245,24 +252,47 @@ void EventHandler::handleMouseMotionEvent(const Common::Event &event) {
 
 	const MouseArea *area;
 	area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
-	if (area)
+	if (area) {
 		g_screen->setMouseCursor(area->_cursor);
-	else
+
+		if (_isRightButtonDown) {
+			int xd = (event.mouse.x / settings._scale) - 96,
+				yd = (event.mouse.y / settings._scale) - 96;
+			double dist = sqrt((double)(xd * xd + yd * yd));
+			_walk.setDelta(area->_direction, (int)dist);
+		}
+	} else {
 		g_screen->setMouseCursor(MC_DEFAULT);
+		if (_isRightButtonDown)
+			_walk.setDelta(DIR_NONE, 0);
+	}
 }
 
 void EventHandler::handleMouseButtonDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen) {
-	if (!settings._mouseOptions._enabled || event.type != Common::EVENT_LBUTTONDOWN)
+	if (!settings._mouseOptions._enabled)
 		return;
 
-	const MouseArea *area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
-	if (!area)
-		return;
-	controller->keybinder(KEYBIND_INTERACT);
+	if (event.type == Common::EVENT_LBUTTONDOWN) {
+		const MouseArea *area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
+		if (!area)
+			return;
+		controller->keybinder(KEYBIND_INTERACT);
+	} else if (event.type == Common::EVENT_RBUTTONDOWN) {
+		_isRightButtonDown = true;
+		handleMouseMotionEvent(event);
+	}
 
 	if (updateScreen)
 		(*updateScreen)();
 	g_screen->update();
+}
+
+void EventHandler::handleMouseButtonUpEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen) {
+	if (!settings._mouseOptions._enabled)
+		return;
+
+	if (event.type == Common::EVENT_RBUTTONUP)
+		_isRightButtonDown = false;
 }
 
 void EventHandler::handleKeyDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen) {
@@ -286,6 +316,57 @@ void EventHandler::handleKeyDownEvent(const Common::Event &event, Controller *co
 		g_screen->update();
 	}
 }
+
+/*-------------------------------------------------------------------*/
+
+void WalkTrigger::reset() {
+	_action = KEYBIND_NONE;
+	_ticksCtr = 0;
+}
+
+void WalkTrigger::setDelta(Direction dir, int distance) {
+	if (distance > 96) {
+		distance = 0;
+		dir = DIR_NONE;
+	}
+
+	KeybindingAction action;
+	switch (dir) {
+	case DIR_NORTH:
+		action = KEYBIND_UP;
+		break;
+	case DIR_SOUTH:
+		action = KEYBIND_DOWN;
+		break;
+	case DIR_WEST:
+		action = KEYBIND_LEFT;
+		break;
+	case DIR_EAST:
+		action = KEYBIND_RIGHT;
+		break;
+	default:
+		action = KEYBIND_NONE;
+		break;
+	}
+
+	if (action != _action) {
+		// Walk quadrant changed
+		_action = action;
+		_ticksCtr = 0;
+	}
+
+	_ticksPerWalk = 4 - (distance / 25);
+}
+
+KeybindingAction WalkTrigger::getAction() {
+	if (--_ticksCtr <= 0) {
+		_ticksCtr = _ticksPerWalk;
+		return _action;
+	}
+
+	return KEYBIND_NONE;
+}
+
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

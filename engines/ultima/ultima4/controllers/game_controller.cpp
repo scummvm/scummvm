@@ -48,11 +48,11 @@ using namespace std;
 GameController *g_game = nullptr;
 
 static const MouseArea MOUSE_AREAS[] = {
-	{ 3, { { 8, 8 }, { 8, 184 }, { 96, 96 } }, MC_WEST },
-	{ 3, { { 8, 8 }, { 184, 8 }, { 96, 96 } }, MC_NORTH },
-	{ 3, { { 184, 8 }, { 184, 184 }, { 96, 96 } }, MC_EAST },
-	{ 3, { { 8, 184 }, { 184, 184 }, { 96, 96 } }, MC_SOUTH },
-	{ 0, { { 0, 0 }, { 0, 0 }, { 0, 0 } }, MC_NORTH }
+	{ 3, { { 8, 8 }, { 8, 184 }, { 96, 96 } }, MC_WEST, DIR_WEST },
+	{ 3, { { 8, 8 }, { 184, 8 }, { 96, 96 } }, MC_NORTH, DIR_NORTH },
+	{ 3, { { 184, 8 }, { 184, 184 }, { 96, 96 } }, MC_EAST, DIR_EAST },
+	{ 3, { { 8, 184 }, { 184, 184 }, { 96, 96 } }, MC_SOUTH, DIR_SOUTH },
+	{ 0, { { 0, 0 }, { 0, 0 }, { 0, 0 } }, MC_NORTH, DIR_NONE }
 };
 
 GameController::GameController() : _mapArea(BORDER_WIDTH, BORDER_HEIGHT, VIEWPORT_W, VIEWPORT_H), _paused(false), _pausedTimer(0) {
@@ -597,6 +597,11 @@ void GameController::timerFired() {
 		updateMoons(true);
 
 		g_screen->screenCycle();
+
+		// Check for any right-button mouse movement
+		KeybindingAction action = eventHandler->getAction();
+		if (action != KEYBIND_NONE)
+			keybinder(action);
 
 		// Do game udpates to the screen, like tile animations
 		gameUpdateScreen();
