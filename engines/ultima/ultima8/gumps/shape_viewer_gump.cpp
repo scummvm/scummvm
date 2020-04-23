@@ -44,6 +44,8 @@
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/usecode/usecode.h"
 
+#include "ultima/ultima8/meta_engine.h"
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -55,10 +57,10 @@ ShapeViewerGump::ShapeViewerGump()
 
 }
 
-ShapeViewerGump::ShapeViewerGump(int width, int height,
+ShapeViewerGump::ShapeViewerGump(int x, int y, int width, int height,
                                  Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
                                  uint32 flags, int32 layer)
-		: ModalGump(50, 50, width, height, 0, flags, layer),
+		: ModalGump(x, y, width, height, 0, flags, layer),
 		_flexes(flexes), _curFlex(0), _curShape(0), _curFrame(0), _background(0) {
 	if (_flexes.size())
 		_flex = _flexes[0].second;
@@ -67,6 +69,12 @@ ShapeViewerGump::ShapeViewerGump(int width, int height,
 }
 
 ShapeViewerGump::~ShapeViewerGump() {
+	MetaEngine::setGameMenuActive(false);
+}
+
+void ShapeViewerGump::InitGump(Gump *newparent, bool take_focus) {
+	MetaEngine::setGameMenuActive(true);
+	ModalGump::InitGump(newparent, take_focus);
 }
 
 void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled*/) {
@@ -78,7 +86,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	surf->Fill32(_background, 0, 0, _dims.w, _dims.h);
 
 	int32 posx = (_dims.w - _shapeW) / 2 + _shapeX;
-	int32 posy = (_dims.h - _shapeH) / 2 + _shapeY;
+	int32 posy = (_dims.h - _shapeH) / 2 + _shapeY - 25;
 
 	Shape *shape_ = _flex->getShape(_curShape);
 	if (shape_ && _curFrame < shape_->frameCount())
@@ -95,10 +103,10 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	} else {
 		sprintf(buf1, "Frame %d of %d", _curFrame, shape_->frameCount());
 	}
-	sprintf(buf2, "%s\nShape %d, %s", _flexes[_curFlex].first.c_str(),
+	sprintf(buf2, "%s  :  Shape %d, %s", _flexes[_curFlex].first.c_str(),
 	        _curShape, buf1);
 	rendtext = font->renderText(buf2, remaining);
-	rendtext->draw(surf, 20, 20);
+	rendtext->draw(surf, 20, 10);
 	delete rendtext;
 
 	MainShapeArchive *mainshapes = p_dynamic_cast<MainShapeArchive *>(_flex);
@@ -110,16 +118,16 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	char buf6[512];
 	ShapeInfo *info = mainshapes->getShapeInfo(_curShape);
 	if (info) {
-		sprintf(buf3, "x = %d, y = %d, z = %d\n flags = 0x%04X, family = %d",
+		sprintf(buf3, "x: %d, y: %d, z: %d\n flags: 0x%04X, family: %d",
 		        info->_x, info->_y, info->_z, info->_flags, info->_family);
-		sprintf(buf4, "equip type = %d\n unknown flags = 0x%02X\n weight = %d",
+		sprintf(buf4, "equip type: %d, unk. flags: 0x%02X\n weight: %d",
 		        info->_equipType, info->_unknown, info->_weight);
-		sprintf(buf5, "volume = %d\n animtype = %d, animdata = %d",
-		        info->_animType, info->_animData, info->_volume);
-		sprintf(buf6, "ShapeInfo:\n %s\n %s, %s\nUsecode: %s",
+		sprintf(buf5, "vol: %d\n animtype: %d, animdata: %d",
+		        info->_volume, info->_animType, info->_animData);
+		sprintf(buf6, "ShapeInfo: %s\n %s, %s\nUsecode: %s",
 		        buf3, buf4, buf5, GameData::get_instance()->getMainUsecode()->get_class_name(_curShape));
 		rendtext = font->renderText(buf6, remaining);
-		rendtext->draw(surf, 300, 20);
+		rendtext->draw(surf, 20, _dims.h - 58);
 		delete rendtext;
 	}
 }
@@ -267,7 +275,12 @@ void ShapeViewerGump::U8ShapeViewer() {
 	Rect res;
 	desktopGump->GetDims(res);
 
-	ModalGump *gump = new ShapeViewerGump((res.w * 3) / 4, (res.h * 3) / 4, _flexes);
+	int width = (res.w * 4) / 5;
+	int height = (res.h * 5) / 6;
+	int xoff = res.w / 10;
+	int yoff = res.h / 12;
+
+	ModalGump *gump = new ShapeViewerGump(xoff, yoff, width, height, _flexes);
 	gump->InitGump(0);
 }
 
