@@ -28,7 +28,7 @@
 #include "ultima/ultima4/game/stats.h"
 #include "ultima/ultima4/controllers/wait_controller.h"
 #include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/annotation.h"

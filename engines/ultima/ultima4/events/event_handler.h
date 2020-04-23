@@ -20,10 +20,9 @@
  *
  */
 
-#ifndef ULTIMA4_EVENTS_EVENT_H
-#define ULTIMA4_EVENTS_EVENT_H
+#ifndef ULTIMA4_EVENTS_EVENT_HANDLER_H
+#define ULTIMA4_EVENTS_EVENT_HANDLER_H
 
-#include "ultima/ultima4/events/event.h"
 #include "ultima/ultima4/events/timed_event_mgr.h"
 #include "ultima/ultima4/controllers/key_handler_controller.h"
 #include "ultima/ultima4/core/types.h"

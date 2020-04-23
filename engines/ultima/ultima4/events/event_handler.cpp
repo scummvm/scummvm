@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/controllers/wait_controller.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"

@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima4/controllers/menu_controller.h"
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/game/menu.h"
 #include "ultima/ultima4/game/textview.h"
 

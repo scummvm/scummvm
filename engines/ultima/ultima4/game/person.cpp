@@ -34,7 +34,7 @@
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/map/city.h"

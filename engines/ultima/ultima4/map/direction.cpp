@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima4/map/direction.h"
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {

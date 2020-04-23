@@ -23,7 +23,7 @@
 #ifndef ULTIMA4_GAME_MENU_H
 #define ULTIMA4_GAME_MENU_H
 
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/game/menuitem.h"
 #include "ultima/ultima4/core/observable.h"
 #include "ultima/ultima4/core/types.h"

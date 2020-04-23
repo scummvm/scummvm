@@ -22,7 +22,7 @@
 
 #include "ultima/ultima4/game/codex.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/item.h"
 #include "ultima/ultima4/gfx/imagemgr.h"

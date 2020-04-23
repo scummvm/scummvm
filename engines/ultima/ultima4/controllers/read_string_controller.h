@@ -24,7 +24,7 @@
 #define ULTIMA4_CONTROLLERS_READ_STRING_CONTROLLER_H
 
 #include "ultima/ultima4/controllers/controller.h"
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/game/textview.h"
 
 namespace Ultima {

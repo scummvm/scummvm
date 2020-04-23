@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima4/controllers/controller.h"
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "engines/engine.h"
 
 namespace Ultima {

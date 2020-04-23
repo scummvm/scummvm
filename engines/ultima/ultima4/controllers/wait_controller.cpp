@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima4/controllers/wait_controller.h"
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 
 namespace Ultima {
 namespace Ultima4 {

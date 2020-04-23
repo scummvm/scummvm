@@ -24,7 +24,7 @@
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/names.h"

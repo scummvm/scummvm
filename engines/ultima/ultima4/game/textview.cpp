@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima4/events/event.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/core/settings.h"
