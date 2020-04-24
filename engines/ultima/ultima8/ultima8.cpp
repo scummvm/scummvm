@@ -691,8 +691,7 @@ bool Ultima8Engine::LoadConsoleFont(Std::string confontini) {
 }
 
 void Ultima8Engine::enterTextMode(Gump *gump) {
-	uint16 key;
-	for (key = 0; key < HID_LAST; ++key) {
+	for (uint16 key = 0; key < HID_LAST; ++key) {
 		if (_down[key]) {
 			_down[key] = false;
 			_lastDown[key] = false;
