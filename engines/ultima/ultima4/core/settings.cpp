@@ -24,7 +24,6 @@
 #include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/core/utils.h"
-#include "common/config-manager.h"
 #include "common/file.h"
 
 namespace Ultima {
@@ -87,7 +86,21 @@ bool SettingsData::operator!=(const SettingsData &s) const {
 /*-------------------------------------------------------------------*/
 
 Settings::Settings() {
-	read();
+	_innAlwaysCombat = 0;
+	_campingAlwaysCombat = 0;
+	_screenAnimationFramesPerSecond = DEFAULT_ANIMATION_FRAMES_PER_SECOND;
+
+	_game = "Ultima IV";
+	_debug = gDebugLevel > 0;
+  
+	_battleDiffs.push_back("Normal");
+	_battleDiffs.push_back("Hard");
+	_battleDiffs.push_back("Expert");
+
+	Shared::ConfSerializer s(false);
+	synchronize(s);
+
+	_eventTimerGranularity = (1000 / _gameCyclesPerSecond);
 }
 
 Settings &Settings::getInstance() {
@@ -101,215 +114,73 @@ void Settings::setData(const SettingsData &data) {
 	*(SettingsData *)this = data;
 }
 
-bool Settings::read() {
-	// default settings
-	_scale                 = DEFAULT_SCALE;
-	_fullscreen            = DEFAULT_FULLSCREEN;
-	_filter                = DEFAULT_FILTER;
-	_videoType             = DEFAULT_VIDEO_TYPE;
-	_gemLayout             = DEFAULT_GEM_LAYOUT;
-	_lineOfSight           = DEFAULT_LINEOFSIGHT;
-	_screenShakes          = DEFAULT_SCREEN_SHAKES;
-	_gamma                 = DEFAULT_GAMMA;
-	_musicVol              = DEFAULT_MUSIC_VOLUME;
-	_soundVol              = DEFAULT_SOUND_VOLUME;
-	_volumeFades           = DEFAULT_VOLUME_FADES;
-	_shortcutCommands      = DEFAULT_SHORTCUT_COMMANDS;
-	_keydelay              = DEFAULT_KEY_DELAY;
-	_keyinterval           = DEFAULT_KEY_INTERVAL;
-	_filterMoveMessages    = DEFAULT_FILTER_MOVE_MESSAGES;
-	_battleSpeed           = DEFAULT_BATTLE_SPEED;
-	_enhancements          = DEFAULT_ENHANCEMENTS;
-	_gameCyclesPerSecond   = DEFAULT_CYCLES_PER_SECOND;
-	_screenAnimationFramesPerSecond = DEFAULT_ANIMATION_FRAMES_PER_SECOND;
-	_debug                 = gDebugLevel > 0;
-	_battleDiff            = DEFAULT_BATTLE_DIFFICULTY;
-	_validateXml           = DEFAULT_VALIDATE_XML;
-	_spellEffectSpeed      = DEFAULT_SPELL_EFFECT_SPEED;
-	_campTime              = DEFAULT_CAMP_TIME;
-	_innTime               = DEFAULT_INN_TIME;
-	_shrineTime            = DEFAULT_SHRINE_TIME;
-	_shakeInterval         = DEFAULT_SHAKE_INTERVAL;
-	_titleSpeedRandom      = DEFAULT_TITLE_SPEED_RANDOM;
-	_titleSpeedOther       = DEFAULT_TITLE_SPEED_OTHER;
-
-	// all specific minor enhancements default to "on", any major enhancements default to "off"
-	_enhancementsOptions._activePlayer     = true;
-	_enhancementsOptions._u5spellMixing    = true;
-	_enhancementsOptions._u5shrines        = true;
-	_enhancementsOptions._slimeDivides     = true;
-	_enhancementsOptions._gazerSpawnsInsects = true;
-	_enhancementsOptions._textColorization = false;
-	_enhancementsOptions._c64chestTraps    = true;
-	_enhancementsOptions._smartEnterKey    = true;
-	_enhancementsOptions._peerShowsObjects = false;
-	_enhancementsOptions._u5combat         = false;
-	_enhancementsOptions._u4TileTransparencyHack = true;
-	_enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity = DEFAULT_SHADOW_PIXEL_OPACITY;
-	_enhancementsOptions._u4TrileTransparencyHackShadowBreadth = DEFAULT_SHADOW_PIXEL_SIZE;
-
-	_innAlwaysCombat = 0;
-	_campingAlwaysCombat = 0;
-
-	// mouse defaults to on
-	_mouseOptions._enabled = 1;
-
-	_logging = DEFAULT_LOGGING;
-	_game = "Ultima IV";
-
-	_battleDiffs.push_back("Normal");
-	_battleDiffs.push_back("Hard");
-	_battleDiffs.push_back("Expert");
-
-	if (ConfMan.hasKey("video"))
-		_videoType = ConfMan.get("video");
-	if (ConfMan.hasKey("gemLayout"))
-		_gemLayout = ConfMan.get("gemLayout");
-	if (ConfMan.hasKey("lineOfSight"))
-		_lineOfSight = ConfMan.get("lineOfSight");
-	if (ConfMan.hasKey("screenShakes"))
-		_screenShakes = ConfMan.getBool("screenShakes");
-	if (ConfMan.hasKey("gamma"))
-		_gamma = ConfMan.getInt("gamma");
-
-	if (ConfMan.hasKey("volumeFades"))
-		_volumeFades = ConfMan.getBool("volumeFades");
-	if (ConfMan.hasKey("shortcutCommands"))
-		_shortcutCommands = ConfMan.getBool("shortcutCommands");
-	if (ConfMan.hasKey("keydelay"))
-		_keydelay = ConfMan.getInt("keydelay");
-	if (ConfMan.hasKey("filterMoveMessages"))
-		_filterMoveMessages = ConfMan.getBool("filterMoveMessages");
-	if (ConfMan.hasKey("battlespeed"))
-		_battleSpeed = ConfMan.getInt("battlespeed");
-	if (ConfMan.hasKey("enhancements"))
-		_enhancements = ConfMan.getBool("enhancements");
-	if (ConfMan.hasKey("gameCyclesPerSecond"))
-		_gameCyclesPerSecond = ConfMan.getInt("gameCyclesPerSecond");
-	if (ConfMan.hasKey("battleDiff"))
-		_battleDiff = ConfMan.get("battleDiff");
-	if (ConfMan.hasKey("validateXml"))
-		_validateXml = ConfMan.getBool("validateXml");
-
-	if (ConfMan.hasKey("spellEffectSpeed"))
-		_spellEffectSpeed = ConfMan.getInt("spellEffectSpeed");
-	if (ConfMan.hasKey("campTime"))
-		_campTime = ConfMan.getInt("campTime");
-	if (ConfMan.hasKey("innTime"))
-		_innTime = ConfMan.getInt("innTime");
-	if (ConfMan.hasKey("shrineTime"))
-		_shrineTime = ConfMan.getInt("shrineTime");
-	if (ConfMan.hasKey("shakeInterval"))
-		_shakeInterval = ConfMan.getInt("shakeInterval");
-	if (ConfMan.hasKey("titleSpeedRandom"))
-		_titleSpeedRandom = ConfMan.getInt("titleSpeedRandom");
-	if (ConfMan.hasKey("titleSpeedOther"))
-		_titleSpeedOther = ConfMan.getInt("titleSpeedOther");
-
-	// minor enhancement options
-	if (ConfMan.hasKey("activePlayer"))
-		_enhancementsOptions._activePlayer = ConfMan.getBool("activePlayer");
-	if (ConfMan.hasKey("u5spellMixing"))
-		_enhancementsOptions._u5spellMixing = ConfMan.getBool("u5spellMixing");
-	if (ConfMan.hasKey("u5shrines"))
-		_enhancementsOptions._u5shrines = ConfMan.getBool("u5shrines");
-	if (ConfMan.hasKey("slimeDivides"))
-		_enhancementsOptions._slimeDivides = ConfMan.getBool("slimeDivides");
-	if (ConfMan.hasKey("gazerSpawnsInsects"))
-		_enhancementsOptions._gazerSpawnsInsects = ConfMan.getBool("gazerSpawnsInsects");
-	if (ConfMan.hasKey("textColorization"))
-		_enhancementsOptions._textColorization = ConfMan.getBool("textColorization");
-	if (ConfMan.hasKey("c64chestTraps"))
-		_enhancementsOptions._c64chestTraps = ConfMan.getBool("c64chestTraps");
-	if (ConfMan.hasKey("smartEnterKey"))
-		_enhancementsOptions._smartEnterKey = ConfMan.getBool("smartEnterKey");
-
-	// major enhancement options
-	if (ConfMan.hasKey("peerShowsObjects"))
-		_enhancementsOptions._peerShowsObjects = ConfMan.getBool("peerShowsObjects");
-	if (ConfMan.hasKey("u5combat"))
-		_enhancementsOptions._u5combat = ConfMan.getBool("u5combat");
-	if (ConfMan.hasKey("innAlwaysCombat"))
-		_innAlwaysCombat = ConfMan.getBool("innAlwaysCombat");
-	if (ConfMan.hasKey("campingAlwaysCombat"))
-		_campingAlwaysCombat = ConfMan.getBool("campingAlwaysCombat");
-
-	// mouse options
-	if (ConfMan.hasKey("mouseEnabled"))
-		_mouseOptions._enabled = ConfMan.getBool("mouseEnabled");
-	if (ConfMan.hasKey("logging"))
-		_logging = ConfMan.get("logging");
-
-	// graphics enhancements options
-	if (ConfMan.hasKey("renderTileTransparency"))
-		_enhancementsOptions._u4TileTransparencyHack = ConfMan.getBool("renderTileTransparency");
-	if (ConfMan.hasKey("transparentTilePixelShadowOpacity"))
-		_enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity =
-			ConfMan.getInt("transparentTilePixelShadowOpacity");
-	if (ConfMan.hasKey("transparentTileShadowSize"))
-		_enhancementsOptions._u4TrileTransparencyHackShadowBreadth =
-		ConfMan.getInt("transparentTileShadowSize");
-
-
-	_eventTimerGranularity = (1000 / _gameCyclesPerSecond);
-	return true;
-}
-
 bool Settings::write() {
-	ConfMan.set("video", _videoType);
-	ConfMan.set("gemLayout", _gemLayout);
-	ConfMan.set("lineOfSight", _lineOfSight);
-	ConfMan.setBool("screenShakes", _screenShakes);
-	ConfMan.setInt("gamma", _gamma);
-
-	ConfMan.setBool("volumeFades", _volumeFades);
-	ConfMan.setBool("shortcutCommands", _shortcutCommands);
-	ConfMan.setInt("keydelay", _keydelay);
-	ConfMan.setBool("filterMoveMessages", _filterMoveMessages);
-	ConfMan.setInt("battlespeed", _battleSpeed);
-	ConfMan.setBool("enhancements", _enhancements);
-	ConfMan.setInt("gameCyclesPerSecond", _gameCyclesPerSecond);
-	ConfMan.set("battleDiff", _battleDiff);
-	ConfMan.setBool("validateXml", _validateXml);
-
-	ConfMan.setInt("spellEffectSpeed", _spellEffectSpeed);
-	ConfMan.setInt("campTime", _campTime);
-	ConfMan.setInt("innTime", _innTime);
-	ConfMan.setInt("shrineTime", _shrineTime);
-	ConfMan.setInt("shakeInterval", _shakeInterval);
-	ConfMan.setInt("titleSpeedRandom", _titleSpeedRandom);
-	ConfMan.setInt("titleSpeedOther", _titleSpeedOther);
-
-	ConfMan.setBool("activePlayer", _enhancementsOptions._activePlayer);
-	ConfMan.setBool("u5spellMixing", _enhancementsOptions._u5spellMixing);
-	ConfMan.setBool("u5shrines", _enhancementsOptions._u5shrines);
-	ConfMan.setBool("slimeDivides", _enhancementsOptions._slimeDivides);
-	ConfMan.setBool("gazerSpawnsInsects", _enhancementsOptions._gazerSpawnsInsects);
-	ConfMan.setBool("textColorization", _enhancementsOptions._textColorization);
-	ConfMan.setBool("c64chestTraps", _enhancementsOptions._c64chestTraps);
-	ConfMan.setBool("smartEnterKey", _enhancementsOptions._smartEnterKey);
-
-	ConfMan.setBool("peerShowsObjects", _enhancementsOptions._peerShowsObjects);
-	ConfMan.setBool("u5combat", _enhancementsOptions._u5combat);
-	ConfMan.setBool("innAlwaysCombat", _innAlwaysCombat);
-	ConfMan.setBool("campingAlwaysCombat", _campingAlwaysCombat);
-
-	ConfMan.setBool("mouseEnabled", _mouseOptions._enabled);
-	ConfMan.set("logging", _logging);
-
-	ConfMan.setBool("renderTileTransparency",
-		_enhancementsOptions._u4TileTransparencyHack);
-	ConfMan.setInt("transparentTilePixelShadowOpacity",
-		_enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity);
-	ConfMan.setInt("transparentTileShadowSize",
-		_enhancementsOptions._u4TrileTransparencyHackShadowBreadth);
-
-	ConfMan.flushToDisk();
+	Shared::ConfSerializer s(true);
+	synchronize(s);
 
 	setChanged();
 	notifyObservers(nullptr);
 
 	return true;
+}
+
+void Settings::synchronize(Shared::ConfSerializer &s) {
+	// TODO: Deprecate these
+	_scale			= DEFAULT_SCALE;
+	_fullscreen		= DEFAULT_FULLSCREEN;
+	_filter			= DEFAULT_FILTER;
+	_musicVol		= DEFAULT_MUSIC_VOLUME;
+	_soundVol		= DEFAULT_SOUND_VOLUME;
+
+	// General settings
+	s.syncAsString("video", _videoType, DEFAULT_VIDEO_TYPE);
+	s.syncAsString("gemLayout", _gemLayout, DEFAULT_GEM_LAYOUT);
+	s.syncAsString("lineOfSight", _lineOfSight, DEFAULT_LINEOFSIGHT);
+	s.syncAsBool("screenShakes", _screenShakes, DEFAULT_SCREEN_SHAKES);
+	s.syncAsInt("gamma", _gamma, DEFAULT_GAMMA);
+	s.syncAsBool("volumeFades", _volumeFades, DEFAULT_VOLUME_FADES);
+	s.syncAsBool("shortcutCommands", _shortcutCommands, DEFAULT_SHORTCUT_COMMANDS);
+	s.syncAsInt("keydelay", _keydelay, DEFAULT_KEY_DELAY);
+	s.syncAsInt("keyinterval", _keyinterval, DEFAULT_KEY_INTERVAL);
+	s.syncAsBool("filterMoveMessages", _filterMoveMessages, DEFAULT_FILTER_MOVE_MESSAGES);
+	s.syncAsInt("battlespeed", _battleSpeed, DEFAULT_BATTLE_SPEED);
+	s.syncAsBool("enhancements", _enhancements, DEFAULT_ENHANCEMENTS);
+	s.syncAsInt("gameCyclesPerSecond", _gameCyclesPerSecond, DEFAULT_CYCLES_PER_SECOND);
+	s.syncAsString("battleDiff", _battleDiff, DEFAULT_BATTLE_DIFFICULTY);
+	s.syncAsBool("validateXml", _validateXml, DEFAULT_VALIDATE_XML);
+	s.syncAsInt("spellEffectSpeed", _spellEffectSpeed, DEFAULT_SPELL_EFFECT_SPEED);
+	s.syncAsInt("campTime", _campTime, DEFAULT_CAMP_TIME);
+	s.syncAsInt("innTime", _innTime, DEFAULT_INN_TIME);
+	s.syncAsInt("shrineTime", _shrineTime, DEFAULT_SHRINE_TIME);
+	s.syncAsInt("shakeInterval", _shakeInterval, DEFAULT_SHAKE_INTERVAL);
+	s.syncAsInt("titleSpeedRandom", _titleSpeedRandom, DEFAULT_TITLE_SPEED_RANDOM);
+	s.syncAsInt("titleSpeedOther", _titleSpeedOther, DEFAULT_TITLE_SPEED_OTHER);
+	s.syncAsBool("innAlwaysCombat", _innAlwaysCombat, false);
+	s.syncAsBool("campingAlwaysCombat", _campingAlwaysCombat, false);
+
+	// all specific minor enhancements default to "on", any major enhancements default to "off"
+	// minor enhancement options
+	s.syncAsBool("activePlayer", _enhancementsOptions._activePlayer, true);
+	s.syncAsBool("u5spellMixing", _enhancementsOptions._u5spellMixing, true);
+	s.syncAsBool("u5shrines", _enhancementsOptions._u5shrines, true);
+	s.syncAsBool("slimeDivides", _enhancementsOptions._slimeDivides, true);
+	s.syncAsBool("gazerSpawnsInsects", _enhancementsOptions._gazerSpawnsInsects, true);
+	s.syncAsBool("textColorization", _enhancementsOptions._textColorization, false);
+	s.syncAsBool("c64chestTraps", _enhancementsOptions._c64chestTraps, true);
+	s.syncAsBool("smartEnterKey", _enhancementsOptions._smartEnterKey, true);
+
+	// major enhancement options
+	s.syncAsBool("peerShowsObjects", _enhancementsOptions._peerShowsObjects, false);
+	s.syncAsBool("u5combat", _enhancementsOptions._u5combat, false);
+
+	// graphics enhancements options
+	s.syncAsBool("renderTileTransparency", _enhancementsOptions._u4TileTransparencyHack, true);
+	s.syncAsInt("transparentTilePixelShadowOpacity", _enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity, DEFAULT_SHADOW_PIXEL_OPACITY);
+	s.syncAsInt("transparentTileShadowSize", _enhancementsOptions._u4TrileTransparencyHackShadowBreadth, DEFAULT_SHADOW_PIXEL_SIZE);
+
+	// mouse options
+	s.syncAsBool("mouseEnabled", _mouseOptions._enabled, true);
+	s.syncAsString("logging", _logging, DEFAULT_LOGGING);
 }
 
 const Std::vector<Common::String> &Settings::getBattleDiffs() {

@@ -25,6 +25,7 @@
 
 #include "ultima/ultima4/core/observable.h"
 #include "ultima/ultima4/core/types.h"
+#include "ultima/shared/conf/conf_serializer.h"
 #include "common/hash-str.h"
 
 namespace Ultima {
@@ -157,7 +158,19 @@ public:
  */
 class Settings : public SettingsData, public Observable<Settings *> {
 	typedef Common::HashMap<Common::String, Common::String> SettingsMap;
+private:
+	static Settings *_instance;
+	Std::vector<Common::String> _battleDiffs;
+private:
+	/**
+	 * Default contructor.  Settings is a singleton so this is private.
+	 */
+	Settings();
 
+	/**
+	 * Synchronize settings with ConfMan
+	 */
+	void synchronize(Shared::ConfSerializer &s);
 public:
 	/* Methods */
 
@@ -168,26 +181,12 @@ public:
 	void setData(const SettingsData &data);
 
 	/**
-	 * Read settings
-	 */
-	bool read();
-
-	/**
 	 * Write the settings out into a human readable file.  This also
 	 * notifies observers that changes have been commited.
 	 */
 	bool write();
 
 	const Std::vector<Common::String> &getBattleDiffs();
-
-private:
-	/**
-	 * Default contructor.  Settings is a singleton so this is private.
-	 */
-	Settings();
-
-	static Settings *_instance;
-	Std::vector<Common::String> _battleDiffs;
 };
 
 /* the global settings */
