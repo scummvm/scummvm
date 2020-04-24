@@ -888,8 +888,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	if (sprite->_editable) {
 		if (!textCast->_widget) {
+			warning("Creating MacEditableText with '%s'", toPrintable(textCast->_ftext).c_str());
 			textCast->_widget = new Graphics::MacEditableText(score->_window, x, y, width, height, g_director->_wm, textCast->_ftext, new Graphics::MacFont(), sprite->_foreColor, sprite->_backColor);
-			warning("Created MacEditableText with '%s'", textCast->_ftext.c_str());
+			warning("Finished creating MacEditableText");
 		}
 
 		textCast->_widget->draw();
