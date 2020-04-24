@@ -49,7 +49,7 @@ Sequence checkWeapon(const Sequence nextanim,
 	Sequence anim = nextanim;
 	if (isCombatAnim(nextanim) && ! isCombatAnim(lastanim)) {
 		anim = readyWeapon;
-	} else if (! isCombatAnim(nextanim) && isCombatAnim(lastanim)) {
+	} else if (!isCombatAnim(nextanim) && isCombatAnim(lastanim)) {
 		anim = unreadyWeapon;
 	}
 	return anim;
