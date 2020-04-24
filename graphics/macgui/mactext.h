@@ -26,6 +26,7 @@
 #include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
 #include "graphics/font.h"
+#include "graphics/macgui/macfontmanager.h"
 
 namespace Graphics {
 

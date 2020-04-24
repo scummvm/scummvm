@@ -28,6 +28,7 @@
 
 namespace Graphics {
 
+class MacMenu;
 class MacText;
 class MacWidget;
 class MacWindow;
@@ -126,7 +127,6 @@ private:
 	const Font *_fontRef;
 
 	ManagedSurface *_cursorSurface;
-	ManagedSurface _composeSurface;
 
 	bool _inTextSelection;
 	SelectedText _selectedText;

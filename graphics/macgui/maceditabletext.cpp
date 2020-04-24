@@ -91,12 +91,15 @@ void MacEditableText::init() {
 	_cursorSurface = new ManagedSurface(1, kCursorHeight);
 	_cursorSurface->fillRect(*_cursorRect, _wm->_colorBlack);
 
+	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
+
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
 }
 
 MacEditableText::~MacEditableText() {
 	delete _cursorRect;
 	delete _cursorSurface;
+	delete _composeSurface;
 
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 }
@@ -155,7 +158,7 @@ bool MacEditableText::draw(bool forceRedraw) {
 	if (_scrollbarIsDirty || forceRedraw) {
 		drawScrollbar();
 
-		_composeSurface.clear(_wm->_colorWhite);
+		_composeSurface->clear(_wm->_colorWhite);
 	}
 
 	if (_inputIsDirty || forceRedraw) {
@@ -166,10 +169,10 @@ bool MacEditableText::draw(bool forceRedraw) {
 	_contentIsDirty = false;
 
 	// Compose
-	MacText::draw(&_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, kConWOverlap - 2, kConWOverlap - 2);
+	MacText::draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, kConWOverlap - 2, kConWOverlap - 2);
 
 	if (_cursorState)
-		_composeSurface.blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap - 2, _cursorY + kConHOverlap - 2));
+		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap - 2, _cursorY + kConHOverlap - 2));
 
 	if (_selectedText.endY != -1)
 		drawSelection();
@@ -181,13 +184,13 @@ bool MacEditableText::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!draw(forceRedraw))
 		return false;
 
-	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
 
 	return true;
 }
 
 void MacEditableText::blit(ManagedSurface *g, Common::Rect &dest) {
-	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), dest, kColorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
 }
 
 void MacEditableText::drawSelection() {
@@ -239,7 +242,7 @@ void MacEditableText::drawSelection() {
 			numLines--;
 		}
 
-		byte *ptr = (byte *)_composeSurface.getBasePtr(x1 + kConWOverlap - 2, y + kConWOverlap - 2);
+		byte *ptr = (byte *)_composeSurface->getBasePtr(x1 + kConWOverlap - 2, y + kConWOverlap - 2);
 
 		for (int x = x1; x < x2; x++, ptr++)
 			if (*ptr == _wm->_colorBlack)
