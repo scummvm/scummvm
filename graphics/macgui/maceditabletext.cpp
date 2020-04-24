@@ -167,6 +167,7 @@ bool MacEditableText::draw(bool forceRedraw) {
 	}
 
 	_contentIsDirty = false;
+	_cursorDirty = false;
 
 	// Compose
 	MacText::draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, kConWOverlap - 2, kConWOverlap - 2);

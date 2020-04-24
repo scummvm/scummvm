@@ -151,6 +151,7 @@ bool MacTextWindow::draw(bool forceRedraw) {
 	}
 
 	_contentIsDirty = false;
+	_cursorDirty = false;
 
 	// Compose
 	_mactext->draw(_composeSurface, 0, _scrollPos, _surface.w - 2, _scrollPos + _surface.h - 2, kConWOverlap - 2, kConWOverlap - 2);
