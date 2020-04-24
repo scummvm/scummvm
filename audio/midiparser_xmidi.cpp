@@ -21,6 +21,7 @@
  */
 
 #include "audio/midiparser.h"
+#include "audio/mididrv.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -39,6 +40,15 @@ protected:
 
 	Loop _loop[4];
 	int _loopCount;
+
+	/**
+	 * The source number to use when sending MIDI messages to the driver.
+	 * When using multiple sources, use source 0 and higher. This must be
+	 * used when source volume or channel locking is used.
+	 * By default this is -1, which means the parser is the only source
+	 * of MIDI messages and multiple source functionality is disabled.
+	 */
+	int8 _source;
 
 	XMidiCallbackProc _callbackProc;
 	void *_callbackData;
@@ -68,11 +78,14 @@ protected:
 		_loopCount = -1;
 	}
 
+	void sendToDriver(uint32 b) override;
+	void sendMetaEventToDriver(byte type, byte *data, uint16 length) override;
 public:
-	MidiParser_XMIDI(XMidiCallbackProc proc, void *data, XMidiNewTimbreListProc newTimbreListProc, MidiDriver_BASE *newTimbreListDriver) {
+	MidiParser_XMIDI(XMidiCallbackProc proc, void *data, XMidiNewTimbreListProc newTimbreListProc, MidiDriver_BASE *newTimbreListDriver, int8 source = -1) {
 		_callbackProc = proc;
 		_callbackData = data;
 		_loopCount = -1;
+		_source = source;
 		_newTimbreListProc = newTimbreListProc;
 		_newTimbreListDriver = newTimbreListDriver;
 		memset(_tracksTimbreList, 0, sizeof(_tracksTimbreList));
@@ -405,10 +418,26 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 	return false;
 }
 
+void MidiParser_XMIDI::sendToDriver(uint32 b) {
+	if (_source < 0) {
+		MidiParser::sendToDriver(b);
+	} else {
+		_driver->send(_source, b);
+	}
+}
+
+void MidiParser_XMIDI::sendMetaEventToDriver(byte type, byte *data, uint16 length) {
+	if (_source < 0) {
+		MidiParser::sendMetaEventToDriver(type, data, length);
+	} else {
+		_driver->metaEvent(_source, type, data, length);
+	}
+}
+
 void MidiParser::defaultXMidiCallback(byte eventData, void *data) {
 	warning("MidiParser: defaultXMidiCallback(%d)", eventData);
 }
 
-MidiParser *MidiParser::createParser_XMIDI(XMidiCallbackProc proc, void *data, XMidiNewTimbreListProc newTimbreListProc, MidiDriver_BASE *newTimbreListDriver) {
-	return new MidiParser_XMIDI(proc, data, newTimbreListProc, newTimbreListDriver);
+MidiParser *MidiParser::createParser_XMIDI(XMidiCallbackProc proc, void *data, XMidiNewTimbreListProc newTimbreListProc, MidiDriver_BASE *newTimbreListDriver, int source) {
+	return new MidiParser_XMIDI(proc, data, newTimbreListProc, newTimbreListDriver, source);
 }

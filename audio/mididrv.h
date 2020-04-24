@@ -99,6 +99,12 @@ public:
 	 */
 	virtual void send(uint32 b) = 0;
 
+	/**
+	 * Send a MIDI command from a specific source. If the MIDI driver
+	 * does not support multiple sources, the source parameter is
+	 * ignored.
+	 */
+	virtual void send(int8 source, uint32 b) { send(b); }
 
 	/**
 	 * Output a midi command to the midi stream. Convenience wrapper
@@ -109,6 +115,13 @@ public:
 	 */
 	void send(byte status, byte firstOp, byte secondOp);
 	
+	/**
+	 * Send a MIDI command from a specific source. If the MIDI driver
+	 * does not support multiple sources, the source parameter is
+	 * ignored.
+	 */
+	void send(int8 source, byte status, byte firstOp, byte secondOp);
+
 	/**
 	 * Transmit a sysEx to the midi device.
 	 *
@@ -124,6 +137,12 @@ public:
 	// TODO: Document this.
 	virtual void metaEvent(byte type, byte *data, uint16 length) { }
 
+	/**
+	 * Send a meta event from a specific source. If the MIDI driver
+	 * does not support multiple sources, the source parameter is
+	 * ignored.
+	 */
+	virtual void metaEvent(int8 source, byte type, byte *data, uint16 length) { metaEvent(type, data, length); }
 protected:
 
 	/**
@@ -207,6 +226,11 @@ public:
 	/** Common operations to be done by all drivers on start of sysEx */
 	void midiDriverCommonSysEx(const byte *msg, uint16 length);
 
+protected:
+	// True if stereo panning should be reversed.
+	bool _reversePanning;
+	// True if GS percussion channel volume should be scaled to match MT-32 volume.
+	bool _scaleGSPercussionVolumeToMT32;
 
 private:
 	// If detectDevice() detects MT32 and we have a preferred MT32 device
@@ -217,10 +241,14 @@ private:
 	static bool _forceTypeMT32;
 
 public:
+	MidiDriver() : _reversePanning(false),
+					_scaleGSPercussionVolumeToMT32(false) { }
 	virtual ~MidiDriver() { }
 
 	static const byte _mt32ToGm[128];
 	static const byte _gmToMt32[128];
+	static const byte _mt32DefaultInstruments[8];
+	static const byte _mt32DefaultPanning[8];
 	// Map for correcting Roland GS drumkit numbers.
 	static const uint8 _gsDrumkitFallbackMap[128];
 
@@ -274,9 +302,26 @@ public:
 	}
 
 	/**
+	 * Initializes the MT-32 MIDI device. The device will be reset and, 
+	 * if the parameter is specified, set up for General MIDI data.
+	 * @param initForGM True if the MT-32 should be initialized for GM mapping
+	 */
+	void initMT32(bool initForGM);
+
+	/**
 	 * Send a Roland MT-32 reset sysEx to the midi device.
 	 */
 	void sendMT32Reset();
+
+	/**
+	 * Initializes the General MIDI device. The device will be reset.
+	 * If the initForMT32 parameter is specified, the device will be set up for
+	 * MT-32 MIDI data. If the device supports Roland GS, the enableGS
+	 * parameter can be specified for enhanced GS MT-32 compatiblity.
+	 * @param initForMT32 True if the device should be initialized for MT-32 mapping
+	 * @param enableGS True if the device should be initialized for GS MT-32 mapping
+	 */
+	void initGM(bool initForMT32, bool enableGS);
 
 	/**
 	 * Send a General MIDI reset sysEx to the midi device.
