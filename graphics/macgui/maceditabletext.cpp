@@ -89,9 +89,10 @@ void MacEditableText::init() {
 	_cursorRect = new Common::Rect(0, 0, 1, kCursorHeight);
 
 	_cursorSurface = new ManagedSurface(1, kCursorHeight);
-	_cursorSurface->fillRect(*_cursorRect, _wm->_colorBlack);
+	_cursorSurface->clear(_wm->_colorBlack);
 
 	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
+	_composeSurface->clear(_wm->_colorWhite);
 
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
 }
@@ -442,9 +443,6 @@ void MacEditableText::updateTextSelection(int x, int y) {
 void MacEditableText::undrawInput() {
 	for (uint i = 0; i < _inputTextHeight; i++)
 		MacText::removeLastLine();
-
-	if (_inputTextHeight)
-		appendText("\n", _font, true);
 
 	_inputTextHeight = 0;
 }
