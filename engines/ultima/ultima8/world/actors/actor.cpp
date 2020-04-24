@@ -1518,7 +1518,7 @@ uint32 Actor::I_isBusy(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UC_PTR(ptr);
 	uint16 id = UCMachine::ptrToObject(ptr);
 
-	uint32 count = Kernel::get_instance()->getNumProcesses(id, 0x00F0);
+	uint32 count = Kernel::get_instance()->getNumProcesses(id, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE);
 	if (count > 0)
 		return 1;
 	else

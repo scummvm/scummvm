@@ -44,6 +44,8 @@ public:
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
+	static const uint16 ACTOR_ANIM_PROC_TYPE = 0x00F0;
+
 	void run() override;
 
 	void terminate() override;

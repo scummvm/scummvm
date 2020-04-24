@@ -172,7 +172,7 @@ int Mouse::getMouseLength(int mx, int my) {
 	}
 }
 
-int Mouse::getMouseDirection(int mx, int my) {
+int Mouse::getMouseDirectionWorld(int mx, int my) {
 	Rect dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
@@ -181,7 +181,11 @@ int Mouse::getMouseDirection(int mx, int my) {
 	int dx = mx - dims.w / 2;
 	int dy = (dims.h / 2 + (dims.h * 14 / 200)) - my; //! constant
 
-	return ((Get_direction(dy * 2, dx)) + 1) % 8;
+	return Get_direction(dy * 2, dx);
+}
+
+int Mouse::getMouseDirectionScreen(int mx, int my) {
+	return ((getMouseDirectionWorld(mx, my)) + 1) % 8;
 }
 
 int Mouse::getMouseFrame() {
@@ -219,7 +223,7 @@ int Mouse::getMouseFrame() {
 		}
 
 		// Calculate frame based on direction
-		int frame = getMouseDirection(_mousePos.x, _mousePos.y);
+		int frame = getMouseDirectionScreen(_mousePos.x, _mousePos.y);
 
 		/** length --- frame offset
 		 *    0              0

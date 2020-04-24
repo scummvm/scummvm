@@ -117,8 +117,11 @@ public:
 	//! get mouse cursor length. 0 = short, 1 = medium, 2 = long
 	int getMouseLength(int mx, int my);
 
-	//! get mouse cursor direction. 0 = up, 1 = up-right, 2 = right, etc...
-	int getMouseDirection(int mx, int my);
+	//! get mouse cursor direction on the screen. 0 = up, 1 = up-right, 2 = right, etc...
+	int getMouseDirectionScreen(int mx, int my);
+
+	//! get mouse cursor direction in the world. 0 = up, 1 = up-right, 2 = right, etc...
+	int getMouseDirectionWorld(int mx, int my);
 
 	//! get current mouse cursor location
 	void getMouseCoords(int32 &mx, int32 &my) const {

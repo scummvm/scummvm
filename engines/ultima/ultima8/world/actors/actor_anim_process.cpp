@@ -70,7 +70,7 @@ ActorAnimProcess::ActorAnimProcess(Actor *actor_, Animation::Sequence action_,
 	assert(actor_);
 	_itemNum = actor_->getObjId();
 
-	_type = 0x00F0; // CONSTANT !
+	_type = ACTOR_ANIM_PROC_TYPE;
 }
 
 bool ActorAnimProcess::init() {
