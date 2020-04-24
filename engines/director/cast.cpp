@@ -22,6 +22,7 @@
 
 #include "common/substream.h"
 #include "graphics/surface.h"
+#include "graphics/macgui/maceditabletext.h"
 #include "image/image_decoder.h"
 
 #include "director/director.h"
@@ -292,6 +293,11 @@ void TextCast::setText(const char *text) {
 	_ptext = _ftext = text;
 
 	_cachedMacText->forceDirty();
+
+	if (_widget) {
+		((Graphics::MacEditableText *)_widget)->clearText();
+		((Graphics::MacEditableText *)_widget)->appendTextDefault(_ftext);
+	}
 }
 
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {

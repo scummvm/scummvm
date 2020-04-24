@@ -886,10 +886,10 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		return;
 	}
 
-	if (sprite->_editable && 0) {
+	if (sprite->_editable) {
 		if (!textCast->_widget) {
-			textCast->_widget = new Graphics::MacEditableText(score->_window, x, y, width, height, g_director->_wm, "", new Graphics::MacFont(), sprite->_foreColor, sprite->_backColor);
-			warning("Created MacEditableText");
+			textCast->_widget = new Graphics::MacEditableText(score->_window, x, y, width, height, g_director->_wm, textCast->_ftext, new Graphics::MacFont(), sprite->_foreColor, sprite->_backColor);
+			warning("Created MacEditableText with '%s'", textCast->_ftext.c_str());
 		}
 
 		textCast->_widget->draw();
