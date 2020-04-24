@@ -163,7 +163,7 @@ void CameraProcess::ItemMoved() {
 		Item *item = getItem(_itemNum);
 
 		// We only update for now if lerping has been disabled
-		if (item && (item->getExtFlags() & Item::EXT_LERP_NOPREV)) {
+		if (item && item->hasExtFlags(Item::EXT_LERP_NOPREV)) {
 			item->getLocation(_ex, _ey, _ez);
 			_sx = _ex;
 			_sy = _ey;

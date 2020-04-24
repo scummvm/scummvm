@@ -128,7 +128,7 @@ void PathfinderProcess::run() {
 	Actor *actor = getActor(_itemNum);
 	assert(actor);
 	// if not in the fastarea, do nothing
-	if (!(actor->getFlags() & Item::FLG_FASTAREA)) return;
+	if (!actor->hasFlags(Item::FLG_FASTAREA)) return;
 
 
 	bool ok = true;

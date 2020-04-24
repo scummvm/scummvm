@@ -600,7 +600,8 @@ uint32 Item::getTotalWeight() const {
 
 uint32 Item::getVolume() const {
 	// invisible items (trap markers and such) don't take up volume
-	if (getFlags() & FLG_INVISIBLE) return 0;
+	if (hasFlags(FLG_INVISIBLE))
+		return 0;
 
 
 	uint32 volume = getShapeInfo()->_volume;
@@ -1135,7 +1136,7 @@ uint32 Item::use() {
 	if (actor) {
 		if (actor->isDead()) {
 			// dead actor, so open/close the dead-body-_gump
-			if (getFlags() & FLG_GUMP_OPEN) {
+			if (hasFlags(FLG_GUMP_OPEN)) {
 				closeGump();
 			} else {
 				openGump(12); // CONSTANT!!

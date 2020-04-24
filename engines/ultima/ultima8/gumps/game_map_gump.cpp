@@ -150,13 +150,13 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 					continue;
 				if (!paintEditorItems && item->getShapeInfo()->is_editor())
 					continue;
-				if (item->getFlags() & Item::FLG_INVISIBLE) {
+				if (item->hasFlags(Item::FLG_INVISIBLE)) {
 					// special case: invisible avatar _is_ drawn
 					// HACK: unless EXT_TRANSPARENT is also set.
 					// (Used for hiding the avatar when drawing a full area map)
 
 					if (item->getObjId() == 1) {
-						if (item->getExtFlags() & Item::EXT_TRANSPARENT)
+						if (item->hasExtFlags(Item::EXT_TRANSPARENT))
 							continue;
 
 						int32 x_, y_, z_;

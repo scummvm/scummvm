@@ -89,7 +89,7 @@ bool ActorAnimProcess::init() {
 		return false;
 	}
 
-	if (!(actor->getFlags() & Item::FLG_FASTAREA)) {
+	if (!actor->hasFlags(Item::FLG_FASTAREA)) {
 		// not in the fast area? Can't play an animation then.
 		// (If we do, the actor will likely fall because the floor is gone.)
 		return false;
@@ -162,7 +162,7 @@ void ActorAnimProcess::run() {
 
 	_firstFrame = false;
 
-	if (!(a->getFlags() & Item::FLG_FASTAREA)) {
+	if (!a->hasFlags(Item::FLG_FASTAREA)) {
 		// not in the fast area? Kill the animation then.
 		//! TODO: Decide if this is the right move.
 		//  Animation could do one of three things: pause, move
@@ -298,7 +298,7 @@ void ActorAnimProcess::run() {
 	}
 
 	// Did we just leave the fast area?
-	if (!(a->getFlags() & Item::FLG_FASTAREA)) {
+	if (!a->hasFlags(Item::FLG_FASTAREA)) {
 #ifdef WATCHACTOR
 		if (_itemNum == watchactor)
 			pout << "Animation ["

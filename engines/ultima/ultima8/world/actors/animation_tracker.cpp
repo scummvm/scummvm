@@ -64,7 +64,7 @@ bool AnimationTracker::init(Actor *actor_, Animation::Sequence action_,
 	if (state_ == 0) {
 		_animAction->getAnimRange(actor_, _dir, _startFrame, _endFrame);
 		actor_->getLocation(_x, _y, _z);
-		_flipped = (actor_->getFlags() & Item::FLG_FLIPPED) != 0;
+		_flipped = actor_->hasFlags(Item::FLG_FLIPPED);
 		_firstStep = actor_->hasActorFlags(Actor::ACT_FIRSTSTEP);
 	} else {
 		_animAction->getAnimRange(state_->_lastAnim, state_->_direction,
@@ -212,7 +212,7 @@ bool AnimationTracker::step() {
 	}
 
 	// determine footpad
-	bool actorflipped = (a->getFlags() & Item::FLG_FLIPPED) != 0;
+	bool actorflipped = a->hasFlags(Item::FLG_FLIPPED);
 	int32 xd, yd, zd;
 	a->getFootpadWorld(xd, yd, zd);
 	if (actorflipped != _flipped) {
@@ -312,13 +312,13 @@ bool AnimationTracker::step() {
 				descentdelta = -20;         // Descend
 
 			if (descentdelta) {
-				if (dy == 0 && dx != 0 && !(support->getFlags() & Item::FLG_FLIPPED)) {
+				if (dy == 0 && dx != 0 && !support->hasFlags(Item::FLG_FLIPPED)) {
 					// Moving left or right on horizontal bridge
 					// descentdelta = 60*dy/dx
 					// 60*dy = descentdelta * dx
 					// dy = descentdelta * dx / 60;
 					ty += descentdelta * dx / 60;
-				} else if (dx == 0 && dy != 0 && (support->getFlags() & Item::FLG_FLIPPED)) {
+				} else if (dx == 0 && dy != 0 && support->hasFlags(Item::FLG_FLIPPED)) {
 					// Moving up or down on vertical bridge
 					tx += descentdelta * dy / 60;
 				}

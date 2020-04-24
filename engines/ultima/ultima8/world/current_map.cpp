@@ -132,8 +132,7 @@ void CurrentMap::writeback() {
 				item->clearExtFlag(Item::EXT_INCURMAP);
 
 				// delete all _fast only and disposable _items
-				if ((item->getFlags() & Item::FLG_FAST_ONLY) ||
-				        (item->getFlags() & Item::FLG_DISPOSABLE)) {
+				if (item->hasFlags(Item::FLG_FAST_ONLY | Item::FLG_DISPOSABLE)) {
 					delete item;
 					continue;
 				}
@@ -145,11 +144,11 @@ void CurrentMap::writeback() {
 				}
 
 				// this item isn't from the Map. (like NPCs)
-				if (item->getFlags() & Item::FLG_IN_NPC_LIST)
+				if (item->hasFlags(Item::FLG_IN_NPC_LIST))
 					continue;
 
 				item->clearObjId();
-				if (item->getExtFlags() & Item::EXT_FIXED) {
+				if (item->hasExtFlags(Item::EXT_FIXED)) {
 					// item came from fixed
 					_currentMap->_fixedItems.push_back(item);
 				} else {
@@ -488,7 +487,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 				const Item *item = *iter;
 
-				if (item->getExtFlags() & Item::EXT_SPRITE)
+				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
 				// check if item is in range?
@@ -499,7 +498,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 				int32 ixd, iyd;
 
 				//!! constants
-				if (item->getFlags() & Item::FLG_FLIPPED) {
+				if (item->hasFlags(Item::FLG_FLIPPED)) {
 					ixd = 32 * info->_y;
 					iyd = 32 * info->_x;
 				} else {
@@ -577,7 +576,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 
 				if (item->getObjId() == check)
 					continue;
-				if (item->getExtFlags() & Item::EXT_SPRITE)
+				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
 				// check if item is in range?
@@ -716,7 +715,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 				const Item *item = *iter;
 				if (item->getObjId() == item_)
 					continue;
-				if (item->getExtFlags() & Item::EXT_SPRITE)
+				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
 				ShapeInfo *si = item->getShapeInfo();
@@ -840,7 +839,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 				Item *citem = *iter;
 				if (citem->getObjId() == item->getObjId())
 					continue;
-				if (citem->getExtFlags() & Item::EXT_SPRITE)
+				if (citem->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
 				ShapeInfo *si = citem->getShapeInfo();
@@ -1027,7 +1026,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 				Item *other_item = *iter;
 				if (other_item->getObjId() == item)
 					continue;
-				if (other_item->getExtFlags() & Item::EXT_SPRITE)
+				if (other_item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
 				uint32 othershapeflags = other_item->getShapeInfo()->_flags;
@@ -1225,7 +1224,7 @@ Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId i
 				Item *item = *iter;
 				if (item->getObjId() == ignore)
 					continue;
-				if (item->getExtFlags() & Item::EXT_SPRITE)
+				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
 				ShapeInfo *si = item->getShapeInfo();

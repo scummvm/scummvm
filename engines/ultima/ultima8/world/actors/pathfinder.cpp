@@ -53,7 +53,7 @@ void PathfindingState::load(const Actor *_actor) {
 	_lastAnim = _actor->getLastAnim();
 	_direction = _actor->getDir();
 	_firstStep = _actor->hasActorFlags(Actor::ACT_FIRSTSTEP);
-	_flipped = (_actor->getFlags() & Item::FLG_FLIPPED) != 0;
+	_flipped = _actor->hasFlags(Item::FLG_FLIPPED);
 	_combat = _actor->isInCombat();
 }
 

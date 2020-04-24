@@ -390,7 +390,7 @@ uint16 Actor::getEquip(uint32 type) const {
 		uint32 cet = (*iter)->getShapeInfo()->_equipType;
 		bool cbackpack = ((*iter)->getShape() == backpack_shape);
 
-		if (((*iter)->getFlags() & FLG_EQUIPPED) &&
+		if ((*iter)->hasFlags(FLG_EQUIPPED) &&
 		        (cet == type || (cbackpack && type == 7))) { // !! constant
 			return (*iter)->getObjId();
 		}

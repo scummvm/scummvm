@@ -131,9 +131,14 @@ public:
 	//! Get the Box this item occupies in the world. Undef if item is contained
 	Box getWorldBox() const;
 
-	//! Get flags
+	//! Get all flags
 	inline uint16 getFlags() const {
 		return _flags;
+	}
+
+	//! Does this item have any of the given flags mask set
+	inline bool hasFlags(uint16 flags) const {
+		return (_flags & flags) != 0;
 	}
 
 	//! Set the flags set in the given mask.
@@ -158,6 +163,11 @@ public:
 	//! Get _extendedFlags
 	inline uint32 getExtFlags() const {
 		return _extendedFlags;
+	}
+
+	//! Does item have any of the given extended flags
+	inline bool hasExtFlags(uint32 flags) const {
+		return (_extendedFlags & flags) != 0;
 	}
 
 	//! Set the _extendedFlags set in the given mask.

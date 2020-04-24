@@ -73,7 +73,7 @@ void CombatProcess::run() {
 	// They should not try to approach.
 
 	Actor *a = getActor(_itemNum);
-	if (!(a->getFlags() & Item::FLG_FASTAREA))
+	if (!a->hasFlags(Item::FLG_FASTAREA))
 		return;
 
 	Actor *t = getActor(_target);
@@ -184,7 +184,7 @@ bool CombatProcess::isValidTarget(Actor *target_) {
 	if (target_ == a) return false;
 
 	// not in the fastarea
-	if (!(target_->getFlags() & Item::FLG_FASTAREA)) return false;
+	if (!target_->hasFlags(Item::FLG_FASTAREA)) return false;
 
 	// dead actors don't make good targets
 	if (target_->isDead()) return false;

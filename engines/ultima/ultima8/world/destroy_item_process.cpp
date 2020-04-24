@@ -62,7 +62,7 @@ void DestroyItemProcess::run() {
 
 	// FIXME: should probably prevent player from opening gump in the
 	// first place...
-	if (it->getFlags() & Item::FLG_GUMP_OPEN) {
+	if (it->hasFlags(Item::FLG_GUMP_OPEN)) {
 		// first close gump in case player is still rummaging through us
 		it->closeGump();
 	}

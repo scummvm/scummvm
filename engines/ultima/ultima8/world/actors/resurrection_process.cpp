@@ -57,7 +57,7 @@ void ResurrectionProcess::run() {
 		return;
 	}
 
-	if (a->getFlags() & Item::FLG_GUMP_OPEN) {
+	if (a->hasFlags(Item::FLG_GUMP_OPEN)) {
 		// first close gump in case player is still rummaging through us
 		a->closeGump();
 	}
