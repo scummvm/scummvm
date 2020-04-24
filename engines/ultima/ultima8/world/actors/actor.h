@@ -126,8 +126,8 @@ public:
 		_unk0C = b;
 	}
 
-	uint32 getActorFlags() const {
-		return _actorFlags;
+	bool hasActorFlags(uint32 flags) const {
+		return (_actorFlags & flags) != 0;
 	}
 	void setActorFlag(uint32 mask) {
 		_actorFlags |= mask;

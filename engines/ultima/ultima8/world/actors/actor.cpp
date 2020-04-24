@@ -625,11 +625,11 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 		Kernel::get_instance()->addProcess(sp);
 	}
 
-	if (damage > 0 && !(getActorFlags() & (ACT_IMMORTAL | ACT_INVINCIBLE))) {
+	if (damage > 0 && !hasActorFlags(ACT_IMMORTAL | ACT_INVINCIBLE)) {
 		if (damage >= _hitPoints) {
 			// we're dead
 
-			if (getActorFlags() & ACT_WITHSTANDDEATH) {
+			if (hasActorFlags(ACT_WITHSTANDDEATH)) {
 				// or maybe not...
 
 				setHP(getMaxHP());
@@ -909,7 +909,7 @@ int Actor::calculateAttackDamage(uint16 other, int damage, uint16 damage_type) {
 		// blocking?
 		if ((getLastAnim() == Animation::startBlock ||
 		        getLastAnim() == Animation::stopBlock) &&
-		        !(getActorFlags() & ACT_STUNNED)) {
+		        !hasActorFlags(ACT_STUNNED)) {
 			damage -= getStr() / 5;
 		}
 
@@ -917,7 +917,7 @@ int Actor::calculateAttackDamage(uint16 other, int damage, uint16 damage_type) {
 		if (damage_type & WeaponInfo::DMG_FIRE)
 			ACmod /= 2; // armour doesn't protect from fire as well
 
-		if (getActorFlags() & ACT_STUNNED)
+		if (hasActorFlags(ACT_STUNNED))
 			ACmod /= 2; // stunned?
 
 		if (ACmod > 100) ACmod = 100;
@@ -936,7 +936,7 @@ int Actor::calculateAttackDamage(uint16 other, int damage, uint16 damage_type) {
 		if (attackdex < 0) attackdex = 0;
 		if (defenddex <= 0) defenddex = 1;
 
-		if ((getActorFlags() & ACT_STUNNED) ||
+		if (hasActorFlags(ACT_STUNNED) ||
 		        (getRandom() % (attackdex + 3) > getRandom() % defenddex)) {
 			hit = true;
 		}
@@ -1011,8 +1011,8 @@ bool Actor::areEnemiesNear() {
 		if (!npc) continue;
 		if (npc == this) continue;
 
-		if (npc->getActorFlags() & (ACT_DEAD | ACT_FEIGNDEATH)) continue;
-		if (!(npc->getActorFlags() & ACT_INCOMBAT)) continue;
+		if (npc->hasActorFlags(ACT_DEAD | ACT_FEIGNDEATH)) continue;
+		if (!npc->hasActorFlags(ACT_INCOMBAT)) continue;
 
 		// TODO: check if hostile.
 		// Might not be strictly necessary, though. This function is only
@@ -1377,7 +1377,7 @@ uint32 Actor::I_isImmortal(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	if (actor->getActorFlags() & ACT_IMMORTAL)
+	if (actor->hasActorFlags(ACT_IMMORTAL))
 		return 1;
 	else
 		return 0;
@@ -1406,7 +1406,7 @@ uint32 Actor::I_isWithstandDeath(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	if (actor->getActorFlags() & ACT_WITHSTANDDEATH)
+	if (actor->hasActorFlags(ACT_WITHSTANDDEATH))
 		return 1;
 	else
 		return 0;
@@ -1434,7 +1434,7 @@ uint32 Actor::I_isFeignDeath(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	if (actor->getActorFlags() & ACT_FEIGNDEATH)
+	if (actor->hasActorFlags(ACT_FEIGNDEATH))
 		return 1;
 	else
 		return 0;
@@ -1444,7 +1444,7 @@ uint32 Actor::I_setFeignDeath(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	if (actor->getActorFlags() & ACT_FEIGNDEATH)
+	if (actor->hasActorFlags(ACT_FEIGNDEATH))
 		return 0;
 
 	actor->setActorFlag(ACT_FEIGNDEATH);
@@ -1578,7 +1578,7 @@ uint32 Actor::I_getAirWalkEnabled(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	if (actor->getActorFlags() & ACT_AIRWALK)
+	if (actor->hasActorFlags(ACT_AIRWALK))
 		return 1;
 	else
 		return 0;

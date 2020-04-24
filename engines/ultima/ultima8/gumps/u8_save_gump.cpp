@@ -326,7 +326,7 @@ Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 		// can't _save if game over
 		// FIXME: this check should probably be in Game or GUIApp
 		MainActor *av = getMainActor();
-		if (!av || (av->getActorFlags() & Actor::ACT_DEAD))
+		if (!av || av->hasActorFlags(Actor::ACT_DEAD))
 			return nullptr;
 	}
 

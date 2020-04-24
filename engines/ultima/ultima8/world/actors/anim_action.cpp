@@ -63,7 +63,7 @@ void AnimAction::getAnimRange(Actor *actor, int dir,
                               unsigned int &startframe,
                               unsigned int &endframe) const {
 	getAnimRange(actor->getLastAnim(), actor->getDir(),
-	             (actor->getActorFlags() & Actor::ACT_FIRSTSTEP) != 0,
+	             actor->hasActorFlags(Actor::ACT_FIRSTSTEP),
 	             dir, startframe, endframe);
 }
 

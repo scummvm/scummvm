@@ -65,7 +65,7 @@ bool AnimationTracker::init(Actor *actor_, Animation::Sequence action_,
 		_animAction->getAnimRange(actor_, _dir, _startFrame, _endFrame);
 		actor_->getLocation(_x, _y, _z);
 		_flipped = (actor_->getFlags() & Item::FLG_FLIPPED) != 0;
-		_firstStep = (actor_->getActorFlags() & Actor::ACT_FIRSTSTEP) != 0;
+		_firstStep = actor_->hasActorFlags(Actor::ACT_FIRSTSTEP);
 	} else {
 		_animAction->getAnimRange(state_->_lastAnim, state_->_direction,
 		                         state_->_firstStep, _dir, _startFrame, _endFrame);

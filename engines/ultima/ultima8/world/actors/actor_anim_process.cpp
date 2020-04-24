@@ -95,7 +95,7 @@ bool ActorAnimProcess::init() {
 		return false;
 	}
 
-	if (actor->getActorFlags() & Actor::ACT_ANIMLOCK) {
+	if (actor->hasActorFlags(Actor::ACT_ANIMLOCK)) {
 		//! What do we do if actor was already animating?
 		//! don't do this animation or kill the previous one?
 		//! Or maybe wait until the previous one finishes?
@@ -509,7 +509,7 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 			break;
 		case 0x330: { // Slayer
 			// if we killed somebody, thunder&lightning
-			if (attacked && (attacked->getActorFlags() & Actor::ACT_DEAD)) {
+			if (attacked && attacked->hasActorFlags(Actor::ACT_DEAD)) {
 				// calling intrinsic...
 				PaletteFaderProcess::I_lightningBolt(0, 0);
 				int sfx;

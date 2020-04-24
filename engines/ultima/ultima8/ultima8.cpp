@@ -942,7 +942,7 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 
 	// Don't allow saving when avatar is dead.
 	MainActor *av = getMainActor();
-	if (!av || (av->getActorFlags() & Actor::ACT_DEAD))
+	if (!av || av->hasActorFlags(Actor::ACT_DEAD))
 		return false;
 
 	return true;
@@ -958,7 +958,7 @@ bool Ultima8Engine::saveGame(int slot, const Std::string &desc, bool ignore_moda
 	// Don't allow saving when avatar is dead.
 	// (Avatar is flagged dead by usecode when you finish the _game as well.)
 	MainActor *av = getMainActor();
-	if (!av || (av->getActorFlags() & Actor::ACT_DEAD)) {
+	if (!av || av->hasActorFlags(Actor::ACT_DEAD)) {
 		pout << "Can't save: _game over." << Std::endl;
 		return false;
 	}

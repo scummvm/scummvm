@@ -685,7 +685,7 @@ bool Debugger::cmdToggleInvincibility(int argc, const char **argv) {
 	}
 	MainActor *av = getMainActor();
 
-	if (av->getActorFlags() & Actor::ACT_INVINCIBLE) {
+	if (av->hasActorFlags(Actor::ACT_INVINCIBLE)) {
 		av->clearActorFlag(Actor::ACT_INVINCIBLE);
 		debugPrintf("Avatar is no longer invincible.\n");
 	} else {

@@ -54,7 +54,7 @@ void AvatarDeathProcess::run() {
 		return;
 	}
 
-	if (!(av->getActorFlags() & Actor::ACT_DEAD)) {
+	if (!av->hasActorFlags(Actor::ACT_DEAD)) {
 		perr << "AvatarDeathProcess: MainActor not dead" << Std::endl;
 		// avatar not dead?
 		terminate();

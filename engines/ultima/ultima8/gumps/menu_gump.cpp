@@ -181,7 +181,7 @@ bool MenuGump::OnKeyDown(int key, int mod) {
 		if (key == Common::KEYCODE_ESCAPE) {
 			// FIXME: this check should probably be in Game or GUIApp
 			MainActor *av = getMainActor();
-			if (av && !(av->getActorFlags() & Actor::ACT_DEAD))
+			if (av && !av->hasActorFlags(Actor::ACT_DEAD))
 				Close(); // don't allow closing if dead/game over
 		} else if (key >= Common::KEYCODE_1 && key <= Common::KEYCODE_9) {
 			selectEntry(key - Common::KEYCODE_1 + 1);

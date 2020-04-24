@@ -149,9 +149,9 @@ void GrantPeaceProcess::run() {
 	} else {
 		// not undead
 
-		if (!(target->getActorFlags() & (Actor::ACT_DEAD |
-		                                 Actor::ACT_IMMORTAL |
-		                                 Actor::ACT_INVINCIBLE))) {
+		if (!target->hasActorFlags(Actor::ACT_DEAD |
+								   Actor::ACT_IMMORTAL |
+								   Actor::ACT_INVINCIBLE)) {
 			if (getRandom() % 10 == 0) {
 				target->receiveHit(_itemNum, 8, target->getHP(),
 				                   (WeaponInfo::DMG_MAGIC |

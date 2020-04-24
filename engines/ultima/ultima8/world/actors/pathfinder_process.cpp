@@ -171,7 +171,7 @@ void PathfinderProcess::run() {
 	// FIXME: this should happen before the pathfinder is actually called,
 	// since the running animation may move the actor, which could break
 	// the found _path.
-	if (actor->getActorFlags() & Actor::ACT_ANIMLOCK) {
+	if (actor->hasActorFlags(Actor::ACT_ANIMLOCK)) {
 		perr << "PathfinderProcess: ANIMLOCK, waiting" << Std::endl;
 		return;
 	}

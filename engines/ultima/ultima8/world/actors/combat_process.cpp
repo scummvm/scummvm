@@ -190,7 +190,7 @@ bool CombatProcess::isValidTarget(Actor *target_) {
 	if (target_->isDead()) return false;
 
 	// feign death only works on undead and demons
-	if (target_->getActorFlags() & Actor::ACT_FEIGNDEATH) {
+	if (target_->hasActorFlags(Actor::ACT_FEIGNDEATH)) {
 
 		if ((a->getDefenseType() & WeaponInfo::DMG_UNDEAD) ||
 		        (a->getShape() == 96)) return false; // CONSTANT!
