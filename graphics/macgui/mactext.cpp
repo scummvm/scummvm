@@ -26,6 +26,8 @@
 
 namespace Graphics {
 
+#define DEBUG 0
+
 const Font *MacFontRun::getFont() {
 	if (font)
 		return font;
@@ -151,6 +153,8 @@ void MacText::splitString(Common::U32String &str) {
 	bool nextChunk = false;
 	MacFontRun previousFormatting;
 
+	debug(9, "******** splitString: \"%s\"", toPrintable(str.encode()).c_str());
+
 	while (*s) {
 #if DEBUG
 		for (uint i = 0; i < _textLines.size(); i++) {
@@ -159,7 +163,7 @@ void MacText::splitString(Common::U32String &str) {
 			for (uint j = 0; j < _textLines[i].chunks.size(); j++)
 				debugN(9, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
 
-			debug(9, " --> %c %d, '%s'", (*s > 0x20 ? *s : ' '), (byte)*s, Common::toPrintable(tmp.encode()).c_str());
+			debug(9, " --> '%c' 0x%02x, \"%s\"", (*s > 0x20 ? *s : ' '), (byte)*s, Common::toPrintable(tmp.encode()).c_str());
 		}
 #endif
 
@@ -293,6 +297,18 @@ void MacText::splitString(Common::U32String &str) {
 			}
 		}
 	}
+
+#if DEBUG
+	debug(9, "Result:");
+	for (uint i = 0; i < _textLines.size(); i++) {
+		debugN(9, "%2d ", i);
+
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++)
+			debugN(9, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
+
+		debug(9, " --> '%c' 0x%02x, \"%s\"", (*s > 0x20 ? *s : ' '), (byte)*s, Common::toPrintable(tmp.encode()).c_str());
+	}
+#endif
 }
 
 void MacText::reallocSurface() {
