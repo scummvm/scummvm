@@ -49,6 +49,10 @@ public:
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 
+	void setFakeBothButtonClick() {
+		_fakeBothButtonClick = true;
+	}
+
 private:
 	void saveData(Common::WriteStream *ws) override;
 
@@ -70,6 +74,9 @@ private:
 	// shake head when idle
 	uint32 _idleTime;
 	Animation::Sequence _lastHeadShakeAnim;
+
+	//! A fake "both button" event has been requested
+	bool _fakeBothButtonClick;
 
 	MButton _mouseButton[2];
 };

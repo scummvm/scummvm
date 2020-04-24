@@ -78,7 +78,7 @@ bool Mouse::buttonDown(Shared::MouseButton button) {
 	mbutton.setState(MBS_DOWN);
 	mbutton.clearState(MBS_HANDLED);
 
-	if (_mouseButton[button].isDoubleClick()) {
+	if (mbutton.isUnhandledDoubleClick()) {
 		if (_dragging == Mouse::DRAG_NOT) {
 			Gump *gump = getGump(mbutton._downGump);
 			if (gump) {

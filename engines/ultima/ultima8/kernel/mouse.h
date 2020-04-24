@@ -60,7 +60,7 @@ struct MButton {
 	void clearState(MouseButtonState state) {
 		_state &= ~state;
 	}
-	
+
 	bool curWithinDblClkTimeout() {
 		uint32 now = g_system->getMillis();
 		return now - _curDown <= DOUBLE_CLICK_TIMEOUT;
@@ -71,8 +71,9 @@ struct MButton {
 		return now - _lastDown <= DOUBLE_CLICK_TIMEOUT;
 	}
 
-	bool isDoubleClick() {
-		return isState(MBS_DOWN) &&
+	//! A convenience function - true if the current state is down, unhandled, and within the double click timeout.
+	bool isUnhandledDoubleClick() {
+		return isState(MBS_DOWN) && !isState(MBS_HANDLED) &&
 				(_curDown - _lastDown) <= DOUBLE_CLICK_TIMEOUT;
 	}
 

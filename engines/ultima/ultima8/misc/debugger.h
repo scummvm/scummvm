@@ -149,6 +149,7 @@ private:
 	bool cmdToggleShowTouchingItems(int argc, const char **argv);
 	bool cmdCloseItemGumps(int argc, const char **argv);
 	bool cmdMemberVar(int argc, const char **argv);
+	bool cmdBothButtonClick(int argc, const char **argv);
 
 	// Audio Process
 	bool cmdListSFX(int argc, const char **argv);

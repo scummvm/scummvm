@@ -43,7 +43,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarMoverProcess, Process)
 
 AvatarMoverProcess::AvatarMoverProcess() : Process(),
 		_lastFrame(0), _lastAttack(0), _idleTime(0),
-		_lastHeadShakeAnim(Animation::lookLeft) {
+		_lastHeadShakeAnim(Animation::lookLeft), _fakeBothButtonClick(false) {
 	_type = 1; // CONSTANT! (type 1 = persistent)
 }
 
@@ -195,7 +195,7 @@ void AvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
-	if (!_mouseButton[0].isState(MBS_HANDLED) && _mouseButton[0].isDoubleClick()) {
+	if (_mouseButton[0].isUnhandledDoubleClick()) {
 		_mouseButton[0].setState(MBS_HANDLED);
 		_mouseButton[0]._lastDown = 0;
 
@@ -217,7 +217,7 @@ void AvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
-	if (!_mouseButton[1].isState(MBS_HANDLED) && _mouseButton[0].isDoubleClick()) {
+	if (_mouseButton[1].isUnhandledDoubleClick()) {
 		_mouseButton[1].setState(MBS_HANDLED);
 		_mouseButton[1]._lastDown = 0;
 
@@ -266,8 +266,9 @@ void AvatarMoverProcess::handleCombatMode() {
 		} else if (ABS(direction - mousedir) == 4) {
 			nextanim = Animation::retreat;
 			nextdir = direction;
-		} else
+		} else {
 			nextanim = Animation::advance;
+		}
 
 		if (mouselength == 2) {
 			// Take a step before running
@@ -302,7 +303,6 @@ void AvatarMoverProcess::handleNormalMode() {
 	MainActor *avatar = getMainActor();
 	Animation::Sequence lastanim = avatar->getLastAnim();
 	int32 direction = avatar->getDir();
-	uint32 now = g_system->getMillis();
 	bool stasis = guiapp->isAvatarInStasis();
 	bool combatRun = avatar->hasActorFlags(Actor::ACT_COMBATRUN);
 
@@ -399,9 +399,10 @@ void AvatarMoverProcess::handleNormalMode() {
 	if (stasis)
 		return;
 
-	// both mouse buttons down
-	if (!_mouseButton[0].isState(MBS_HANDLED) &&
-	        !_mouseButton[1].isState(MBS_HANDLED)) {
+	// both mouse buttons down and not yet handled, or neither down and we are faking it.
+	if ((!_mouseButton[0].isState(MBS_HANDLED) && !_mouseButton[1].isState(MBS_HANDLED)) ||
+			(_mouseButton[0].isState(MBS_HANDLED) && _mouseButton[1].isState(MBS_HANDLED) &&
+			 _fakeBothButtonClick)) {
 		// Take action if both were clicked within
 		// double-click timeout of each other.
 		// notice these are all unsigned.
@@ -412,11 +413,16 @@ void AvatarMoverProcess::handleNormalMode() {
 			down = _mouseButton[0]._curDown - down;
 		}
 
-		if (down < DOUBLE_CLICK_TIMEOUT) {
+		if (_fakeBothButtonClick || down < DOUBLE_CLICK_TIMEOUT) {
 			_mouseButton[0].setState(MBS_HANDLED);
 			_mouseButton[1].setState(MBS_HANDLED);
-			// We got a left mouse down.
-			// Note that this automatically means right was down too.
+			if (_fakeBothButtonClick) {
+				// Also have to fake a release.
+				_mouseButton[1].clearState(MBS_RELHANDLED);
+			}
+			_fakeBothButtonClick = false;
+			// Both buttons pressed within the timeout
+			// (or we're faking it)
 
 			if (checkTurn(mousedir, false))
 				return;
@@ -451,10 +457,12 @@ void AvatarMoverProcess::handleNormalMode() {
 		}
 	}
 
-	if ((!_mouseButton[0].isState(MBS_HANDLED) || m0clicked) &&
+	if ((!_mouseButton[0].isState(MBS_HANDLED) || m0clicked || _fakeBothButtonClick) &&
 	        _mouseButton[1].isState(MBS_DOWN)) {
 		_mouseButton[0].setState(MBS_HANDLED);
-		// We got a left mouse down while the (already handled) right was down.
+		_fakeBothButtonClick = false;
+		// We got a left mouse down (or a fake one) while the already
+		// handled right was down.
 
 		if (checkTurn(mousedir, false))
 			return;
@@ -474,7 +482,7 @@ void AvatarMoverProcess::handleNormalMode() {
 		// CHECKME: check what needs to happen when keeping left pressed
 	}
 
-	if (!_mouseButton[1].isState(MBS_HANDLED) && _mouseButton[1].isDoubleClick()) {
+	if (_mouseButton[1].isUnhandledDoubleClick()) {
 		Gump *desktopgump = Ultima8Engine::get_instance()->getDesktopGump();
 		if (desktopgump->TraceObjId(mx, my) == 1) {
 			// double right click on avatar = toggle combat mode
