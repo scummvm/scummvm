@@ -6,6 +6,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Autosaves are now supported for all the engines.
    - Errors are more likely to open the debugger, and be displayed, than just crash ScummVM.
+   - Games are sorted in GUI ignoring the articles.
 
  Dreamweb:
    - Added support for Russian fan-translation.
