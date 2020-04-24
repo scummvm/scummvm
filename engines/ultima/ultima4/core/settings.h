@@ -44,10 +44,6 @@ namespace Ultima4 {
 #define MAX_SHAKE_INTERVAL              200
 #define MAX_VOLUME                      10
 
-#define DEFAULT_SCALE                   2
-#define DEFAULT_FULLSCREEN              0
-#define DEFAULT_FILTER                  "Scale2x"
-#define DEFAULT_VIDEO_TYPE              (g_ultima->isEnhanced() ? "new" : "EGA")
 #define DEFAULT_GEM_LAYOUT              "Standard"
 #define DEFAULT_LINEOFSIGHT             "DOS"
 #define DEFAULT_SCREEN_SHAKES           1
@@ -120,7 +116,6 @@ public:
 	bool _enhancements;
 	SettingsEnhancementOptions _enhancementsOptions;
 	bool _filterMoveMessages;
-	bool _fullscreen;
 	int _gameCyclesPerSecond;
 	int _screenAnimationFramesPerSecond;
 	bool _innAlwaysCombat;

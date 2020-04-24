@@ -222,10 +222,7 @@ IntroController::IntroController() : Controller(1),
 
 	_videoMenu.setTitle("Video Options:", 0, 0);
 	_videoMenu.add(MI_VIDEO_CONF_GFX,                        "\010 Game Graphics Options",  2,  2,/*'g'*/  2);
-	_videoMenu.add(MI_VIDEO_04,         new IntMenuItem("Scale                x%d", 2,  4,/*'s'*/  0, reinterpret_cast<int *>(&settingsChanged._scale), 1, 5, 1));
-	_videoMenu.add(MI_VIDEO_05, (new BoolMenuItem("Mode                 %s",  2,  5,/*'m'*/  0, &settingsChanged._fullscreen))->setValueStrings("Fullscreen", "Window"));
-	_videoMenu.add(MI_VIDEO_06,             new StringMenuItem("Filter               %s",  2,  6,/*'f'*/  0, &settingsChanged._filter, screenGetFilterNames()));
-	_videoMenu.add(MI_VIDEO_08,         new IntMenuItem("Gamma                %s",  2,  7,/*'a'*/  1, &settingsChanged._gamma, 50, 150, 10, MENU_OUTPUT_GAMMA));
+	_videoMenu.add(MI_VIDEO_08,         new IntMenuItem("Gamma                %s",  2,  4,/*'a'*/  1, &settingsChanged._gamma, 50, 150, 10, MENU_OUTPUT_GAMMA));
 	_videoMenu.add(USE_SETTINGS,                   "\010 Use These Settings",  2, 11,/*'u'*/  2);
 	_videoMenu.add(CANCEL,                         "\010 Cancel",              2, 12,/*'c'*/  2);
 	_videoMenu.addShortcutKey(CANCEL, ' ');

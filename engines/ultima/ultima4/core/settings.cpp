@@ -86,19 +86,25 @@ bool SettingsData::operator!=(const SettingsData &s) const {
 /*-------------------------------------------------------------------*/
 
 Settings::Settings() {
+	// Synchronize settings
+	Shared::ConfSerializer s(false);
+	synchronize(s);
+
+	// Set up various other constants that aren't configurable
+	_game = "Ultima IV";
+	_debug = gDebugLevel > 0;
+
 	_innAlwaysCombat = 0;
 	_campingAlwaysCombat = 0;
 	_screenAnimationFramesPerSecond = DEFAULT_ANIMATION_FRAMES_PER_SECOND;
 
-	_game = "Ultima IV";
-	_debug = gDebugLevel > 0;
+	bool isEnhanced = _videoType != "EGA";
+	_scale = isEnhanced ? 2 : 1;
+	_filter = isEnhanced ? "Scale2x" : "point";
   
 	_battleDiffs.push_back("Normal");
 	_battleDiffs.push_back("Hard");
 	_battleDiffs.push_back("Expert");
-
-	Shared::ConfSerializer s(false);
-	synchronize(s);
 
 	_eventTimerGranularity = (1000 / _gameCyclesPerSecond);
 }
@@ -126,14 +132,12 @@ bool Settings::write() {
 
 void Settings::synchronize(Shared::ConfSerializer &s) {
 	// TODO: Deprecate these
-	_scale			= DEFAULT_SCALE;
-	_fullscreen		= DEFAULT_FULLSCREEN;
-	_filter			= DEFAULT_FILTER;
-	_musicVol		= DEFAULT_MUSIC_VOLUME;
-	_soundVol		= DEFAULT_SOUND_VOLUME;
+	_musicVol = DEFAULT_MUSIC_VOLUME;
+	_soundVol = DEFAULT_SOUND_VOLUME;
 
 	// General settings
-	s.syncAsString("video", _videoType, DEFAULT_VIDEO_TYPE);
+	bool isEnhanced = g_ultima->isEnhanced();
+	s.syncAsString("video", _videoType, isEnhanced ? "new" : "EGA");
 	s.syncAsString("gemLayout", _gemLayout, DEFAULT_GEM_LAYOUT);
 	s.syncAsString("lineOfSight", _lineOfSight, DEFAULT_LINEOFSIGHT);
 	s.syncAsBool("screenShakes", _screenShakes, DEFAULT_SCREEN_SHAKES);
