@@ -211,12 +211,12 @@ private:
 
 	// item lists. Lots of them :-)
 	// items[x][y]
-	Std::list<Item *> **_items;
+	Std::list<Item *> _items[MAP_NUM_CHUNKS][MAP_NUM_CHUNKS];
 
 	ProcId _eggHatcher;
 
 	// Fast area bit masks -> fast[ry][rx/32]&(1<<(rx&31));
-	uint32 **_fast;
+	uint32 _fast[MAP_NUM_CHUNKS][MAP_NUM_CHUNKS / 32];
 	int32 _fastXMin, _fastYMin, _fastXMax, _fastYMax;
 
 	int _mapChunkSize;
