@@ -29,40 +29,63 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Std::vector;
-using Common::String;
+Armors *g_armors;
 
-bool Armor::_confLoaded = false;
-vector<Armor *> Armor::_armors;
-
-const Armor *Armor::get(ArmorType a) {
-	// Load in XML if it hasn't been already
-	loadConf();
-
-	if (static_cast<unsigned>(a) >= _armors.size())
-		return nullptr;
-	return _armors[a];
+Armors::Armors() : _confLoaded(false) {
+	g_armors = this;
 }
 
-const Armor *Armor::get(const string &name) {
+Armors::~Armors() {
+	g_armors = nullptr;
+}
+
+const Armor *Armors::get(ArmorType a) {
 	// Load in XML if it hasn't been already
 	loadConf();
 
-	for (unsigned i = 0; i < _armors.size(); i++) {
-		if (scumm_stricmp(name.c_str(), _armors[i]->_name.c_str()) == 0)
-			return _armors[i];
+	if (static_cast<unsigned>(a) >= size())
+		return nullptr;
+	return (*this)[a];
+}
+
+const Armor *Armors::get(const Common::String &name) {
+	// Load in XML if it hasn't been already
+	loadConf();
+
+	for (unsigned i = 0; i < size(); i++) {
+		if (scumm_stricmp(name.c_str(), (*this)[i]->_name.c_str()) == 0)
+			return (*this)[i];
 	}
 	return nullptr;
 }
 
-Armor::Armor(const ConfigElement &conf) {
-	_type = static_cast<ArmorType>(_armors.size());
-	_name = conf.getString("name");
-	_canUse = 0xFF;
-	_defense = conf.getInt("defense");
-	_mask = 0;
 
-	vector<ConfigElement> contraintConfs = conf.getChildren();
+void Armors::loadConf() {
+	if (!_confLoaded)
+		_confLoaded = true;
+	else
+		return;
+
+	const Config *config = Config::getInstance();
+
+	Std::vector<ConfigElement> armorConfs = config->getElement("armors").getChildren();
+	for (Std::vector<ConfigElement>::iterator i = armorConfs.begin(); i != armorConfs.end(); i++) {
+		if (i->getName() != "armor")
+			continue;
+
+		ArmorType armorType = static_cast<ArmorType>(size());
+		push_back(new Armor(armorType, *i));
+	}
+}
+
+/*-------------------------------------------------------------------*/
+
+Armor::Armor(ArmorType armorType, const ConfigElement &conf) :
+		_type(armorType), _canUse(0xff), _mask(0) {
+	_name = conf.getString("name");
+	_defense = conf.getInt("defense");
+
+	Std::vector<ConfigElement> contraintConfs = conf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = contraintConfs.begin(); i != contraintConfs.end(); i++) {
 		byte useMask = 0;
 
@@ -83,23 +106,6 @@ Armor::Armor(const ConfigElement &conf) {
 			_canUse |= useMask;
 		else
 			_canUse &= ~useMask;
-	}
-}
-
-void Armor::loadConf() {
-	if (!_confLoaded)
-		_confLoaded = true;
-	else
-		return;
-
-	const Config *config = Config::getInstance();
-
-	vector<ConfigElement> armorConfs = config->getElement("armors").getChildren();
-	for (Std::vector<ConfigElement>::iterator i = armorConfs.begin(); i != armorConfs.end(); i++) {
-		if (i->getName() != "armor")
-			continue;
-
-		_armors.push_back(new Armor(*i));
 	}
 }
 

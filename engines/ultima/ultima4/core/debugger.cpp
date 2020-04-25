@@ -1120,7 +1120,7 @@ bool Debugger::cmdWearArmor(int argc, const char **argv) {
 	if (armor == -1)
 		return isDebuggerActive();
 
-	const Armor *a = Armor::get((ArmorType)armor);
+	const Armor *a = g_armors->get((ArmorType)armor);
 	PartyMember *p = g_context->_party->member(player);
 
 	if (!a) {

@@ -275,7 +275,7 @@ void StatsArea::showArmor() {
 		if (g_ultima->_saveGame->_armor[a] > 0) {
 			const char *format = (g_ultima->_saveGame->_armor[a] >= 10) ? "%c%d-%s" : "%c-%d-%s";
 
-			_mainArea.textAt(0, line++, format, a - ARMR_NONE + 'A', g_ultima->_saveGame->_armor[a], Armor::get((ArmorType) a)->getName().c_str());
+			_mainArea.textAt(0, line++, format, a - ARMR_NONE + 'A', g_ultima->_saveGame->_armor[a], g_armors->get((ArmorType) a)->getName().c_str());
 		}
 	}
 }

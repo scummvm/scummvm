@@ -31,26 +31,16 @@ namespace Ultima {
 namespace Ultima4 {
 
 class ConfigElement;
+class Armors;
 
 class Armor {
+	friend class Armors;
 public:
-	typedef Common::String string;
-
-	/**
-	 * Returns armor by ArmorType.
-	 */
-	static const Armor *get(ArmorType a);
-
-	/**
-	 * Returns armor that has the given name
-	 */
-	static const Armor *get(const string &name);
-
 	// Getters
 	ArmorType getType() const       {
 		return _type;      /**< Returns the ArmorType of the armor */
 	}
-	const string &getName() const   {
+	const Common::String &getName() const   {
 		return _name;      /**< Returns the name of the armor */
 	}
 	int getDefense() const          {
@@ -62,18 +52,42 @@ public:
 	}
 
 private:
-	Armor(const ConfigElement &conf);
-
-	static void loadConf();
-	static bool _confLoaded;
-	static Std::vector<Armor *> _armors;
+	Armor(ArmorType armorType, const ConfigElement &conf);
 
 	ArmorType _type;
-	string _name;
+	Common::String _name;
 	byte _canUse;
 	int _defense;
 	unsigned short _mask;
 };
+
+class Armors : public Std::vector<Armor *> {
+private:
+	void loadConf();
+	bool _confLoaded;
+public:
+	/**
+	 * Constructor
+	 */
+	Armors();
+
+	/**
+	 * Destructor
+	 */
+	~Armors();
+
+	/**
+	 * Returns armor by ArmorType.
+	 */
+	const Armor *get(ArmorType a);
+
+	/**
+	 * Returns armor that has the given name
+	 */
+	const Armor *get(const Common::String &name);
+};
+
+extern Armors *g_armors;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

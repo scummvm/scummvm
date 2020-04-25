@@ -165,7 +165,7 @@ const Weapon *PartyMember::getWeapon() const {
 }
 
 const Armor *PartyMember::getArmor() const   {
-	return Armor::get(_player->armor);
+	return g_armors->get(_player->armor);
 }
 
 Common::String PartyMember::getName() const          {
@@ -437,7 +437,7 @@ int PartyMember::getAttackBonus() const {
 }
 
 int PartyMember::getDefense() const {
-	return Armor::get(_player->armor)->getDefense();
+	return g_armors->get(_player->armor)->getDefense();
 }
 
 bool PartyMember::dealDamage(Creature *m, int damage) {
@@ -629,7 +629,7 @@ Common::String Party::translate(Std::vector<Common::String> &parts) {
 				if (w)
 					return xu4_to_string(_saveGame->_weapons[w->getType()]);
 			} else if (parts[0] == "armor") {
-				const Armor *a = Armor::get(parts[1]);
+				const Armor *a = g_armors->get(parts[1]);
 				if (a)
 					return xu4_to_string(_saveGame->_armor[a->getType()]);
 			}
