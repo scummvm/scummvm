@@ -46,11 +46,26 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
-using Std::vector;
+Shrines *g_shrines;
 
-int cycles, completedCycles;
-Std::vector<Common::String> shrineAdvice;
+Shrines::Shrines() : _cycles(0), _completedCycles(0) {
+	g_shrines = this;
+}
+
+Shrines::~Shrines() {
+	g_shrines = nullptr;
+}
+
+void Shrines::loadAdvice() {
+	Common::File *avatar = u4fopen("avatar.exe");
+	if (!avatar)
+		return;
+
+	_advice = u4read_stringtable(avatar, 93682, 24);
+	u4fclose(avatar);
+}
+
+/*-------------------------------------------------------------------*/
 
 bool shrineCanEnter(const Portal *p) {
 	Shrine *shrine = dynamic_cast<Shrine *>(mapMgr->get(p->_destid));
@@ -69,6 +84,7 @@ bool isShrine(Map *punknown) {
 		return false;
 }
 
+/*-------------------------------------------------------------------*/
 
 Shrine::Shrine() {}
 
@@ -97,13 +113,9 @@ void Shrine::setMantra(Common::String m) {
 }
 
 void Shrine::enter() {
-	if (shrineAdvice.empty()) {
-		Common::File *avatar = u4fopen("avatar.exe");
-		if (!avatar)
-			return;
-		shrineAdvice = u4read_stringtable(avatar, 93682, 24);
-		u4fclose(avatar);
-	}
+	if (!g_shrines->isAdviceLoaded())
+		g_shrines->loadAdvice();
+
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
@@ -136,15 +148,15 @@ void Shrine::enter() {
 	}
 #endif
 	if (choice == '\033' || choice == '\015')
-		cycles = 0;
+		g_shrines->_cycles = 0;
 	else
-		cycles = choice - '0';
-	completedCycles = 0;
+		g_shrines->_cycles = choice - '0';
+	g_shrines->_completedCycles = 0;
 
 	g_screen->screenMessage("\n\n");
 
 	// ensure the player chose the right virtue and entered a valid number for cycles
-	if (scumm_strnicmp(virtue.c_str(), getVirtueName(getVirtue()), 6) != 0 || cycles == 0) {
+	if (scumm_strnicmp(virtue.c_str(), getVirtueName(getVirtue()), 6) != 0 || g_shrines->_cycles == 0) {
 		g_screen->screenMessage("Thou art unable to focus thy thoughts on this subject!\n");
 		eject();
 		return;
@@ -235,15 +247,15 @@ void Shrine::askMantra() {
 		g_context->_party->adjustKarma(KA_BAD_MANTRA);
 		g_screen->screenMessage("Thou art not able to focus thy thoughts with that Mantra!\n");
 		eject();
-	} else if (--cycles > 0) {
-		completedCycles++;
+	} else if (--g_shrines->_cycles > 0) {
+		g_shrines->_completedCycles++;
 		g_context->_party->adjustKarma(KA_MEDITATION);
 		meditationCycle();
 	} else {
-		completedCycles++;
+		g_shrines->_completedCycles++;
 		g_context->_party->adjustKarma(KA_MEDITATION);
 
-		bool elevated = completedCycles == 3 && g_context->_party->attemptElevation(getVirtue());
+		bool elevated = g_shrines->_completedCycles == 3 && g_context->_party->attemptElevation(getVirtue());
 		if (elevated)
 			g_screen->screenMessage("\nThou hast achieved partial Avatarhood in the Virtue of %s\n\n",
 			              getVirtueName(getVirtue()));
@@ -276,7 +288,8 @@ void Shrine::showVision(bool elevated) {
 		gameSetViewMode(VIEW_RUNE);
 		g_screen->screenDrawImageInMapArea(visionImageNames[getVirtue()]);
 	} else {
-		g_screen->screenMessage("\n%s", shrineAdvice[getVirtue() * 3 + completedCycles - 1].c_str());
+		g_screen->screenMessage("\n%s", g_shrines->_advice[
+			getVirtue() * 3 + g_shrines->_completedCycles - 1].c_str());
 	}
 }
 

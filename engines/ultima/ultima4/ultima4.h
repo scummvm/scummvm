@@ -39,6 +39,7 @@ class Moongates;
 class Music;
 struct SaveGame;
 class Screen;
+class Shrines;
 class TileMaps;
 class TileRules;
 class TileSets;
@@ -70,6 +71,7 @@ public:
 	Music *_music;
 	SaveGame *_saveGame;
 	Screen *_screen;
+	Shrines *_shrines;
 	TileMaps *_tileMaps;
 	TileRules *_tileRules;
 	TileSets *_tileSets;

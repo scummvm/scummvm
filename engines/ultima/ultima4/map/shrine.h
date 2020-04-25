@@ -61,10 +61,40 @@ private:
 	Common::String _mantra;
 };
 
+class Shrines {
+public:
+	int _cycles, _completedCycles;
+	Std::vector<Common::String> _advice;
+public:
+	/**
+	 * Constructor
+	 */
+	Shrines();
+
+	/**
+	 * Destructor
+	 */
+	~Shrines();
+
+	/**
+	 * Returns true if advice data has been loaded
+	 */
+	bool isAdviceLoaded() const {
+		return !_advice.empty();
+	}
+
+	/**
+	 * Load advice
+	 */
+	void loadAdvice();
+};
+
+extern Shrines *g_shrines;
+
 /**
  * Returns true if the player can use the portal to the shrine
  */
-bool shrineCanEnter(const struct _Portal *p);
+bool shrineCanEnter(const Portal *p);
 
 /**
  * Returns true if 'map' points to a Shrine map

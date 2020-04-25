@@ -38,6 +38,7 @@
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
+#include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/sound/music.h"
@@ -54,14 +55,15 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _armors(nullptr),
 		_config(nullptr), _context(nullptr), _dialogueLoaders(nullptr), _game(nullptr),
 		_music(nullptr), _imageLoaders(nullptr), _moongates(nullptr), _saveGame(nullptr),
-		_screen(nullptr), _tileMaps(nullptr), _tileRules(nullptr), _tileSets(nullptr),
-		_weapons(nullptr) {
+		_screen(nullptr), _shrines(nullptr), _tileMaps(nullptr), _tileRules(nullptr),
+		_tileSets(nullptr), _weapons(nullptr) {
 	g_ultima = this;
 	g_armors = nullptr;
 	g_context = nullptr;
 	g_game = nullptr;
 	g_moongates = nullptr;
 	g_screen = nullptr;
+	g_shrines = nullptr;
 	g_tileMaps = nullptr;
 	g_tileRules = nullptr;
 	g_tileSets = nullptr;
@@ -79,6 +81,7 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _music;
 	delete _saveGame;
 	delete _screen;
+	delete _shrines;
 	delete _tileMaps;
 	delete _tileRules;
 	delete _tileSets;
@@ -102,6 +105,7 @@ bool Ultima4Engine::initialize() {
 	_moongates = new Moongates();
 	_screen = new Screen();
 	_screen->init();
+	_shrines = new Shrines();
 	_tileRules = new TileRules();
 	_tileSets = new TileSets();
 	_tileMaps = new TileMaps();
