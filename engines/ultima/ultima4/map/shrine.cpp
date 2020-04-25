@@ -104,7 +104,7 @@ void Shrine::enter() {
 		shrineAdvice = u4read_stringtable(avatar, 93682, 24);
 		u4fclose(avatar);
 	}
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
 	if (settings._enhancements && settings._enhancementsOptions._u5shrines)
@@ -114,25 +114,25 @@ void Shrine::enter() {
 
 	g_screen->screenMessage("\nUpon which virtue dost thou meditate?\n");
 	Common::String virtue;
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	{
 		U4IOS::IOSConversationHelper inputVirture;
 		inputVirture.beginConversation(U4IOS::UIKeyboardTypeDefault, "Upon which virtue dost thou meditate?");
 #endif
 		virtue = ReadStringController::get(32, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	}
 #endif
 
 	int choice;
 	g_screen->screenMessage("\n\nFor how many Cycles (0-3)? ");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	{
 		U4IOS::IOSConversationChoiceHelper cyclesChoice;
 		cyclesChoice.updateChoices("0123 \015\033");
 #endif
 		choice = ReadChoiceController::get("0123\015\033");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	}
 #endif
 	if (choice == '\033' || choice == '\015')
@@ -220,14 +220,14 @@ void Shrine::askMantra() {
 	g_screen->screenMessage("\nMantra: ");
 	g_screen->update();       // FIXME: needed?
 	Common::String mantra;
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	{
 		U4IOS::IOSConversationHelper mantraHelper;
 		mantraHelper.beginConversation(U4IOS::UIKeyboardTypeASCIICapable, "Mantra?");
 #endif
 		mantra = ReadStringController::get(4, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
 		g_screen->screenMessage("\n");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	}
 #endif
 
@@ -251,7 +251,7 @@ void Shrine::askMantra() {
 			g_screen->screenMessage("\nThy thoughts are pure. "
 			              "Thou art granted a vision!\n");
 
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationChoiceHelper choiceDialog;
 		choiceDialog.updateChoices(" ");
 		U4IOS::testFlightPassCheckPoint(Common::String("Gained avatarhood in: ")

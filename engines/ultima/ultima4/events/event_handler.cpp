@@ -77,7 +77,7 @@ void EventHandler::wait_cycles(uint cycles) {
 
 void EventHandler::setControllerDone(bool done) {
 	_controllerDone = done;
-#if defined(IOS)
+#if defined(IOS_ULTIMA4)
 	if (done)
 		controllerStopped_helper();
 #endif

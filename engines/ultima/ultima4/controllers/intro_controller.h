@@ -223,7 +223,7 @@ private:
 	 * virtue v2 (zero based virtue index, starting at honesty).
 	 */
 	Common::String getQuestion(int v1, int v2);
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 public:
 	/**
 	 * Try to put the intro music back at just the correct moment on iOS;
@@ -255,7 +255,7 @@ public:
 	 * Shows an about box.
 	 */
 	void about();
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 private:
 #endif
 	/**

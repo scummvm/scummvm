@@ -922,7 +922,7 @@ bool CombatController::keyPressed(int key) {
 		g_debugger->castSpell(_focus);
 		break;
 
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	case Common::KEYCODE_RETURN: // Fall through and get the chest.
 #endif
 	case 'g':
@@ -970,7 +970,7 @@ bool CombatController::keyPressed(int key) {
 	case 'u':
 		g_screen->screenMessage("Use which item:\n");
 		g_context->_stats->setView(STATS_ITEMS);
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString("Use which item?");
 #endif
 		itemUse(gameGetInput().c_str());
@@ -1052,7 +1052,7 @@ void CombatController::attack() {
 	g_screen->screenMessage("Dir: ");
 
 	ReadDirController dirController;
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSDirectionHelper directionPopup;
 #endif
 	eventHandler->pushController(&dirController);

@@ -147,7 +147,7 @@ void GameController::setMap(Map *map, bool saveLocation, const Portal *portal, T
 	g_context->_location = new Location(coords, map, viewMode, context, turnCompleter, g_context->_location);
 	g_context->_location->addObserver(this);
 	g_context->_party->setActivePlayer(activePlayer);
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::updateGameControllerContext(c->location->context);
 #endif
 
@@ -182,7 +182,7 @@ int GameController::exitToParentMap() {
 
 		// restore the tileset to the one the current map uses
 		_mapArea.setTileset(g_context->_location->_map->_tileset);
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::updateGameControllerContext(c->location->context);
 #endif
 
@@ -718,7 +718,7 @@ void GameController::creatureCleanup() {
 
 void GameController::checkRandomCreatures() {
 	int canSpawnHere = g_context->_location->_map->isWorldMap() || g_context->_location->_context & CTX_DUNGEON;
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	int spawnDivisor = c->location->context & CTX_DUNGEON ? (53 - (c->location->coords.z << 2)) : 53;
 #else
 	int spawnDivisor = g_context->_location->_context & CTX_DUNGEON ? (32 - (g_context->_location->_coords.z << 2)) : 32;

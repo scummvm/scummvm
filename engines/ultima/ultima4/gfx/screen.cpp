@@ -250,7 +250,7 @@ void Screen::screenPrompt() {
 }
 
 void Screen::screenMessage(const char *fmt, ...) {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	static bool recursed = false;
 #endif
 
@@ -264,7 +264,7 @@ void Screen::screenMessage(const char *fmt, ...) {
 	va_start(args, fmt);
 	vsnprintf(buffer, BUFFER_SIZE, fmt, args);
 	va_end(args);
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	if (recursed)
 		recursed = false;
 	else
@@ -312,7 +312,7 @@ void Screen::screenMessage(const char *fmt, ...) {
 				i++;
 			g_context->_line++;
 			g_context->col = 0;
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			recursed = true;
 #endif
 			screenMessage("%s", buffer + i);
@@ -1407,7 +1407,7 @@ Image *Screen::screenScaleDown(Image *src, int scale) {
 	return dest;
 }
 
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 //Unsure if implementation required in iOS.
 void inline screenLock() {};
 void inline screenUnlock() {};

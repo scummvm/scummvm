@@ -97,7 +97,7 @@ void TileView::drawTile(MapTile &mapTile, bool focus, int x, int y) {
 	// Draw the tile to the screen
 	if (tile->getAnim()) {
 		// First, create our animated version of the tile
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		animated->clearImageContents();
 #endif
 		tile->getAnim()->draw(_animated, tile, mapTile, DIR_NONE);

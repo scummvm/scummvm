@@ -231,14 +231,14 @@ Common::String Dialogue::dump(const Common::String &arg) {
  */
 
 Conversation::Conversation() : _state(INTRO), _script(new Script()) {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::incrementConversationCount();
 #endif
 
 }
 
 Conversation::~Conversation() {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::decrementConversationCount();
 #endif
 	delete _script;

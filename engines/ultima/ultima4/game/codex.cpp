@@ -91,7 +91,7 @@ void codexStart() {
 	/**
 	 * disable the whirlpool cursor and black out the screen
 	 */
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
 	g_screen->screenDisableCursor();
@@ -131,7 +131,7 @@ void codexStart() {
 	/**
 	 * Get the Word of Passage
 	 */
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSConversationHelper::setIntroString("What is the Word of Passage?");
 #endif
 	codexHandleWOP(gameGetInput());
@@ -275,7 +275,7 @@ void codexHandleWOP(const Common::String &word) {
 	else if (tries++ < 3) {
 		codexImpureThoughts();
 		g_screen->screenMessage("\"What is the Word of Passage?\"\n\n");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString("Which virtue?");
 #endif
 		codexHandleWOP(gameGetInput());
@@ -328,7 +328,7 @@ void codexHandleVirtues(const Common::String &virtue) {
 		g_screen->screenMessage("\n\nThe voice asks:\n");
 		EventHandler::sleep(2000);
 		g_screen->screenMessage("\n%s\n\n", codexVirtueQuestions[current].c_str());
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString((current != VIRT_MAX) ? "Which virtue?" : "Which principle?");
 #endif
 		codexHandleVirtues(gameGetInput());
@@ -348,7 +348,7 @@ void codexHandleVirtues(const Common::String &virtue) {
 			g_screen->screenMessage("\n\nThe voice asks:\n");
 			EventHandler::sleep(2000);
 			g_screen->screenMessage("\n%s\n\n", codexVirtueQuestions[current].c_str());
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			U4IOS::IOSConversationHelper::setIntroString("Which principle?");
 #endif
 			codexHandleVirtues(gameGetInput());
@@ -360,7 +360,7 @@ void codexHandleVirtues(const Common::String &virtue) {
 			EventHandler::sleep(3000);
 			g_screen->screenEnableCursor();
 			g_screen->screenMessage("\nAbove the din, the voice asks:\n\nIf all eight virtues of the Avatar combine into and are derived from the Three Principles of Truth, Love and Courage...");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			// Ugh, we now enter happy callback land, so I know how to do these things manually. Good thing I kept these separate functions.
 			U4IOS::beginChoiceConversation();
 			U4IOS::updateChoicesInDialog(" ", "", -1);
@@ -373,7 +373,7 @@ void codexHandleVirtues(const Common::String &virtue) {
 	else if (tries++ < 3) {
 		codexImpureThoughts();
 		g_screen->screenMessage("%s\n\n", codexVirtueQuestions[current].c_str());
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString("Which virtue?");
 #endif
 		codexHandleVirtues(gameGetInput());
@@ -392,7 +392,7 @@ bool codexHandleInfinityAnyKey(int key, void *data) {
 	eventHandler->popKeyHandler();
 
 	g_screen->screenMessage("\n\nThen what is the one thing which encompasses and is the whole of all undeniable Truth, unending Love, and unyielding Courage?\n\n");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::endChoiceConversation();
 	U4IOS::IOSConversationHelper::setIntroString("What is the whole of all undeniable Truth, unending Love, and unyielding Courage?");
 #endif
@@ -404,7 +404,7 @@ void codexHandleInfinity(const Common::String &answer) {
 	static int tries = 1;
 
 	eventHandler->popKeyHandler();
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
 	/* slight pause before continuing */
@@ -418,7 +418,7 @@ void codexHandleInfinity(const Common::String &answer) {
 
 		g_screen->screenEnableCursor();
 		g_screen->screenMessage("\n%s", codexEndgameText1[0].c_str());
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		// Ugh, we now enter happy callback land, so I know how to do these things manually. Good thing I kept these separate functions.
 		U4IOS::hideGameButtons();
 		U4IOS::beginChoiceConversation();
@@ -459,7 +459,7 @@ bool codexHandleEndgameAnyKey(int key, void *data) {
 		/* CONGRATULATIONS!... you have completed the game in x turns */
 		g_screen->screenDisableCursor();
 		g_screen->screenMessage("%s%d%s", codexEndgameText2[index - 7].c_str(), g_ultima->_saveGame->_moves, codexEndgameText2[index - 6].c_str());
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::endChoiceConversation();
 #endif
 		eventHandler->pushKeyHandler(&KeyHandler::ignoreKeys);

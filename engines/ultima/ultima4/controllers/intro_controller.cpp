@@ -313,7 +313,7 @@ bool IntroController::init() {
 		// the init() method is called again from within the
 		// game via ALT-Q, so return to the menu
 		//
-#ifndef IOS
+#ifndef IOS_ULTIMA4
 		_mode = INTRO_MENU;
 #else
 		mode = INTRO_MAP;
@@ -699,7 +699,7 @@ void IntroController::initiateNewGame() {
 }
 
 void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexType sex) {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	mode = INTRO_MENU; // ensure we are now in the menu mode, (i.e., stop drawing the map).
 #endif
 	// no more text entry, so disable the text cursor
@@ -733,7 +733,7 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 
 	// show the text thats segues into the main game
 	showText(_binData->_introGypsy[GYP_SEGUE1]);
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::switchU4IntroControllerToContinueButton();
 #endif
 	ReadChoiceController pauseController("");
@@ -814,7 +814,7 @@ void IntroController::startQuestions() {
 		                     _binData->_introGypsy[_questionTree[_questionRound * 2 + 1] + 4].c_str());
 		_questionArea.textAt(0, 3, "\"Consider this:\"");
 
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::switchU4IntroControllerToContinueButton();
 #endif
 		// wait for a key
@@ -825,7 +825,7 @@ void IntroController::startQuestions() {
 		// show the question to choose between virtues
 		showText(getQuestion(_questionTree[_questionRound * 2], _questionTree[_questionRound * 2 + 1]));
 
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::switchU4IntroControllerToABButtons();
 #endif
 		// wait for an answer
@@ -1611,7 +1611,7 @@ void IntroController::getTitleSourceData() {
 int getTicks() {
 	return SDL_GetTicks();
 }
-#elif !defined(IOS)
+#elif !defined(IOS_ULTIMA4)
 static int ticks = 0;
 int getTicks() {
 	ticks += 1000;
@@ -1620,7 +1620,7 @@ int getTicks() {
 #endif
 
 bool IntroController::updateTitle() {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	static bool firstTime = true;
 	if (firstTime) {
 		firstTime = false;
@@ -1934,7 +1934,7 @@ void IntroController::skipTitles() {
 	soundStop();
 }
 
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 void IntroController::tryTriggerIntroMusic() {
 	if (mode == INTRO_MAP)
 		g_music->intro();

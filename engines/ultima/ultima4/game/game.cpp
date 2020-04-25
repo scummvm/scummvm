@@ -175,7 +175,7 @@ void gameSpellEffect(int spell, int player, Sound sound) {
 Common::String gameGetInput(int maxlen) {
 	g_screen->screenEnableCursor();
 	g_screen->screenShowCursor();
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSConversationHelper helper;
 	helper.beginConversation(U4IOS::UIKeyboardTypeDefault);
 #endif
@@ -220,7 +220,7 @@ Direction gameGetDirection() {
 	ReadDirController dirController;
 
 	g_screen->screenMessage("Dir?");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSDirectionHelper directionPopup;
 #endif
 
@@ -311,7 +311,7 @@ bool gamePeerCity(int city, void *data) {
 		g_game->_pausedTimer = 0;
 
 		g_screen->screenDisableCursor();
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationChoiceHelper continueHelper;
 		continueHelper.updateChoices(" ");
 		continueHelper.fullSizeChoicePanel();
@@ -347,7 +347,7 @@ void peer(bool useGem) {
 	g_screen->screenDisableCursor();
 
 	g_context->_location->_viewMode = VIEW_GEM;
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSConversationChoiceHelper continueHelper;
 	continueHelper.updateChoices(" ");
 	continueHelper.fullSizeChoicePanel();

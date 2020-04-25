@@ -403,7 +403,7 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 		/* if all chunks haven't been shown, wait for a key and process next chunk*/
 		int size = conv._reply.size();
 		if (size > 0) {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			U4IOS::IOSConversationChoiceHelper continueDialog;
 			continueDialog.updateChoices(" ");
 #endif
@@ -445,7 +445,7 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 			Common::String prompt = talker->getPrompt(&conv);
 			if (!prompt.empty()) {
 				if (linesused + linecount(prompt, TEXT_AREA_W) > TEXT_AREA_H) {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 					U4IOS::IOSConversationChoiceHelper continueDialog;
 					continueDialog.updateChoices(" ");
 #endif
@@ -461,7 +461,7 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 		case Conversation::INPUT_STRING:
 		{
 			conv._playerInput = gameGetInput(maxlen);
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			g_screen->screenMessage("%s", conv.playerInput.c_str()); // Since we put this in a different window, we need to show it again.
 #endif
 			conv._reply = talker->getConversationText(&conv, conv._playerInput.c_str());
@@ -472,7 +472,7 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 		case Conversation::INPUT_CHARACTER:
 		{
 			char message[2];
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			U4IOS::IOSConversationChoiceHelper yesNoHelper;
 			yesNoHelper.updateChoices("yn ");
 #endif

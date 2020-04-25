@@ -28,13 +28,13 @@ namespace Ultima {
 namespace Ultima4 {
 
 ReadPlayerController::ReadPlayerController() : ReadChoiceController("12345678 \033\n") {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::beginCharacterChoiceDialog();
 #endif
 }
 
 ReadPlayerController::~ReadPlayerController() {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::endCharacterChoiceDialog();
 #endif
 }

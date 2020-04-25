@@ -117,7 +117,7 @@ public:
 	 * Re-initializes the timer manager to a new timer granularity
 	 */
 	void reset(uint interval);     /**< Re-initializes the event manager to a new base interval */
-#if defined(IOS)
+#if defined(IOS_ULTIMA4)
 	bool hasActiveTimer() const;
 #endif
 
@@ -132,7 +132,7 @@ protected:
 	bool _locked;
 	List _events;
 	List _deferredRemovals;
-#if defined(IOS)
+#if defined(IOS_ULTIMA4)
 	TimedManagerHelper *m_helper;
 #endif
 };

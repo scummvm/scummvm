@@ -175,7 +175,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 				script->unload();
 			script->load("vendorScript.xml", ids[_npcType - NPC_VENDOR_WEAPONS], "vendor", g_context->_location->_map->getName());
 			script->run("intro");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			U4IOS::IOSConversationChoiceHelper choiceDialog;
 #endif
 			while (script->getState() != Script::STATE_DONE) {
@@ -185,7 +185,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 					case Script::INPUT_CHOICE: {
 						const Common::String &choices = script->getChoices();
 						// Get choice
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 						choiceDialog.updateChoices(choices, script->getTarget(), npcType);
 #endif
 						char val = ReadChoiceController::get(choices);
@@ -204,7 +204,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 						break;
 
 					case Script::INPUT_NUMBER: {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 						U4IOS::IOSConversationHelper ipadNumberInput;
 						ipadNumberInput.beginConversation(U4IOS::UIKeyboardTypeNumberPad, "Amount?");
 #endif
@@ -214,7 +214,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 					break;
 
 					case Script::INPUT_STRING: {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 						U4IOS::IOSConversationHelper ipadNumberInput;
 						ipadNumberInput.beginConversation(U4IOS::UIKeyboardTypeDefault);
 #endif

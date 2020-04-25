@@ -48,7 +48,7 @@ void View::clear() {
 void View::update() {
 	if (_highlighted)
 		drawHighlighted();
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::updateView();
 #endif
 }
@@ -56,7 +56,7 @@ void View::update() {
 void View::update(int x, int y, int width, int height) {
 	if (_highlighted)
 		drawHighlighted();
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::updateRectInView(x, y, width, height);
 #endif
 }

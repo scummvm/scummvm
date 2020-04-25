@@ -218,7 +218,7 @@ void putRuneInInventory(int virt) {
 	g_context->_party->member(0)->awardXp(100);
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
 	g_ultima->_saveGame->_runes |= virt;
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	Common::String virtueName;
 	switch (virt) {
 	default:
@@ -264,7 +264,7 @@ void putStoneInInventory(int virt) {
 	g_context->_party->member(0)->awardXp(200);
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
 	g_ultima->_saveGame->_stones |= virt;
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	Common::String stoneName;
 	switch (virt) {
 	default:
@@ -310,7 +310,7 @@ void putItemInInventory(int item) {
 	g_context->_party->member(0)->awardXp(400);
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
 	g_ultima->_saveGame->_items |= item;
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	Common::String itemName;
 	switch (item) {
 	default:
@@ -357,7 +357,7 @@ void useBBC(int item) {
 	if (g_context->_location->_coords == abyssEntrance) {
 		/* must use bell first */
 		if (item == ITEM_BELL) {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			U4IOS::testFlightPassCheckPoint("The Bell rings on and on!");
 #endif
 			g_screen->screenMessage("\nThe Bell rings on and on!\n");
@@ -365,7 +365,7 @@ void useBBC(int item) {
 		}
 		/* then the book */
 		else if ((item == ITEM_BOOK) && (g_ultima->_saveGame->_items & ITEM_BELL_USED)) {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			U4IOS::testFlightPassCheckPoint("The words resonate with the ringing!");
 #endif
 			g_screen->screenMessage("\nThe words resonate with the ringing!\n");
@@ -374,7 +374,7 @@ void useBBC(int item) {
 		/* then the candle */
 		else if ((item == ITEM_CANDLE) && (g_ultima->_saveGame->_items & ITEM_BOOK_USED)) {
 			g_screen->screenMessage("\nAs you light the Candle the Earth Trembles!\n");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			U4IOS::testFlightPassCheckPoint("As you light the Candle the Earth Trembles!");
 #endif
 			g_ultima->_saveGame->_items |= ITEM_CANDLE_USED;
@@ -419,7 +419,7 @@ void useSkull(int item) {
 	/* destroy the skull! pat yourself on the back */
 	if (g_context->_location->_coords.x == 0xe9 && g_context->_location->_coords.y == 0xe9) {
 		g_screen->screenMessage("\n\nYou cast the Skull of Mondain into the Abyss!\n");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::testFlightPassCheckPoint("You cast the Skull of Mondain into the Abyss!");
 #endif
 
@@ -430,7 +430,7 @@ void useSkull(int item) {
 	/* use the skull... bad, very bad */
 	else {
 		g_screen->screenMessage("\n\nYou hold the evil Skull of Mondain the Wizard aloft...\n");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::testFlightPassCheckPoint("You hold the evil Skull of Mondain the Wizard aloft...");
 #endif
 
@@ -499,7 +499,7 @@ void useStone(int item) {
 				/* see if we have all the stones, if not, get more names! */
 				if (attr && needStoneNames) {
 					g_screen->screenMessage("\n%c:", 'E' - needStoneNames);
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 					U4IOS::IOSConversationHelper::setIntroString("Which Color?");
 #endif
 					itemHandleStones(gameGetInput());
@@ -523,7 +523,7 @@ void useStone(int item) {
 
 					/* in an altar room, named all of the stones, and don't have the key yet... */
 					if (attr && (stoneMask == *attr) && !(g_ultima->_saveGame->_items & key)) {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 						Common::String keyName;
 						switch (key) {
 						case ITEM_KEY_C:
@@ -580,7 +580,7 @@ void useStone(int item) {
 		if (virtueMask > 0)
 			g_screen->screenMessage("\n\nAs thou doth approach, a voice rings out: What virtue dost stem from %s?\n\n", getBaseVirtueName(virtueMask));
 		else g_screen->screenMessage("\n\nA voice rings out:  What virtue exists independently of Truth, Love, and Courage?\n\n");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString("Which virtue?");
 #endif
 		Common::String virtue = gameGetInput();
@@ -589,7 +589,7 @@ void useStone(int item) {
 			/* now ask for stone */
 			g_screen->screenMessage("\n\nThe Voice says: Use thy Stone.\n\nColor:\n");
 			needStoneNames = 1;
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			U4IOS::IOSConversationHelper::setIntroString("Which color?");
 #endif
 			itemHandleStones(gameGetInput());
@@ -605,7 +605,7 @@ void useStone(int item) {
 	         coords.x == 5 && coords.y == 5) {
 		needStoneNames = 4;
 		g_screen->screenMessage("\n\nThere are holes for 4 stones.\nWhat colors:\nA:");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString("Which color?");
 #endif
 		itemHandleStones(gameGetInput());
@@ -668,7 +668,7 @@ void putWeaponInInventory(int weapon) {
 
 void useTelescope(int notused) {
 	g_screen->screenMessage("You see a knob\non the telescope\nmarked A-P\nYou Select:");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSConversationChoiceHelper telescopeHelper;
 	telescopeHelper.updateChoices("abcdefghijklmnop ");
 #endif

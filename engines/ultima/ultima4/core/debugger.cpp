@@ -317,7 +317,7 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 	g_context->_stats->setView(STATS_MIXTURES);
 	printN("Spell: ");
 	// ### Put the iPad thing too.
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSCastSpellHelper castSpellController;
 #endif
 	int spell = AlphaActionController::get('z', "Spell: ");
@@ -342,7 +342,7 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 
 	case Spell::PARAM_PHASE: {
 		printN("To Phase: ");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationChoiceHelper choiceController;
 		choiceController.fullSizeChoicePanel();
 		choiceController.updateGateSpellChoices();
@@ -378,7 +378,7 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 
 	case Spell::PARAM_TYPEDIR: {
 		printN("Energy type? ");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationChoiceHelper choiceController;
 		choiceController.fullSizeChoicePanel();
 		choiceController.updateEnergyFieldSpellChoices();
@@ -656,7 +656,7 @@ bool Debugger::cmdInteract(int argc, const char **argv) {
 		if (g_context->_party->isFlying()) {
 			return cmdDescend(argc, argv);
 		} else {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			U4IOS::IOSSuperButtonHelper superHelper;
 			key = ReadChoiceController::get("xk \033\n");
 #else
@@ -680,7 +680,7 @@ bool Debugger::cmdInteract(int argc, const char **argv) {
 		bool up = dungeon->ladderUpAt(g_context->_location->_coords);
 		bool down = dungeon->ladderDownAt(g_context->_location->_coords);
 		if (up && down) {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 			U4IOS::IOSClimbHelper climbHelper;
 			key = ReadChoiceController::get("kd \033\n");
 #else
@@ -750,7 +750,7 @@ bool Debugger::cmdMixReagents(int argc, const char **argv) {
 
 	while (!done) {
 		print("Mix reagents");
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		U4IOS::beginMixSpellController();
 		return isDebuggerActive(); // Just return, the dialog takes control from here.
 #endif
@@ -1052,7 +1052,7 @@ bool Debugger::cmdStats(int argc, const char **argv) {
 	g_context->_stats->resetReagentsMenu();
 
 	g_context->_stats->setView(StatsView(STATS_CHAR1 + player));
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSHideActionKeysHelper hideExtraControls;
 #endif
 	ZtatsController ctrl;
@@ -1093,7 +1093,7 @@ bool Debugger::cmdUse(int argc, const char **argv) {
 		// a little xu4 enhancement: show items in inventory when prompted for an item to use
 		g_context->_stats->setView(STATS_ITEMS);
 	}
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	U4IOS::IOSConversationHelper::setIntroString("Use which item?");
 #endif
 	itemUse(gameGetInput().c_str());

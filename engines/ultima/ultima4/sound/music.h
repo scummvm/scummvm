@@ -138,7 +138,7 @@ public:
 		playMid(SHOPPING);
 	}
 	void intro() {
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 		_on = true; // Force iOS to turn this back on from going in the background.
 #endif
 		playMid(_introMid);

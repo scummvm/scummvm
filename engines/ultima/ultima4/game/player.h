@@ -439,7 +439,7 @@ private:
 	MapTile _transport;
 	int _torchDuration;
 	int _activePlayer;
-#ifdef IOS
+#ifdef IOS_ULTIMA4
 	friend void U4IOS::syncPartyMembersWithSaveGame();
 #endif
 };

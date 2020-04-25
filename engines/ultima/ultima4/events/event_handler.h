@@ -38,7 +38,7 @@ namespace Ultima4 {
 
 #define eventHandler (EventHandler::getInstance())
 
-#if defined(IOS)
+#if defined(IOS_ULTIMA4)
 #ifndef __OBJC__
 typedef void *TimedManagerHelper;
 typedef void *UIEvent;
@@ -143,7 +143,7 @@ public:
 	/* Event functions */
 	void run();
 	void setScreenUpdate(void (*updateScreen)(void));
-#if defined(IOS)
+#if defined(IOS_ULTIMA4)
 	void handleEvent(UIEvent *);
 	static void controllerStopped_helper();
 	updateScreenCallback screenCallback() {
