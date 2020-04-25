@@ -1032,15 +1032,15 @@ void IntroController::updateVideoMenu(MenuEvent &event) {
 
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
-			/* save settings (if necessary) */
+			// Save settings (if necessary)
 			if (settings != _settingsChanged) {
 				settings.setData(_settingsChanged);
 				settings.write();
 
-				/* FIXME: resize images, etc. */
+				// FIXME: resize images, etc.
 				g_screen->screenReInit();
 
-				// go back to menu mode
+				// Go back to menu mode
 				_mode = INTRO_MENU;
 			}
 			break;

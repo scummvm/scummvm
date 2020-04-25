@@ -53,7 +53,8 @@ bool SettingsEnhancementOptions::operator==(const SettingsEnhancementOptions &s)
 /*-------------------------------------------------------------------*/
 
 bool SettingsData::operator==(const SettingsData &s) const {
-	return _battleSpeed == s._battleSpeed
+	return _videoType == s._videoType
+		&& _battleSpeed == s._battleSpeed
 		&& _campingAlwaysCombat == s._campingAlwaysCombat
 		&& _campTime == s._campTime
 		&& _debug == s._debug
@@ -118,6 +119,10 @@ Settings &Settings::getInstance() {
 void Settings::setData(const SettingsData &data) {
 	// bitwise copy is safe
 	*(SettingsData *)this = data;
+
+	bool isEnhanced = _videoType != "EGA";
+	_scale = isEnhanced ? 2 : 1;
+	_filter = isEnhanced ? "Scale2x" : "point";
 }
 
 bool Settings::write() {

@@ -62,24 +62,6 @@ Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1),
 	Common::fill(&_mouseCursors[0], &_mouseCursors[5], (MouseCursorSurface *)nullptr);
 	Common::fill(&_los[0][0], &_los[0][0] + (VIEWPORT_W * VIEWPORT_H), 0);
 
-	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	Common::Point size(SCREEN_WIDTH * settings._scale, SCREEN_HEIGHT * settings._scale);
-	initGraphics(size.x, size.y, &SCREEN_FORMAT);
-
-	create(size.x, size.y, SCREEN_FORMAT);
-	loadMouseCursors();
-}
-
-Screen::~Screen() {
-	clear();
-	g_screen = nullptr;
-
-	// Delete cursors
-	for (int idx = 0; idx < 5; ++idx)
-		delete _mouseCursors[idx];
-}
-
-void Screen::init() {
 	_filterNames.clear();
 	_filterNames.push_back("point");
 	_filterNames.push_back("2xBi");
@@ -89,7 +71,21 @@ void Screen::init() {
 	_lineOfSightStyles.clear();
 	_lineOfSightStyles.push_back("DOS");
 	_lineOfSightStyles.push_back("Enhanced");
+}
 
+Screen::~Screen() {
+	clear();
+	g_screen = nullptr;
+}
+
+void Screen::init() {
+	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	Common::Point size(SCREEN_WIDTH * settings._scale, SCREEN_HEIGHT * settings._scale);
+
+	initGraphics(size.x, size.y, &SCREEN_FORMAT);
+	create(size.x, size.y, SCREEN_FORMAT);
+
+	loadMouseCursors();
 	screenLoadGraphicsFromConf();
 
 	debug(1, "using %s scaler\n", settings._filter.c_str());
@@ -131,12 +127,22 @@ void Screen::init() {
 }
 
 void Screen::clear() {
+	// Clear any pending updates for the current screen
+	update();
+
 	Std::vector<Layout *>::const_iterator i;
 	for (i = _layouts.begin(); i != _layouts.end(); ++i)
 		delete(*i);
 	_layouts.clear();
 
 	ImageMgr::destroy();
+	_charSetInfo = nullptr;
+
+	// Delete cursors
+	for (int idx = 0; idx < 5; ++idx) {
+		delete _mouseCursors[idx];
+		_mouseCursors[idx] = nullptr;
+	}
 }
 
 void Screen::loadMouseCursors() {

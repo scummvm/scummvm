@@ -82,12 +82,12 @@ bool Ultima4Engine::initialize() {
 	_context = new Context();
 	_dialogueLoaders = new DialogueLoaders();
 	_screen = new Screen();
+	_screen->init();
 	_game = new GameController();
 	_imageLoaders = new ImageLoaders();
 	_music = new Music();
 	_saveGame = new SaveGame();
 
-	_screen->init();
 	setDebugger(new Debugger());
 	soundInit();
 	Tileset::loadAll();
