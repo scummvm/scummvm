@@ -302,7 +302,8 @@ void EventHandler::handleKeyDownEvent(const Common::Event &event, Controller *co
 	key = event.kbd.ascii;
 	if (!key)
 		return;
-	key += event.kbd.flags << 16;
+	key += (event.kbd.flags & (Common::KBD_CTRL |
+		Common::KBD_ALT | Common::KBD_META)) << 16;
 
 	debug(1, "key event: sym = %d, mod = %d; translated = %d",
 		event.kbd.keycode, event.kbd.flags, key);
