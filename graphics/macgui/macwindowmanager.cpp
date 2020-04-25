@@ -216,7 +216,7 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool edi
 
 	addWindowInitialized(w);
 
-	setActive(getNextId());
+	setActiveWindow(getNextId());
 
 	return w;
 }
@@ -226,7 +226,7 @@ MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor,
 
 	addWindowInitialized(w);
 
-	setActive(getNextId());
+	setActiveWindow(getNextId());
 
 	return w;
 }
@@ -272,7 +272,7 @@ bool MacWindowManager::isMenuActive() {
 	return _menu->isVisible();
 }
 
-void MacWindowManager::setActive(int id) {
+void MacWindowManager::setActiveWindow(int id) {
 	if (_activeWindow == id)
 		return;
 
@@ -434,7 +434,7 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		if (w->hasAllFocus() || (w->isEditable() && event.type == Common::EVENT_KEYDOWN) ||
 				w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
-				setActive(w->getId());
+				setActiveWindow(w->getId());
 
 			return w->processEvent(event);
 		}

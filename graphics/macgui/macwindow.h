@@ -122,8 +122,6 @@ public:
 	 */
 	virtual bool processEvent(Common::Event &event) = 0;
 
-	virtual bool hasAllFocus() = 0;
-
 	/**
 	 * Set the callback that will be used when an event needs to be processed.
 	 * @param callback A function pointer to a function that accepts:
@@ -187,7 +185,7 @@ public:
 	 * of the window, although move() and resize() might be more comfortable.
 	 * @param r The desired dimensions of the window.
 	 */
-	virtual void setDimensions(const Common::Rect &r);
+	virtual void setDimensions(const Common::Rect &r) override;
 
 	/**
 	 * Accessor to retrieve the dimensions of the inner surface of the window
@@ -209,17 +207,17 @@ public:
 	 * @param g See BaseMacWindow.
 	 * @param forceRedraw If true, the borders are guarranteed to redraw.
 	 */
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
 
-	virtual bool draw(bool forceRedraw = false);
-	virtual void blit(ManagedSurface *g, Common::Rect &dest);
+	virtual bool draw(bool forceRedraw = false) override;
+	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
 
 	/**
 	 * Mutator to change the active state of the window.
 	 * Most often called from the WM.
 	 * @param active Target state.
 	 */
-	void setActive(bool active);
+	virtual void setActive(bool active) override;
 	/**
 	 * Accessor to determine whether a window is active.
 	 * @return True if the window is active.
@@ -246,8 +244,8 @@ public:
 	/**
 	 * See BaseMacWindow.
 	 */
-	virtual bool processEvent(Common::Event &event);
-	bool hasAllFocus() { return _beingDragged || _beingResized; }
+	virtual bool processEvent(Common::Event &event) override;
+	virtual bool hasAllFocus() override { return _beingDragged || _beingResized; }
 
 	/**
 	 * Set arbitrary border from a BMP data stream, with custom border offsets.

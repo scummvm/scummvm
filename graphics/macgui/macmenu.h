@@ -81,9 +81,6 @@ public:
 	void enableCommand(const Common::U32String &menuitem, const Common::U32String &menuaction, bool state);
 	void disableAllMenus();
 
-	void setActive(bool active) { _menuActivated = active; }
-	bool hasAllFocus() { return _menuActivated; }
-
 	bool isVisible() { return _isVisible; }
 	void setVisible(bool visible) { _isVisible = visible; _contentIsDirty = true; }
 
@@ -121,7 +118,6 @@ private:
 
 	const Font *_font;
 
-	bool _menuActivated;
 	bool _isVisible;
 
 	bool _dimensionsDirty;

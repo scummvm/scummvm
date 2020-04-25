@@ -114,8 +114,6 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 	_bbox.right = _screen.w;
 	_bbox.bottom = kMenuHeight;
 
-	_menuActivated = false;
-
 	_dimensionsDirty = true;
 
 	if (_wm->_mode & kWMModeAutohideMenu)
@@ -982,10 +980,10 @@ bool MacMenu::mouseClick(int x, int y) {
 			}
 		}
 
-		if (!_menuActivated)
+		if (!_active)
 			_wm->activateMenu();
 
-		_menuActivated = true;
+		setActive(true);
 
 		_contentIsDirty = true;
 		_wm->setFullRefresh(true);
@@ -1002,7 +1000,7 @@ bool MacMenu::mouseClick(int x, int y) {
 		return true;
 	}
 
-	if (!_menuActivated)
+	if (!_active)
 		return false;
 
 	if (_menustack.size() > 0 && _menustack.back()->bbox.contains(x, y)) {
@@ -1083,7 +1081,7 @@ bool MacMenu::mouseClick(int x, int y) {
 }
 
 bool MacMenu::mouseMove(int x, int y) {
-	if (_menuActivated) {
+	if (_active) {
 		if (mouseClick(x, y))
 			return true;
 	} else if ((_wm->_mode & kWMModeAutohideMenu) && !_bbox.contains(x, y)) {
@@ -1115,8 +1113,8 @@ bool MacMenu::checkCallback(bool unicode) {
 }
 
 bool MacMenu::mouseRelease(int x, int y) {
-	if (_menuActivated) {
-		_menuActivated = false;
+	if (_active) {
+		setActive(false);
 		if (_wm->_mode & kWMModeAutohideMenu)
 			_isVisible = false;
 
@@ -1242,7 +1240,7 @@ void MacMenu::disableAllMenus() {
 void MacMenu::eventLoop() {
 	_contentIsDirty = true;
 
-	while (_menuActivated) {
+	while (_active) {
 		Common::Event event;
 
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -1251,7 +1249,7 @@ void MacMenu::eventLoop() {
 			draw(_wm->_screen);
 		}
 
-		if (_menuActivated) {
+		if (_active) {
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}

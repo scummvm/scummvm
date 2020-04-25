@@ -164,7 +164,7 @@ public:
 	 * Set the desired window state to active.
 	 * @param id ID of the window that has to be set to active.
 	 */
-	void setActive(int id);
+	void setActiveWindow(int id);
 	/**
 	 * Mark a window for removal.
 	 * Note that the window data will be destroyed.

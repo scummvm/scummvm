@@ -302,7 +302,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		if (!_editable)
 			return false;
 
-		_wm->setActive(getId());
+		_wm->setActiveWindow(getId());
 
 		if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
 			return false;
