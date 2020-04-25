@@ -90,7 +90,7 @@ void Screen::init() {
 
 	debug(1, "using %s scaler\n", settings._filter.c_str());
 
-	KeyHandler::setKeyRepeat(settings._keydelay, settings._keyinterval);
+	KeyHandler::setKeyRepeat(settings._keyDelay, settings._keyInterval);
 
 	/* find the tile animations for our tileset */
 	_tileAnims = nullptr;
@@ -400,7 +400,7 @@ Layout *Screen::screenLoadLayoutFromConf(const ConfigElement &conf) {
 
 Std::vector<MapTile> Screen::screenViewportTile(uint width, uint height, int x, int y, bool &focus) {
 	MapCoords center = g_context->_location->_coords;
-	static MapTile grass = g_context->_location->_map->_tileset->getByName("grass")->getId();
+	static MapTile grass = g_context->_location->_map->_tileSet->getByName("grass")->getId();
 
 	if (g_context->_location->_map->_width <= width &&
 	        g_context->_location->_map->_height <= height) {
@@ -468,7 +468,7 @@ void Screen::screenUpdate(TileView *view, bool showmap, bool blackout) {
 		DungeonViewer.display(g_context, view);
 		screenRedrawMapArea();
 	} else if (showmap) {
-		static MapTile black = g_context->_location->_map->_tileset->getByName("black")->getId();
+		static MapTile black = g_context->_location->_map->_tileSet->getByName("black")->getId();
 		//static MapTile avatar = g_context->_location->_map->_tileset->getByName("avatar")->getId();
 
 		int x, y;
@@ -1162,7 +1162,7 @@ void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus,
 	// Make sure we account for tiles that look like other tiles (dungeon tiles, mainly)
 	Common::String looks_like = t.getTileType()->getLooksLike();
 	if (!looks_like.empty())
-		t = map->_tileset->getByName(looks_like)->getId();
+		t = map->_tileSet->getByName(looks_like)->getId();
 
 	uint tile = map->translateToRawTileIndex(t);
 
@@ -1271,7 +1271,7 @@ void Screen::screenGemUpdate() {
 			                             layout->_viewport.height(), x - center_x + avt_x, y - center_y + avt_y, focus);
 			tile = tiles.front();
 
-			TileId avatarTileId = g_context->_location->_map->_tileset->getByName("avatar")->getId();
+			TileId avatarTileId = g_context->_location->_map->_tileSet->getByName("avatar")->getId();
 
 
 			if (!weAreDrawingTheAvatarTile) {

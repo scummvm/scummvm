@@ -152,7 +152,7 @@ void GameController::setMap(Map *map, bool saveLocation, const Portal *portal, T
 #endif
 
 	/* now, actually set our new tileset */
-	_mapArea.setTileset(map->_tileset);
+	_mapArea.setTileset(map->_tileSet);
 
 	if (isCity(map)) {
 		City *city = dynamic_cast<City *>(map);
@@ -181,7 +181,7 @@ int GameController::exitToParentMap() {
 		locationFree(&g_context->_location);
 
 		// restore the tileset to the one the current map uses
-		_mapArea.setTileset(g_context->_location->_map->_tileset);
+		_mapArea.setTileset(g_context->_location->_map->_tileSet);
 #ifdef IOS_ULTIMA4
 		U4IOS::updateGameControllerContext(c->location->context);
 #endif
@@ -285,7 +285,7 @@ void GameController::flashTile(const Coords &coords, MapTile tile, int frames) {
 }
 
 void GameController::flashTile(const Coords &coords, const Common::String &tilename, int timeFactor) {
-	Tile *tile = g_context->_location->_map->_tileset->getByName(tilename);
+	Tile *tile = g_context->_location->_map->_tileSet->getByName(tilename);
 	ASSERT(tile, "no tile named '%s' found in tileset", tilename.c_str());
 	flashTile(coords, tile->getId(), timeFactor);
 }
@@ -735,7 +735,7 @@ void GameController::checkRandomCreatures() {
 }
 
 void GameController::checkBridgeTrolls() {
-	const Tile *bridge = g_context->_location->_map->_tileset->getByName("bridge");
+	const Tile *bridge = g_context->_location->_map->_tileSet->getByName("bridge");
 	if (!bridge)
 		return;
 
@@ -763,7 +763,7 @@ bool GameController::createBalloon(Map *map) {
 			return false;
 	}
 
-	const Tile *balloon = map->_tileset->getByName("balloon");
+	const Tile *balloon = map->_tileSet->getByName("balloon");
 	ASSERT(balloon, "no balloon tile found in tileset");
 	map->addObject(balloon->getId(), balloon->getId(), map->getLabel("balloon"));
 	return true;

@@ -283,8 +283,8 @@ public:
 	MapData         _data;
 	ObjectDeque     _objects;
 	Std::map<Common::String, MapCoords> _labels;
-	Tileset        *_tileset;
-	TileMap        *_tilemap;
+	Tileset        *_tileSet;
+	TileMap        *_tileMap;
 
 	// u4dos compatibility
 	SaveGameMonsterRecord _monsterTable[MONSTERTABLE_SIZE];

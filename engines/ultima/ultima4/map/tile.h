@@ -219,7 +219,7 @@ private:
 private:
 	TileId _id;          /**< an id that is unique across all tilesets */
 	Common::String _name;        /**< The name of this tile */
-	Tileset *_tileset;   /**< The tileset this tile belongs to */
+	Tileset *_tileSet;   /**< The tileset this tile belongs to */
 	int _w, _h;           /**< width and height of the tile */
 	int _frames;         /**< The number of frames this tile has */
 	int _scale;          /**< The scale of the tile */

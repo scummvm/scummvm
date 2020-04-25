@@ -36,13 +36,13 @@ Settings *Settings::_instance = nullptr;
 
 bool SettingsEnhancementOptions::operator==(const SettingsEnhancementOptions &s) const {
 	return _activePlayer == s._activePlayer
-		&& _u5spellMixing == s._u5spellMixing
-		&& _u5shrines == s._u5shrines
-		&& _u5combat == s._u5combat
+		&& _u5SpellMixing == s._u5SpellMixing
+		&& _u5Shrines == s._u5Shrines
+		&& _u5Combat == s._u5Combat
 		&& _slimeDivides == s._slimeDivides
 		&& _gazerSpawnsInsects == s._gazerSpawnsInsects
 		&& _textColorization == s._textColorization
-		&& _c64chestTraps == s._c64chestTraps
+		&& _c64ChestTraps == s._c64ChestTraps
 		&& _smartEnterKey == s._smartEnterKey
 		&& _peerShowsObjects == s._peerShowsObjects
 		&& _u4TileTransparencyHack == s._u4TileTransparencyHack
@@ -65,8 +65,8 @@ bool SettingsData::operator==(const SettingsData &s) const {
 		&& _screenAnimationFramesPerSecond == s._screenAnimationFramesPerSecond
 		&& _innAlwaysCombat == s._innAlwaysCombat
 		&& _innTime == s._innTime
-		&& _keydelay == s._keydelay
-		&& _keyinterval == s._keyinterval
+		&& _keyDelay == s._keyDelay
+		&& _keyInterval == s._keyInterval
 		&& _mouseOptions == s._mouseOptions
 		&& _screenShakes == s._screenShakes
 		&& _gamma == s._gamma
@@ -149,8 +149,8 @@ void Settings::synchronize(Shared::ConfSerializer &s) {
 	s.syncAsInt("gamma", _gamma, DEFAULT_GAMMA);
 	s.syncAsBool("volumeFades", _volumeFades, DEFAULT_VOLUME_FADES);
 	s.syncAsBool("shortcutCommands", _shortcutCommands, DEFAULT_SHORTCUT_COMMANDS);
-	s.syncAsInt("keydelay", _keydelay, DEFAULT_KEY_DELAY);
-	s.syncAsInt("keyinterval", _keyinterval, DEFAULT_KEY_INTERVAL);
+	s.syncAsInt("keydelay", _keyDelay, DEFAULT_KEY_DELAY);
+	s.syncAsInt("keyinterval", _keyInterval, DEFAULT_KEY_INTERVAL);
 	s.syncAsBool("filterMoveMessages", _filterMoveMessages, DEFAULT_FILTER_MOVE_MESSAGES);
 	s.syncAsInt("battlespeed", _battleSpeed, DEFAULT_BATTLE_SPEED);
 	s.syncAsBool("enhancements", _enhancements, DEFAULT_ENHANCEMENTS);
@@ -170,17 +170,17 @@ void Settings::synchronize(Shared::ConfSerializer &s) {
 	// all specific minor enhancements default to "on", any major enhancements default to "off"
 	// minor enhancement options
 	s.syncAsBool("activePlayer", _enhancementsOptions._activePlayer, true);
-	s.syncAsBool("u5spellMixing", _enhancementsOptions._u5spellMixing, true);
-	s.syncAsBool("u5shrines", _enhancementsOptions._u5shrines, true);
+	s.syncAsBool("u5spellMixing", _enhancementsOptions._u5SpellMixing, true);
+	s.syncAsBool("u5shrines", _enhancementsOptions._u5Shrines, true);
 	s.syncAsBool("slimeDivides", _enhancementsOptions._slimeDivides, true);
 	s.syncAsBool("gazerSpawnsInsects", _enhancementsOptions._gazerSpawnsInsects, true);
 	s.syncAsBool("textColorization", _enhancementsOptions._textColorization, false);
-	s.syncAsBool("c64chestTraps", _enhancementsOptions._c64chestTraps, true);
+	s.syncAsBool("c64chestTraps", _enhancementsOptions._c64ChestTraps, true);
 	s.syncAsBool("smartEnterKey", _enhancementsOptions._smartEnterKey, true);
 
 	// major enhancement options
 	s.syncAsBool("peerShowsObjects", _enhancementsOptions._peerShowsObjects, false);
-	s.syncAsBool("u5combat", _enhancementsOptions._u5combat, false);
+	s.syncAsBool("u5combat", _enhancementsOptions._u5Combat, false);
 
 	// graphics enhancements options
 	s.syncAsBool("renderTileTransparency", _enhancementsOptions._u4TileTransparencyHack, true);

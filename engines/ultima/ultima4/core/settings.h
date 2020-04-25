@@ -77,13 +77,13 @@ namespace Ultima4 {
 
 struct SettingsEnhancementOptions {
 	bool _activePlayer;
-	bool _u5spellMixing;
-	bool _u5shrines;
-	bool _u5combat;
+	bool _u5SpellMixing;
+	bool _u5Shrines;
+	bool _u5Combat;
 	bool _slimeDivides;
 	bool _gazerSpawnsInsects;
 	bool _textColorization;
-	bool _c64chestTraps;
+	bool _c64ChestTraps;
 	bool _smartEnterKey;
 	bool _peerShowsObjects;
 	bool _u4TileTransparencyHack;
@@ -120,8 +120,8 @@ public:
 	int _screenAnimationFramesPerSecond;
 	bool _innAlwaysCombat;
 	int _innTime;
-	int _keydelay;
-	int _keyinterval;
+	int _keyDelay;
+	int _keyInterval;
 	MouseOptions _mouseOptions;
 	int _musicVol;
 	uint _scale;

@@ -40,7 +40,7 @@ TileView::TileView(int x, int y, int columns, int rows) : View(x, y, columns * T
 	_rows = rows;
 	_tileWidth = TILE_WIDTH;
 	_tileHeight = TILE_HEIGHT;
-	_tileset = Tileset::get("base");
+	_tileSet = Tileset::get("base");
 	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
 }
 
@@ -50,7 +50,7 @@ TileView::TileView(int x, int y, int columns, int rows, const Common::String &ti
 	_rows = rows;
 	_tileWidth = TILE_WIDTH;
 	_tileHeight = TILE_HEIGHT;
-	_tileset = Tileset::get(tileset);
+	_tileSet = Tileset::get(tileset);
 	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
 }
 
@@ -60,7 +60,7 @@ TileView::~TileView() {
 
 void TileView::reinit() {
 	View::reinit();
-	_tileset = Tileset::get("base");
+	_tileSet = Tileset::get("base");
 
 	// Scratchpad needs to be re-inited if we rescale...
 	if (_animated) {
@@ -72,7 +72,7 @@ void TileView::reinit() {
 
 void TileView::loadTile(MapTile &mapTile) {
 	// This attempts to preload tiles in advance
-	Tile *tile = _tileset->get(mapTile._id);
+	Tile *tile = _tileSet->get(mapTile._id);
 	if (tile) {
 		tile->getImage();
 	}
@@ -80,7 +80,7 @@ void TileView::loadTile(MapTile &mapTile) {
 }
 
 void TileView::drawTile(MapTile &mapTile, bool focus, int x, int y) {
-	Tile *tile = _tileset->get(mapTile._id);
+	Tile *tile = _tileSet->get(mapTile._id);
 	Image *image = tile->getImage();
 
 	ASSERT(x < _columns, "x value of %d out of range", x);
@@ -133,7 +133,7 @@ void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 	// Iterate through rendering each of the needed tiles
  	for (Std::vector<MapTile>::reverse_iterator t = tiles.rbegin(); t != tiles.rend(); ++t) {
 		MapTile &frontTile = *t;
-		Tile *frontTileType = _tileset->get(frontTile._id);
+		Tile *frontTileType = _tileSet->get(frontTile._id);
 
 		if (!frontTileType) {
 			// TODO: This leads to an error. It happens after graphics mode changes.
@@ -201,7 +201,7 @@ void TileView::drawFocus(int x, int y) {
 }
 
 void TileView::setTileset(Tileset *tileset) {
-	this->_tileset = tileset;
+	this->_tileSet = tileset;
 }
 
 } // End of namespace Ultima4

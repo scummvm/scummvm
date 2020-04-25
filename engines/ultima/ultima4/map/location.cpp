@@ -116,7 +116,7 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 	// then camouflaged creatures that have a disguise
 	if (obj && (obj->getType() == Object::CREATURE) && !obj->isVisible() && (!m->getCamouflageTile().empty())) {
 		focus = focus || obj->hasFocus();
-		tiles.push_back(_map->_tileset->getByName(m->getCamouflageTile())->getId());
+		tiles.push_back(_map->_tileSet->getByName(m->getCamouflageTile())->getId());
 	}
 	// then visible creatures and objects
 	else if (obj && obj->isVisible()) {
@@ -227,7 +227,7 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 	} while (++loop_count < 128 && searchQueue.size() > 0 && searchQueue.size() < 64);
 
 	// couldn't find a tile, give it the classic default
-	return _map->_tileset->getByName("brick_floor")->getId();
+	return _map->_tileSet->getByName("brick_floor")->getId();
 }
 
 int Location::getCurrentPosition(MapCoords *coords) {

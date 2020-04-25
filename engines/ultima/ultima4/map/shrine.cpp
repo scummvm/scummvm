@@ -107,7 +107,7 @@ void Shrine::enter() {
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
-	if (settings._enhancements && settings._enhancementsOptions._u5shrines)
+	if (settings._enhancements && settings._enhancementsOptions._u5Shrines)
 		enhancedSequence();
 	else
 		g_screen->screenMessage("You enter the ancient shrine and sit before the altar...");
@@ -162,7 +162,7 @@ void Shrine::enter() {
 
 void Shrine::enhancedSequence() {
 	// Replace the 'static' avatar tile with grass
-	_annotations->add(Coords(5, 6, g_context->_location->_coords.z), _tileset->getByName("grass")->getId(), false, true);
+	_annotations->add(Coords(5, 6, g_context->_location->_coords.z), _tileSet->getByName("grass")->getId(), false, true);
 
 	g_screen->screenDisableCursor();
 	g_screen->screenMessage("You approach\nthe ancient\nshrine...\n");
@@ -170,7 +170,7 @@ void Shrine::enhancedSequence() {
 	EventHandler::wait_cycles(settings._gameCyclesPerSecond);
 
 	Object *obj = addCreature(creatureMgr->getById(BEGGAR_ID), Coords(5, 10, g_context->_location->_coords.z));
-	obj->setTile(_tileset->getByName("avatar")->getId());
+	obj->setTile(_tileSet->getByName("avatar")->getId());
 
 	gameUpdateScreen();
 	EventHandler::wait_msecs(400);

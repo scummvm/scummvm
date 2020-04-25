@@ -60,7 +60,7 @@ public:
 protected:
 	int _columns, _rows;
 	int _tileWidth, _tileHeight;
-	Tileset *_tileset;
+	Tileset *_tileSet;
 	Image *_animated;            /**< a scratchpad image for drawing animations */
 };
 

@@ -505,7 +505,7 @@ bool Debugger::cmdExit(int argc, const char **argv) {
 		if (g_context->_transportContext == TRANSPORT_SHIP)
 			g_context->_lastShip = obj;
 
-		Tile *avatar = g_context->_location->_map->_tileset->getByName("avatar");
+		Tile *avatar = g_context->_location->_map->_tileSet->getByName("avatar");
 		ASSERT(avatar, "no avatar tile found in tileset");
 
 		g_context->_party->setTransport(avatar->getId());
@@ -789,7 +789,7 @@ bool Debugger::cmdMixReagents(int argc, const char **argv) {
 			g_context->_stats->resetReagentsMenu();
 
 			g_context->_stats->setView(MIX_REAGENTS);
-			if (settings._enhancements && settings._enhancementsOptions._u5spellMixing)
+			if (settings._enhancements && settings._enhancementsOptions._u5SpellMixing)
 				done = mixReagentsForSpellU5(spell);
 			else
 				done = mixReagentsForSpellU4(spell);
@@ -1538,9 +1538,9 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 		return isDebuggerActive();
 	}
 
-	_horse = g_context->_location->_map->_tileset->getByName("horse")->getId();
-	_ship = g_context->_location->_map->_tileset->getByName("ship")->getId();
-	_balloon = g_context->_location->_map->_tileset->getByName("balloon")->getId();
+	_horse = g_context->_location->_map->_tileSet->getByName("horse")->getId();
+	_ship = g_context->_location->_map->_tileSet->getByName("ship")->getId();
+	_balloon = g_context->_location->_map->_tileSet->getByName("balloon")->getId();
 
 	MapCoords coords = g_context->_location->_coords;
 	MapTile *choice;
@@ -1572,7 +1572,7 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 		return isDebuggerActive();
 	}
 
-	tile = g_context->_location->_map->_tileset->get(choice->getId());
+	tile = g_context->_location->_map->_tileSet->get(choice->getId());
 	Direction dir;
 
 	if (argc == 3) {

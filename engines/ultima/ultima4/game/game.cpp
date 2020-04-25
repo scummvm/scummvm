@@ -246,7 +246,7 @@ bool fireAt(const Coords &coords, bool originAvatar) {
 	Object *obj = nullptr;
 
 
-	MapTile tile(g_context->_location->_map->_tileset->getByName("miss_flash")->getId());
+	MapTile tile(g_context->_location->_map->_tileSet->getByName("miss_flash")->getId());
 	GameController::flashTile(coords, tile, 1);
 
 	obj = g_context->_location->_map->objectAt(coords);
@@ -465,7 +465,7 @@ bool creatureRangeAttack(const Coords &coords, Creature *m) {
 //    int attackdelay = MAX_BATTLE_SPEED - settings.battleSpeed;
 
 	// Figure out what the ranged attack should look like
-	MapTile tile(g_context->_location->_map->_tileset->getByName((m && !m->getWorldrangedtile().empty()) ?
+	MapTile tile(g_context->_location->_map->_tileSet->getByName((m && !m->getWorldrangedtile().empty()) ?
 	             m->getWorldrangedtile() :
 	             "hit_flash")->getId());
 

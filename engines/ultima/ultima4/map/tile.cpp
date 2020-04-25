@@ -42,7 +42,7 @@ TileId Tile::_nextId = 0;
 Tile::Tile(Tileset *tileset)
 	: _id(_nextId++)
 	, _name()
-	, _tileset(tileset)
+	, _tileSet(tileset)
 	, _w(0)
 	, _h(0)
 	, _frames(0)
@@ -192,7 +192,7 @@ void Tile::deleteImage() {
 }
 
 bool Tile::isDungeonFloor() const {
-	Tile *floor = _tileset->getByName("brick_floor");
+	Tile *floor = _tileSet->getByName("brick_floor");
 	if (_id == floor->_id)
 		return true;
 	return false;

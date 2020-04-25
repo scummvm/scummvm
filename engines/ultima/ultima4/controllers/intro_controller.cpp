@@ -249,8 +249,8 @@ IntroController::IntroController() : Controller(1),
 	_soundMenu.setClosesMenu(CANCEL);
 
 	_inputMenu.setTitle("Keyboard Options:", 0, 0);
-	_inputMenu.add(MI_INPUT_01,  new IntMenuItem("Repeat Delay        %4d msec", 2,  2,/*'d'*/  7, &_settingsChanged._keydelay, 100, MAX_KEY_DELAY, 100));
-	_inputMenu.add(MI_INPUT_02,  new IntMenuItem("Repeat Interval     %4d msec", 2,  3,/*'i'*/  7, &_settingsChanged._keyinterval, 10, MAX_KEY_INTERVAL, 10));
+	_inputMenu.add(MI_INPUT_01,  new IntMenuItem("Repeat Delay        %4d msec", 2,  2,/*'d'*/  7, &_settingsChanged._keyDelay, 100, MAX_KEY_DELAY, 100));
+	_inputMenu.add(MI_INPUT_02,  new IntMenuItem("Repeat Interval     %4d msec", 2,  3,/*'i'*/  7, &_settingsChanged._keyInterval, 10, MAX_KEY_INTERVAL, 10));
 	/* "Mouse Options:" is drawn in the updateInputMenu() function */
 	_inputMenu.add(MI_INPUT_03, new BoolMenuItem("Mouse                %s",      2,  7,/*'m'*/  0, &_settingsChanged._mouseOptions._enabled));
 	_inputMenu.add(USE_SETTINGS,                 "\010 Use These Settings",      2, 11,/*'u'*/  2);
@@ -276,7 +276,7 @@ IntroController::IntroController() : Controller(1),
 	/* move the BATTLE DIFFICULTY, DEBUG, and AUTOMATIC ACTIONS settings to "enhancementsOptions" */
 	_gameplayMenu.setTitle("Enhanced Gameplay Options:", 0, 0);
 	_gameplayMenu.add(MI_GAMEPLAY_01, new StringMenuItem("Battle Difficulty          %s", 2,  2,/*'b'*/  0, &_settingsChanged._battleDiff, settings.getBattleDiffs()));
-	_gameplayMenu.add(MI_GAMEPLAY_02,   new BoolMenuItem("Fixed Chest Traps          %s", 2,  3,/*'t'*/ 12, &_settingsChanged._enhancementsOptions._c64chestTraps));
+	_gameplayMenu.add(MI_GAMEPLAY_02,   new BoolMenuItem("Fixed Chest Traps          %s", 2,  3,/*'t'*/ 12, &_settingsChanged._enhancementsOptions._c64ChestTraps));
 	_gameplayMenu.add(MI_GAMEPLAY_03,   new BoolMenuItem("Gazer Spawns Insects       %s", 2,  4,/*'g'*/  0, &_settingsChanged._enhancementsOptions._gazerSpawnsInsects));
 	_gameplayMenu.add(MI_GAMEPLAY_04,   new BoolMenuItem("Gem View Shows Objects     %s", 2,  5,/*'e'*/  1, &_settingsChanged._enhancementsOptions._peerShowsObjects));
 	_gameplayMenu.add(MI_GAMEPLAY_05,   new BoolMenuItem("Slime Divides              %s", 2,  6,/*'s'*/  0, &_settingsChanged._enhancementsOptions._slimeDivides));
@@ -293,8 +293,8 @@ IntroController::IntroController() : Controller(1),
 	_interfaceMenu.add(MI_INTERFACE_02, new BoolMenuItem("Set Active Player          %s", 2,  4,/*'p'*/ 11, &_settingsChanged._enhancementsOptions._activePlayer));
 	_interfaceMenu.add(MI_INTERFACE_03, new BoolMenuItem("Smart 'Enter' Key          %s", 2,  5,/*'e'*/  7, &_settingsChanged._enhancementsOptions._smartEnterKey));
 	_interfaceMenu.add(MI_INTERFACE_04, new BoolMenuItem("Text Colorization          %s", 2,  6,/*'t'*/  0, &_settingsChanged._enhancementsOptions._textColorization));
-	_interfaceMenu.add(MI_INTERFACE_05, new BoolMenuItem("Ultima V Shrines           %s", 2,  7,/*'s'*/  9, &_settingsChanged._enhancementsOptions._u5shrines));
-	_interfaceMenu.add(MI_INTERFACE_06, new BoolMenuItem("Ultima V Spell Mixing      %s", 2,  8,/*'m'*/ 15, &_settingsChanged._enhancementsOptions._u5spellMixing));
+	_interfaceMenu.add(MI_INTERFACE_05, new BoolMenuItem("Ultima V Shrines           %s", 2,  7,/*'s'*/  9, &_settingsChanged._enhancementsOptions._u5Shrines));
+	_interfaceMenu.add(MI_INTERFACE_06, new BoolMenuItem("Ultima V Spell Mixing      %s", 2,  8,/*'m'*/ 15, &_settingsChanged._enhancementsOptions._u5SpellMixing));
 	_interfaceMenu.add(USE_SETTINGS,                     "\010 Use These Settings",       2, 11,/*'u'*/  2);
 	_interfaceMenu.add(CANCEL,                           "\010 Cancel",                   2, 12,/*'c'*/  2);
 	_interfaceMenu.addShortcutKey(CANCEL, ' ');
@@ -1131,7 +1131,7 @@ void IntroController::updateInputMenu(MenuEvent &event) {
 			settings.write();
 
 			// re-initialize keyboard
-			KeyHandler::setKeyRepeat(_settingsChanged._keydelay, _settingsChanged._keyinterval);
+			KeyHandler::setKeyRepeat(_settingsChanged._keyDelay, _settingsChanged._keyInterval);
 
 #ifdef SLACK_ON_SDL_AGNOSTICISM
 			if (settings.mouseOptions.enabled) {

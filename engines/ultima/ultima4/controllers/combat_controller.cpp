@@ -528,12 +528,12 @@ void CombatController::awardLoot() {
 	if (_creature->leavesChest() &&
 	        ground->isCreatureWalkable() &&
 	        (!(g_context->_location->_context & CTX_DUNGEON) || ground->isDungeonFloor())) {
-		MapTile chest = g_context->_location->_map->_tileset->getByName("chest")->getId();
+		MapTile chest = g_context->_location->_map->_tileSet->getByName("chest")->getId();
 		g_context->_location->_map->addObject(chest, chest, coords);
 	}
 	/* add a ship if you just defeated a pirate ship */
 	else if (_creature->getTile().getTileType()->isPirateShip()) {
-		MapTile ship = g_context->_location->_map->_tileset->getByName("ship")->getId();
+		MapTile ship = g_context->_location->_map->_tileSet->getByName("ship")->getId();
 		ship.setDirection(_creature->getTile().getDirection());
 		g_context->_location->_map->addObject(ship, ship, coords);
 	}
@@ -553,8 +553,8 @@ bool CombatController::attackAt(const Coords &coords, PartyMember *attacker, int
 	const Weapon *weapon = attacker->getWeapon();
 	bool wrongRange = weapon->rangeAbsolute() && (distance != range);
 
-	MapTile hittile = _map->_tileset->getByName(weapon->getHitTile())->getId();
-	MapTile misstile = _map->_tileset->getByName(weapon->getMissTile())->getId();
+	MapTile hittile = _map->_tileSet->getByName(weapon->getHitTile())->getId();
+	MapTile misstile = _map->_tileSet->getByName(weapon->getMissTile())->getId();
 
 	// Check to see if something hit
 	Creature *creature = _map->creatureAt(coords);
@@ -597,8 +597,8 @@ bool CombatController::attackAt(const Coords &coords, PartyMember *attacker, int
 }
 
 bool CombatController::rangedAttack(const Coords &coords, Creature *attacker) {
-	MapTile hittile = _map->_tileset->getByName(attacker->getHitTile())->getId();
-	MapTile misstile = _map->_tileset->getByName(attacker->getMissTile())->getId();
+	MapTile hittile = _map->_tileSet->getByName(attacker->getHitTile())->getId();
+	MapTile misstile = _map->_tileSet->getByName(attacker->getMissTile())->getId();
 
 	Creature *target = isCreature(attacker) ? _map->partyMemberAt(coords) : _map->creatureAt(coords);
 
@@ -676,13 +676,13 @@ void CombatController::rangedMiss(const Coords &coords, Creature *attacker) {
 	/* If the creature leaves a tile behind, do it here! (lava lizard, etc) */
 	const Tile *ground = _map->tileTypeAt(coords, WITH_GROUND_OBJECTS);
 	if (attacker->leavesTile() && ground->isWalkable())
-		_map->_annotations->add(coords, _map->_tileset->getByName(attacker->getHitTile())->getId());
+		_map->_annotations->add(coords, _map->_tileSet->getByName(attacker->getHitTile())->getId());
 }
 
 bool CombatController::returnWeaponToOwner(const Coords &coords, int distance, int dir, const Weapon *weapon) {
 	MapCoords new_coords = coords;
 
-	MapTile misstile = _map->_tileset->getByName(weapon->getMissTile())->getId();
+	MapTile misstile = _map->_tileSet->getByName(weapon->getMissTile())->getId();
 
 	/* reverse the direction of the weapon */
 	Direction returnDir = dirReverse(dirFromMask(dir));
@@ -1113,7 +1113,7 @@ void CombatController::attack() {
 	// does weapon leave a tile behind? (e.g. flaming oil)
 	const Tile *ground = _map->tileTypeAt(targetCoords, WITHOUT_OBJECTS);
 	if (!weapon->leavesTile().empty() && ground->isWalkable())
-		_map->_annotations->add(targetCoords, _map->_tileset->getByName(weapon->leavesTile())->getId());
+		_map->_annotations->add(targetCoords, _map->_tileSet->getByName(weapon->leavesTile())->getId());
 
 	/* show the 'miss' tile */
 	if (!foundTarget) {

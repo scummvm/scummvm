@@ -60,7 +60,7 @@ DungeonToken Dungeon::tokenForTile(MapTile tile) {
 	const static Common::String fieldNames[] = { "poison_field", "energy_field", "fire_field", "sleep_field", "" };
 
 	int i;
-	Tile *t = _tileset->get(tile.getId());
+	Tile *t = _tileSet->get(tile.getId());
 
 	for (i = 0; !tileNames[i].empty(); i++) {
 		if (t->getName() == tileNames[i])
@@ -191,7 +191,7 @@ void dungeonTouchOrb() {
 	int damage = 0;
 
 	/* Get current position and find a replacement tile for it */
-	Tile *orb_tile = g_context->_location->_map->_tileset->getByName("magic_orb");
+	Tile *orb_tile = g_context->_location->_map->_tileSet->getByName("magic_orb");
 	MapTile replacementTile(g_context->_location->getReplacementTile(g_context->_location->_coords, orb_tile));
 
 	switch (g_context->_location->_map->_id) {
@@ -277,7 +277,7 @@ bool Dungeon::ladderUpAt(MapCoords coords) {
 	if (a.size() > 0) {
 		Annotation::List::iterator i;
 		for (i = a.begin(); i != a.end(); i++) {
-			if (i->getTile() == _tileset->getByName("up_ladder")->getId())
+			if (i->getTile() == _tileSet->getByName("up_ladder")->getId())
 				return true;
 		}
 	}
@@ -294,7 +294,7 @@ bool Dungeon::ladderDownAt(MapCoords coords) {
 	if (a.size() > 0) {
 		Annotation::List::iterator i;
 		for (i = a.begin(); i != a.end(); i++) {
-			if (i->getTile() == _tileset->getByName("down_ladder")->getId())
+			if (i->getTile() == _tileSet->getByName("down_ladder")->getId())
 				return true;
 		}
 	}

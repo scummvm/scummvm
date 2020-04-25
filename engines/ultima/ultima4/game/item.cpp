@@ -555,7 +555,7 @@ void useStone(int item) {
 						MapCoords pos;
 						g_screen->screenMessage("\n\nThe altar changes before thyne eyes!\n");
 						g_context->_location->getCurrentPosition(&pos);
-						g_context->_location->_map->_annotations->add(pos, g_context->_location->_map->_tileset->getByName("down_ladder")->getId());
+						g_context->_location->_map->_annotations->add(pos, g_context->_location->_map->_tileSet->getByName("down_ladder")->getId());
 					}
 					/* start chamber of the codex sequence... */
 					else {

@@ -243,8 +243,8 @@ Map::Map() {
 	_chunkHeight = 0;
 	_offset = 0;
 	_id = 0;
-	_tileset = nullptr;
-	_tilemap = nullptr;
+	_tileSet = nullptr;
+	_tileMap = nullptr;
 }
 
 Map::~Map() {
@@ -606,7 +606,7 @@ int Map::getValidMoves(MapCoords from, MapTile transport) {
 			else if (transport.getTileType()->isBalloon() && tile.getTileType()->isFlyable())
 				retval = DIR_ADD_TO_MASK(d, retval);
 			// avatar or horseback: check walkable
-			else if (transport == _tileset->getByName("avatar")->getId() || transport.getTileType()->isHorse()) {
+			else if (transport == _tileSet->getByName("avatar")->getId() || transport.getTileType()->isHorse()) {
 				if (tile.getTileType()->canWalkOn(d) &&
 				        (!transport.getTileType()->isHorse() || tile.getTileType()->isCreatureWalkable()) &&
 				        prev_tile.getTileType()->canWalkOff(d))
@@ -772,13 +772,13 @@ bool Map::fillMonsterTable() {
 }
 
 MapTile Map::translateFromRawTileIndex(int raw) const {
-	ASSERT(_tilemap != nullptr, "tilemap hasn't been set");
+	ASSERT(_tileMap != nullptr, "tilemap hasn't been set");
 
-	return _tilemap->translate(raw);
+	return _tileMap->translate(raw);
 }
 
 uint Map::translateToRawTileIndex(MapTile &tile) const {
-	return _tilemap->untranslate(tile);
+	return _tileMap->untranslate(tile);
 }
 
 } // End of namespace Ultima4

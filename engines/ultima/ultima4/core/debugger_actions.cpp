@@ -93,7 +93,7 @@ bool DebuggerActions::destroyAt(const Coords &coords) {
 			Creature *c = dynamic_cast<Creature *>(obj);
 			g_screen->screenMessage("%s Destroyed!\n", c->getName().c_str());
 		} else {
-			Tile *t = g_context->_location->_map->_tileset->get(obj->getTile()._id);
+			Tile *t = g_context->_location->_map->_tileSet->get(obj->getTile()._id);
 			g_screen->screenMessage("%s Destroyed!\n", t->getName().c_str());
 		}
 
@@ -148,7 +148,7 @@ bool DebuggerActions::getChestTrapHandler(int player) {
 	int randNum = xu4_random(4);
 
 	/* Do we use u4dos's way of trap-determination, or the original intended way? */
-	int passTest = (settings._enhancements && settings._enhancementsOptions._c64chestTraps) ?
+	int passTest = (settings._enhancements && settings._enhancementsOptions._c64ChestTraps) ?
 		(xu4_random(2) == 0) : /* xu4-enhanced */
 		((randNum & 1) == 0); /* u4dos original way (only allows even numbers through, so only acid and poison show) */
 
@@ -208,7 +208,7 @@ bool DebuggerActions::jimmyAt(const Coords &coords) {
 		return false;
 
 	if (g_ultima->_saveGame->_keys) {
-		Tile *door = g_context->_location->_map->_tileset->getByName("door");
+		Tile *door = g_context->_location->_map->_tileSet->getByName("door");
 		ASSERT(door, "no door tile found in tileset");
 		g_ultima->_saveGame->_keys--;
 		g_context->_location->_map->_annotations->add(coords, door->getId());
@@ -327,7 +327,7 @@ bool DebuggerActions::openAt(const Coords &coords) {
 		return true;
 	}
 
-	Tile *floor = g_context->_location->_map->_tileset->getByName("brick_floor");
+	Tile *floor = g_context->_location->_map->_tileSet->getByName("brick_floor");
 	ASSERT(floor, "no floor tile found in tileset");
 	g_context->_location->_map->_annotations->add(coords, floor->getId(), false, true)->setTTL(4);
 

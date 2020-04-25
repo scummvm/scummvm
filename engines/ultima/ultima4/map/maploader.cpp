@@ -89,7 +89,7 @@ bool MapLoader::loadData(Map *map, Common::File *f) {
 	for (ych = 0; ych < (map->_height / map->_chunkHeight); ++ych) {
 		for (xch = 0; xch < (map->_width / map->_chunkWidth); ++xch) {
 			if (isChunkCompressed(map, ych * map->_chunkWidth + xch)) {
-				MapTile water = map->_tileset->getByName("sea")->getId();
+				MapTile water = map->_tileSet->getByName("sea")->getId();
 				for (y = 0; y < map->_chunkHeight; ++y) {
 					for (x = 0; x < map->_chunkWidth; ++x) {
 						map->_data[x + (y * map->_width) + (xch * map->_chunkWidth) + (ych * map->_chunkHeight * map->_width)] = water;
@@ -432,7 +432,7 @@ void DngMapLoader::initDungeonRoom(Dungeon *dng, int room) {
 	dng->_roomMaps[room]->_music = Music::COMBAT;
 	dng->_roomMaps[room]->_type = Map::COMBAT;
 	dng->_roomMaps[room]->_flags |= NO_LINE_OF_SIGHT;
-	dng->_roomMaps[room]->_tileset = Tileset::get("base");
+	dng->_roomMaps[room]->_tileSet = Tileset::get("base");
 }
 
 bool WorldMapLoader::load(Map *map) {
