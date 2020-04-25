@@ -665,7 +665,7 @@ void IntroController::initiateNewGame() {
 	g_screen->update();
 
 	Common::String nameBuffer = ReadStringController::get(12, &_menuArea);
-	if (nameBuffer.empty()) {
+	if (nameBuffer.empty() || shouldQuit()) {
 		// the user didn't enter a name
 		_menuArea.disableCursor();
 		g_screen->screenEnableCursor();
@@ -687,12 +687,15 @@ void IntroController::initiateNewGame() {
 
 	SexType sex;
 	int sexChoice = ReadChoiceController::get("mf");
-	if (sexChoice == 'm')
-		sex = SEX_MALE;
-	else
-		sex = SEX_FEMALE;
 
-	finishInitiateGame(nameBuffer, sex);
+	if (!shouldQuit()) {
+		if (sexChoice == 'm')
+			sex = SEX_MALE;
+		else
+			sex = SEX_FEMALE;
+
+		finishInitiateGame(nameBuffer, sex);
+	}
 }
 
 void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexType sex) {
