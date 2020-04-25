@@ -924,6 +924,8 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 		ext[i] = dims[i] / 2;
 		centre[i] = start[i] - ext[i];
 	}
+	// Z is opposite direction to x and y..
+	centre[2] = start[2] + ext[2];
 
 //	pout << "Sweeping from (" << -ext[0] << ", " << -ext[1] << ", " << -ext[2] << ")" << Std::endl;
 //	pout << "              (" << ext[0] << ", " << ext[1] << ", " << ext[2] << ")" << Std::endl;
