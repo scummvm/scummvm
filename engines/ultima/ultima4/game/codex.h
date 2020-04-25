@@ -23,6 +23,8 @@
 #ifndef ULTIMA4_GAME_CODEX_H
 #define ULTIMA4_GAME_CODEX_H
 
+#include "common/array.h"
+
 namespace Ultima {
 namespace Ultima4 {
 
@@ -45,10 +47,68 @@ enum CodexEjectCode {
 	CODEX_EJECT_BAD_INFINITY
 };
 
-/**
- * Begins the Chamber of the Codex sequence
- */
-void codexStart();
+class Codex {
+private:
+	Common::Array<Common::String> _virtueQuestions;
+	Common::Array<Common::String> _endgameText1;
+	Common::Array<Common::String> _endgameText2;
+private:
+	/**
+	 * Initializes the Chamber of the Codex sequence (runs from codexStart())
+	 */
+	int init();
+
+	/**
+	 * Frees all memory associated with the Codex sequence
+	 */
+	void deinit();
+
+	/**
+	 * Ejects you from the chamber of the codex (and the Abyss, for that matter)
+	 * with the correct message.
+	 */
+	void eject(CodexEjectCode code);
+
+	/**
+	 * Handles entering the Word of Passage
+	 */
+	void handleWOP(const Common::String &word);
+
+	/**
+	 * Handles naming of virtues in the Chamber of the Codex
+	 */
+	void handleVirtues(const Common::String &virtue);
+
+	void handleInfinity(const Common::String &answer);
+
+	/**
+	 * Pretty self-explanatory
+	 */
+	void impureThoughts();
+
+	/**
+	 * Key handlers
+	 */
+	static bool handleInfinityAnyKey(int key, void *data);
+	static bool handleEndgameAnyKey(int key, void *data);
+public:
+	/**
+	 * Constructor
+	 */
+	Codex();
+
+	/**
+	 * Destructor
+	 */
+	~Codex();
+
+	/**
+	 * Begins the Chamber of the Codex sequence
+	 */
+	void start();
+};
+
+extern Codex *g_codex;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

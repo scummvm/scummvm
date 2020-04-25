@@ -544,10 +544,8 @@ void useStone(int item) {
 
 					stoneMask = 0; /* reset the mask so you can try again */
 				}
-			}
-
-			/* Otherwise, we're asking for a stone while in the abyss on top of an altar */
-			else {
+			} else {
+				/* Otherwise, we're asking for a stone while in the abyss on top of an altar */
 				/* see if they entered the correct stone */
 				if (stone == (1 << g_context->_location->_coords.z)) {
 					if (g_context->_location->_coords.z < 7) {
@@ -556,12 +554,13 @@ void useStone(int item) {
 						g_screen->screenMessage("\n\nThe altar changes before thyne eyes!\n");
 						g_context->_location->getCurrentPosition(&pos);
 						g_context->_location->_map->_annotations->add(pos, g_context->_location->_map->_tileSet->getByName("down_ladder")->getId());
+					} else {
+						// Start chamber of the codex sequence...
+						g_codex->start();
 					}
-					/* start chamber of the codex sequence... */
-					else {
-						codexStart();
-					}
-				} else g_screen->screenMessage("\nHmm...No effect!\n");
+				} else {
+					g_screen->screenMessage("\nHmm...No effect!\n");
+				}
 			}
 		} else {
 			g_screen->screenMessage("\nNot a Usable Item!\n");

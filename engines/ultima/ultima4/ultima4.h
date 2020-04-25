@@ -30,6 +30,7 @@ namespace Ultima {
 namespace Ultima4 {
 
 class Armors;
+class Codex;
 class Config;
 class Context;
 class DialogueLoaders;
@@ -62,6 +63,7 @@ protected:
 	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
 public:
 	Armors *_armors;
+	Codex *_codex;
 	Config *_config;
 	Context *_context;
 	DialogueLoaders *_dialogueLoaders;

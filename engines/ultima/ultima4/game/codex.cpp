@@ -37,86 +37,64 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using namespace std;
+Codex *g_codex;
 
-int codexInit();
-void codexDelete();
-void codexEject(CodexEjectCode code);
-void codexHandleWOP(const Common::String &word);
-void codexHandleVirtues(const Common::String &virtue);
-void codexHandleInfinity(const Common::String &answer);
-void codexImpureThoughts();
+Codex::Codex() {
+	g_codex = this;
+}
 
-/**
- * Key handlers
- */
-bool codexHandleInfinityAnyKey(int key, void *data);
-bool codexHandleEndgameAnyKey(int key, void *data);
+Codex::~Codex() {
+	g_codex = nullptr;
+}
 
-Std::vector<Common::String> codexVirtueQuestions;
-Std::vector<Common::String> codexEndgameText1;
-Std::vector<Common::String> codexEndgameText2;
-
-/**
- * Initializes the Chamber of the Codex sequence (runs from codexStart())
- */
-int codexInit() {
+int Codex::init() {
 	Common::File *avatar;
 
 	avatar = u4fopen("avatar.exe");
 	if (!avatar)
 		return 0;
 
-	codexVirtueQuestions = u4read_stringtable(avatar, 0x0fc7b, 11);
-	codexEndgameText1 = u4read_stringtable(avatar, 0x0fee4, 7);
-	codexEndgameText2 = u4read_stringtable(avatar, 0x10187, 5);
+	_virtueQuestions = u4read_stringtable(avatar, 0x0fc7b, 11);
+	_endgameText1 = u4read_stringtable(avatar, 0x0fee4, 7);
+	_endgameText2 = u4read_stringtable(avatar, 0x10187, 5);
 
 	u4fclose(avatar);
 
 	return 1;
 }
 
-/**
- * Frees all memory associated with the Codex sequence
- */
-void codexDelete() {
-	codexVirtueQuestions.clear();
-	codexEndgameText1.clear();
-	codexEndgameText2.clear();
+void Codex::deinit() {
+	_virtueQuestions.clear();
+	_endgameText1.clear();
+	_endgameText2.clear();
 }
 
-void codexStart() {
-	codexInit();
+void Codex::start() {
+	init();
 
-	/**
-	 * disable the whirlpool cursor and black out the screen
-	 */
+	// Disable the whirlpool cursor and black out the screen	
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
 	g_screen->screenDisableCursor();
 	g_screen->screenUpdate(&g_game->_mapArea, false, true);
 
-	/**
-	 * make the avatar alone
-	 */
+	// Make the avatar alone
+	
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
-	g_context->_stats->update(true);     /* show just the avatar */
+	g_context->_stats->update(true);     // show just the avatar
 	g_screen->update();
 
-	/**
-	 * change the view mode so the dungeon doesn't get shown
-	 */
+	// Change the view mode so the dungeon doesn't get shown
+	
 	gameSetViewMode(VIEW_CODEX);
 
 	g_screen->screenMessage("\n\n\n\nThere is a sudden darkness, and you find yourself alone in an empty chamber.\n");
 	EventHandler::sleep(4000);
 
-	/**
-	 * check to see if you have the 3-part key
-	 */
+	// Check to see if you have the 3-part key	
 	if ((g_ultima->_saveGame->_items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) != (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
-		codexEject(CODEX_EJECT_NO_3_PART_KEY);
+		eject(CODEX_EJECT_NO_3_PART_KEY);
 		return;
 	}
 
@@ -128,21 +106,15 @@ void codexStart() {
 
 	g_screen->screenMessage("\nA voice rings out:\n\"What is the Word of Passage?\"\n\n");
 
-	/**
-	 * Get the Word of Passage
-	 */
+	// Get the Word of Passage	
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSConversationHelper::setIntroString("What is the Word of Passage?");
 #endif
-	codexHandleWOP(gameGetInput());
+	handleWOP(gameGetInput());
 }
 
-/**
- * Ejects you from the chamber of the codex (and the Abyss, for that matter)
- * with the correct message.
- */
-void codexEject(CodexEjectCode code) {
-	struct {
+void Codex::eject(CodexEjectCode code) {
+	const struct {
 		int x, y;
 	} startLocations[] = {
 		{ 231, 136 },
@@ -195,19 +167,19 @@ void codexEject(CodexEjectCode code) {
 
 	EventHandler::sleep(2000);
 
-	/* free memory associated with the Codex */
-	codexDelete();
+	// Free memory associated with the Codex
+	deinit();
 
-	/* re-enable the cursor and show it */
+	// Re-enable the cursor and show it
 	g_screen->screenEnableCursor();
 	g_screen->screenShowCursor();
 
-	/* return view to normal and exit the Abyss */
+	// Return view to normal and exit the Abyss
 	gameSetViewMode(VIEW_NORMAL);
 	g_game->exitToParentMap();
 	g_music->play();
 
-	/**
+	/*
 	 * if being ejected because of a missed virtue question,
 	 * then teleport the party to the starting location for
 	 * that virtue.
@@ -218,39 +190,36 @@ void codexEject(CodexEjectCode code) {
 		g_context->_location->_coords.y = startLocations[virtue].y;
 	}
 
-	/* finally, finish the turn */
+	// finally, finish the turn
 	g_context->_location->_turnCompleter->finishTurn();
 	eventHandler->setController(g_game);
 }
 
-/**
- * Handles entering the Word of Passage
- */
-void codexHandleWOP(const Common::String &word) {
+void Codex::handleWOP(const Common::String &word) {
 	static int tries = 1;
 	int i;
 
 	eventHandler->popKeyHandler();
 
-	/* slight pause before continuing */
+	// slight pause before continuing
 	g_screen->screenMessage("\n");
 	g_screen->screenDisableCursor();
 	EventHandler::sleep(1000);
 
-	/* entered correctly */
+	// entered correctly
 	if (scumm_stricmp(word.c_str(), "veramocor") == 0) {
-		tries = 1; /* reset 'tries' in case we need to enter this again later */
+		tries = 1; // reset 'tries' in case we need to enter this again later
 
-		/* eject them if they don't have all 8 party members */
+		// eject them if they don't have all 8 party members
 		if (g_ultima->_saveGame->_members != 8) {
-			codexEject(CODEX_EJECT_NO_FULL_PARTY);
+			eject(CODEX_EJECT_NO_FULL_PARTY);
 			return;
 		}
 
-		/* eject them if they're not a full avatar at this point */
+		// eject them if they're not a full avatar at this point
 		for (i = 0; i < VIRT_MAX; i++) {
 			if (g_ultima->_saveGame->_karma[i] != 0) {
-				codexEject(CODEX_EJECT_NO_FULL_AVATAR);
+				eject(CODEX_EJECT_NO_FULL_AVATAR);
 				return;
 			}
 		}
@@ -261,37 +230,34 @@ void codexHandleWOP(const Common::String &word) {
 		g_screen->screenEraseMapArea();
 		g_screen->screenRedrawMapArea();
 
-		/* Ask the Virtue questions */
+		// Ask the Virtue questions
 		g_screen->screenMessage("\n\nThe voice asks:\n");
 		EventHandler::sleep(2000);
-		g_screen->screenMessage("\n%s\n\n", codexVirtueQuestions[0].c_str());
+		g_screen->screenMessage("\n%s\n\n", _virtueQuestions[0].c_str());
 
-		codexHandleVirtues(gameGetInput());
+		handleVirtues(gameGetInput());
 
 		return;
 	}
 
-	/* entered incorrectly - give 3 tries before ejecting */
+	// entered incorrectly - give 3 tries before ejecting
 	else if (tries++ < 3) {
-		codexImpureThoughts();
+		impureThoughts();
 		g_screen->screenMessage("\"What is the Word of Passage?\"\n\n");
 #ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString("Which virtue?");
 #endif
-		codexHandleWOP(gameGetInput());
+		handleWOP(gameGetInput());
 	}
 
-	/* 3 tries are up... eject! */
+	// 3 tries are up... eject!
 	else {
 		tries = 1;
-		codexEject(CODEX_EJECT_BAD_WOP);
+		eject(CODEX_EJECT_BAD_WOP);
 	}
 }
 
-/**
- * Handles naming of virtues in the Chamber of the Codex
- */
-void codexHandleVirtues(const Common::String &virtue) {
+void Codex::handleVirtues(const Common::String &virtue) {
 	static const char *codexImageNames[] = {
 		BKGD_HONESTY, BKGD_COMPASSN, BKGD_VALOR, BKGD_JUSTICE,
 		BKGD_SACRIFIC, BKGD_HONOR, BKGD_SPIRIT, BKGD_HUMILITY,
@@ -303,12 +269,12 @@ void codexHandleVirtues(const Common::String &virtue) {
 
 	eventHandler->popKeyHandler();
 
-	/* slight pause before continuing */
+	// slight pause before continuing
 	g_screen->screenMessage("\n");
 	g_screen->screenDisableCursor();
 	EventHandler::sleep(1000);
 
-	/* answered with the correct one of eight virtues */
+	// answered with the correct one of eight virtues
 	if ((current < VIRT_MAX) &&
 	        (scumm_stricmp(virtue.c_str(), getVirtueName(static_cast<Virtue>(current))) == 0)) {
 
@@ -327,14 +293,14 @@ void codexHandleVirtues(const Common::String &virtue) {
 
 		g_screen->screenMessage("\n\nThe voice asks:\n");
 		EventHandler::sleep(2000);
-		g_screen->screenMessage("\n%s\n\n", codexVirtueQuestions[current].c_str());
+		g_screen->screenMessage("\n%s\n\n", _virtueQuestions[current].c_str());
 #ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString((current != VIRT_MAX) ? "Which virtue?" : "Which principle?");
 #endif
-		codexHandleVirtues(gameGetInput());
+		handleVirtues(gameGetInput());
 	}
 
-	/* answered with the correct base virtue (truth, love, courage) */
+	// answered with the correct base virtue (truth, love, courage)
 	else if ((current >= VIRT_MAX) &&
 	         (scumm_stricmp(virtue.c_str(), getBaseVirtueName(static_cast<BaseVirtue>(1 << (current - VIRT_MAX)))) == 0)) {
 
@@ -347,11 +313,11 @@ void codexHandleVirtues(const Common::String &virtue) {
 		if (current < VIRT_MAX + 3) {
 			g_screen->screenMessage("\n\nThe voice asks:\n");
 			EventHandler::sleep(2000);
-			g_screen->screenMessage("\n%s\n\n", codexVirtueQuestions[current].c_str());
+			g_screen->screenMessage("\n%s\n\n", _virtueQuestions[current].c_str());
 #ifdef IOS_ULTIMA4
 			U4IOS::IOSConversationHelper::setIntroString("Which principle?");
 #endif
-			codexHandleVirtues(gameGetInput());
+			handleVirtues(gameGetInput());
 		} else {
 			g_screen->screenMessage("\nThe ground rumbles beneath your feet.\n");
 			EventHandler::sleep(1000);
@@ -365,30 +331,30 @@ void codexHandleVirtues(const Common::String &virtue) {
 			U4IOS::beginChoiceConversation();
 			U4IOS::updateChoicesInDialog(" ", "", -1);
 #endif
-			eventHandler->pushKeyHandler(&codexHandleInfinityAnyKey);
+			eventHandler->pushKeyHandler(&handleInfinityAnyKey);
 		}
 	}
 
-	/* give them 3 tries to enter the correct virtue, then eject them! */
+	// give them 3 tries to enter the correct virtue, then eject them!
 	else if (tries++ < 3) {
-		codexImpureThoughts();
-		g_screen->screenMessage("%s\n\n", codexVirtueQuestions[current].c_str());
+		impureThoughts();
+		g_screen->screenMessage("%s\n\n", _virtueQuestions[current].c_str());
 #ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString("Which virtue?");
 #endif
-		codexHandleVirtues(gameGetInput());
+		handleVirtues(gameGetInput());
 	}
 
-	/* failed 3 times... eject! */
+	// failed 3 times... eject!
 	else {
-		codexEject(static_cast<CodexEjectCode>(CODEX_EJECT_HONESTY + current));
+		eject(static_cast<CodexEjectCode>(CODEX_EJECT_HONESTY + current));
 
 		tries = 1;
 		current = 0;
 	}
 }
 
-bool codexHandleInfinityAnyKey(int key, void *data) {
+bool Codex::handleInfinityAnyKey(int key, void *data) {
 	eventHandler->popKeyHandler();
 
 	g_screen->screenMessage("\n\nThen what is the one thing which encompasses and is the whole of all undeniable Truth, unending Love, and unyielding Courage?\n\n");
@@ -396,18 +362,18 @@ bool codexHandleInfinityAnyKey(int key, void *data) {
 	U4IOS::endChoiceConversation();
 	U4IOS::IOSConversationHelper::setIntroString("What is the whole of all undeniable Truth, unending Love, and unyielding Courage?");
 #endif
-	codexHandleInfinity(gameGetInput());
+	g_codex->handleInfinity(gameGetInput());
 	return true;
 }
 
-void codexHandleInfinity(const Common::String &answer) {
+void Codex::handleInfinity(const Common::String &answer) {
 	static int tries = 1;
 
 	eventHandler->popKeyHandler();
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
-	/* slight pause before continuing */
+	// slight pause before continuing
 	g_screen->screenMessage("\n");
 	g_screen->screenDisableCursor();
 	EventHandler::sleep(1000);
@@ -417,7 +383,7 @@ void codexHandleInfinity(const Common::String &answer) {
 		g_screen->screenShake(10);
 
 		g_screen->screenEnableCursor();
-		g_screen->screenMessage("\n%s", codexEndgameText1[0].c_str());
+		g_screen->screenMessage("\n%s", _endgameText1[0].c_str());
 #ifdef IOS_ULTIMA4
 		// Ugh, we now enter happy callback land, so I know how to do these things manually. Good thing I kept these separate functions.
 		U4IOS::hideGameButtons();
@@ -425,15 +391,15 @@ void codexHandleInfinity(const Common::String &answer) {
 		U4IOS::updateChoicesInDialog(" ", "", -1);
 		U4IOS::testFlightPassCheckPoint("Game won!");
 #endif
-		eventHandler->pushKeyHandler(&codexHandleEndgameAnyKey);
+		eventHandler->pushKeyHandler(&handleEndgameAnyKey);
 	} else if (tries++ < 3) {
-		codexImpureThoughts();
+		impureThoughts();
 		g_screen->screenMessage("\nAbove the din, the voice asks:\n\nIf all eight virtues of the Avatar combine into and are derived from the Three Principles of Truth, Love and Courage...");
-		eventHandler->pushKeyHandler(&codexHandleInfinityAnyKey);
-	} else codexEject(CODEX_EJECT_BAD_INFINITY);
+		eventHandler->pushKeyHandler(&handleInfinityAnyKey);
+	} else eject(CODEX_EJECT_BAD_INFINITY);
 }
 
-bool codexHandleEndgameAnyKey(int key, void *data) {
+bool Codex::handleEndgameAnyKey(int key, void *data) {
 	static int index = 1;
 
 	eventHandler->popKeyHandler();
@@ -445,20 +411,21 @@ bool codexHandleEndgameAnyKey(int key, void *data) {
 				g_screen->screenEraseMapArea();
 				g_screen->screenRedrawMapArea();
 			}
-			g_screen->screenMessage("%s", codexEndgameText1[index].c_str());
+			g_screen->screenMessage("%s", g_codex->_endgameText1[index].c_str());
 		} else if (index == 7) {
 			g_screen->screenDrawImageInMapArea(BKGD_STONCRCL);
 			g_screen->screenRedrawMapArea();
-			g_screen->screenMessage("\n\n%s", codexEndgameText2[index - 7].c_str());
+			g_screen->screenMessage("\n\n%s", g_codex->_endgameText2[index - 7].c_str());
 		} else if (index > 7)
-			g_screen->screenMessage("%s", codexEndgameText2[index - 7].c_str());
+			g_screen->screenMessage("%s", g_codex->_endgameText2[index - 7].c_str());
 
 		index++;
-		eventHandler->pushKeyHandler(&codexHandleEndgameAnyKey);
+		eventHandler->pushKeyHandler(&g_codex->handleEndgameAnyKey);
 	} else {
-		/* CONGRATULATIONS!... you have completed the game in x turns */
+		// CONGRATULATIONS!... you have completed the game in x turns
 		g_screen->screenDisableCursor();
-		g_screen->screenMessage("%s%d%s", codexEndgameText2[index - 7].c_str(), g_ultima->_saveGame->_moves, codexEndgameText2[index - 6].c_str());
+		g_screen->screenMessage("%s%d%s", g_codex->_endgameText2[index - 7].c_str(),
+			g_ultima->_saveGame->_moves, g_codex->_endgameText2[index - 6].c_str());
 #ifdef IOS_ULTIMA4
 		U4IOS::endChoiceConversation();
 #endif
@@ -468,10 +435,7 @@ bool codexHandleEndgameAnyKey(int key, void *data) {
 	return true;
 }
 
-/**
- * Pretty self-explanatory
- */
-void codexImpureThoughts() {
+void Codex::impureThoughts() {
 	g_screen->screenMessage("\nThy thoughts are not pure.\nI ask again.\n");
 	EventHandler::sleep(2000);
 }
