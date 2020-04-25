@@ -93,16 +93,27 @@ void MacEditableText::init() {
 
 	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
 	_composeSurface->clear(_wm->_colorWhite);
-
-	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
 }
 
 MacEditableText::~MacEditableText() {
+	setActive(false);
+
 	delete _cursorRect;
 	delete _cursorSurface;
 	delete _composeSurface;
+}
 
-	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
+void MacEditableText::setActive(bool active) {
+	if (_active == active)
+		return;
+
+	MacWidget::setActive(active);
+
+	if (_active) {
+		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
+	} else {
+		g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
+	}
 }
 
 void MacEditableText::resize(int w, int h) {

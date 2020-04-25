@@ -62,14 +62,16 @@ public:
 
 	virtual void resize(int w, int h);
 
-	virtual bool processEvent(Common::Event &event);
+	virtual bool processEvent(Common::Event &event) override;
 
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
-	virtual bool draw(bool forceRedraw = false);
-	virtual void blit(ManagedSurface *g, Common::Rect &dest);
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
+	virtual bool draw(bool forceRedraw = false) override;
+	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
 
 	void setTextFont(const MacFont *macFont);
 	const MacFont *getTextFont();
+
+	virtual void setActive(bool active) override;
 
 	void appendText(Common::U32String str, const MacFont *macFont, bool skipAdd = false);
 	void appendText(const Common::String &str, const MacFont *macFont, bool skipAdd = false);
