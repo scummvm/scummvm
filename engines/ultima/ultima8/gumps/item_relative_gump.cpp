@@ -121,7 +121,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 	}
 
 	Item *next;
-	Item *prev;
+	Item *prev = nullptr;
 	while ((next = it->getParentAsContainer()) != nullptr) {
 		prev = it;
 		it = next;
@@ -142,6 +142,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 
 		gump->GetLocationOfItem(_owner, gx, gy, lerp_factor);
 	} else {
+		assert(prev);
 		gump->GetLocationOfItem(prev->getObjId(), gx, gy, lerp_factor);
 	}
 
