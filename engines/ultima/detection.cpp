@@ -45,6 +45,8 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 	{ "ultima6", "Ultima VI - The False Prophet" },
 	{ "ultima6_enh", "Ultima VI - The False Prophet - Enhanced" },
 	{ "ultima8", "Ultima VIII - Pagan" },
+	{ "remorse", "Crusader: No Remorse" },
+	{ "regret", "Crusader: No Regret" },
 
 	{ "martiandreams", "Worlds of Ultima: Martian Dreams" },
 	{ "martiandreams_enh", "Worlds of Ultima: Martian Dreams - Enhanced" },
@@ -80,10 +82,13 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 			*engine = new Ultima::Nuvie::NuvieEngine(syst, gd);
 			break;
 		case Ultima::GAME_ULTIMA8:
+		case Ultima::GAME_CRUSADER_REG:
+		case Ultima::GAME_CRUSADER_REM:
 			*engine = new Ultima::Ultima8::Ultima8Engine(syst, gd);
 			break;
+
 		default:
-			error("Unsupported game specified");
+			error("Unsupported ultima engine game specified");
 		}
 	}
 	return gd != 0;
@@ -121,7 +126,7 @@ Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = getGameId(target);
 	if (gameId == "ultima4" || gameId == "ultima4_enh")
 		return Ultima::Ultima4::MetaEngine::initKeymaps();
-	if (gameId == "ultima8")
+	if (gameId == "ultima8" || gameId == "remorse" || gameId == "regret")
 		return Ultima::Ultima8::MetaEngine::initKeymaps();
 
 	return Common::KeymapArray();

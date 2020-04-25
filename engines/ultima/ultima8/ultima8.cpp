@@ -302,12 +302,12 @@ void Ultima8Engine::startupGame() {
 
 	_gameData = new GameData(_gameInfo);
 
-	if (GAME_IS_U8) {
+	if (_gameInfo->_type == GameInfo::GAME_U8) {
 		_ucMachine = new UCMachine(U8Intrinsics, 256);
-	} else if (GAME_IS_REMORSE) {
+	} else if (_gameInfo->_type == GameInfo::GAME_REMORSE) {
 		_ucMachine = new UCMachine(RemorseIntrinsics, 308);
 	} else {
-		CANT_HAPPEN_MSG("Invalid _game type.");
+		CANT_HAPPEN_MSG("Invalid game type.");
 	}
 
 	_inBetweenFrame = 0;
