@@ -24,6 +24,7 @@
 #define ULTIMA4_H
 
 #include "ultima/shared/engine/ultima.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -67,6 +68,7 @@ public:
 	TileMaps *_tileMaps;
 	TileRules *_tileRules;
 	TileSets *_tileSets;
+	Std::vector<Common::String> _hawkwindText;
 public:
 	Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima4Engine() override;
