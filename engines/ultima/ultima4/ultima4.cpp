@@ -108,14 +108,14 @@ void Ultima4Engine::startup() {
 
 	if (!skipInfo) {
 		// do the intro
-		intro = new IntroController();
-		intro->init();
-		intro->preloadMap();
+		g_intro = new IntroController();
+		g_intro->init();
+		g_intro->preloadMap();
 
-		eventHandler->pushController(intro);
+		eventHandler->pushController(g_intro);
 		eventHandler->run();
 		eventHandler->popController();
-		intro->deleteIntro();
+		g_intro->deleteIntro();
 	}
 }
 

@@ -51,7 +51,7 @@ using namespace std;
 Common::String profileName;
 bool useProfile;
 
-IntroController *intro = nullptr;
+IntroController *g_intro;
 
 #define INTRO_MAP_HEIGHT 5
 #define INTRO_MAP_WIDTH 19
@@ -1503,7 +1503,7 @@ void IntroController::getTitleSourceData() {
 		switch (_titles[i]._method) {
 		case SIGNATURE: {
 			// PLOT: "Lord British"
-			srcData = intro->getSigData();
+			srcData = g_intro->getSigData();
 			RGBA color = info->_image->setColor(0, 255, 255);    // cyan for EGA
 			int x = 0, y = 0;
 
@@ -1836,7 +1836,7 @@ bool IntroController::updateTitle() {
 			Image *screen = imageMgr->get("screen")->_image;
 
 			// draw the updated map display
-			intro->drawMapStatic();
+			g_intro->drawMapStatic();
 
 			screen->drawSubRectOn(
 			    _title->_srcImage,

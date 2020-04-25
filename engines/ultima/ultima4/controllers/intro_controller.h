@@ -431,7 +431,7 @@ private:
 	bool _bSkipTitles;
 };
 
-extern IntroController *intro;
+extern IntroController *g_intro;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

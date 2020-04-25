@@ -214,7 +214,7 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 	bool alpha = im->isAlphaOn();
 	RGBA color;
 
-	sigData = intro->getSigData();
+	sigData = g_intro->getSigData();
 	im->alphaOff();
 	if (settings._videoType != "VGA-ALLPNG" && settings._videoType != "new") {
 		/* ----------------------------

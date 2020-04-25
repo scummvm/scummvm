@@ -214,13 +214,13 @@ MouseCursorSurface *Screen::loadMouseCursor(Shared::File &src) {
 }
 
 void Screen::screenReInit() {
-	intro->deleteIntro();       /* delete intro stuff */
-	Tileset::unloadAllImages(); /* unload tilesets, which will be reloaded lazily as needed */
+	g_intro->deleteIntro();      // delete intro stuff
+	Tileset::unloadAllImages();  // unload tilesets, which will be reloaded lazily as needed
 	ImageMgr::destroy();
 	_tileAnims = nullptr;
 	clear();
-	init();           // re-init screen stuff (loading new backgrounds, etc.)
-	intro->init();    /* re-fix the backgrounds loaded and scale images, etc. */
+	init();           // Re-init screen stuff (loading new backgrounds, etc.)
+	g_intro->init();  // Re-fix the backgrounds loaded and scale images, etc.
 }
 
 void Screen::screenTextAt(int x, int y, const char *fmt, ...) {
