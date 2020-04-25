@@ -423,10 +423,10 @@ void CurrentMap::unsetChunkFast(int32 cx, int32 cy) {
 }
 
 void CurrentMap::clipMapChunks(int &minx, int &maxx, int &miny, int &maxy) const {
-	CLIP(minx, 0, MAP_NUM_CHUNKS - 1);
-	CLIP(maxx, 0, MAP_NUM_CHUNKS - 1);
-	CLIP(miny, 0, MAP_NUM_CHUNKS - 1);
-	CLIP(maxy, 0, MAP_NUM_CHUNKS - 1);
+	minx = CLIP(minx, 0, MAP_NUM_CHUNKS - 1);
+	maxx = CLIP(maxx, 0, MAP_NUM_CHUNKS - 1);
+	miny = CLIP(miny, 0, MAP_NUM_CHUNKS - 1);
+	maxy = CLIP(maxy, 0, MAP_NUM_CHUNKS - 1);
 }
 
 void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
