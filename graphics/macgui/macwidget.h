@@ -49,7 +49,13 @@ public:
 	const Common::Rect &getDimensions() { return _dims; }
 
 	bool isFocusable() { return _focusable; }
-	virtual void setActive(bool active) = 0;
+
+	/**
+	 * Method for indicating whether the widget is active or inactive.
+	 * Used by the WM to handle focus on windows, etc.
+	 * @param active Desired state of the widget.
+	 */
+	virtual void setActive(bool active);
 
 	/**
 	 * Method for marking the widget for redraw.
@@ -61,7 +67,7 @@ public:
 	virtual bool draw(bool forceRedraw = false) = 0;
 	virtual void blit(ManagedSurface *g, Common::Rect &dest) = 0;
 	virtual bool processEvent(Common::Event &event) = 0;
-	virtual bool hasAllFocus() = 0;
+	virtual bool hasAllFocus() { return _active; }
 
 	virtual void setDimensions(const Common::Rect &r) {
 		_dims = r;
@@ -77,6 +83,7 @@ public:
 protected:
 	bool _focusable;
 	bool _contentIsDirty;
+	bool _active;
 
 	Common::Rect _dims;
 

@@ -43,7 +43,6 @@ BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
 
 MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm) :
 		BaseMacWindow(id, editable, wm), _scrollable(scrollable), _resizable(resizable) {
-	_active = false;
 	_borderIsDirty = true;
 
 	_pattern = 0;
@@ -101,10 +100,8 @@ const Font *MacWindow::getTitleFont() {
 }
 
 void MacWindow::setActive(bool active) {
-	if (active == _active)
-		return;
+	MacWidget::setActive(active);
 
-	_active = active;
 	_borderIsDirty = true;
 }
 

@@ -105,13 +105,6 @@ public:
 	ManagedSurface *getWindowSurface() { return &_surface; }
 
 	/**
-	 * Abstract method for indicating whether the window is active or inactive.
-	 * Used by the WM to handle focus on windows, etc.
-	 * @param active Desired state of the window.
-	 */
-	virtual void setActive(bool active) = 0;
-
-	/**
 	 * Method called to draw the window into the target surface.
 	 * This method is most often called by the WM, and relies on
 	 * the window being marked as dirty unless otherwise specified.
@@ -308,7 +301,6 @@ private:
 
 	bool _scrollable;
 	bool _resizable;
-	bool _active;
 
 	bool _closeable;
 

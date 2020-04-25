@@ -39,11 +39,23 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusab
 		parent->_children.push_back(this);
 
 	_composeSurface = nullptr;
+
+	_active = false;
 }
 
 MacWidget::~MacWidget() {
 	if (_parent)
 		_parent->removeWidget(this, false);
+}
+
+void MacWidget::setActive(bool active) {
+	if (!_focusable)
+		return;
+
+	if (active == _active)
+		return;
+
+	_active = active;
 }
 
 void MacWidget::removeWidget(MacWidget *child, bool del) {
