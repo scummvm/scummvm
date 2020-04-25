@@ -429,6 +429,9 @@ private:
 	RGBA _transparentColor;     // palette color for transparency
 
 	bool _bSkipTitles;
+
+	// Temporary place-holder for settings changes
+	SettingsData _settingsChanged;
 };
 
 extern IntroController *g_intro;

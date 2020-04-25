@@ -74,9 +74,6 @@ public:
 	MapTile tile; /* base tile + tile frame */
 };
 
-/* temporary place-holder for settings changes */
-SettingsData settingsChanged;
-
 const int IntroBinData::INTRO_TEXT_OFFSET = 17445 - 1;  // (start at zero)
 const int IntroBinData::INTRO_MAP_OFFSET = 30339;
 const int IntroBinData::INTRO_FIXUPDATA_OFFSET = 29806;
@@ -209,7 +206,7 @@ IntroController::IntroController() : Controller(1),
 	_confMenu.add(MI_CONF_SOUND,               "\010 Sound Options",              2,  3,/*'s'*/  2);
 	_confMenu.add(MI_CONF_INPUT,               "\010 Input Options",              2,  4,/*'i'*/  2);
 	_confMenu.add(MI_CONF_SPEED,               "\010 Speed Options",              2,  5,/*'p'*/  3);
-	_confMenu.add(MI_CONF_01, new BoolMenuItem("Game Enhancements         %s",    2,  7,/*'e'*/  5, &settingsChanged._enhancements));
+	_confMenu.add(MI_CONF_01, new BoolMenuItem("Game Enhancements         %s",    2,  7,/*'e'*/  5, &_settingsChanged._enhancements));
 	_confMenu.add(MI_CONF_GAMEPLAY,            "\010 Enhanced Gameplay Options",  2,  9,/*'g'*/ 11);
 	_confMenu.add(MI_CONF_INTERFACE,           "\010 Enhanced Interface Options", 2, 10,/*'n'*/ 12);
 	_confMenu.add(CANCEL,                      "\017 Main Menu",                  2, 12,/*'m'*/  2);
@@ -222,7 +219,7 @@ IntroController::IntroController() : Controller(1),
 
 	_videoMenu.setTitle("Video Options:", 0, 0);
 	_videoMenu.add(MI_VIDEO_CONF_GFX,                        "\010 Game Graphics Options",  2,  2,/*'g'*/  2);
-	_videoMenu.add(MI_VIDEO_08,         new IntMenuItem("Gamma                %s",  2,  4,/*'a'*/  1, &settingsChanged._gamma, 50, 150, 10, MENU_OUTPUT_GAMMA));
+	_videoMenu.add(MI_VIDEO_08,         new IntMenuItem("Gamma                %s",  2,  4,/*'a'*/  1, &_settingsChanged._gamma, 50, 150, 10, MENU_OUTPUT_GAMMA));
 	_videoMenu.add(USE_SETTINGS,                   "\010 Use These Settings",  2, 11,/*'u'*/  2);
 	_videoMenu.add(CANCEL,                         "\010 Cancel",              2, 12,/*'c'*/  2);
 	_videoMenu.addShortcutKey(CANCEL, ' ');
@@ -230,21 +227,21 @@ IntroController::IntroController() : Controller(1),
 	_videoMenu.setClosesMenu(CANCEL);
 
 	_gfxMenu.setTitle("Game Graphics Options", 0, 0);
-	_gfxMenu.add(MI_GFX_SCHEME, new StringMenuItem("Graphics Scheme    %s", 2, 2, /*'G'*/ 0, &settingsChanged._videoType, imageMgr->getSetNames()));
-	_gfxMenu.add(MI_GFX_TILE_TRANSPARENCY, new BoolMenuItem("Transparency Hack  %s", 2, 4, /*'t'*/ 0, &settingsChanged._enhancementsOptions._u4TileTransparencyHack));
-	_gfxMenu.add(MI_GFX_TILE_TRANSPARENCY_SHADOW_SIZE, new IntMenuItem("  Shadow Size:     %d", 2, 5, /*'s'*/ 9, &settingsChanged._enhancementsOptions._u4TrileTransparencyHackShadowBreadth, 0, 16, 1));
-	_gfxMenu.add(MI_GFX_TILE_TRANSPARENCY_SHADOW_OPACITY, new IntMenuItem("  Shadow Opacity:  %d", 2, 6, /*'o'*/ 9, &settingsChanged._enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity, 8, 256, 8));
-	_gfxMenu.add(MI_VIDEO_02,               new StringMenuItem("Gem Layout         %s",  2,  8,/*'e'*/  1, &settingsChanged._gemLayout, screenGetGemLayoutNames()));
-	_gfxMenu.add(MI_VIDEO_03,           new StringMenuItem("Line Of Sight      %s",  2,  9,/*'l'*/  0, &settingsChanged._lineOfSight, screenGetLineOfSightStyles()));
-	_gfxMenu.add(MI_VIDEO_07,           new BoolMenuItem("Screen Shaking     %s",  2, 10,/*'k'*/ 8, &settingsChanged._screenShakes));
+	_gfxMenu.add(MI_GFX_SCHEME, new StringMenuItem("Graphics Scheme    %s", 2, 2, /*'G'*/ 0, &_settingsChanged._videoType, imageMgr->getSetNames()));
+	_gfxMenu.add(MI_GFX_TILE_TRANSPARENCY, new BoolMenuItem("Transparency Hack  %s", 2, 4, /*'t'*/ 0, &_settingsChanged._enhancementsOptions._u4TileTransparencyHack));
+	_gfxMenu.add(MI_GFX_TILE_TRANSPARENCY_SHADOW_SIZE, new IntMenuItem("  Shadow Size:     %d", 2, 5, /*'s'*/ 9, &_settingsChanged._enhancementsOptions._u4TrileTransparencyHackShadowBreadth, 0, 16, 1));
+	_gfxMenu.add(MI_GFX_TILE_TRANSPARENCY_SHADOW_OPACITY, new IntMenuItem("  Shadow Opacity:  %d", 2, 6, /*'o'*/ 9, &_settingsChanged._enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity, 8, 256, 8));
+	_gfxMenu.add(MI_VIDEO_02,               new StringMenuItem("Gem Layout         %s",  2,  8,/*'e'*/  1, &_settingsChanged._gemLayout, screenGetGemLayoutNames()));
+	_gfxMenu.add(MI_VIDEO_03,           new StringMenuItem("Line Of Sight      %s",  2,  9,/*'l'*/  0, &_settingsChanged._lineOfSight, screenGetLineOfSightStyles()));
+	_gfxMenu.add(MI_VIDEO_07,           new BoolMenuItem("Screen Shaking     %s",  2, 10,/*'k'*/ 8, &_settingsChanged._screenShakes));
 	_gfxMenu.add(MI_GFX_RETURN,               "\010 Return to Video Options",              2,  12,/*'r'*/  2);
 	_gfxMenu.setClosesMenu(MI_GFX_RETURN);
 
 
 	_soundMenu.setTitle("Sound Options:", 0, 0);
-	_soundMenu.add(MI_SOUND_01,  new IntMenuItem("Music Volume         %s", 2,  2,/*'m'*/  0, &settingsChanged._musicVol, 0, MAX_VOLUME, 1, MENU_OUTPUT_VOLUME));
-	_soundMenu.add(MI_SOUND_02,  new IntMenuItem("Sound Effect Volume  %s", 2,  3,/*'s'*/  0, &settingsChanged._soundVol, 0, MAX_VOLUME, 1, MENU_OUTPUT_VOLUME));
-	_soundMenu.add(MI_SOUND_03, new BoolMenuItem("Fading               %s", 2,  4,/*'f'*/  0, &settingsChanged._volumeFades));
+	_soundMenu.add(MI_SOUND_01,  new IntMenuItem("Music Volume         %s", 2,  2,/*'m'*/  0, &_settingsChanged._musicVol, 0, MAX_VOLUME, 1, MENU_OUTPUT_VOLUME));
+	_soundMenu.add(MI_SOUND_02,  new IntMenuItem("Sound Effect Volume  %s", 2,  3,/*'s'*/  0, &_settingsChanged._soundVol, 0, MAX_VOLUME, 1, MENU_OUTPUT_VOLUME));
+	_soundMenu.add(MI_SOUND_03, new BoolMenuItem("Fading               %s", 2,  4,/*'f'*/  0, &_settingsChanged._volumeFades));
 	_soundMenu.add(USE_SETTINGS,                 "\010 Use These Settings", 2, 11,/*'u'*/  2);
 	_soundMenu.add(CANCEL,                       "\010 Cancel",             2, 12,/*'c'*/  2);
 	_soundMenu.addShortcutKey(CANCEL, ' ');
@@ -252,10 +249,10 @@ IntroController::IntroController() : Controller(1),
 	_soundMenu.setClosesMenu(CANCEL);
 
 	_inputMenu.setTitle("Keyboard Options:", 0, 0);
-	_inputMenu.add(MI_INPUT_01,  new IntMenuItem("Repeat Delay        %4d msec", 2,  2,/*'d'*/  7, &settingsChanged._keydelay, 100, MAX_KEY_DELAY, 100));
-	_inputMenu.add(MI_INPUT_02,  new IntMenuItem("Repeat Interval     %4d msec", 2,  3,/*'i'*/  7, &settingsChanged._keyinterval, 10, MAX_KEY_INTERVAL, 10));
+	_inputMenu.add(MI_INPUT_01,  new IntMenuItem("Repeat Delay        %4d msec", 2,  2,/*'d'*/  7, &_settingsChanged._keydelay, 100, MAX_KEY_DELAY, 100));
+	_inputMenu.add(MI_INPUT_02,  new IntMenuItem("Repeat Interval     %4d msec", 2,  3,/*'i'*/  7, &_settingsChanged._keyinterval, 10, MAX_KEY_INTERVAL, 10));
 	/* "Mouse Options:" is drawn in the updateInputMenu() function */
-	_inputMenu.add(MI_INPUT_03, new BoolMenuItem("Mouse                %s",      2,  7,/*'m'*/  0, &settingsChanged._mouseOptions._enabled));
+	_inputMenu.add(MI_INPUT_03, new BoolMenuItem("Mouse                %s",      2,  7,/*'m'*/  0, &_settingsChanged._mouseOptions._enabled));
 	_inputMenu.add(USE_SETTINGS,                 "\010 Use These Settings",      2, 11,/*'u'*/  2);
 	_inputMenu.add(CANCEL,                       "\010 Cancel",                  2, 12,/*'c'*/  2);
 	_inputMenu.addShortcutKey(CANCEL, ' ');
@@ -263,13 +260,13 @@ IntroController::IntroController() : Controller(1),
 	_inputMenu.setClosesMenu(CANCEL);
 
 	_speedMenu.setTitle("Speed Options:", 0, 0);
-	_speedMenu.add(MI_SPEED_01, new IntMenuItem("Game Cycles per Second    %3d",      2,  2,/*'g'*/  0, &settingsChanged._gameCyclesPerSecond, 1, MAX_CYCLES_PER_SECOND, 1));
-	_speedMenu.add(MI_SPEED_02, new IntMenuItem("Battle Speed              %3d",      2,  3,/*'b'*/  0, &settingsChanged._battleSpeed, 1, MAX_BATTLE_SPEED, 1));
-	_speedMenu.add(MI_SPEED_03, new IntMenuItem("Spell Effect Length       %s",       2,  4,/*'p'*/  1, &settingsChanged._spellEffectSpeed, 1, MAX_SPELL_EFFECT_SPEED, 1, MENU_OUTPUT_SPELL));
-	_speedMenu.add(MI_SPEED_04, new IntMenuItem("Camping Length            %3d sec",  2,  5,/*'m'*/  2, &settingsChanged._campTime, 1, MAX_CAMP_TIME, 1));
-	_speedMenu.add(MI_SPEED_05, new IntMenuItem("Inn Rest Length           %3d sec",  2,  6,/*'i'*/  0, &settingsChanged._innTime, 1, MAX_INN_TIME, 1));
-	_speedMenu.add(MI_SPEED_06, new IntMenuItem("Shrine Meditation Length  %3d sec",  2,  7,/*'s'*/  0, &settingsChanged._shrineTime, 1, MAX_SHRINE_TIME, 1));
-	_speedMenu.add(MI_SPEED_07, new IntMenuItem("Screen Shake Interval     %3d msec", 2,  8,/*'r'*/  2, &settingsChanged._shakeInterval, MIN_SHAKE_INTERVAL, MAX_SHAKE_INTERVAL, 10));
+	_speedMenu.add(MI_SPEED_01, new IntMenuItem("Game Cycles per Second    %3d",      2,  2,/*'g'*/  0, &_settingsChanged._gameCyclesPerSecond, 1, MAX_CYCLES_PER_SECOND, 1));
+	_speedMenu.add(MI_SPEED_02, new IntMenuItem("Battle Speed              %3d",      2,  3,/*'b'*/  0, &_settingsChanged._battleSpeed, 1, MAX_BATTLE_SPEED, 1));
+	_speedMenu.add(MI_SPEED_03, new IntMenuItem("Spell Effect Length       %s",       2,  4,/*'p'*/  1, &_settingsChanged._spellEffectSpeed, 1, MAX_SPELL_EFFECT_SPEED, 1, MENU_OUTPUT_SPELL));
+	_speedMenu.add(MI_SPEED_04, new IntMenuItem("Camping Length            %3d sec",  2,  5,/*'m'*/  2, &_settingsChanged._campTime, 1, MAX_CAMP_TIME, 1));
+	_speedMenu.add(MI_SPEED_05, new IntMenuItem("Inn Rest Length           %3d sec",  2,  6,/*'i'*/  0, &_settingsChanged._innTime, 1, MAX_INN_TIME, 1));
+	_speedMenu.add(MI_SPEED_06, new IntMenuItem("Shrine Meditation Length  %3d sec",  2,  7,/*'s'*/  0, &_settingsChanged._shrineTime, 1, MAX_SHRINE_TIME, 1));
+	_speedMenu.add(MI_SPEED_07, new IntMenuItem("Screen Shake Interval     %3d msec", 2,  8,/*'r'*/  2, &_settingsChanged._shakeInterval, MIN_SHAKE_INTERVAL, MAX_SHAKE_INTERVAL, 10));
 	_speedMenu.add(USE_SETTINGS,                "\010 Use These Settings",            2, 11,/*'u'*/  2);
 	_speedMenu.add(CANCEL,                      "\010 Cancel",                        2, 12,/*'c'*/  2);
 	_speedMenu.addShortcutKey(CANCEL, ' ');
@@ -278,12 +275,12 @@ IntroController::IntroController() : Controller(1),
 
 	/* move the BATTLE DIFFICULTY, DEBUG, and AUTOMATIC ACTIONS settings to "enhancementsOptions" */
 	_gameplayMenu.setTitle("Enhanced Gameplay Options:", 0, 0);
-	_gameplayMenu.add(MI_GAMEPLAY_01, new StringMenuItem("Battle Difficulty          %s", 2,  2,/*'b'*/  0, &settingsChanged._battleDiff, settings.getBattleDiffs()));
-	_gameplayMenu.add(MI_GAMEPLAY_02,   new BoolMenuItem("Fixed Chest Traps          %s", 2,  3,/*'t'*/ 12, &settingsChanged._enhancementsOptions._c64chestTraps));
-	_gameplayMenu.add(MI_GAMEPLAY_03,   new BoolMenuItem("Gazer Spawns Insects       %s", 2,  4,/*'g'*/  0, &settingsChanged._enhancementsOptions._gazerSpawnsInsects));
-	_gameplayMenu.add(MI_GAMEPLAY_04,   new BoolMenuItem("Gem View Shows Objects     %s", 2,  5,/*'e'*/  1, &settingsChanged._enhancementsOptions._peerShowsObjects));
-	_gameplayMenu.add(MI_GAMEPLAY_05,   new BoolMenuItem("Slime Divides              %s", 2,  6,/*'s'*/  0, &settingsChanged._enhancementsOptions._slimeDivides));
-	_gameplayMenu.add(MI_GAMEPLAY_06,   new BoolMenuItem("Debug Mode (Cheats)        %s", 2,  8,/*'d'*/  0, &settingsChanged._debug));
+	_gameplayMenu.add(MI_GAMEPLAY_01, new StringMenuItem("Battle Difficulty          %s", 2,  2,/*'b'*/  0, &_settingsChanged._battleDiff, settings.getBattleDiffs()));
+	_gameplayMenu.add(MI_GAMEPLAY_02,   new BoolMenuItem("Fixed Chest Traps          %s", 2,  3,/*'t'*/ 12, &_settingsChanged._enhancementsOptions._c64chestTraps));
+	_gameplayMenu.add(MI_GAMEPLAY_03,   new BoolMenuItem("Gazer Spawns Insects       %s", 2,  4,/*'g'*/  0, &_settingsChanged._enhancementsOptions._gazerSpawnsInsects));
+	_gameplayMenu.add(MI_GAMEPLAY_04,   new BoolMenuItem("Gem View Shows Objects     %s", 2,  5,/*'e'*/  1, &_settingsChanged._enhancementsOptions._peerShowsObjects));
+	_gameplayMenu.add(MI_GAMEPLAY_05,   new BoolMenuItem("Slime Divides              %s", 2,  6,/*'s'*/  0, &_settingsChanged._enhancementsOptions._slimeDivides));
+	_gameplayMenu.add(MI_GAMEPLAY_06,   new BoolMenuItem("Debug Mode (Cheats)        %s", 2,  8,/*'d'*/  0, &_settingsChanged._debug));
 	_gameplayMenu.add(USE_SETTINGS,                      "\010 Use These Settings",       2, 11,/*'u'*/  2);
 	_gameplayMenu.add(CANCEL,                            "\010 Cancel",                   2, 12,/*'c'*/  2);
 	_gameplayMenu.addShortcutKey(CANCEL, ' ');
@@ -291,13 +288,13 @@ IntroController::IntroController() : Controller(1),
 	_gameplayMenu.setClosesMenu(CANCEL);
 
 	_interfaceMenu.setTitle("Enhanced Interface Options:", 0, 0);
-	_interfaceMenu.add(MI_INTERFACE_01, new BoolMenuItem("Automatic Actions          %s", 2,  2,/*'a'*/  0, &settingsChanged._shortcutCommands));
+	_interfaceMenu.add(MI_INTERFACE_01, new BoolMenuItem("Automatic Actions          %s", 2,  2,/*'a'*/  0, &_settingsChanged._shortcutCommands));
 	/* "(Open, Jimmy, etc.)" */
-	_interfaceMenu.add(MI_INTERFACE_02, new BoolMenuItem("Set Active Player          %s", 2,  4,/*'p'*/ 11, &settingsChanged._enhancementsOptions._activePlayer));
-	_interfaceMenu.add(MI_INTERFACE_03, new BoolMenuItem("Smart 'Enter' Key          %s", 2,  5,/*'e'*/  7, &settingsChanged._enhancementsOptions._smartEnterKey));
-	_interfaceMenu.add(MI_INTERFACE_04, new BoolMenuItem("Text Colorization          %s", 2,  6,/*'t'*/  0, &settingsChanged._enhancementsOptions._textColorization));
-	_interfaceMenu.add(MI_INTERFACE_05, new BoolMenuItem("Ultima V Shrines           %s", 2,  7,/*'s'*/  9, &settingsChanged._enhancementsOptions._u5shrines));
-	_interfaceMenu.add(MI_INTERFACE_06, new BoolMenuItem("Ultima V Spell Mixing      %s", 2,  8,/*'m'*/ 15, &settingsChanged._enhancementsOptions._u5spellMixing));
+	_interfaceMenu.add(MI_INTERFACE_02, new BoolMenuItem("Set Active Player          %s", 2,  4,/*'p'*/ 11, &_settingsChanged._enhancementsOptions._activePlayer));
+	_interfaceMenu.add(MI_INTERFACE_03, new BoolMenuItem("Smart 'Enter' Key          %s", 2,  5,/*'e'*/  7, &_settingsChanged._enhancementsOptions._smartEnterKey));
+	_interfaceMenu.add(MI_INTERFACE_04, new BoolMenuItem("Text Colorization          %s", 2,  6,/*'t'*/  0, &_settingsChanged._enhancementsOptions._textColorization));
+	_interfaceMenu.add(MI_INTERFACE_05, new BoolMenuItem("Ultima V Shrines           %s", 2,  7,/*'s'*/  9, &_settingsChanged._enhancementsOptions._u5shrines));
+	_interfaceMenu.add(MI_INTERFACE_06, new BoolMenuItem("Ultima V Spell Mixing      %s", 2,  8,/*'m'*/ 15, &_settingsChanged._enhancementsOptions._u5spellMixing));
 	_interfaceMenu.add(USE_SETTINGS,                     "\010 Use These Settings",       2, 11,/*'u'*/  2);
 	_interfaceMenu.add(CANCEL,                           "\010 Cancel",                   2, 12,/*'c'*/  2);
 	_interfaceMenu.addShortcutKey(CANCEL, ' ');
@@ -403,7 +400,7 @@ bool IntroController::keyPressed(int key) {
 		case 'c': {
 			_errorMessage.clear();
 			// Make a copy of our settings so we can change them
-			settingsChanged = settings;
+			_settingsChanged = settings;
 			g_screen->screenDisableCursor();
 			runMenu(&_confMenu, &_extendedMenuArea, true);
 			g_screen->screenEnableCursor();
@@ -985,11 +982,11 @@ void IntroController::updateConfMenu(MenuEvent &event) {
 	        event.getType() == MenuEvent::DECREMENT) {
 
 		// show or hide game enhancement options if enhancements are enabled/disabled
-		_confMenu.getItemById(MI_CONF_GAMEPLAY)->setVisible(settingsChanged._enhancements);
-		_confMenu.getItemById(MI_CONF_INTERFACE)->setVisible(settingsChanged._enhancements);
+		_confMenu.getItemById(MI_CONF_GAMEPLAY)->setVisible(_settingsChanged._enhancements);
+		_confMenu.getItemById(MI_CONF_INTERFACE)->setVisible(_settingsChanged._enhancements);
 
 		// save settings
-		settings.setData(settingsChanged);
+		settings.setData(_settingsChanged);
 		settings.write();
 
 		switch (event.getMenuItem()->getId()) {
@@ -1016,7 +1013,7 @@ void IntroController::updateConfMenu(MenuEvent &event) {
 			break;
 		case CANCEL:
 			// discard settings
-			settingsChanged = settings;
+			_settingsChanged = settings;
 			break;
 		default:
 			break;
@@ -1036,8 +1033,8 @@ void IntroController::updateVideoMenu(MenuEvent &event) {
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
 			/* save settings (if necessary) */
-			if (settings != settingsChanged) {
-				settings.setData(settingsChanged);
+			if (settings != _settingsChanged) {
+				settings.setData(_settingsChanged);
 				settings.write();
 
 				/* FIXME: resize images, etc. */
@@ -1052,7 +1049,7 @@ void IntroController::updateVideoMenu(MenuEvent &event) {
 			break;
 		case CANCEL:
 			// discard settings
-			settingsChanged = settings;
+			_settingsChanged = settings;
 			break;
 		default:
 			break;
@@ -1091,15 +1088,15 @@ void IntroController::updateSoundMenu(MenuEvent &event) {
 
 		switch (event.getMenuItem()->getId()) {
 		case MI_SOUND_01:
-			g_music->setMusicVolume(settingsChanged._musicVol);
+			g_music->setMusicVolume(_settingsChanged._musicVol);
 			break;
 		case MI_SOUND_02:
-			g_music->setSoundVolume(settingsChanged._soundVol);
+			g_music->setSoundVolume(_settingsChanged._soundVol);
 			soundPlay(SOUND_FLEE);
 			break;
 		case USE_SETTINGS:
 			// save settings
-			settings.setData(settingsChanged);
+			settings.setData(_settingsChanged);
 			settings.write();
 			g_music->intro();
 			break;
@@ -1107,7 +1104,7 @@ void IntroController::updateSoundMenu(MenuEvent &event) {
 			g_music->setMusicVolume(settings._musicVol);
 			g_music->setSoundVolume(settings._soundVol);
 			// discard settings
-			settingsChanged = settings;
+			_settingsChanged = settings;
 			break;
 		default:
 			break;
@@ -1127,11 +1124,11 @@ void IntroController::updateInputMenu(MenuEvent &event) {
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
 			// save settings
-			settings.setData(settingsChanged);
+			settings.setData(_settingsChanged);
 			settings.write();
 
 			// re-initialize keyboard
-			KeyHandler::setKeyRepeat(settingsChanged._keydelay, settingsChanged._keyinterval);
+			KeyHandler::setKeyRepeat(_settingsChanged._keydelay, _settingsChanged._keyinterval);
 
 #ifdef SLACK_ON_SDL_AGNOSTICISM
 			if (settings.mouseOptions.enabled) {
@@ -1144,7 +1141,7 @@ void IntroController::updateInputMenu(MenuEvent &event) {
 			break;
 		case CANCEL:
 			// discard settings
-			settingsChanged = settings;
+			_settingsChanged = settings;
 			break;
 		default:
 			break;
@@ -1167,7 +1164,7 @@ void IntroController::updateSpeedMenu(MenuEvent &event) {
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
 			// save settings
-			settings.setData(settingsChanged);
+			settings.setData(_settingsChanged);
 			settings.write();
 
 			// re-initialize events
@@ -1177,7 +1174,7 @@ void IntroController::updateSpeedMenu(MenuEvent &event) {
 			break;
 		case CANCEL:
 			// discard settings
-			settingsChanged = settings;
+			_settingsChanged = settings;
 			break;
 		default:
 			break;
@@ -1197,12 +1194,12 @@ void IntroController::updateGameplayMenu(MenuEvent &event) {
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
 			// save settings
-			settings.setData(settingsChanged);
+			settings.setData(_settingsChanged);
 			settings.write();
 			break;
 		case CANCEL:
 			// discard settings
-			settingsChanged = settings;
+			_settingsChanged = settings;
 			break;
 		default:
 			break;
@@ -1222,12 +1219,12 @@ void IntroController::updateInterfaceMenu(MenuEvent &event) {
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
 			// save settings
-			settings.setData(settingsChanged);
+			settings.setData(_settingsChanged);
 			settings.write();
 			break;
 		case CANCEL:
 			// discard settings
-			settingsChanged = settings;
+			_settingsChanged = settings;
 			break;
 		default:
 			break;
