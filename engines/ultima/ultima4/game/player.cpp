@@ -413,7 +413,7 @@ bool PartyMember::applyDamage(int damage, bool) {
 	if (isCombatMap(g_context->_location->_map) && getStatus() == STAT_DEAD) {
 		Coords p = getCoords();
 		Map *map = getMap();
-		map->_annotations->add(p, Tileset::findTileByName("corpse")->getId())->setTTL(_party->size() * 2);
+		map->_annotations->add(p, g_tileSets->findTileByName("corpse")->getId())->setTTL(_party->size() * 2);
 
 		if (_party) {
 			_party->setChanged();
@@ -498,7 +498,7 @@ void PartyMember::putToSleep() {
 	if (getStatus() != STAT_DEAD) {
 		soundPlay(SOUND_SLEEP, false);
 		addStatus(STAT_SLEEPING);
-		setTile(Tileset::findTileByName("corpse")->getId());
+		setTile(g_tileSets->findTileByName("corpse")->getId());
 	}
 }
 
@@ -539,7 +539,7 @@ MapTile PartyMember::tileForClass(int klass) {
 		error("invalid class %d in tileForClass", klass);
 	}
 
-	const Tile *tile = Tileset::get("base")->getByName(name);
+	const Tile *tile = g_tileSets->get("base")->getByName(name);
 	ASSERT(tile, "no tile found for class %d", klass);
 	return tile->getId();
 }
@@ -1043,7 +1043,7 @@ void Party::reviveParty() {
 		_saveGame->_weapons[i] = 0;
 	_saveGame->_food = 20099;
 	_saveGame->_gold = 200;
-	setTransport(Tileset::findTileByName("avatar")->getId());
+	setTransport(g_tileSets->findTileByName("avatar")->getId());
 	setChanged();
 	PartyEvent event(PartyEvent::PARTY_REVIVED, 0);
 	notifyObservers(event);

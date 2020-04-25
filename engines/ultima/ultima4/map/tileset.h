@@ -31,36 +31,9 @@ namespace Ultima4 {
 
 class ConfigElement;
 class Tile;
+class TileSets;
 
 typedef Common::HashMap<Common::String, class TileRule *> TileRuleMap;
-
-/**
- * Tile rules
- */
-class TileRules : public TileRuleMap {
-public:
-	/**
-	 * Constructor
-	 */
-	TileRules();
-
-	/**
-	 * Destructor
-	 */
-	~TileRules();
-
-	/**
-	 * Load tile information from xml.
-	 */
-	void load();
-
-	/**
-	 * Returns the tile rule with the given name, or nullptr if none could be found
-	 */
-	TileRule *findByName(const Common::String &name);
-};
-
-extern TileRules *g_tileRules;
 
 /**
  * TileRule class
@@ -85,38 +58,10 @@ public:
  * Tileset class
  */
 class Tileset {
+	friend class TileSets;
 public:
-	typedef Common::HashMap<Common::String, Tileset *> TilesetMap;
 	typedef Common::HashMap<TileId, Tile *> TileIdMap;
 	typedef Common::HashMap<Common::String, Tile *> TileStrMap;
-
-	/**
-	 * Loads all tilesets using the filename
-	 * indicated by 'filename' as a definition
-	 */
-	static void loadAll();
-
-	/**
-	 * Delete all tilesets
-	 */
-	static void unloadAll();
-
-	/**
-	 * Delete all tileset images
-	 */
-	static void unloadAllImages();
-
-	/**
-	 * Returns the tileset with the given name, if it exists
-	 */
-	static Tileset *get(const Common::String &name);
-
-	/**
-	 * Returns the tile that has the given name from any tileset, if there is one
-	 */
-	static Tile *findTileByName(const Common::String &name);
-	static Tile *findTileById(TileId id);
-
 public:
 	/**
 	 * Loads a tileset.
@@ -155,8 +100,6 @@ public:
 	uint numFrames() const;
 
 private:
-	static TilesetMap tilesets;
-
 	Common::String _name;
 	TileIdMap _tiles;
 	uint _totalFrames;
@@ -165,6 +108,79 @@ private:
 
 	TileStrMap _nameMap;
 };
+
+
+/**
+ * Tile rules container
+ */
+class TileRules : public TileRuleMap {
+public:
+	/**
+	 * Constructor
+	 */
+	TileRules();
+
+	/**
+	 * Destructor
+	 */
+	~TileRules();
+
+	/**
+	 * Load tile information from xml.
+	 */
+	void load();
+
+	/**
+	 * Returns the tile rule with the given name, or nullptr if none could be found
+	 */
+	TileRule *findByName(const Common::String &name);
+};
+
+/**
+ * Tile sets container
+ */
+class TileSets : public Common::HashMap<Common::String, Tileset *> {
+public:
+	/**
+	 * Constructor
+	 */
+	TileSets();
+
+	/**
+	 * Destructor
+	 */
+	~TileSets();
+
+	/**
+	 * Loads all tilesets using the filename
+	 * indicated by 'filename' as a definition
+	 */
+	void loadAll();
+
+	/**
+	 * Delete all tilesets
+	 */
+	void unloadAll();
+
+	/**
+	 * Delete all tileset images
+	 */
+	void unloadAllImages();
+
+	/**
+	 * Returns the tileset with the given name, if it exists
+	 */
+	Tileset *get(const Common::String &name);
+
+	/**
+	 * Returns the tile that has the given name from any tileset, if there is one
+	 */
+	Tile *findTileByName(const Common::String &name);
+	Tile *findTileById(TileId id);
+};
+
+extern TileRules *g_tileRules;
+extern TileSets *g_tileSets;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

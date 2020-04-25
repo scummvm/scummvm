@@ -40,7 +40,7 @@ TileView::TileView(int x, int y, int columns, int rows) : View(x, y, columns * T
 	_rows = rows;
 	_tileWidth = TILE_WIDTH;
 	_tileHeight = TILE_HEIGHT;
-	_tileSet = Tileset::get("base");
+	_tileSet = g_tileSets->get("base");
 	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
 }
 
@@ -50,7 +50,7 @@ TileView::TileView(int x, int y, int columns, int rows, const Common::String &ti
 	_rows = rows;
 	_tileWidth = TILE_WIDTH;
 	_tileHeight = TILE_HEIGHT;
-	_tileSet = Tileset::get(tileset);
+	_tileSet = g_tileSets->get(tileset);
 	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
 }
 
@@ -60,7 +60,7 @@ TileView::~TileView() {
 
 void TileView::reinit() {
 	View::reinit();
-	_tileSet = Tileset::get("base");
+	_tileSet = g_tileSets->get("base");
 
 	// Scratchpad needs to be re-inited if we rescale...
 	if (_animated) {

@@ -662,7 +662,7 @@ bool CombatController::rangedAttack(const Coords &coords, Creature *attacker) {
 	default:
 		/* show the appropriate 'hit' message */
 		// soundPlay(SOUND_PC_STRUCK, false);
-		if (hittile == Tileset::findTileByName("magic_flash")->getId())
+		if (hittile == g_tileSets->findTileByName("magic_flash")->getId())
 			g_screen->screenMessage("\n%s %cMagical Hit%c!\n", target->getName().c_str(), FG_BLUE, FG_WHITE);
 		else g_screen->screenMessage("\n%s Hit!\n", target->getName().c_str());
 		attacker->dealDamage(target, attacker->getDamage());
@@ -1185,37 +1185,37 @@ MapId CombatMap::mapForTile(const Tile *groundTile, const Tile *transport, Objec
 
 	static Std::map<const Tile *, MapId, Std::PointerHash> tileMap;
 	if (!tileMap.size()) {
-		tileMap[Tileset::get("base")->getByName("horse")] = MAP_GRASS_CON;
-		tileMap[Tileset::get("base")->getByName("swamp")] = MAP_MARSH_CON;
-		tileMap[Tileset::get("base")->getByName("grass")] = MAP_GRASS_CON;
-		tileMap[Tileset::get("base")->getByName("brush")] = MAP_BRUSH_CON;
-		tileMap[Tileset::get("base")->getByName("forest")] = MAP_FOREST_CON;
-		tileMap[Tileset::get("base")->getByName("hills")] = MAP_HILL_CON;
-		tileMap[Tileset::get("base")->getByName("dungeon")] = MAP_DUNGEON_CON;
-		tileMap[Tileset::get("base")->getByName("city")] = MAP_GRASS_CON;
-		tileMap[Tileset::get("base")->getByName("castle")] = MAP_GRASS_CON;
-		tileMap[Tileset::get("base")->getByName("town")] = MAP_GRASS_CON;
-		tileMap[Tileset::get("base")->getByName("lcb_entrance")] = MAP_GRASS_CON;
-		tileMap[Tileset::get("base")->getByName("bridge")] = MAP_BRIDGE_CON;
-		tileMap[Tileset::get("base")->getByName("balloon")] = MAP_GRASS_CON;
-		tileMap[Tileset::get("base")->getByName("bridge_pieces")] = MAP_BRIDGE_CON;
-		tileMap[Tileset::get("base")->getByName("shrine")] = MAP_GRASS_CON;
-		tileMap[Tileset::get("base")->getByName("chest")] = MAP_GRASS_CON;
-		tileMap[Tileset::get("base")->getByName("brick_floor")] = MAP_BRICK_CON;
-		tileMap[Tileset::get("base")->getByName("moongate")] = MAP_GRASS_CON;
-		tileMap[Tileset::get("base")->getByName("moongate_opening")] = MAP_GRASS_CON;
-		tileMap[Tileset::get("base")->getByName("dungeon_floor")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("horse")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("swamp")] = MAP_MARSH_CON;
+		tileMap[g_tileSets->get("base")->getByName("grass")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("brush")] = MAP_BRUSH_CON;
+		tileMap[g_tileSets->get("base")->getByName("forest")] = MAP_FOREST_CON;
+		tileMap[g_tileSets->get("base")->getByName("hills")] = MAP_HILL_CON;
+		tileMap[g_tileSets->get("base")->getByName("dungeon")] = MAP_DUNGEON_CON;
+		tileMap[g_tileSets->get("base")->getByName("city")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("castle")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("town")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("lcb_entrance")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("bridge")] = MAP_BRIDGE_CON;
+		tileMap[g_tileSets->get("base")->getByName("balloon")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("bridge_pieces")] = MAP_BRIDGE_CON;
+		tileMap[g_tileSets->get("base")->getByName("shrine")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("chest")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("brick_floor")] = MAP_BRICK_CON;
+		tileMap[g_tileSets->get("base")->getByName("moongate")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("moongate_opening")] = MAP_GRASS_CON;
+		tileMap[g_tileSets->get("base")->getByName("dungeon_floor")] = MAP_GRASS_CON;
 	}
 	static Std::map<const Tile *, MapId, Std::PointerHash> dungeontileMap;
 	if (!dungeontileMap.size()) {
-		dungeontileMap[Tileset::get("dungeon")->getByName("brick_floor")] = MAP_DNG0_CON;
-		dungeontileMap[Tileset::get("dungeon")->getByName("up_ladder")] = MAP_DNG1_CON;
-		dungeontileMap[Tileset::get("dungeon")->getByName("down_ladder")] = MAP_DNG2_CON;
-		dungeontileMap[Tileset::get("dungeon")->getByName("up_down_ladder")] = MAP_DNG3_CON;
-		// dungeontileMap[Tileset::get("dungeon")->getByName("chest")] = MAP_DNG4_CON;
+		dungeontileMap[g_tileSets->get("dungeon")->getByName("brick_floor")] = MAP_DNG0_CON;
+		dungeontileMap[g_tileSets->get("dungeon")->getByName("up_ladder")] = MAP_DNG1_CON;
+		dungeontileMap[g_tileSets->get("dungeon")->getByName("down_ladder")] = MAP_DNG2_CON;
+		dungeontileMap[g_tileSets->get("dungeon")->getByName("up_down_ladder")] = MAP_DNG3_CON;
+		// dungeontileMap[g_tileSets->get("dungeon")->getByName("chest")] = MAP_DNG4_CON;
 		// chest tile doesn't work that well
-		dungeontileMap[Tileset::get("dungeon")->getByName("dungeon_door")] = MAP_DNG5_CON;
-		dungeontileMap[Tileset::get("dungeon")->getByName("secret_door")] = MAP_DNG6_CON;
+		dungeontileMap[g_tileSets->get("dungeon")->getByName("dungeon_door")] = MAP_DNG5_CON;
+		dungeontileMap[g_tileSets->get("dungeon")->getByName("secret_door")] = MAP_DNG6_CON;
 	}
 
 	if (g_context->_location->_context & CTX_DUNGEON) {

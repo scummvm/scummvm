@@ -1132,7 +1132,7 @@ Script::ReturnCode Script::add(Shared::XMLNode *script, Shared::XMLNode *current
 		quant *= 100;
 		g_context->_party->adjustFood(quant);
 	} else if (type == "horse")
-		g_context->_party->setTransport(Tileset::findTileByName("horse")->getId());
+		g_context->_party->setTransport(g_tileSets->findTileByName("horse")->getId());
 	else if (type == "torch") {
 		AdjustValueMax(g_ultima->_saveGame->_torches, quant, 99);
 		g_context->_party->notifyOfChange(0, PartyEvent::INVENTORY_ADDED);

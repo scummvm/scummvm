@@ -432,7 +432,7 @@ void DngMapLoader::initDungeonRoom(Dungeon *dng, int room) {
 	dng->_roomMaps[room]->_music = Music::COMBAT;
 	dng->_roomMaps[room]->_type = Map::COMBAT;
 	dng->_roomMaps[room]->_flags |= NO_LINE_OF_SIGHT;
-	dng->_roomMaps[room]->_tileSet = Tileset::get("base");
+	dng->_roomMaps[room]->_tileSet = g_tileSets->get("base");
 }
 
 bool WorldMapLoader::load(Map *map) {

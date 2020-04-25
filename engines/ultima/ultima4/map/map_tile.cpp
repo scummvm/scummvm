@@ -45,7 +45,7 @@ bool MapTile::setDirection(Direction d) {
 }
 
 const Tile *MapTile::getTileType() const {
-	return Tileset::findTileById(_id);
+	return g_tileSets->findTileById(_id);
 }
 
 } // End of namespace Ultima4

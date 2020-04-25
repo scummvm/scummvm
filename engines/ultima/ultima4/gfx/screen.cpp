@@ -220,8 +220,8 @@ MouseCursorSurface *Screen::loadMouseCursor(Shared::File &src) {
 }
 
 void Screen::screenReInit() {
-	g_intro->deleteIntro();      // delete intro stuff
-	Tileset::unloadAllImages();  // unload tilesets, which will be reloaded lazily as needed
+	g_intro->deleteIntro();			// delete intro stuff
+	g_tileSets->unloadAllImages();	// unload tilesets, which will be reloaded lazily as needed
 	ImageMgr::destroy();
 	_tileAnims = nullptr;
 	clear();

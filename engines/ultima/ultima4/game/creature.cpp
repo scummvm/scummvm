@@ -133,7 +133,7 @@ void Creature::load(const ConfigElement &conf) {
 
 	_xp = static_cast<unsigned short>(conf.getInt("exp"));
 	_ranged = conf.getBool("ranged");
-	setTile(Tileset::findTileByName(conf.getString("tile")));
+	setTile(g_tileSets->findTileByName(conf.getString("tile")));
 
 	setHitTile("hit_flash");
 	setMissTile("miss_flash");

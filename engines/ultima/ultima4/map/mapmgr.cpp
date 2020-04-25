@@ -184,7 +184,7 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 		map->_flags |= FIRST_PERSON;
 
 	map->_music = static_cast<Music::Type>(mapConf.getInt("music"));
-	map->_tileSet = Tileset::get(mapConf.getString("tileset"));
+	map->_tileSet = g_tileSets->get(mapConf.getString("tileset"));
 	map->_tileMap = TileMap::get(mapConf.getString("tilemap"));
 
 	vector<ConfigElement> children = mapConf.getChildren();

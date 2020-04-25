@@ -85,7 +85,7 @@ void TileMap::load(const ConfigElement &tilemapConf) {
 		Common::String tile = i->getString("tile");
 
 		// Find the tile this references
-		Tile *t = Tileset::get(tileset)->getByName(tile);
+		Tile *t = g_tileSets->get(tileset)->getByName(tile);
 		if (!t)
 			error("Error: tile '%s' from '%s' was not found in tileset %s", tile.c_str(), name.c_str(), tileset.c_str());
 

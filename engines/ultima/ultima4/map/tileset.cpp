@@ -31,6 +31,7 @@ namespace Ultima {
 namespace Ultima4 {
 
 TileRules *g_tileRules;
+TileSets *g_tileSets;
 
 TileRules::TileRules() {
 	g_tileRules = this;
@@ -61,11 +62,101 @@ TileRule *TileRules::findByName(const Common::String &name) {
 	return nullptr;
 }
 
-
 /*-------------------------------------------------------------------*/
 
-// Static member variables
-Tileset::TilesetMap Tileset::tilesets;
+TileSets::TileSets() {
+	g_tileSets = this;
+	loadAll();
+}
+
+TileSets::~TileSets() {
+	unloadAll();
+	g_tileSets = nullptr;
+}
+
+void TileSets::loadAll() {
+	const Config *config = Config::getInstance();
+	Std::vector<ConfigElement> conf;
+
+	unloadAll();
+
+	// Get the config element for all tilesets
+	conf = config->getElement("tilesets").getChildren();
+
+	// Load tile rules
+	if (g_tileRules->empty())
+		g_tileRules->load();
+
+	// Load all of the tilesets
+	for (Std::vector<ConfigElement>::iterator i = conf.begin(); i != conf.end(); i++) {
+		if (i->getName() == "tileset") {
+
+			Tileset *tileset = new Tileset();
+			tileset->load(*i);
+
+			(*this)[tileset->_name] = tileset;
+		}
+	}
+
+	// Load tile maps, including translations from index to id
+	TileMap::loadAll();
+}
+
+void TileSets::unloadAll() {
+	iterator i;
+
+	// Unload all tilemaps
+	TileMap::unloadAll();
+
+	for (i = begin(); i != end(); i++) {
+		i->_value->unload();
+		delete i->_value;
+	}
+	clear();
+
+	Tile::resetNextId();
+}
+
+void TileSets::unloadAllImages() {
+	iterator i;
+
+	for (i = begin(); i != end(); i++) {
+		i->_value->unloadImages();
+	}
+
+	Tile::resetNextId();
+}
+
+Tileset *TileSets::get(const Common::String &name) {
+	if (find(name) != end())
+		return (*this)[name];
+	else return nullptr;
+}
+
+Tile *TileSets::findTileByName(const Common::String &name) {
+	iterator i;
+	for (i = begin(); i != end(); i++) {
+		Tile *t = i->_value->getByName(name);
+		if (t)
+			return t;
+	}
+
+	return nullptr;
+}
+
+Tile *TileSets::findTileById(TileId id) {
+	iterator i;
+	for (i = begin(); i != end(); i++) {
+		Tile *t = i->_value->get(id);
+		if (t)
+			return t;
+	}
+
+	return nullptr;
+}
+
+
+/*-------------------------------------------------------------------*/
 
 bool TileRule::initFromConf(const ConfigElement &conf) {
 	uint i;
@@ -158,93 +249,12 @@ bool TileRule::initFromConf(const ConfigElement &conf) {
 	return true;
 }
 
-void Tileset::loadAll() {
-	const Config *config = Config::getInstance();
-	Std::vector<ConfigElement> conf;
-
-	unloadAll();
-
-	// Get the config element for all tilesets
-	conf = config->getElement("tilesets").getChildren();
-
-	// Load tile rules
-	if (g_tileRules->empty())
-		g_tileRules->load();
-
-	// Load all of the tilesets
-	for (Std::vector<ConfigElement>::iterator i = conf.begin(); i != conf.end(); i++) {
-		if (i->getName() == "tileset") {
-
-			Tileset *tileset = new Tileset();
-			tileset->load(*i);
-
-			tilesets[tileset->_name] = tileset;
-		}
-	}
-
-	// Load tile maps, including translations from index to id
-	TileMap::loadAll();
-}
-
-void Tileset::unloadAll() {
-	TilesetMap::iterator i;
-
-	// Unload all tilemaps
-	TileMap::unloadAll();
-
-	for (i = tilesets.begin(); i != tilesets.end(); i++) {
-		i->_value->unload();
-		delete i->_value;
-	}
-	tilesets.clear();
-
-	Tile::resetNextId();
-}
-
-void Tileset::unloadAllImages() {
-	TilesetMap::iterator i;
-
-	for (i = tilesets.begin(); i != tilesets.end(); i++) {
-		i->_value->unloadImages();
-	}
-
-	Tile::resetNextId();
-}
-
-Tileset *Tileset::get(const Common::String &name) {
-	if (tilesets.find(name) != tilesets.end())
-		return tilesets[name];
-	else return nullptr;
-}
-
-Tile *Tileset::findTileByName(const Common::String &name) {
-	TilesetMap::iterator i;
-	for (i = tilesets.begin(); i != tilesets.end(); i++) {
-		Tile *t = i->_value->getByName(name);
-		if (t)
-			return t;
-	}
-
-	return nullptr;
-}
-
-Tile *Tileset::findTileById(TileId id) {
-	TilesetMap::iterator i;
-	for (i = tilesets.begin(); i != tilesets.end(); i++) {
-		Tile *t = i->_value->get(id);
-		if (t)
-			return t;
-	}
-
-	return nullptr;
-}
-
 void Tileset::load(const ConfigElement &tilesetConf) {
 	_name = tilesetConf.getString("name");
 	if (tilesetConf.exists("imageName"))
 		_imageName = tilesetConf.getString("imageName");
 	if (tilesetConf.exists("extends"))
-		_extends = Tileset::get(tilesetConf.getString("extends"));
+		_extends = g_tileSets->get(tilesetConf.getString("extends"));
 	else _extends = nullptr;
 
 	int index = 0;

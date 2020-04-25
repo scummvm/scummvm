@@ -157,7 +157,7 @@ bool IntroBinData::load() {
 	_baseTileTable = new Tile*[INTRO_BASETILE_TABLE_SIZE];
 	for (i = 0; i < INTRO_BASETILE_TABLE_SIZE; i++) {
 		MapTile tile = TileMap::get("base")->translate(u4fgetc(title));
-		_baseTileTable[i] = Tileset::get("base")->get(tile._id);
+		_baseTileTable[i] = g_tileSets->get("base")->get(tile._id);
 	}
 
 	/* --------------------------
