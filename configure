@@ -2790,35 +2790,65 @@ case $_host_os in
 			fi
 		fi
 
-		# When building for MacOS X 10.5 we need to use the legacy icon
-		echocheck "macOS SDK target version at least 10.6"
-		_macos_atleast_10_6=no
-		cat > $TMPC << EOF
+		# Building with SDK 10.14+ causes blurry display on Retina screens.
+		# A workaround is to set the LC_VERSION_MIN_MACOSX load command's sdk value
+		# to n/a (i.e. 0.0). See bug #11430 for details.
+		echocheck "macOS deployement target"
+		_macos_min_version=undefined
+		for _macos_min_version_check in 1030 140 1050 1060 1070 1080 1090 101000 101100 101200 101300 101400 101500 101600; do
+			cat > $TMPC << EOF
 #include "AvailabilityMacros.h"
-#if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
+#if MAC_OS_X_VERSION_MIN_REQUIRED > ${_macos_min_version_check}
 error
 #endif
 int main(int argc, char *argv[]) { return 0; }
 EOF
-		cc_check && _macos_atleast_10_6=yes
-		echo ${_macos_atleast_10_6}
-		if test "$_macos_atleast_10_6" = no ; then
+			cc_check
+			if test "$TMPR" -eq 0; then
+				_macos_min_version=$_macos_min_version_check
+				break
+			fi
+		done
+		# Also get a dot version of the min version
+		_macos_min_version_dot=undefined
+		if test "$_macos_min_version" != undefined ; then
+			if test "$_macos_min_version" -lt 101000; then
+				_macos_min_ver_major=$((${_macos_min_version}/100))
+				_macos_min_ver_minor=$((${_macos_min_version}/10 - 10*${_macos_min_ver_major}))
+				_macos_min_version_dot=${_macos_min_ver_major}.${_macos_min_ver_minor}
+			else
+				_macos_min_ver_major=$((${_macos_min_version}/10000))
+				_macos_min_ver_minor=$((${_macos_min_version}/100 - 100*${_macos_min_ver_major}))
+				_macos_min_version_dot=${_macos_min_ver_major}.${_macos_min_ver_minor}
+			fi
+		fi
+		echo $_macos_min_version_dot
+
+		# Building with SDK 10.14+ causes blurry display on Retina screens.
+		# A workaround is to set the LC_VERSION_MIN_MACOSX load command's sdk value
+		# to n/a (i.e. 0.0). See bug #11430 for details.
+		# We do it in any case when the linker supports the -platform_version flag,
+		# even when using an older SDK.
+		echo_n "Checking if linker supports -platform_version... "
+		_macos_has_ld_platform_version=no
+		cat > $TMPC << EOF
+int main(int argc, char *argv[]) { return 0; }
+EOF
+		_macos_ldflags_platform_version="-Xlinker -platform_version -Xlinker macos -Xlinker $_macos_min_version_dot -Xlinker 0.0.0"
+		cc_check $_macos_ldflags_platform_version && _macos_has_ld_platform_version=yes
+		echo $_macos_has_ld_platform_version
+		if test "$_macos_has_ld_platform_version" = yes ; then
+			append_var LDFLAGS "$_macos_ldflags_platform_version"
+		fi
+
+		# When building for MacOS X 10.5 or below we need to use the legacy icon
+		if test "$_macos_min_version" != undefined -a "$_macos_min_version" -lt 1060 ; then
 			add_line_to_config_mk 'MACOSX_USE_LEGACY_ICONS = 1'
 		fi
 
 		# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
-		echocheck "macOS SDK target version at least 10.14"
-		_macos_atleast_10_14=no
-		cat > $TMPC << EOF
-#include "AvailabilityMacros.h"
-#if !defined(MAC_OS_X_VERSION_10_14) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_14
-error
-#endif
-int main(int argc, char *argv[]) { return 0; }
-EOF
-		cc_check && _macos_atleast_10_14=yes
-		echo ${_macos_atleast_10_14}
-		if test "$_macos_atleast_10_14" = yes ; then
+		# Assume the SDK version is the same as the min version.
+		if test "$_macos_min_version" != undefined -a "$_macos_min_version" -gt 101399 ; then
 			add_line_to_config_mk 'MACOSX_64_BITS_ONLY = 1'
 		fi
 
