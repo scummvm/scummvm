@@ -49,11 +49,12 @@ Ultima4Engine *g_ultima;
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _config(nullptr),
 		_context(nullptr), _dialogueLoaders(nullptr), _game(nullptr), _music(nullptr),
-		_imageLoaders(nullptr), _saveGame(nullptr), _screen(nullptr) {
+		_imageLoaders(nullptr), _saveGame(nullptr), _screen(nullptr), _tileRules(nullptr) {
 	g_ultima = this;
 	g_context = nullptr;
 	g_game = nullptr;
 	g_screen = nullptr;
+	g_tileRules = nullptr;
 }
 
 Ultima4Engine::~Ultima4Engine() {
@@ -65,6 +66,7 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _music;
 	delete _saveGame;
 	delete _screen;
+	delete _tileRules;
 
 	Tileset::unloadAll();
 	ImageMgr::destroy();
@@ -87,12 +89,12 @@ bool Ultima4Engine::initialize() {
 	_imageLoaders = new ImageLoaders();
 	_music = new Music();
 	_saveGame = new SaveGame();
+	_tileRules = new TileRules();
 
 	setDebugger(new Debugger());
 	soundInit();
 	Tileset::loadAll();
 	creatureMgr->getInstance();
-
 
 	_saveSlotToLoad = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 

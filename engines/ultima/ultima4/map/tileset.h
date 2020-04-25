@@ -35,21 +35,38 @@ class Tile;
 typedef Common::HashMap<Common::String, class TileRule *> TileRuleMap;
 
 /**
- * TileRule class
+ * Tile rules
  */
-class TileRule {
+class TileRules : public TileRuleMap {
 public:
 	/**
-	 * Returns the tile rule with the given name, or nullptr if none could be found
+	 * Constructor
 	 */
-	static TileRule *findByName(const Common::String &name);
+	TileRules();
+
+	/**
+	 * Destructor
+	 */
+	~TileRules();
 
 	/**
 	 * Load tile information from xml.
 	 */
-	static void load();
-	static TileRuleMap _rules;   // A map of rule names to rules
+	void load();
 
+	/**
+	 * Returns the tile rule with the given name, or nullptr if none could be found
+	 */
+	TileRule *findByName(const Common::String &name);
+};
+
+extern TileRules *g_tileRules;
+
+/**
+ * TileRule class
+ */
+class TileRule {
+public:
 	/**
 	 * Load properties for the current rule node
 	 */

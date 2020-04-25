@@ -30,31 +30,42 @@
 namespace Ultima {
 namespace Ultima4 {
 
-/**
- * TileRule Class Implementation
- */
-TileRuleMap TileRule::_rules;
+TileRules *g_tileRules;
 
-TileRule *TileRule::findByName(const Common::String &name) {
-	TileRuleMap::iterator i = _rules.find(name);
-	if (i != _rules.end())
-		return i->_value;
-	return nullptr;
+TileRules::TileRules() {
+	g_tileRules = this;
 }
 
-void TileRule::load() {
+TileRules::~TileRules() {
+	g_tileRules = nullptr;
+}
+
+void TileRules::load() {
 	const Config *config = Config::getInstance();
 	Std::vector<ConfigElement> rules = config->getElement("tileRules").getChildren();
 
 	for (Std::vector<ConfigElement>::iterator i = rules.begin(); i != rules.end(); i++) {
 		TileRule *rule = new TileRule();
 		rule->initFromConf(*i);
-		TileRule::_rules[rule->_name] = rule;
+		(*this)[rule->_name] = rule;
 	}
 
-	if (TileRule::findByName("default") == nullptr)
+	if (findByName("default") == nullptr)
 		error("no 'default' rule found in tile rules");
 }
+
+TileRule *TileRules::findByName(const Common::String &name) {
+	TileRuleMap::iterator i = find(name);
+	if (i != end())
+		return i->_value;
+	return nullptr;
+}
+
+
+/*-------------------------------------------------------------------*/
+
+// Static member variables
+Tileset::TilesetMap Tileset::tilesets;
 
 bool TileRule::initFromConf(const ConfigElement &conf) {
 	uint i;
@@ -147,11 +158,6 @@ bool TileRule::initFromConf(const ConfigElement &conf) {
 	return true;
 }
 
-/*-------------------------------------------------------------------*/
-
-// Static member variables
-Tileset::TilesetMap Tileset::tilesets;
-
 void Tileset::loadAll() {
 	const Config *config = Config::getInstance();
 	Std::vector<ConfigElement> conf;
@@ -162,8 +168,8 @@ void Tileset::loadAll() {
 	conf = config->getElement("tilesets").getChildren();
 
 	// Load tile rules
-	if (!TileRule::_rules.size())
-		TileRule::load();
+	if (g_tileRules->empty())
+		g_tileRules->load();
 
 	// Load all of the tilesets
 	for (Std::vector<ConfigElement>::iterator i = conf.begin(); i != conf.end(); i++) {

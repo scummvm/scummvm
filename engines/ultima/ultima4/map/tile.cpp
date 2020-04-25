@@ -80,10 +80,10 @@ void Tile::loadProperties(const ConfigElement &conf) {
 	/* find the rule that applies to the current tile, if there is one.
 	   if there is no rule specified, it defaults to the "default" rule */
 	if (conf.exists("rule")) {
-		rule = TileRule::findByName(conf.getString("rule"));
+		rule = g_tileRules->findByName(conf.getString("rule"));
 		if (rule == nullptr)
-			rule = TileRule::findByName("default");
-	} else rule = TileRule::findByName("default");
+			rule = g_tileRules->findByName("default");
+	} else rule = g_tileRules->findByName("default");
 
 	// Get the number of frames the tile has
 	_frames = conf.getInt("frames", 1);

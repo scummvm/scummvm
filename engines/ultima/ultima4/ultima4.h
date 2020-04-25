@@ -36,6 +36,7 @@ class GameController;
 class Music;
 struct SaveGame;
 class Screen;
+class TileRules;
 
 class Ultima4Engine : public Shared::UltimaEngine {
 private:
@@ -61,6 +62,7 @@ public:
 	Music *_music;
 	SaveGame *_saveGame;
 	Screen *_screen;
+	TileRules *_tileRules;
 public:
 	Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima4Engine() override;
