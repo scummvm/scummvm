@@ -193,7 +193,7 @@ public:
 	}
 
 	// A simple trace to find the top item at a specific xy point
-	Item *traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags);
+	const Item *traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags);
 
 	// Set the entire map as being 'fast'
 	void setWholeMapFast();
@@ -206,6 +206,9 @@ public:
 private:
 	void loadItems(Std::list<Item *> itemlist, bool callCacheIn);
 	void createEggHatcher();
+
+	//! clip the given map chunk numbers to iterate over them safely
+	void clipMapChunks(int &minx, int &maxx, int &miny, int &maxy) const;
 
 	Map *_currentMap;
 
