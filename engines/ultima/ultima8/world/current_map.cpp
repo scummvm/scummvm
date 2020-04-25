@@ -337,29 +337,14 @@ static inline void CalcFastAreaLimits(int32 &sx_limit,
 }
 
 void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 to_x, int32 to_y, int32 to_z) {
-	int x_min = from_x;
-	int x_max = to_x;
+	int x_min = MIN(from_x, to_x);
+	int x_max = MAX(from_x, to_x);
 
-	if (x_max < x_min)  {
-		x_min = to_x;
-		x_max = from_x;
-	}
+	int y_min = MIN(from_y, to_y);
+	int y_max = MAX(from_y, to_y);
 
-	int y_min = from_y;
-	int y_max = to_y;
-
-	if (y_max < y_min)  {
-		y_min = to_y;
-		y_max = from_y;
-	}
-
-	int z_min = from_z;
-	int z_max = to_z;
-
-	if (z_max < z_min)  {
-		z_min = to_z;
-		z_max = from_z;
-	}
+	int z_min = MIN(from_z, to_z);
+	int z_max = MAX(from_z, to_z);
 
 	// Work out Fine (screenspace) Limits of chunks with half chunk border
 	Rect dims;
@@ -447,12 +432,12 @@ void CurrentMap::clipMapChunks(int &minx, int &maxx, int &miny, int &maxy) const
 void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
                             uint32 scriptsize, const Item *check, uint16 range,
                             bool recurse, int32 x, int32 y) {
-	int32 z;
-	int32 xd = 0, yd = 0, zd = 0;
+	int32 xd = 0, yd = 0;
 
 	// if item != 0, search an area around item. Otherwise, search an area
 	// around (x,y)
 	if (check) {
+		int32 z, zd;
 		check->getLocationAbsolute(x, y, z);
 		check->getFootpadWorld(xd, yd, zd);
 	}
@@ -483,7 +468,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 				int32 ixd, iyd, izd;
 				item->getFootpadWorld(ixd, iyd, izd);
 
-				Rect itemrect(ix - ixd, iy - iyd, ixd, iyd);
+				const Rect itemrect(ix - ixd, iy - iyd, ixd, iyd);
 
 				if (!itemrect.Overlaps(searchrange))
 					continue;
@@ -528,14 +513,14 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 	const Rect searchrange(origin[0] - dims[0], origin[1] - dims[1],
 	                 dims[0], dims[1]);
 
-	int32 minx = ((origin[0] - dims[0]) / _mapChunkSize) - 1;
-	int32 maxx = ((origin[0]) / _mapChunkSize) + 1;
-	int32 miny = ((origin[1] - dims[1]) / _mapChunkSize) - 1;
-	int32 maxy = ((origin[1]) / _mapChunkSize) + 1;
+	int minx = ((origin[0] - dims[0]) / _mapChunkSize) - 1;
+	int maxx = ((origin[0]) / _mapChunkSize) + 1;
+	int miny = ((origin[1] - dims[1]) / _mapChunkSize) - 1;
+	int maxy = ((origin[1]) / _mapChunkSize) + 1;
 	clipMapChunks(minx, maxx, miny, maxy);
 
-	for (int32 cx = minx; cx <= maxx; cx++) {
-		for (int32 cy = miny; cy <= maxy; cy++) {
+	for (int cx = minx; cx <= maxx; cx++) {
+		for (int cy = miny; cy <= maxy; cy++) {
 			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
 			        iter != _items[cx][cy].end(); ++iter) {
@@ -714,7 +699,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 				if (!(x <= ix - ixd || x - xd >= ix ||
 				        y <= iy - iyd || y - yd >= iy)) {
 					// check support
-					if (support == 0 && si->is_solid() &&
+					if (support == nullptr && si->is_solid() &&
 					        iz + izd == z) {
 						support = item;
 					}
@@ -742,16 +727,16 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
                                       int32 &tx, int32 &ty, int32 &tz) {
 	// TODO: clean this up. Currently the mask arrays are filled with more
 	// data than is actually used.
-	static uint32 validmask[17];
-	static uint32 supportmask[17];
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING) & item->getShapeInfo()->_flags;
 
 	int searchdir = (movedir + 2) % 4;
 
-	int xdir = (x_fact[searchdir] != 0) ? 1 : 0;
-	int ydir = (y_fact[searchdir] != 0) ? 1 : 0;
+	bool xdir = (x_fact[searchdir] != 0);
+	bool ydir = (y_fact[searchdir] != 0);
 
 	// mark everything as valid, but without support
+	uint32 validmask[17];
+	uint32 supportmask[17];
 	for (int i = 0; i < 17; ++i) {
 		validmask[i] = 0x1FFFF;
 		supportmask[i] = 0;
@@ -787,7 +772,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 				if (citem->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
-				ShapeInfo *si = citem->getShapeInfo();
+				const ShapeInfo *si = citem->getShapeInfo();
 				//!! need to check is_sea() and is_land() maybe?
 				if (!(si->_flags & blockflagmask))
 					continue; // not an interesting item
