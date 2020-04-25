@@ -33,6 +33,8 @@ MidiPlayer::MidiPlayer() {
 	MidiPlayer::createDriver();
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_isFMSynth = MidiDriver::getMusicType(dev) == MT_ADLIB;
+	_callbackData[0] = 0;
+	_callbackData[1] = 0;
 
 	if (_driver) {
 		int retValue = _driver->open();
