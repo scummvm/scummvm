@@ -57,11 +57,6 @@ class MapLoader {
 public:
 	virtual ~MapLoader() {}
 
-	/**
-	 * Gets a map loader for the given map type.
-	 */
-	static MapLoader *getLoader(Map::Type type);
-
 	virtual bool load(Map *map) = 0;
 
 protected:
@@ -81,8 +76,6 @@ private:
 };
 
 class CityMapLoader : public MapLoader {
-	static MapLoader *_instance;
-
 public:
 	/**
 	 * Load city data from 'ult' and 'tlk' files.
@@ -91,8 +84,6 @@ public:
 };
 
 class ConMapLoader : public MapLoader {
-	static MapLoader *_instance;
-
 public:
 	/**
 	 * Loads a combat map from the 'con' file
@@ -101,8 +92,6 @@ public:
 };
 
 class DngMapLoader : public MapLoader {
-	static MapLoader *_instance;
-
 public:
 	/**
 	 * Loads a dungeon map from the 'dng' file
@@ -117,13 +106,32 @@ private:
 };
 
 class WorldMapLoader : public MapLoader {
-	static MapLoader *_instance;
 public:
 	/**
 	 * Loads the world map data in from the 'world' file.
 	 */
 	bool load(Map *map) override;
 };
+
+class MapLoaders : public Std::map<Map::Type, MapLoader *, MapType_Hash> {
+public:
+	/**
+	 * Constructor
+	 */
+	MapLoaders();
+
+	/**
+	 * Destructor
+	 */
+	~MapLoaders();
+
+	/**
+	 * Gets a map loader for the given map type.
+	 */
+	MapLoader *getLoader(Map::Type type);
+};
+
+extern MapLoaders *g_mapLoaders;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

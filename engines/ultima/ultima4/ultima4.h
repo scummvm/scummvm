@@ -36,6 +36,7 @@ class Context;
 class DialogueLoaders;
 class ImageLoaders;
 class GameController;
+class MapLoaders;
 class Moongates;
 class Music;
 struct SaveGame;
@@ -69,6 +70,7 @@ public:
 	DialogueLoaders *_dialogueLoaders;
 	ImageLoaders *_imageLoaders;
 	GameController *_game;
+	MapLoaders *_mapLoaders;
 	Moongates *_moongates;
 	Music *_music;
 	SaveGame *_saveGame;

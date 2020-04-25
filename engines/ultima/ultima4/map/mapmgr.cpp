@@ -130,12 +130,13 @@ Map *MapMgr::initMap(Map::Type type) {
 Map *MapMgr::get(MapId id) {
 	// if the map hasn't been loaded yet, load it!
 	if (!_mapList[id]->_data.size()) {
-		MapLoader *loader = MapLoader::getLoader(_mapList[id]->_type);
+		MapLoader *loader = g_mapLoaders->getLoader(_mapList[id]->_type);
 		if (loader == nullptr)
 			error("can't load map of type \"%d\"", _mapList[id]->_type);
 
 		loader->load(_mapList[id]);
 	}
+
 	return _mapList[id];
 }
 

@@ -46,30 +46,29 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Std::map<Map::Type, MapLoader *, MapType_Hash> *MapLoader::loaderMap = nullptr;
+MapLoaders *g_mapLoaders;
 
-MapLoader *CityMapLoader::_instance = MapLoader::registerLoader(new CityMapLoader, Map::CITY);
-MapLoader *ConMapLoader::_instance = MapLoader::registerLoader(MapLoader::registerLoader(new ConMapLoader, Map::COMBAT), Map::SHRINE);
-MapLoader *DngMapLoader::_instance = MapLoader::registerLoader(new DngMapLoader, Map::DUNGEON);
-MapLoader *WorldMapLoader::_instance = MapLoader::registerLoader(new WorldMapLoader, Map::WORLD);
+MapLoaders::MapLoaders() {
+	g_mapLoaders = this;
 
-MapLoader *MapLoader::getLoader(Map::Type type) {
-	ASSERT(loaderMap != nullptr, "ImageLoader::getLoader loaderMap not initialized");
-	if (loaderMap->find(type) == loaderMap->end())
+	(*this)[Map::CITY] = new CityMapLoader();
+	(*this)[Map::SHRINE] = new ConMapLoader();
+	(*this)[Map::DUNGEON] = new DngMapLoader();
+	(*this)[Map::WORLD] = new WorldMapLoader();
+}
+
+MapLoaders::~MapLoaders() {
+	g_mapLoaders = nullptr;
+}
+
+MapLoader *MapLoaders::getLoader(Map::Type type) {
+	if (find(type) == end())
 		return nullptr;
-	return (*loaderMap)[type];
+
+	return (*this)[type];
 }
 
-MapLoader *MapLoader::registerLoader(MapLoader *loader, Map::Type type) {
-	if (loaderMap == nullptr)
-		loaderMap = new Std::map<Map::Type, MapLoader *, MapType_Hash>();
-
-	if (loaderMap->find(type) != loaderMap->end())
-		error("map loader already registered for type %d", type);
-
-	(*loaderMap)[type] = loader;
-	return loader;
-}
+/*-------------------------------------------------------------------*/
 
 bool MapLoader::loadData(Map *map, Common::File *f) {
 	uint x, xch, y, ych;
