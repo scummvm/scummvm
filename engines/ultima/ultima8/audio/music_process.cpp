@@ -104,6 +104,8 @@ void MusicProcess::playMusic_internal(int track) {
 		return;
 	}
 
+	MusicFlex *musicflex = GameData::get_instance()->getMusic();
+
 	// No current track if not playing
 	if (_midiPlayer && !_midiPlayer->isPlaying())
 		_trackState._wanted = _currentTrack = 0;
@@ -117,7 +119,7 @@ void MusicProcess::playMusic_internal(int track) {
 
 	} else {
 		// We want to do a transition
-		const MusicFlex::SongInfo *info = GameData::get_instance()->getMusic()->getSongInfo(_currentTrack);
+		const MusicFlex::SongInfo *info = musicflex->getSongInfo(_currentTrack);
 
 		uint32 measure = _midiPlayer->getSequenceCallbackData(0);
 
@@ -147,14 +149,13 @@ void MusicProcess::playMusic_internal(int track) {
 		}
 
 		// Now get the transition midi
-		uint32 size = 0;
 		int xmidi_index = _midiPlayer->isFMSynth() ? 260 : 258;
-		byte *data = GameData::get_instance()->getMusic()->getRawObject(xmidi_index, &size);
+		MusicFlex::XMidiData *xmidi = musicflex->getXMidi(xmidi_index);
 
 		//warning("Doing a MIDI transition! trans: %d xmidi: %d speedhack: %d", trans, xmidi_index, speed_hack);
 
-		if (data) {
-			_midiPlayer->play(data, size, 1, trans, speed_hack);
+		if (xmidi && xmidi->_data) {
+			_midiPlayer->play(xmidi->_data, xmidi->_size, 1, trans, speed_hack);
 		} else {
 			_midiPlayer->stop();
 		}
@@ -188,18 +189,17 @@ void MusicProcess::run() {
 		if (_midiPlayer)
 			_midiPlayer->stop();
 
-		byte *data = nullptr;
-		uint32 size = 0;
+		MusicFlex::XMidiData *xmidi = nullptr;
 
 		if (_trackState._wanted) {
 			int xmidi_index = _trackState._wanted;
 			if (_midiPlayer && _midiPlayer->isFMSynth())
 				xmidi_index += 128;
 
-			data = GameData::get_instance()->getMusic()->getRawObject(xmidi_index, &size);
+			xmidi = GameData::get_instance()->getMusic()->getXMidi(xmidi_index);
 		}
 
-		if (data) {
+		if (xmidi && xmidi->_data) {
 #ifdef TODO
 			// TODO: support branches in tracks.
 			// Not clear how to do this with the scummvm xmidi parser..
@@ -213,7 +213,7 @@ void MusicProcess::run() {
 			if (_midiPlayer) {
 				// if there's a track queued, only play this one once
 				bool repeat = (_trackState._queued == 0);
-				_midiPlayer->play(data, size, 0, 0, false);
+				_midiPlayer->play(xmidi->_data, xmidi->_size, 0, 0, false);
 				_midiPlayer->setLooping(repeat);
 			}
 

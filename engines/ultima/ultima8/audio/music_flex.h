@@ -29,7 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class XMidiFile;
 
 class MusicFlex : public Archive {
 public:
@@ -45,11 +44,19 @@ public:
 		int         *_transitions[128];
 	};
 
+	struct XMidiData {
+		XMidiData(byte *data, uint32 size) : _data(data), _size(size)
+		{}
+
+		byte 	*_data;
+		uint32 	_size;
+	};
+
 	MusicFlex(Common::SeekableReadStream *rs);
 	~MusicFlex() override;
 
 	//! Get an xmidi
-	XMidiFile *getXMidi(uint32 index);
+	XMidiData *getXMidi(uint32 index);
 
 	//! Get song info
 	const SongInfo *getSongInfo(uint32 index) const;
@@ -66,11 +73,11 @@ public:
 	}
 
 private:
-	SongInfo        *_info[128];
-	XMidiFile       **_songs;
+	SongInfo   *_info[128];
+	XMidiData  **_songs;
 
 	//! Load the song info
-	void            loadSongInfo();
+	void       loadSongInfo();
 };
 
 } // End of namespace Ultima8
