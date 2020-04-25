@@ -313,7 +313,7 @@ bool DngMapLoader::load(Map *map) {
 		for (j = 0; j < DNGROOM_NTRIGGERS; j++) {
 			int tmp;
 
-			dungeon->_rooms[i]._triggers[j]._tile = TileMap::get("base")->translate(u4fgetc(dng))._id;
+			dungeon->_rooms[i]._triggers[j]._tile = g_tileMaps->get("base")->translate(u4fgetc(dng))._id;
 
 			tmp = u4fgetc(dng);
 			if (tmp == EOF)
@@ -350,11 +350,11 @@ bool DngMapLoader::load(Map *map) {
 
 		// Translate each creature tile to a tile id
 		for (j = 0; j < sizeof(dungeon->_rooms[i]._creatureTiles); j++)
-			dungeon->_rooms[i]._creatureTiles[j] = TileMap::get("base")->translate(dungeon->_rooms[i]._creatureTiles[j])._id;
+			dungeon->_rooms[i]._creatureTiles[j] = g_tileMaps->get("base")->translate(dungeon->_rooms[i]._creatureTiles[j])._id;
 
 		// Translate each map tile to a tile id
 		for (j = 0; j < sizeof(room_tiles); j++)
-			dungeon->_rooms[i]._mapData.push_back(TileMap::get("base")->translate(room_tiles[j]));
+			dungeon->_rooms[i]._mapData.push_back(g_tileMaps->get("base")->translate(room_tiles[j]));
 
 		//
 		// dungeon room fixup
@@ -408,7 +408,7 @@ bool DngMapLoader::load(Map *map) {
 
 				for (j = 0; j < int(sizeof(tile) / sizeof(Coords)); j++) {
 					const int index = (tile[j].y * CON_WIDTH) + tile[j].x;
-					dungeon->_rooms[i]._mapData[index] = TileMap::get("base")->translate(tile[j].z);
+					dungeon->_rooms[i]._mapData[index] = g_tileMaps->get("base")->translate(tile[j].z);
 				}
 			}
 		}

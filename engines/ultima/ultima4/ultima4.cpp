@@ -35,6 +35,7 @@
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
+#include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/sound/sound.h"
@@ -49,12 +50,13 @@ Ultima4Engine *g_ultima;
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _config(nullptr),
 		_context(nullptr), _dialogueLoaders(nullptr), _game(nullptr), _music(nullptr),
-		_imageLoaders(nullptr), _saveGame(nullptr), _screen(nullptr), _tileRules(nullptr),
-		_tileSets(nullptr) {
+		_imageLoaders(nullptr), _saveGame(nullptr), _screen(nullptr), _tileMaps(nullptr),
+		_tileRules(nullptr), _tileSets(nullptr) {
 	g_ultima = this;
 	g_context = nullptr;
 	g_game = nullptr;
 	g_screen = nullptr;
+	g_tileMaps = nullptr;
 	g_tileRules = nullptr;
 	g_tileSets = nullptr;
 }
@@ -68,6 +70,7 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _music;
 	delete _saveGame;
 	delete _screen;
+	delete _tileMaps;
 	delete _tileRules;
 	delete _tileSets;
 
@@ -89,6 +92,7 @@ bool Ultima4Engine::initialize() {
 	_screen->init();
 	_tileRules = new TileRules();
 	_tileSets = new TileSets();
+	_tileMaps = new TileMaps();
 	_game = new GameController();
 	_imageLoaders = new ImageLoaders();
 	_music = new Music();

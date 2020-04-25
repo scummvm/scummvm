@@ -556,7 +556,7 @@ Party::Party(SaveGame *s) : _saveGame(s), _transport(0), _torchDuration(0), _act
 
 	// set the party's transport (transport value stored in savegame
 	// hardcoded to index into base tilemap)
-	setTransport(TileMap::get("base")->translate(_saveGame->_transport));
+	setTransport(g_tileMaps->get("base")->translate(_saveGame->_transport));
 }
 
 Party::~Party() {
@@ -1055,7 +1055,7 @@ MapTile Party::getTransport() const {
 
 void Party::setTransport(MapTile tile) {
 	// transport value stored in savegame hardcoded to index into base tilemap
-	_saveGame->_transport = TileMap::get("base")->untranslate(tile);
+	_saveGame->_transport = g_tileMaps->get("base")->untranslate(tile);
 	ASSERT(_saveGame->_transport != 0, "could not generate valid savegame transport for tile with id %d\n", tile._id);
 
 	_transport = tile;

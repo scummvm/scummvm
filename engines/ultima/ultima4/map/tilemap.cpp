@@ -28,16 +28,21 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Std::vector;
+TileMaps *g_tileMaps;
 
-/**
- * Static variables
- */
-TileMap::TileIndexMapMap TileMap::_tileMaps;
+TileMaps::TileMaps() {
+	g_tileMaps = this;
+	loadAll();
+}
 
-void TileMap::loadAll() {
+TileMaps::~TileMaps() {
+	unloadAll();
+	g_tileMaps = nullptr;
+}
+
+void TileMaps::loadAll() {
 	const Config *config = Config::getInstance();
-	vector<ConfigElement> conf;
+	Std::vector<ConfigElement> conf;
 
 	// FIXME: make sure tilesets are loaded by now
 	unloadAll();
@@ -55,18 +60,18 @@ void TileMap::loadAll() {
 	}
 }
 
-void TileMap::unloadAll() {
-	TileIndexMapMap::iterator map;
+void TileMaps::unloadAll() {
+	iterator map;
 
 	// Free all the memory for the tile maps
-	for (map = _tileMaps.begin(); map != _tileMaps.end(); map++)
+	for (map = begin(); map != end(); map++)
 		delete map->_value;
 
 	// Clear the map so we don't attempt to delete the memory again next time
-	_tileMaps.clear();
+	clear();
 }
 
-void TileMap::load(const ConfigElement &tilemapConf) {
+void TileMaps::load(const ConfigElement &tilemapConf) {
 	TileMap *tm = new TileMap();
 
 	Common::String name = tilemapConf.getString("name");
@@ -74,7 +79,7 @@ void TileMap::load(const ConfigElement &tilemapConf) {
 	Common::String tileset = tilemapConf.getString("tileset");
 
 	int index = 0;
-	vector<ConfigElement> children = tilemapConf.getChildren();
+	Std::vector<ConfigElement> children = tilemapConf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() != "mapping")
 			continue;
@@ -107,14 +112,16 @@ void TileMap::load(const ConfigElement &tilemapConf) {
 	}
 
 	// Add the tilemap to our list
-	_tileMaps[name] = tm;
+	(*this)[name] = tm;
 }
 
-TileMap *TileMap::get(Common::String name) {
-	if (_tileMaps.find(name) != _tileMaps.end())
-		return _tileMaps[name];
+TileMap *TileMaps::get(Common::String name) {
+	if (find(name) != end())
+		return (*this)[name];
 	else return nullptr;
 }
+
+/*-------------------------------------------------------------------*/
 
 MapTile TileMap::translate(uint index) {
 	return _tileMap[index];

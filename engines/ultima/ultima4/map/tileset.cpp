@@ -97,16 +97,10 @@ void TileSets::loadAll() {
 			(*this)[tileset->_name] = tileset;
 		}
 	}
-
-	// Load tile maps, including translations from index to id
-	TileMap::loadAll();
 }
 
 void TileSets::unloadAll() {
 	iterator i;
-
-	// Unload all tilemaps
-	TileMap::unloadAll();
 
 	for (i = begin(); i != end(); i++) {
 		i->_value->unload();

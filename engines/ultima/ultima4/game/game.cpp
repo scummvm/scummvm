@@ -408,8 +408,8 @@ void gameFixupObjects(Map *map) {
 			Coords coords(monster->_x, monster->_y);
 
 			// tile values stored in monsters.sav hardcoded to index into base tilemap
-			MapTile tile = TileMap::get("base")->translate(monster->_tile),
-			        oldTile = TileMap::get("base")->translate(monster->_prevTile);
+			MapTile tile = g_tileMaps->get("base")->translate(monster->_tile),
+			        oldTile = g_tileMaps->get("base")->translate(monster->_prevTile);
 
 			if (i < MONSTERTABLE_CREATURES_SIZE) {
 				const Creature *creature = creatureMgr->getByTile(tile);

@@ -31,46 +31,60 @@ namespace Ultima {
 namespace Ultima4 {
 
 class ConfigElement;
+class TileMaps;
 
 /**
  * A tilemap maps the raw bytes in a map file to MapTiles.
  */
 class TileMap {
+	friend class TileMaps;
+private:
+	Std::map<uint, MapTile> _tileMap;
 public:
-	typedef Std::map<Common::String, TileMap *> TileIndexMapMap;
-
 	/**
 	 * Translates a raw index to a MapTile.
 	 */
 	MapTile translate(uint index);
+
 	uint untranslate(MapTile &tile);
+};
 
-	/**
-	 * Load all tilemaps from the specified xml file
-	 */
-	static void loadAll();
-
-	/**
-	 * Delete all tilemaps
-	 */
-	static void unloadAll();
-
-	/**
-	 * Returns the Tile index map with the specified name
-	 */
-	static TileMap *get(Common::String name);
-
+class TileMaps : public Std::map<Common::String, TileMap *> {
 private:
 	/**
 	 * Loads a tile map which translates between tile indices and tile
 	 * names.  Tile maps are useful to translate from dos tile indices to
 	 * xu4 tile ids.
 	 */
-	static void load(const ConfigElement &tilemapConf);
-	static TileIndexMapMap _tileMaps;
+	void load(const ConfigElement &tilemapConf);
+public:
+	/**
+	 * Constructor
+	 */
+	TileMaps();
 
-	Std::map<uint, MapTile> _tileMap;
+	/**
+	 * Destructor
+	 */
+	~TileMaps();
+
+	/**
+	 * Load all tilemaps from the specified xml file
+	 */
+	void loadAll();
+
+	/**
+	 * Delete all tilemaps
+	 */
+	void unloadAll();
+
+	/**
+	 * Returns the Tile index map with the specified name
+	 */
+	TileMap *get(Common::String name);
 };
+
+extern TileMaps *g_tileMaps;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

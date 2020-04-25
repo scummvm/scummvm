@@ -36,6 +36,7 @@ class GameController;
 class Music;
 struct SaveGame;
 class Screen;
+class TileMaps;
 class TileRules;
 class TileSets;
 
@@ -63,6 +64,7 @@ public:
 	Music *_music;
 	SaveGame *_saveGame;
 	Screen *_screen;
+	TileMaps *_tileMaps;
 	TileRules *_tileRules;
 	TileSets *_tileSets;
 public:
