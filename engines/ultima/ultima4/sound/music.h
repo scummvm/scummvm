@@ -95,7 +95,7 @@ public:
 	/**
 	 * Stop playing music
 	 */
-	void stop()         {
+	void stop() {
 		_on = false;
 		stopMid();
 	}
@@ -113,28 +113,28 @@ public:
 	/**
 	 * Music when you talk to Lord British
 	 */
-	void lordBritish()  {
+	void lordBritish() {
 		playMid(RULEBRIT);
 	}
 
 	/**
 	 * Music when you talk to Hawkwind
 	 */
-	void hawkwind()     {
+	void hawkwind() {
 		playMid(SHOPPING);    
 	}
 
 	/**
 	 * Music that plays while camping
 	 */
-	void camp()         {
+	void camp() {
 		fadeOut(1000);
 	}
 
 	/**
 	 * Music when talking to a vendor
 	 */
-	void shopping()     {
+	void shopping() {
 		playMid(SHOPPING);
 	}
 	void intro() {

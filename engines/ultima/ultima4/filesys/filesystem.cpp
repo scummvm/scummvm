@@ -77,15 +77,15 @@ Common::String Path::getDir() const {
 	return !node.exists() || node.isDirectory() ? node.getPath() : node.getParent().getPath();
 }
 
-Common::String Path::getFilename() const        {
+Common::String Path::getFilename() const {
 	return (ext.empty()) ? file : file + Common::String(".") + ext;
 }
 
-Common::String Path::getBaseFilename() const    {
+Common::String Path::getBaseFilename() const {
 	return file;
 }
 
-Common::String Path::getExt() const             {
+Common::String Path::getExt() const {
 	return ext;
 }
 

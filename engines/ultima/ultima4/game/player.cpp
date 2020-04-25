@@ -118,7 +118,7 @@ Common::String PartyMember::translate(Std::vector<Common::String> &parts) {
 	return "";
 }
 
-int PartyMember::getHp() const      {
+int PartyMember::getHp() const {
 	return _player->_hp;
 }
 
@@ -164,19 +164,19 @@ const Weapon *PartyMember::getWeapon() const {
 	return Weapon::get(_player->_weapon);
 }
 
-const Armor *PartyMember::getArmor() const   {
+const Armor *PartyMember::getArmor() const {
 	return g_armors->get(_player->armor);
 }
 
-Common::String PartyMember::getName() const          {
+Common::String PartyMember::getName() const {
 	return _player->name;
 }
 
-SexType PartyMember::getSex() const          {
+SexType PartyMember::getSex() const {
 	return _player->_sex;
 }
 
-ClassType PartyMember::getClass() const      {
+ClassType PartyMember::getClass() const {
 	return _player->_class;
 }
 

@@ -43,7 +43,7 @@ public:
 private:
 	bool load(Sound sound);
 	int init_sys();
-	void del()      {
+	void del() {
 		del_sys();
 	}
 	void del_sys();

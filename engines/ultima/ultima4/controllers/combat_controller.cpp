@@ -106,41 +106,41 @@ CombatController::~CombatController() {
 }
 
 // Accessor Methods
-bool CombatController::isCamping() const                    {
+bool CombatController::isCamping() const {
 	return _camping;
 }
-bool CombatController::isWinOrLose() const                  {
+bool CombatController::isWinOrLose() const {
 	return _winOrLose;
 }
-Direction CombatController::getExitDir() const              {
+Direction CombatController::getExitDir() const {
 	return _exitDir;
 }
-byte CombatController::getFocus() const            {
+byte CombatController::getFocus() const {
 	return _focus;
 }
-CombatMap *CombatController::getMap() const                 {
+CombatMap *CombatController::getMap() const {
 	return _map;
 }
-Creature *CombatController::getCreature() const               {
+Creature *CombatController::getCreature() const {
 	return _creature;
 }
-PartyMemberVector *CombatController::getParty()             {
+PartyMemberVector *CombatController::getParty() {
 	return &_party;
 }
-PartyMember *CombatController::getCurrentPlayer()           {
+PartyMember *CombatController::getCurrentPlayer() {
 	return _party[_focus];
 }
 
-void CombatController::setExitDir(Direction d)              {
+void CombatController::setExitDir(Direction d) {
 	_exitDir = d;
 }
-void CombatController::setCreature(Creature *m)               {
+void CombatController::setCreature(Creature *m) {
 	_creature = m;
 }
-void CombatController::setWinOrLose(bool worl)              {
+void CombatController::setWinOrLose(bool worl) {
 	_winOrLose = worl;
 }
-void CombatController::showCombatMessage(bool show)         {
+void CombatController::showCombatMessage(bool show) {
 	_showMessage = show;
 }
 

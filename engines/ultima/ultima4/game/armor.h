@@ -37,13 +37,13 @@ class Armor {
 	friend class Armors;
 public:
 	// Getters
-	ArmorType getType() const       {
+	ArmorType getType() const {
 		return _type;      /**< Returns the ArmorType of the armor */
 	}
-	const Common::String &getName() const   {
+	const Common::String &getName() const {
 		return _name;      /**< Returns the name of the armor */
 	}
-	int getDefense() const          {
+	int getDefense() const {
 		return _defense;   /**< Returns the defense value of the armor */
 	}
 	/** Returns true if the class given can wear the armor */

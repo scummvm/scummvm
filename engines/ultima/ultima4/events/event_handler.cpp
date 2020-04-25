@@ -92,7 +92,7 @@ void EventHandler::end() {
 	_ended = true;
 }
 
-TimedEventMgr *EventHandler::getTimer()  {
+TimedEventMgr *EventHandler::getTimer() {
 	return &_timer;
 }
 

@@ -72,46 +72,46 @@ public:
 	 */
 	void loadProperties(const ConfigElement &conf);
 
-	TileId getId() const                {
+	TileId getId() const {
 		return _id;
 	}
-	const Common::String &getName() const       {
+	const Common::String &getName() const {
 		return _name;
 	}
-	int getWidth() const                {
+	int getWidth() const {
 		return _w;
 	}
-	int getHeight() const               {
+	int getHeight() const {
 		return _h;
 	}
-	int getFrames() const               {
+	int getFrames() const {
 		return _frames;
 	}
-	int getScale() const                {
+	int getScale() const {
 		return _scale;
 	}
-	TileAnim *getAnim() const           {
+	TileAnim *getAnim() const {
 		return _anim;
 	}
 	Image *getImage();
-	const Common::String &getLooksLike() const  {
+	const Common::String &getLooksLike() const {
 		return _looksLike;
 	}
 
-	bool isTiledInDungeon() const       {
+	bool isTiledInDungeon() const {
 		return _tiledInDungeon;
 	}
-	bool isLandForeground() const       {
+	bool isLandForeground() const {
 		return _foreground;
 	}
-	bool isWaterForeground() const      {
+	bool isWaterForeground() const {
 		return _waterForeground;
 	}
 
-	int canWalkOn(Direction d) const   {
+	int canWalkOn(Direction d) const {
 		return DIR_IN_MASK(d, rule->_walkOnDirs);
 	}
-	int canWalkOff(Direction d) const  {
+	int canWalkOff(Direction d) const {
 		return DIR_IN_MASK(d, rule->_walkOffDirs);
 	}
 
@@ -119,23 +119,23 @@ public:
 	 * All tiles that you can walk, swim, or sail on, can be attacked over. All others must declare
 	 * themselves
 	 */
-	int  canAttackOver() const      {
+	int  canAttackOver() const {
 		return isWalkable() || isSwimable() || isSailable() || (rule->_mask & MASK_ATTACKOVER);
 	}
-	int  canLandBalloon() const     {
+	int  canLandBalloon() const {
 		return rule->_mask & MASK_CANLANDBALLOON;
 	}
-	int  isLivingObject() const     {
+	int  isLivingObject() const {
 		return rule->_mask & MASK_LIVING_THING;
 	}
-	int  isReplacement() const      {
+	int  isReplacement() const {
 		return rule->_mask & MASK_REPLACEMENT;
 	}
 	int  isWaterReplacement() const {
 		return rule->_mask & MASK_WATER_REPLACEMENT;
 	}
 
-	int  isWalkable() const         {
+	int  isWalkable() const {
 		return rule->_walkOnDirs > 0;
 	}
 	bool isCreatureWalkable() const {
@@ -143,49 +143,49 @@ public:
 	}
 	bool isDungeonWalkable() const;
 	bool isDungeonFloor() const;
-	int  isSwimable() const         {
+	int  isSwimable() const {
 		return rule->_movementMask & MASK_SWIMABLE;
 	}
-	int  isSailable() const         {
+	int  isSailable() const {
 		return rule->_movementMask & MASK_SAILABLE;
 	}
-	bool isWater() const            {
+	bool isWater() const {
 		return (isSwimable() || isSailable());
 	}
-	int  isFlyable() const          {
+	int  isFlyable() const {
 		return !(rule->_movementMask & MASK_UNFLYABLE);
 	}
-	int  isDoor() const             {
+	int  isDoor() const {
 		return rule->_mask & MASK_DOOR;
 	}
-	int  isLockedDoor() const       {
+	int  isLockedDoor() const {
 		return rule->_mask & MASK_LOCKEDDOOR;
 	}
-	int  isChest() const            {
+	int  isChest() const {
 		return rule->_mask & MASK_CHEST;
 	}
-	int  isShip() const             {
+	int  isShip() const {
 		return rule->_mask & MASK_SHIP;
 	}
-	bool isPirateShip() const       {
+	bool isPirateShip() const {
 		return _name == "pirate_ship";
 	}
-	int  isHorse() const            {
+	int  isHorse() const {
 		return rule->_mask & MASK_HORSE;
 	}
-	int  isBalloon() const          {
+	int  isBalloon() const {
 		return rule->_mask & MASK_BALLOON;
 	}
-	int  canDispel() const          {
+	int  canDispel() const {
 		return rule->_mask & MASK_DISPEL;
 	}
-	int  canTalkOver() const        {
+	int  canTalkOver() const {
 		return rule->_mask & MASK_TALKOVER;
 	}
-	TileSpeed getSpeed() const      {
+	TileSpeed getSpeed() const {
 		return rule->_speed;
 	}
-	TileEffect getEffect() const    {
+	TileEffect getEffect() const {
 		return rule->_effect;
 	}
 
@@ -199,10 +199,10 @@ public:
 	Direction directionForFrame(int frame) const;
 	int frameForDirection(Direction d) const;
 
-	static void resetNextId()                       {
+	static void resetNextId() {
 		_nextId = 0;
 	}
-	static bool canTalkOverTile(const Tile *tile)   {
+	static bool canTalkOverTile(const Tile *tile) {
 		return tile->canTalkOver() != 0;
 	}
 	static bool canAttackOverTile(const Tile *tile) {

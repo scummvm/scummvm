@@ -148,10 +148,10 @@ public:
 		/*
 		 * Accessor methods
 		 */
-		const Common::String &getKeyword()  {
+		const Common::String &getKeyword() {
 			return _keyword;
 		}
-		Response *getResponse()     {
+		Response *getResponse() {
 			return _response;
 		}
 
@@ -174,53 +174,53 @@ public:
 	/*
 	 * Accessor methods
 	 */
-	const Common::String &getName() const                   {
+	const Common::String &getName() const {
 		return _name;
 	}
-	const Common::String &getPronoun() const                {
+	const Common::String &getPronoun() const {
 		return _pronoun;
 	}
-	const Common::String &getPrompt() const                 {
+	const Common::String &getPrompt() const {
 		return _prompt;
 	}
-	Response *getIntro(bool familiar = false)       {
+	Response *getIntro(bool familiar = false) {
 		return _intro;
 	}
-	Response *getLongIntro(bool familiar = false)   {
+	Response *getLongIntro(bool familiar = false) {
 		return _longIntro;
 	}
-	Response *getDefaultAnswer()                    {
+	Response *getDefaultAnswer() {
 		return _defaultAnswer;
 	}
-	Dialogue::Question *getQuestion()               {
+	Dialogue::Question *getQuestion() {
 		return _question;
 	}
 
 	/*
 	 * Getters
 	 */
-	void setName(const Common::String &n)       {
+	void setName(const Common::String &n) {
 		_name           = n;
 	}
-	void setPronoun(const Common::String &pn)   {
+	void setPronoun(const Common::String &pn) {
 		_pronoun        = pn;
 	}
 	void setPrompt(const Common::String &prompt) {
 		this->_prompt   = prompt;
 	}
-	void setIntro(Response *i)          {
+	void setIntro(Response *i) {
 		_intro          = i;
 	}
-	void setLongIntro(Response *i)      {
+	void setLongIntro(Response *i) {
 		_longIntro      = i;
 	}
-	void setDefaultAnswer(Response *a)  {
+	void setDefaultAnswer(Response *a) {
 		_defaultAnswer  = a;
 	}
-	void setTurnAwayProb(int prob)      {
+	void setTurnAwayProb(int prob) {
 		_turnAwayProb   = prob;
 	}
-	void setQuestion(Question *q)       {
+	void setQuestion(Question *q) {
 		_question       = q;
 	}
 	void addKeyword(const Common::String &kw, Response *response);

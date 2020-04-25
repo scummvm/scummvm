@@ -794,7 +794,7 @@ void mixReagentsSuper() {
 	ReagentShop shops[] = {
 		{ "BuccDen", {6, 7, 9, 9, 9, 1} },
 		{ "Moonglo", {2, 5, 6, 3, 6, 9} },
-		{ "Paws",    {3, 4, 2, 8, 6, 7} },
+		{ "Paws", {3, 4, 2, 8, 6, 7} },
 		{ "SkaraBr", {2, 4, 9, 6, 4, 8} },
 	};
 	const int shopcount = sizeof(shops) / sizeof(shops[0]);

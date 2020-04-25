@@ -44,13 +44,13 @@ public:
 
 	Aura();
 
-	int getDuration() const         {
+	int getDuration() const {
 		return _duration;
 	}
-	Aura::Type getType() const      {
+	Aura::Type getType() const {
 		return _type;
 	}
-	bool isActive() const           {
+	bool isActive() const {
 		return _duration > 0;
 	}
 
@@ -58,10 +58,10 @@ public:
 	void set(Type = NONE, int d = 0);
 	void setType(Type t);
 
-	bool operator==(const Type &t) const    {
+	bool operator==(const Type &t) const {
 		return _type == t;
 	}
-	bool operator!=(const Type &t) const    {
+	bool operator!=(const Type &t) const {
 		return !operator==(t);
 	}
 

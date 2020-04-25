@@ -444,28 +444,28 @@ void Script::_continue() {
 	else run(_target);
 }
 
-void Script::resetState()               {
+void Script::resetState() {
 	_state = STATE_NORMAL;
 }
 
-void Script::setState(Script::State s)  {
+void Script::setState(Script::State s) {
 	_state = s;
 }
 
-void Script::setTarget(const Common::String &val)      {
+void Script::setTarget(const Common::String &val) {
 	_target = val;
 }
 
-void Script::setChoices(const Common::String &val)     {
+void Script::setChoices(const Common::String &val) {
 	_choices = val;
 }
 
-void Script::setVar(const Common::String &name, const Common::String &val)    {
+void Script::setVar(const Common::String &name, const Common::String &val) {
 	removeCurrentVariable(name);
 	_variables[name] = new Variable(val);
 }
 
-void Script::setVar(const Common::String &name, int val)       {
+void Script::setVar(const Common::String &name, int val) {
 	removeCurrentVariable(name);
 	_variables[name] = new Variable(val);
 }
@@ -477,11 +477,11 @@ void Script::unsetVar(const Common::String &name) {
 	else _variables[name] = new Variable();
 }
 
-Script::State Script::getState()        {
+Script::State Script::getState() {
 	return _state;
 }
 
-Common::String Script::getTarget()              {
+Common::String Script::getTarget() {
 	return _target;
 }
 
@@ -489,15 +489,15 @@ Script::InputType Script::getInputType() {
 	return _inputType;
 }
 
-Common::String Script::getChoices()             {
+Common::String Script::getChoices() {
 	return _choices;
 }
 
-Common::String Script::getInputName()           {
+Common::String Script::getInputName() {
 	return _inputName;
 }
 
-int Script::getInputMaxLen()            {
+int Script::getInputMaxLen() {
 	return _inputMaxLen;
 }
 

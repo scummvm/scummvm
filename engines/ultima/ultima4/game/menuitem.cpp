@@ -36,34 +36,34 @@ MenuItem::MenuItem(Common::String t, short xp, short yp, int sc) :
 	if (sc != -1) addShortcutKey(tolower(_text[sc]));
 }
 
-int MenuItem::getId() const                         {
+int MenuItem::getId() const {
 	return _id;
 }
-short MenuItem::getX() const                        {
+short MenuItem::getX() const {
 	return x;
 }
-short MenuItem::getY() const                        {
+short MenuItem::getY() const {
 	return y;
 }
-int MenuItem::getScOffset() const                   {
+int MenuItem::getScOffset() const {
 	return _scOffset;
 }
-Common::String MenuItem::getText() const                    {
+Common::String MenuItem::getText() const {
 	return _text;
 }
-bool MenuItem::isHighlighted() const                {
+bool MenuItem::isHighlighted() const {
 	return _highlighted;
 }
-bool MenuItem::isSelected() const                   {
+bool MenuItem::isSelected() const {
 	return _selected;
 }
-bool MenuItem::isVisible() const                    {
+bool MenuItem::isVisible() const {
 	return _visible;
 }
-const Std::set<int> &MenuItem::getShortcutKeys() const   {
+const Std::set<int> &MenuItem::getShortcutKeys() const {
 	return _shortcutKeys;
 }
-bool MenuItem::getClosesMenu() const                {
+bool MenuItem::getClosesMenu() const {
 	return _closesMenu;
 }
 

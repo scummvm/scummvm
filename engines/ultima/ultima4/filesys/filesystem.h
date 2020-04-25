@@ -60,7 +60,7 @@ public:
 	/**
 	 * Returns the full translated path
 	 */
-	Common::String getPath() const          {
+	Common::String getPath() const {
 		return path;
 	}
 

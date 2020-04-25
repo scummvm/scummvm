@@ -41,7 +41,7 @@ DungeonView::DungeonView(int x, int y, int columns, int rows) : TileView(x, y, r
 }
 
 DungeonView *DungeonView::getInstance() {
-	if (!_instance)     {
+	if (!_instance) {
 		_instance = new DungeonView(BORDER_WIDTH, BORDER_HEIGHT, VIEWPORT_W, VIEWPORT_H);
 	}
 	return _instance;

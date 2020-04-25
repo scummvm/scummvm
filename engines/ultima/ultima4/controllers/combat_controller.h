@@ -237,13 +237,13 @@ public:
 	static MapId mapForTile(const Tile *ground, const Tile *transport, Object *obj);
 
 	// Getters
-	bool isDungeonRoom() const      {
+	bool isDungeonRoom() const {
 		return _dungeonRoom;
 	}
-	bool isAltarRoom() const        {
+	bool isAltarRoom() const {
 		return _altarRoom != VIRT_NONE;
 	}
-	bool isContextual() const       {
+	bool isContextual() const {
 		return _contextual;
 	}
 	BaseVirtue getAltarRoom() const {
@@ -254,10 +254,10 @@ public:
 	void setAltarRoom(BaseVirtue ar) {
 		_altarRoom = ar;
 	}
-	void setDungeonRoom(bool d)     {
+	void setDungeonRoom(bool d) {
 		_dungeonRoom = d;
 	}
-	void setContextual(bool c)      {
+	void setContextual(bool c) {
 		_contextual = c;
 	}
 

@@ -57,62 +57,62 @@ public:
 	 */
 	static const Weapon *get(const Common::String &name);
 
-	WeaponType getType() const          {
+	WeaponType getType() const {
 		return _type;
 	}
-	const Common::String &getName() const       {
+	const Common::String &getName() const {
 		return _name;
 	}
-	const Common::String &getAbbrev() const     {
+	const Common::String &getAbbrev() const {
 		return _abbr;
 	}
 	bool canReady(ClassType klass) const {
 		return (_canUse & (1 << klass)) != 0;
 	}
-	int getRange() const                {
+	int getRange() const {
 		return _range;
 	}
-	int getDamage() const               {
+	int getDamage() const {
 		return _damage;
 	}
-	const Common::String &getHitTile() const    {
+	const Common::String &getHitTile() const {
 		return _hitTile;
 	}
-	const Common::String &getMissTile() const   {
+	const Common::String &getMissTile() const {
 		return _missTile;
 	}
-	const Common::String &leavesTile() const    {
+	const Common::String &leavesTile() const {
 		return _leaveTile;
 	}
-	unsigned short getFlags() const     {
+	unsigned short getFlags() const {
 		return _flags;
 	}
 
-	bool loseWhenUsed() const           {
+	bool loseWhenUsed() const {
 		return _flags & WEAP_LOSE;
 	}
-	bool loseWhenRanged() const         {
+	bool loseWhenRanged() const {
 		return _flags & WEAP_LOSEWHENRANGED;
 	}
-	bool canChooseDistance() const      {
+	bool canChooseDistance() const {
 		return _flags & WEAP_CHOOSEDISTANCE;
 	}
-	bool alwaysHits() const             {
+	bool alwaysHits() const {
 		return _flags & WEAP_ALWAYSHITS;
 	}
-	bool isMagic() const                {
+	bool isMagic() const {
 		return _flags & WEAP_MAGIC;
 	}
 	bool canAttackThroughObjects() const {
 		return _flags & WEAP_ATTACKTHROUGHOBJECTS;
 	}
-	bool rangeAbsolute() const          {
+	bool rangeAbsolute() const {
 		return _flags & WEAP_ABSOLUTERANGE;
 	}
-	bool returns() const                {
+	bool returns() const {
 		return _flags & WEAP_RETURNS;
 	}
-	bool showTravel() const             {
+	bool showTravel() const {
 		return !(_flags & WEAP_DONTSHOWTRAVEL);
 	}
 

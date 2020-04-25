@@ -237,7 +237,7 @@ void Creature::load(const ConfigElement &conf) {
 		_slowedType = SLOWED_BY_NOTHING;
 }
 
-bool Creature::isAttackable() const  {
+bool Creature::isAttackable() const {
 	if (_mAttr & MATTR_NONATTACKABLE)
 		return false;
 	/* can't attack horse transport */
