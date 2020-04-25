@@ -431,7 +431,7 @@ void CurrentMap::clipMapChunks(int &minx, int &maxx, int &miny, int &maxy) const
 
 void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
                             uint32 scriptsize, const Item *check, uint16 range,
-                            bool recurse, int32 x, int32 y) {
+                            bool recurse, int32 x, int32 y) const {
 	int32 xd = 0, yd = 0;
 
 	// if item != 0, search an area around item. Otherwise, search an area
@@ -474,9 +474,9 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 					continue;
 
 				// check item against loopscript
-				if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
+				if (item->checkLoopScript(loopscript, scriptsize)) {
 					assert(itemlist->getElementSize() == 2);
-					uint16 objid = (*iter)->getObjId();
+					uint16 objid = item->getObjId();
 					uint8 buf[2];
 					buf[0] = static_cast<uint8>(objid);
 					buf[1] = static_cast<uint8>(objid >> 8);
@@ -485,7 +485,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 				if (recurse) {
 					// recurse into child-containers
-					Container *container = p_dynamic_cast<Container *>(*iter);
+					const Container *container = p_dynamic_cast<const Container *>(item);
 					if (container)
 						container->containerSearch(itemlist, loopscript,
 						                           scriptsize, recurse);
@@ -497,7 +497,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
                                uint32 scriptsize, const Item *check,
-							   bool above, bool below, bool recurse) {
+							   bool above, bool below, bool recurse) const {
 	int32 origin[3];
 	int32 dims[3];
 	check->getLocationAbsolute(origin[0], origin[1], origin[2]);
@@ -509,7 +509,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
                                uint32 scriptsize, ObjId check,
                                int32 origin[3], int32 dims[3],
-                               bool above, bool below, bool recurse) {
+                               bool above, bool below, bool recurse) const {
 	const Rect searchrange(origin[0] - dims[0], origin[1] - dims[1],
 	                 dims[0], dims[1]);
 
@@ -563,9 +563,9 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 					continue;
 
 				// check item against loopscript
-				if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
+				if (item->checkLoopScript(loopscript, scriptsize)) {
 					assert(itemlist->getElementSize() == 2);
-					uint16 objid = (*iter)->getObjId();
+					uint16 objid = item->getObjId();
 					uint8 buf[2];
 					buf[0] = static_cast<uint8>(objid);
 					buf[1] = static_cast<uint8>(objid >> 8);
@@ -606,7 +606,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  ObjId *roof) const {
 	const ShapeInfo *si = GameData::get_instance()->
 	                getMainShapes()->getShapeInfo(shape);
-	int xd, yd, zd;
+	int32 xd, yd, zd;
 	// Note: this assumes the shape to be placed is not flipped
 	si->getFootpadWorld(xd, yd, zd, 0);
 

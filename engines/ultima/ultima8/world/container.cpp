@@ -273,8 +273,8 @@ uint32 Container::getContentVolume() const {
 }
 
 void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
-                                uint32 scriptsize, bool recurse) {
-	Std::list<Item *>::iterator iter;
+                                uint32 scriptsize, bool recurse) const {
+	Std::list<Item *>::const_iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		// check item against loopscript
 		if ((*iter)->checkLoopScript(loopscript, scriptsize)) {

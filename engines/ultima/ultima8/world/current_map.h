@@ -84,18 +84,18 @@ public:
 	//! \param y y coordinate of search center if item is 0.
 	void areaSearch(UCList *itemlist, const uint8 *loopscript,
 	                uint32 scriptsize, const Item *item, uint16 range,
-					bool recurse, int32 x = 0, int32 y = 0);
+					bool recurse, int32 x = 0, int32 y = 0) const;
 
 	// Surface search: Search above and below an item.
 	void surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 	                   uint32 scriptsize, const Item *item, bool above,
-					   bool below, bool recurse = false);
+					   bool below, bool recurse = false) const;
 
 	// Surface search: Search above and below an item.
 	void surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 	                   uint32 scriptsize, ObjId id,
 	                   int32 origin[3], int32 dims[2],
-	                   bool above, bool below, bool recurse = false);
+	                   bool above, bool below, bool recurse = false) const;
 
 	// Collision detection. Returns true if the box [x,y,z]-[x-xd,y-yd,z+zd]
 	// does not collide with any solid items.

@@ -84,7 +84,7 @@ public:
 	//! \param scriptsize The size (in bytes) of the loopscript
 	//! \param recurse If true, search through child-containers too
 	void containerSearch(UCList *itemlist, const uint8 *loopscript,
-	                     uint32 scriptsize, bool recurse);
+	                     uint32 scriptsize, bool recurse) const;
 
 	//! Get the weight of the container and its contents
 	//! \return weight

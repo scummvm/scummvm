@@ -377,7 +377,7 @@ public:
 	//! \param script The loopscript to run
 	//! \param scriptsize The size (in bytes) of the loopscript
 	//! \return true if the item matches, false otherwise
-	bool checkLoopScript(const uint8 *script, uint32 scriptsize);
+	bool checkLoopScript(const uint8 *script, uint32 scriptsize) const;
 
 	uint32 callUsecodeEvent_look();                             // event 0
 	uint32 callUsecodeEvent_use();                              // event 1

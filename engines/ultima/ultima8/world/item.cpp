@@ -618,7 +618,7 @@ uint32 Item::getVolume() const {
 	}
 }
 
-bool Item::checkLoopScript(const uint8 *script, uint32 scriptsize) {
+bool Item::checkLoopScript(const uint8 *script, uint32 scriptsize) const {
 	// if really necessary this could be made static to prevent news/deletes
 	DynamicUCStack stack(0x40); // 64bytes should be plenty of room
 
