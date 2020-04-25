@@ -34,6 +34,7 @@
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/person.h"
+#include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
@@ -53,7 +54,8 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _armors(nullptr),
 		_config(nullptr), _context(nullptr), _dialogueLoaders(nullptr), _game(nullptr),
 		_music(nullptr), _imageLoaders(nullptr), _moongates(nullptr), _saveGame(nullptr),
-		_screen(nullptr), _tileMaps(nullptr), _tileRules(nullptr), _tileSets(nullptr) {
+		_screen(nullptr), _tileMaps(nullptr), _tileRules(nullptr), _tileSets(nullptr),
+		_weapons(nullptr) {
 	g_ultima = this;
 	g_armors = nullptr;
 	g_context = nullptr;
@@ -63,6 +65,7 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 	g_tileMaps = nullptr;
 	g_tileRules = nullptr;
 	g_tileSets = nullptr;
+	g_weapons = nullptr;
 }
 
 Ultima4Engine::~Ultima4Engine() {
@@ -79,6 +82,7 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _tileMaps;
 	delete _tileRules;
 	delete _tileSets;
+	delete _weapons;
 
 	ImageMgr::destroy();
 
@@ -105,6 +109,7 @@ bool Ultima4Engine::initialize() {
 	_imageLoaders = new ImageLoaders();
 	_music = new Music();
 	_saveGame = new SaveGame();
+	_weapons = new Weapons();
 
 	setDebugger(new Debugger());
 	soundInit();

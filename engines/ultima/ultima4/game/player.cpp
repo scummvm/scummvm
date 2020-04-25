@@ -52,7 +52,7 @@ PartyMember::PartyMember(Party *p, SaveGamePlayerRecord *pr) :
 	_party(p) {
 	/* FIXME: we need to rename movement behaviors */
 	setMovementBehavior(MOVEMENT_ATTACK_AVATAR);
-	this->_ranged = Weapon::get(pr->_weapon)->getRange() ? 1 : 0;
+	this->_ranged = g_weapons->get(pr->_weapon)->getRange() ? 1 : 0;
 	setStatus(pr->_status);
 }
 
@@ -161,7 +161,7 @@ int PartyMember::getMaxMp() const {
 }
 
 const Weapon *PartyMember::getWeapon() const {
-	return Weapon::get(_player->_weapon);
+	return g_weapons->get(_player->_weapon);
 }
 
 const Armor *PartyMember::getArmor() const {
@@ -431,7 +431,7 @@ bool PartyMember::applyDamage(int damage, bool) {
 }
 
 int PartyMember::getAttackBonus() const {
-	if (Weapon::get(_player->_weapon)->alwaysHits() || _player->_dex >= 40)
+	if (g_weapons->get(_player->_weapon)->alwaysHits() || _player->_dex >= 40)
 		return 255;
 	return _player->_dex;
 }
@@ -456,7 +456,7 @@ bool PartyMember::dealDamage(Creature *m, int damage) {
 int PartyMember::getDamage() {
 	int maxDamage;
 
-	maxDamage = Weapon::get(_player->_weapon)->getDamage();
+	maxDamage = g_weapons->get(_player->_weapon)->getDamage();
 	maxDamage += _player->_str;
 	if (maxDamage > 255)
 		maxDamage = 255;
@@ -625,7 +625,7 @@ Common::String Party::translate(Std::vector<Common::String> &parts) {
 
 		else if (parts.size() == 2) {
 			if (parts[0] == "weapon") {
-				const Weapon *w = Weapon::get(parts[1]);
+				const Weapon *w = g_weapons->get(parts[1]);
 				if (w)
 					return xu4_to_string(_saveGame->_weapons[w->getType()]);
 			} else if (parts[0] == "armor") {

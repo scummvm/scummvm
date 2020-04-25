@@ -935,7 +935,7 @@ bool Debugger::cmdReadyWeapon(int argc, const char **argv) {
 		return isDebuggerActive();
 
 	PartyMember *p = g_context->_party->member(player);
-	const Weapon *w = Weapon::get(weapon);
+	const Weapon *w = g_weapons->get(weapon);
 
 
 	if (!w) {
@@ -1278,7 +1278,7 @@ bool Debugger::cmdEquipment(int argc, const char **argv) {
 		g_ultima->_saveGame->_armor[i] = 8;
 
 	for (i = WEAP_HANDS + 1; i < WEAP_MAX; ++i) {
-		const Weapon *weapon = Weapon::get(static_cast<WeaponType>(i));
+		const Weapon *weapon = g_weapons->get(static_cast<WeaponType>(i));
 		if (weapon->loseWhenUsed() || weapon->loseWhenRanged())
 			g_ultima->_saveGame->_weapons[i] = 99;
 		else

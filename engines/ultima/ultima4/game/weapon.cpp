@@ -27,31 +27,58 @@
 namespace Ultima {
 namespace Ultima4 {
 
-bool Weapon::_confLoaded = false;
-Std::vector<Weapon *> Weapon::_weapons;
+Weapons *g_weapons;
 
-const Weapon *Weapon::get(WeaponType w) {
-	// Load in XML if it hasn't been already
-	loadConf();
-
-	if (static_cast<unsigned>(w) >= _weapons.size())
-		return nullptr;
-	return _weapons[w];
+Weapons::Weapons() : _confLoaded(false) {
+	g_weapons = this;
 }
 
-const Weapon *Weapon::get(const Common::String &name) {
+Weapons::~Weapons() {
+	g_weapons = nullptr;
+}
+
+const Weapon *Weapons::get(WeaponType w) {
 	// Load in XML if it hasn't been already
 	loadConf();
 
-	for (unsigned i = 0; i < _weapons.size(); i++) {
-		if (scumm_stricmp(name.c_str(), _weapons[i]->_name.c_str()) == 0)
-			return _weapons[i];
+	if (static_cast<unsigned>(w) >= size())
+		return nullptr;
+	return (*this)[w];
+}
+
+const Weapon *Weapons::get(const Common::String &name) {
+	// Load in XML if it hasn't been already
+	loadConf();
+
+	for (uint i = 0; i < size(); i++) {
+		if (scumm_stricmp(name.c_str(), (*this)[i]->_name.c_str()) == 0)
+			return (*this)[i];
 	}
+
 	return nullptr;
 }
 
-Weapon::Weapon(const ConfigElement &conf)
-	: _type(static_cast<WeaponType>(_weapons.size()))
+void Weapons::loadConf() {
+	if (_confLoaded)
+		return;
+
+	_confLoaded = true;
+	const Config *config = Config::getInstance();
+
+	Std::vector<ConfigElement> weaponConfs = config->getElement("weapons").getChildren();
+	for (Std::vector<ConfigElement>::iterator i = weaponConfs.begin(); i != weaponConfs.end(); i++) {
+		if (i->getName() != "weapon")
+			continue;
+
+		WeaponType weaponType = static_cast<WeaponType>(size());
+		push_back(new Weapon(weaponType, *i));
+	}
+}
+
+/*-------------------------------------------------------------------*/
+
+Weapon::Weapon(WeaponType weaponType, const ConfigElement &conf)
+	: _type(weaponType)
 	, _name(conf.getString("name"))
 	, _abbr(conf.getString("abbr"))
 	, _canUse(0xFF)
@@ -128,22 +155,6 @@ Weapon::Weapon(const ConfigElement &conf)
 			_canUse |= mask;
 		else
 			_canUse &= ~mask;
-	}
-}
-
-void Weapon::loadConf() {
-	if (_confLoaded)
-		return;
-
-	_confLoaded = true;
-	const Config *config = Config::getInstance();
-
-	Std::vector<ConfigElement> weaponConfs = config->getElement("weapons").getChildren();
-	for (Std::vector<ConfigElement>::iterator i = weaponConfs.begin(); i != weaponConfs.end(); i++) {
-		if (i->getName() != "weapon")
-			continue;
-
-		_weapons.push_back(new Weapon(*i));
 	}
 }
 

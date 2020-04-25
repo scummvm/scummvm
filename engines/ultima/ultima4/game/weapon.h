@@ -30,8 +30,10 @@ namespace Ultima {
 namespace Ultima4 {
 
 class ConfigElement;
+class Weapons;
 
 class Weapon {
+	friend class Weapons;
 public:
 	/**< Flags affecting weapon's behavior. @see Weapon::flags */
 	enum Flags {
@@ -47,16 +49,6 @@ public:
 	};
 
 public:
-	/**
-	 * Returns weapon by WeaponType.
-	 */
-	static const Weapon *get(WeaponType w);
-
-	/**
-	 * Returns weapon that has the given name
-	 */
-	static const Weapon *get(const Common::String &name);
-
 	WeaponType getType() const {
 		return _type;
 	}
@@ -117,11 +109,7 @@ public:
 	}
 
 private:
-	Weapon(const ConfigElement &conf);
-
-	static void loadConf();
-	static bool _confLoaded;
-	static Std::vector<Weapon *> _weapons;
+	Weapon(WeaponType weaponType, const ConfigElement &conf);
 
 	WeaponType _type;
 	Common::String _name;
@@ -134,6 +122,35 @@ private:
 	Common::String _leaveTile;       /**< if the weapon leaves a tile, the tile #, zero otherwise */
 	unsigned short _flags;
 };
+
+class Weapons : public Common::Array<Weapon *> {
+private:
+	bool _confLoaded;
+
+	void loadConf();
+public:
+	/**
+	 * Constructor
+	 */
+	Weapons();
+
+	/**
+	 * Destructor
+	 */
+	~Weapons();
+
+	/**
+	 * Returns weapon by WeaponType.
+	 */
+	const Weapon *get(WeaponType w);
+
+	/**
+	 * Returns weapon that has the given name
+	 */
+	const Weapon *get(const Common::String &name);
+};
+
+extern Weapons *g_weapons;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

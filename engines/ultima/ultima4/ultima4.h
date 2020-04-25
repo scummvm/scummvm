@@ -42,6 +42,7 @@ class Screen;
 class TileMaps;
 class TileRules;
 class TileSets;
+class Weapons;
 
 class Ultima4Engine : public Shared::UltimaEngine {
 private:
@@ -72,6 +73,7 @@ public:
 	TileMaps *_tileMaps;
 	TileRules *_tileRules;
 	TileSets *_tileSets;
+	Weapons *_weapons;
 	Std::vector<Common::String> _hawkwindText;
 public:
 	Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);

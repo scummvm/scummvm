@@ -249,7 +249,7 @@ void StatsArea::showWeapons() {
 
 	int line = 0;
 	int col = 0;
-	_mainArea.textAt(0, line++, "A-%s", Weapon::get(WEAP_HANDS)->getName().c_str());
+	_mainArea.textAt(0, line++, "A-%s", g_weapons->get(WEAP_HANDS)->getName().c_str());
 	for (int w = WEAP_HANDS + 1; w < WEAP_MAX; w++) {
 		int n = g_ultima->_saveGame->_weapons[w];
 		if (n >= 100)
@@ -257,7 +257,7 @@ void StatsArea::showWeapons() {
 		if (n >= 1) {
 			const char *format = (n >= 10) ? "%c%d-%s" : "%c-%d-%s";
 
-			_mainArea.textAt(col, line++, format, w - WEAP_HANDS + 'A', n, Weapon::get((WeaponType) w)->getAbbrev().c_str());
+			_mainArea.textAt(col, line++, format, w - WEAP_HANDS + 'A', n, g_weapons->get((WeaponType) w)->getAbbrev().c_str());
 			if (line >= (STATS_AREA_HEIGHT)) {
 				line = 0;
 				col += 8;
