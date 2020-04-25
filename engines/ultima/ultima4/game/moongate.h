@@ -23,15 +23,31 @@
 #ifndef ULTIMA4_GAME_MOONGATE_H
 #define ULTIMA4_GAME_MOONGATE_H
 
+#include "ultima/ultima4/core/coords.h"
+#include "common/hashmap.h"
+
 namespace Ultima {
 namespace Ultima4 {
 
-class Coords;
+class Moongates : public Common::HashMap<int, Coords> {
+public:
+	/**
+	 * Constructor
+	 */
+	Moongates();
 
-void moongateAdd(int phase, const Coords &coords);
-const Coords *moongateGetGateCoordsForPhase(int phase);
-bool moongateFindActiveGateAt(int trammel, int felucca, const Coords &src, Coords &dest);
-bool moongateIsEntryToShrineOfSpirituality(int trammel, int felucca);
+	/**
+	 * Destructor
+	 */
+	~Moongates();
+
+	void add(int phase, const Coords &coords);
+	const Coords *getGateCoordsForPhase(int phase);
+	bool findActiveGateAt(int trammel, int felucca, const Coords &src, Coords &dest);
+	bool isEntryToShrineOfSpirituality(int trammel, int felucca);
+};
+
+extern Moongates *g_moongates;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

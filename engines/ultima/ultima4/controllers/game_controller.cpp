@@ -386,50 +386,50 @@ void GameController::updateMoons(bool showmoongates) {
 		if (showmoongates) {
 			/* update the moongates if trammel changed */
 			if (trammelSubphase == 0) {
-				gate = moongateGetGateCoordsForPhase(oldTrammel);
+				gate = g_moongates->getGateCoordsForPhase(oldTrammel);
 				if (gate)
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x40));
-				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
+				gate = g_moongates->getGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate)
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x40));
 			} else if (trammelSubphase == 1) {
-				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
+				gate = g_moongates->getGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x40));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x41));
 				}
 			} else if (trammelSubphase == 2) {
-				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
+				gate = g_moongates->getGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x41));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x42));
 				}
 			} else if (trammelSubphase == 3) {
-				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
+				gate = g_moongates->getGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x42));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x43));
 				}
 			} else if ((trammelSubphase > 3) && (trammelSubphase < (MOON_SECONDS_PER_PHASE * 4 * 3) - 3)) {
-				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
+				gate = g_moongates->getGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x43));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x43));
 				}
 			} else if (trammelSubphase == (MOON_SECONDS_PER_PHASE * 4 * 3) - 3) {
-				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
+				gate = g_moongates->getGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x43));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x42));
 				}
 			} else if (trammelSubphase == (MOON_SECONDS_PER_PHASE * 4 * 3) - 2) {
-				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
+				gate = g_moongates->getGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x42));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x41));
 				}
 			} else if (trammelSubphase == (MOON_SECONDS_PER_PHASE * 4 * 3) - 1) {
-				gate = moongateGetGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
+				gate = g_moongates->getGateCoordsForPhase(g_ultima->_saveGame->_trammelPhase);
 				if (gate) {
 					g_context->_location->_map->_annotations->remove(*gate, g_context->_location->_map->translateFromRawTileIndex(0x41));
 					g_context->_location->_map->_annotations->add(*gate, g_context->_location->_map->translateFromRawTileIndex(0x40));
@@ -670,7 +670,7 @@ void GameController::checkSpecialCreatures(Direction dir) {
 bool GameController::checkMoongates() {
 	Coords dest;
 
-	if (moongateFindActiveGateAt(g_ultima->_saveGame->_trammelPhase, g_ultima->_saveGame->_feluccaPhase, g_context->_location->_coords, dest)) {
+	if (g_moongates->findActiveGateAt(g_ultima->_saveGame->_trammelPhase, g_ultima->_saveGame->_feluccaPhase, g_context->_location->_coords, dest)) {
 
 		gameSpellEffect(-1, -1, SOUND_MOONGATE); // Default spell effect (screen inversion without 'spell' sound effects)
 
@@ -679,7 +679,7 @@ bool GameController::checkMoongates() {
 			gameSpellEffect(-1, -1, SOUND_MOONGATE); // Again, after arriving
 		}
 
-		if (moongateIsEntryToShrineOfSpirituality(g_ultima->_saveGame->_trammelPhase, g_ultima->_saveGame->_feluccaPhase)) {
+		if (g_moongates->isEntryToShrineOfSpirituality(g_ultima->_saveGame->_trammelPhase, g_ultima->_saveGame->_feluccaPhase)) {
 			Shrine *shrine_spirituality;
 
 			shrine_spirituality = dynamic_cast<Shrine *>(mapMgr->get(MAP_SHRINE_SPIRITUALITY));

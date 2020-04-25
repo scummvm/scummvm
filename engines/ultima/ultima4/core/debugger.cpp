@@ -1299,7 +1299,7 @@ bool Debugger::cmdGate(int argc, const char **argv) {
 			print("Gate %d!", gateNum);
 
 		if (g_context->_location->_map->isWorldMap()) {
-			const Coords *moongate = moongateGetGateCoordsForPhase(gateNum - 1);
+			const Coords *moongate = g_moongates->getGateCoordsForPhase(gateNum - 1);
 			if (moongate) {
 				g_context->_location->_coords = *moongate;
 				return false;

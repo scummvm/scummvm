@@ -613,7 +613,7 @@ static int spellGate(int phase) {
 
 	GameController::flashTile(g_context->_location->_coords, "moongate", 2);
 
-	moongate = moongateGetGateCoordsForPhase(phase);
+	moongate = g_moongates->getGateCoordsForPhase(phase);
 	if (moongate)
 		g_context->_location->_coords = *moongate;
 

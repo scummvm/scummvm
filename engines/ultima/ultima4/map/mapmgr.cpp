@@ -336,7 +336,7 @@ void MapMgr::createMoongateFromConf(const ConfigElement &moongateConf) {
 	int phase = moongateConf.getInt("phase");
 	Coords coords(moongateConf.getInt("x"), moongateConf.getInt("y"));
 
-	moongateAdd(phase, coords);
+	g_moongates->add(phase, coords);
 }
 
 int MapMgr::initCompressedChunkFromConf(const ConfigElement &compressedChunkConf) {

@@ -32,6 +32,7 @@
 #include "ultima/ultima4/game/armor.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
+#include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/imageloader.h"
@@ -51,12 +52,13 @@ Ultima4Engine *g_ultima;
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _armors(nullptr),
 		_config(nullptr), _context(nullptr), _dialogueLoaders(nullptr), _game(nullptr),
-		_music(nullptr), _imageLoaders(nullptr), _saveGame(nullptr), _screen(nullptr),
-		_tileMaps(nullptr), _tileRules(nullptr), _tileSets(nullptr) {
+		_music(nullptr), _imageLoaders(nullptr), _moongates(nullptr), _saveGame(nullptr),
+		_screen(nullptr), _tileMaps(nullptr), _tileRules(nullptr), _tileSets(nullptr) {
 	g_ultima = this;
 	g_armors = nullptr;
 	g_context = nullptr;
 	g_game = nullptr;
+	g_moongates = nullptr;
 	g_screen = nullptr;
 	g_tileMaps = nullptr;
 	g_tileRules = nullptr;
@@ -70,6 +72,7 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _dialogueLoaders;
 	delete _game;
 	delete _imageLoaders;
+	delete _moongates;
 	delete _music;
 	delete _saveGame;
 	delete _screen;
@@ -92,6 +95,7 @@ bool Ultima4Engine::initialize() {
 	_armors = new Armors();
 	_context = new Context();
 	_dialogueLoaders = new DialogueLoaders();
+	_moongates = new Moongates();
 	_screen = new Screen();
 	_screen->init();
 	_tileRules = new TileRules();
@@ -107,7 +111,6 @@ bool Ultima4Engine::initialize() {
 	creatureMgr->getInstance();
 
 	_saveSlotToLoad = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
-
 
 	return true;
 }
