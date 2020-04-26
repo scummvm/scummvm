@@ -204,54 +204,21 @@ void Screen_EoB::sega_paletteOps(int16 op, int16 par1, int16 par2) {
 	}
 }
 
+void Screen_EoB::sega_setTextBuffer(uint8 *buffer, uint32 bufferSize) {
+	if (!buffer) {
+		_textRenderBuffer = _defaultRenderBuffer;
+		_textRenderBufferSize = _defaultRenderBufferSize;
+	} else {
+		_textRenderBuffer = buffer;
+		_textRenderBufferSize = bufferSize;
+	}
+}
+
 void Screen_EoB::sega_clearTextBuffer(uint8 col) {
 	memset(_textRenderBuffer, col, _textRenderBufferSize);
 }
 
-void Screen_EoB::sega_clearTextBufferLine(uint16 y, uint16 lineHeight, uint16 pitch, uint8 col) {
-	uint32 *dst = (uint32*)(_textRenderBuffer + (((y >> 3) * pitch) << 5) + ((y & 7) << 2));
-	int ln = y;
-	uint32 c = col | (col << 8) | (col << 16) | (col << 24);
-	while (lineHeight--) {
-		uint32 *dst2 = dst;
-		for (uint16 w = pitch; w; --w) {
-			*dst = c;
-			dst += 8;
-		}
-		dst = dst2 + 1;
-		if (((++ln) & 7) == 0)
-			dst += ((pitch - 1) << 3);
-	}
-}
-
-
-void Screen_EoB::sega_copyTextBufferLine(uint16 srcY, uint16 dstY, uint16 lineHeight, uint16 pitch) {
-	uint32 *src = (uint32*)(_textRenderBuffer + (((srcY >> 3) * pitch) << 5) + ((srcY & 7) << 2));
-	uint32 *dst = (uint32*)(_textRenderBuffer + (((dstY >> 3) * pitch) << 5) + ((dstY & 7) << 2));
-	int src_ln = srcY;
-	int dst_ln = dstY;
-
-	while (lineHeight--) {
-		uint32 *src2 = src;
-		uint32 *dst2 = dst;
-
-		for (uint16 w = pitch; w; --w) {
-			*dst = *src;
-			src += 8;
-			dst += 8;
-		}
-
-		src = src2 + 1;
-		dst = dst2 + 1;
-
-		if (((++dst_ln) & 7) == 0)
-			dst += ((pitch - 1) << 3);
-		if (((++src_ln) & 7) == 0)
-			src += ((pitch - 1) << 3);
-	}
-}
-
-void Screen_EoB::sega_copyToTextBuffer(const uint8 *src, uint16 size) {
+void Screen_EoB::sega_loadTextBackground(const uint8 *src, uint16 size) {
 	assert(size <= _textRenderBufferSize);
 	memcpy(_textRenderBuffer, src, size);
 }
@@ -540,7 +507,7 @@ void SegaRenderer::loadToVRAM(const void *data, uint16 dataSize, uint16 addr) {
 	checkUpdateDirtyRects(addr, dataSize);
 }
 
-void SegaRenderer::loadStreamToVRAM(Common::SeekableReadStreamEndian *in, uint16 addr, bool compressedData) {
+void SegaRenderer::loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr, bool compressedData) {
 	assert(in);
 	assert(addr <= 0xFFFF);
 

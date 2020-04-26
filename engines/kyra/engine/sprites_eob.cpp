@@ -1050,6 +1050,15 @@ bool EoBCoreEngine::updateMonsterTryCloseAttack(EoBMonsterInPlay *m, int block) 
 			for (int i = 0; i < 16 && m->curAttackFrame < 0; ++i) {
 				if (m->type != 4 && m->curAttackFrame == -1)
 					snd_updateEnvironmentalSfx(_monsterProps[m->type].sound1);
+				if (_flags.platform == Common::kPlatformSegaCD && _partyResting) {
+					// The original SegaCD code does not update the monsters during resting. I presume to
+					// avoid graphical issues which I try to fix here...
+					setLevelPalettes(_currentLevel);
+					_screen->sega_selectPalette(-1, 2, true);
+					gui_setupPlayFieldHelperPages(true);
+					gui_drawAllCharPortraitsWithStats();
+					_partyResting = false;
+				}
 				drawScene(1);
 				_flashShapeTimer = _system->getMillis() + _flashShapeTimerIntv1;
 			}

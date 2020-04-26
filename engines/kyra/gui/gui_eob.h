@@ -59,8 +59,8 @@ public:
 	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk);
 
 	// Button based menus (camp menu, load menu)
-	void runCampMenu();
-	bool runLoadMenu(int x, int y, bool fromMainMenu = false);
+	virtual void runCampMenu();
+	virtual bool runLoadMenu(int x, int y, bool fromMainMenu = false);
 
 	bool confirmDialogue2(int dim, int id, int deflt);
 	void messageDialogue(int dim, int id, int buttonTextCol);
@@ -78,6 +78,13 @@ public:
 	// utilities for thumbnail creation
 	void createScreenThumbnail(Graphics::Surface &dst) override;
 
+protected:
+	const char *getMenuString(int id);
+	Button *initMenu(int id);
+	void releaseButtons(Button *list);
+
+	Screen_EoB *_screen;
+
 private:
 	int simpleMenu_getMenuItem(int index, int32 menuItemsMask, int itemOffset);
 	void simpleMenu_flashSelection(const char *str, int x, int y, int color1, int color2, int color3);
@@ -89,27 +96,25 @@ private:
 	void scribeScrollDialogue();
 	bool restParty();
 
-	bool confirmDialogue(int id);
+	virtual void drawCampMenu() {}
+	virtual bool confirmDialogue(int id);
 	int selectCharacterDialogue(int id);
-	void displayTextBox(int id);
+	virtual void displayTextBox(int id);
 
-	Button *initMenu(int id);
-	void drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill);
+	virtual void drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill);
 	void drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill);
 	void drawTextBox(int dim, int id);
 	void drawSaveSlotButton(int slot, int redrawBox, int textCol);
 	void memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight);
-	void updateOptionsStrings();
-	const char *getMenuString(int id);
+	virtual void updateOptionsStrings();
 
 	Button *linkButton(Button *list, Button *newbt);
-	void releaseButtons(Button *list);
 
 	void setupSaveMenuSlots();
 	int getHighlightSlot();
 	void sortSaveSlots() override;
 
-	void restParty_updateRestTime(int hours, bool init);
+	virtual void restParty_updateRestTime(int hours, bool init);
 
 	char **_menuStringsPrefsTemp;
 	char **_saveSlotStringsTemp;
@@ -119,7 +124,6 @@ private:
 	int16 _saveSlotY;
 
 	EoBCoreEngine *_vm;
-	Screen_EoB *_screen;
 
 	bool _pressFlag;
 

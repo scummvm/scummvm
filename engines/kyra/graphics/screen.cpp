@@ -93,7 +93,6 @@ Screen::~Screen() {
 
 	delete _screenPalette;
 	delete _internFadePalette;
-	delete[] _textRenderBuffer;
 	delete[] _animBlockPtr;
 	delete[] _16bitPalette;
 	delete[] _16bitConversionPalette;

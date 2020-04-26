@@ -73,7 +73,7 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 	}
 }
 
-void EoBCoreEngine::gui_setupPlayFieldHelperPages() {
+void EoBCoreEngine::gui_setupPlayFieldHelperPages(bool) {
 	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
 }
 
@@ -885,12 +885,20 @@ int EoBCoreEngine::clickedCamp(Button *button) {
 	// This ensures that all special rendering (EGA dithering, 16bit rendering, Japanese font rendering) will be visible on the thumbnail.
 	::createThumbnailFromScreen(&_thumbNail);
 
-	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, Screen_EoB::kCampMenuBackupPage, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 120, 0, 0, 176, 48, 0, Screen_EoB::kCampMenuBackupPage, Screen::CR_NO_P_CHECK);
 
 	_gui->runCampMenu();
 
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		setLevelPalettes(_currentLevel);
+		_screen->sega_selectPalette(-1, 2, true);
+		gui_setupPlayFieldHelperPages(true);
+		snd_playLevelScore();
+		gui_drawAllCharPortraitsWithStats();
+	}
+
 	_screen->fillRect(0, 0, 175, 143, 0, 2);
-	_screen->copyRegion(0, 0, 0, 120, 176, 24, Screen_EoB::kCampMenuBackupPage, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 0, 120, 176, 48, Screen_EoB::kCampMenuBackupPage, 2, Screen::CR_NO_P_CHECK);
 	_screen->setScreenDim(cd);
 
 	_thumbNail.free();
@@ -2185,17 +2193,21 @@ void GUI_EoB::runCampMenu() {
 	Button *buttonList = 0;
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
-		if (newMenu == 2)
-			updateOptionsStrings();
-
 		if (newMenu != -1) {
+			drawCampMenu();
+			if (newMenu == 2) {
+				updateOptionsStrings();
+				if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
+					keepButtons = false;
+			}
 			if (!keepButtons) {
 				releaseButtons(buttonList);
 
-				_vm->_menuDefs[0].titleStrId = newMenu ? 1 : 56;
-				if (newMenu == 2)
+				if (_vm->_menuDefs[0].titleStrId != -1)
+					_vm->_menuDefs[0].titleStrId = newMenu ? 1 : 56;
+				if (newMenu == 2 && _vm->_menuDefs[2].titleStrId != -1)
 					_vm->_menuDefs[2].titleStrId = 57;
-				else if (newMenu == 1)
+				else if (newMenu == 1 && _vm->_menuDefs[1].titleStrId != -1)
 					_vm->_menuDefs[1].titleStrId = 58;
 
 				buttonList = initMenu(newMenu);
@@ -2204,6 +2216,9 @@ void GUI_EoB::runCampMenu() {
 					highlightButton = buttonList;
 					prevHighlightButton = 0;
 				}
+			} else if (_vm->gameFlags().platform == Common::kPlatformSegaCD && newMenu == 2) {
+				_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+				_screen->copyRegion(0, 0, 0, 0, 176, 168, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
 			}
 
 			lastMenu = newMenu;
@@ -2222,6 +2237,8 @@ void GUI_EoB::runCampMenu() {
 		Button *clickedButton = _vm->gui_getButton(buttonList, inputFlag & 0x7FFF);
 
 		if (clickedButton) {
+			if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
+				_vm->snd_playSoundEffect(0x81);
 			drawMenuButton(prevHighlightButton, false, false, true);
 			drawMenuButton(clickedButton, true, true, true);
 			_screen->updateScreen();
@@ -2261,7 +2278,7 @@ void GUI_EoB::runCampMenu() {
 				highlightButton = _vm->gui_getButton(buttonList, s);
 			}
 
-		} else if (inputFlag > 0x8000 && inputFlag < 0x8011) {
+		} else if (inputFlag > 0x8000 && inputFlag < 0x8012) {
 			int i = 0;
 			int cnt = 0;
 
@@ -2303,8 +2320,13 @@ void GUI_EoB::runCampMenu() {
 					displayTextBox(44);
 				// fall through
 
-			case 0x800C:
 			case 0x8010:
+				if (_vm->gameFlags().platform == Common::kPlatformSegaCD && inputFlag == 0x8010) {
+					_vm->_configMouse ^= true;
+					newMenu = 2;
+					break;
+				}
+			case 0x800C:			
 				if (lastMenu == 1 || lastMenu == 2)
 					newMenu = 0;
 				else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE])
@@ -2347,17 +2369,24 @@ void GUI_EoB::runCampMenu() {
 				break;
 
 			case 0x800B:
-				if (confirmDialogue(46))
-					_vm->quitGame();
-				newMenu = 0;
+				if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+					_vm->_inputMode = (_vm->_inputMode + 1) % 3;
+					newMenu = 2;
+				} else {
+					if (confirmDialogue(46))
+						_vm->quitGame();
+					newMenu = 0;
+				}
 				break;
 
 			case 0x800D:
-				if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+				if (_vm->gameFlags().platform == Common::kPlatformPC98 || _vm->gameFlags().platform == Common::kPlatformSegaCD) {
 					_vm->_configMusic ^= true;
 					_vm->writeSettings();
-					if (_vm->_configMusic)
+					if (_vm->_configMusic && _vm->gameFlags().platform == Common::kPlatformPC98)
 						_vm->snd_playLevelScore();
+					else if (_vm->_configMusic)
+						_vm->snd_playSong(11);
 					else
 						_vm->snd_playSong(0);
 				} else {
@@ -2369,7 +2398,7 @@ void GUI_EoB::runCampMenu() {
 				break;
 
 			case 0x800E:
-				if (_vm->gameFlags().platform == Common::kPlatformPC98)
+				if (_vm->gameFlags().platform == Common::kPlatformPC98 || _vm->gameFlags().platform == Common::kPlatformSegaCD)
 					_vm->_configSounds ^= true;
 				else
 					_vm->_configHpBarGraphs ^= true;
@@ -2388,6 +2417,14 @@ void GUI_EoB::runCampMenu() {
 				} else {
 					newMenu = 0;
 				}
+				break;
+
+			case 0x8011:
+				if (_vm->_configMouse)
+					_vm->_mouseSpeed = (_vm->_mouseSpeed + 1) % 5;
+				else
+					_vm->_padSpeed = (_vm->_padSpeed + 1) % 5;
+				newMenu = 2;
 				break;
 
 			default:
@@ -3644,7 +3681,8 @@ bool GUI_EoB::restParty() {
 	if (_vm->restParty_extraAbortCondition())
 		return true;
 
-	drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
+	if (_vm->gameFlags().platform != Common::kPlatformSegaCD)
+		drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
 
 	bool poisoned = false;
 	for (int i = 0; i < 6; i++) {
@@ -3681,8 +3719,12 @@ bool GUI_EoB::restParty() {
 		}
 	}
 
-	_screen->setClearScreenDim(7);
-	Screen::FontId of = _screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	if (_vm->gameFlags().platform != Common::kPlatformSegaCD)
+		_screen->setClearScreenDim(7);
+	else
+		_screen->sega_clearTextBuffer(0);
+
+	Screen::FontId of = _screen->setFont(_vm->_conFont);
 
 	restParty_updateRestTime(hours, true);
 
@@ -4163,18 +4205,22 @@ Button *GUI_EoB::initMenu(int id) {
 		drawMenuButtonBox(dm->sx << 3, dm->sy, dm->w << 3, dm->h, false, false);
 	}
 
-	_screen->printShadedText(getMenuString(m->titleStrId), 5, 5, m->titleCol, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->setTextMarginRight(Screen::SCREEN_W);
+	if (m->titleStrId != -1) {
+		_screen->printShadedText(getMenuString(m->titleStrId), 5, 5, m->titleCol, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->setTextMarginRight(Screen::SCREEN_W);
+	}
 
 	Button *buttons = 0;
 	for (int i = 0; i < m->numButtons; i++) {
 		const EoBMenuButtonDef *df = &_vm->_menuButtonDefs[m->firstButtonStrId + i];
 		Button *b = new Button;
 		b->index = m->firstButtonStrId + i + 1;
-		if (id == 4 && _vm->game() == GI_EOB1)
-			b->index -= 14;
-		else if (id == 2)
-			b->index -= _vm->_prefMenuPlatformOffset;
+		if (_vm->gameFlags().platform != Common::kPlatformSegaCD) {
+			if (id == 4 && _vm->game() == GI_EOB1)
+				b->index -= 14;
+			else if (id == 2)
+				b->index -= _vm->_prefMenuPlatformOffset;
+		}
 
 		b->data0Val2 = 12;
 		b->data1Val2 = b->data2Val2 = 15;
@@ -4193,7 +4239,13 @@ Button *GUI_EoB::initMenu(int id) {
 		buttons = linkButton(buttons, b);
 	}
 
-	_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 2, 0, Screen::CR_NO_P_CHECK);
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+		_screen->copyRegion(0, 0, 0, 0, 176, 168, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+	} else {
+		_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 2, 0, Screen::CR_NO_P_CHECK);
+	}
+
 	_vm->gui_notifyButtonListChanged();
 	_screen->setCurPage(0);
 	_screen->updateScreen();

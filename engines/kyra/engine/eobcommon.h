@@ -246,10 +246,11 @@ struct EoBMenuDef {
 	int8 numButtons;
 	int8 titleCol;
 };
+
 struct EoBMenuButtonDef {
 	int8 labelId;
 	int16 x;
-	int8 y;
+	int16 y;
 	uint8 width;
 	uint8 height;
 	int16 keyCode;
@@ -730,7 +731,7 @@ protected:
 
 	// Gui
 	virtual void gui_drawPlayField(bool refresh);
-	virtual void gui_setupPlayFieldHelperPages();
+	virtual void gui_setupPlayFieldHelperPages(bool keepText = false);
 	void gui_restorePlayField();
 	void gui_drawAllCharPortraitsWithStats();
 	void gui_drawCharPortraitWithStats(int index);
@@ -764,7 +765,7 @@ protected:
 	int clickedInventoryNextPage(Button *button);
 	int clickedPortraitRestore(Button *button);
 	int clickedCharPortraitDefault(Button *button);
-	int clickedCamp(Button *button);
+	virtual int clickedCamp(Button *button);
 	int clickedSceneDropPickupItem(Button *button);
 	int clickedCharPortrait2(Button *button);
 	int clickedWeaponSlot(Button *button);
@@ -1211,6 +1212,9 @@ protected:
 	int _prefMenuPlatformOffset;
 	bool _configMouse;
 	bool _config2431;
+	int _mouseSpeed;
+	int _padSpeed;
+	int _inputMode;
 
 	const char *const *_menuStringsMain;
 	const char *const *_menuStringsSaveLoad;

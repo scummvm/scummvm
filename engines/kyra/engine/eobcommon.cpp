@@ -52,6 +52,8 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_playFinale = false;
 	_runFlag = true;
 	_configMouse = _config2431 = true;
+	_mouseSpeed = _padSpeed = 1;
+	_inputMode = 0;
 	_loading = false;
 
 	_enableHiResDithering = false;
@@ -462,8 +464,11 @@ Common::Error EoBCoreEngine::init() {
 
 	setupKeyMap();
 
-	_gui = new GUI_EoB(this);
-	assert(_gui);
+	if (_flags.platform != Common::kPlatformSegaCD) {
+		_gui = new GUI_EoB(this);
+		assert(_gui);
+	}
+
 	if (_flags.platform != Common::kPlatformSegaCD) {
 		_txt = new TextDisplayer_rpg(this, _screen);
 		assert(_txt);
@@ -673,7 +678,7 @@ void EoBCoreEngine::readSettings() {
 	_configHpBarGraphs = ConfMan.getBool("hpbargraphs");
 	_configMouseBtSwap = ConfMan.getBool("mousebtswap");
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;	
-	_configMusic = (_flags.platform == Common::kPlatformPC98) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
+	_configMusic = (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
 
 	if (_sound) {
 		_sound->enableMusic(_configNullSound ? false : _configMusic);
@@ -685,11 +690,11 @@ void EoBCoreEngine::writeSettings() {
 	ConfMan.setBool("hpbargraphs", _configHpBarGraphs);
 	ConfMan.setBool("mousebtswap", _configMouseBtSwap);
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
-	if (_flags.platform == Common::kPlatformPC98)
+	if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD)
 		ConfMan.setBool("music_mute", _configMusic == 0);
 
 	if (_sound) {
-		if (_flags.platform == Common::kPlatformPC98) {
+		if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD) {
 			if (!_configMusic)
 				snd_playSong(0);
 		} else if (!_configSounds) {
@@ -1682,10 +1687,10 @@ int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, int loopButtonId,
 void EoBCoreEngine::restParty_displayWarning(const char *str) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(7);
-	Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	Screen::FontId of = _screen->setFont(_conFont);
 	_screen->setCurPage(0);
 
-	_txt->printMessage(Common::String::format("\r%s\r", str).c_str());
+	_txt->printMessage(Common::String::format(_flags.platform == Common::kPlatformSegaCD ? "%s" : "\r%s\r", str).c_str());
 
 	_screen->setFont(of);
 	_screen->setScreenDim(od);
@@ -1699,7 +1704,12 @@ bool EoBCoreEngine::restParty_updateMonsters() {
 
 	for (int i = 0; i < 5; i++) {
 		_partyResting = true;
-		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+
+		// The original SegaCD code does not update the monsters during resting. I presume to
+		// avoid graphical issues which I have (apparently successfully) tried to fix. At first
+		// I had disabled the monster updated just like the original, but it annoyed me, since
+		// it felt like a step backwards...
+		Screen::FontId of = _screen->setFont(_conFont);
 		int od = _screen->curDimIndex();
 		_screen->setScreenDim(7);
 		updateMonsters(0);
@@ -1707,6 +1717,7 @@ bool EoBCoreEngine::restParty_updateMonsters() {
 		timerProcessFlyingObjects(0);
 		_screen->setScreenDim(od);
 		_screen->setFont(of);
+
 		_partyResting = false;
 
 		for (int ii = 0; ii < 30; ii++) {

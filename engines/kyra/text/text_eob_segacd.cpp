@@ -32,9 +32,13 @@ namespace Kyra {
 TextDisplayer_SegaCD::TextDisplayer_SegaCD(EoBEngine *engine, Screen_EoB *scr) : TextDisplayer_rpg(engine, scr), _engine(engine), _screen(scr), _renderer(scr->sega_getRenderer()),
 	_curDim(0), _textColor(0xFF), _curPosY(0), _curPosX(0) {
 	assert(_renderer);
+	_msgRenderBufferSize = 320 * 48;
+	_msgRenderBuffer = new uint8[_msgRenderBufferSize];
+	memset(_msgRenderBuffer, 0, _msgRenderBufferSize);
 }
 
 TextDisplayer_SegaCD::~TextDisplayer_SegaCD() {
+	delete[] _msgRenderBuffer;
 }
 
 void TextDisplayer_SegaCD::printDialogueText(int id, const char *string1, const char *string2) {
@@ -92,7 +96,7 @@ void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int 
 			_screen->sega_loadTextBufferToVRAM(i * (pitchW >> 3), (s->unkC & 0x7FF) << 5, (pitchW * pitchH) >> 1);
 	} else {
 		_screen->sega_loadTextBufferToVRAM(0, (s->unkC & 0x7FF) << 5, (pitchW * pitchH) >> 1);
-	}	
+	}
 }
 
 int TextDisplayer_SegaCD::clearDim(int dim) {
@@ -102,10 +106,12 @@ int TextDisplayer_SegaCD::clearDim(int dim) {
 	const ScreenDim *s = &_dimTable[dim];
 	_renderer->memsetVRAM((s->unkC & 0x7FF) << 5, s->unkA, (s->w * s->h) >> 1);
 	_screen->sega_clearTextBuffer(s->unkA);
+	memset(_msgRenderBuffer, 0, _msgRenderBufferSize);
 	return res;
 }
 
 void TextDisplayer_SegaCD::displayText(char *str, ...) {
+	_screen->sega_setTextBuffer(_msgRenderBuffer, _msgRenderBufferSize);
 	int cs = _screen->setFontStyles(Screen::FID_8_FNT, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat | Font::kStyleForceTwoByte);
 	char tmp[3] = "  ";
 	int posX = _curPosX;
@@ -166,6 +172,7 @@ void TextDisplayer_SegaCD::displayText(char *str, ...) {
 	_renderer->render(Screen_EoB::kSegaRenderPage);
 	_screen->setFontStyles(Screen::FID_8_FNT, cs);
 	_screen->copyRegion(8, 176, 8, 176, 280, 24, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+	_screen->sega_setTextBuffer(0, 0);
 }
 
 uint8 TextDisplayer_SegaCD::fetchCharacter(char *dest, const char *&src) {
@@ -183,8 +190,51 @@ uint8 TextDisplayer_SegaCD::fetchCharacter(char *dest, const char *&src) {
 }
 
 void TextDisplayer_SegaCD::linefeed() {
-	_screen->sega_copyTextBufferLine(_screen->getFontHeight(), 0, (_dimTable[_curDim].h & ~7) - _screen->getFontHeight(), _dimTable[_curDim].w >> 3);
-	_screen->sega_clearTextBufferLine(_screen->getFontHeight(), _screen->getFontHeight(), _dimTable[_curDim].w >> 3, _dimTable[_curDim].unkA);
+	copyTextBufferLine(_screen->getFontHeight(), 0, (_dimTable[_curDim].h & ~7) - _screen->getFontHeight(), _dimTable[_curDim].w >> 3);
+	clearTextBufferLine(_screen->getFontHeight(), _screen->getFontHeight(), _dimTable[_curDim].w >> 3, _dimTable[_curDim].unkA);
+}
+
+void TextDisplayer_SegaCD::clearTextBufferLine(uint16 y, uint16 lineHeight, uint16 pitch, uint8 col) {
+	uint32 *dst = (uint32*)(_msgRenderBuffer + (((y >> 3) * pitch) << 5) + ((y & 7) << 2));
+	int ln = y;
+	uint32 c = col | (col << 8) | (col << 16) | (col << 24);
+	while (lineHeight--) {
+		uint32 *dst2 = dst;
+		for (uint16 w = pitch; w; --w) {
+			*dst = c;
+			dst += 8;
+		}
+		dst = dst2 + 1;
+		if (((++ln) & 7) == 0)
+			dst += ((pitch - 1) << 3);
+	}
+}
+
+
+void TextDisplayer_SegaCD::copyTextBufferLine(uint16 srcY, uint16 dstY, uint16 lineHeight, uint16 pitch) {
+	uint32 *src = (uint32*)(_msgRenderBuffer + (((srcY >> 3) * pitch) << 5) + ((srcY & 7) << 2));
+	uint32 *dst = (uint32*)(_msgRenderBuffer + (((dstY >> 3) * pitch) << 5) + ((dstY & 7) << 2));
+	int src_ln = srcY;
+	int dst_ln = dstY;
+
+	while (lineHeight--) {
+		uint32 *src2 = src;
+		uint32 *dst2 = dst;
+
+		for (uint16 w = pitch; w; --w) {
+			*dst = *src;
+			src += 8;
+			dst += 8;
+		}
+
+		src = src2 + 1;
+		dst = dst2 + 1;
+
+		if (((++dst_ln) & 7) == 0)
+			dst += ((pitch - 1) << 3);
+		if (((++src_ln) & 7) == 0)
+			src += ((pitch - 1) << 3);
+	}
 }
 
 const ScreenDim TextDisplayer_SegaCD::_dimTable[6] = {

@@ -78,7 +78,7 @@ public:
 	void setVScrollMode(int mode);
 
 	void loadToVRAM(const void *data, uint16 dataSize, uint16 addr);
-	void loadStreamToVRAM(Common::SeekableReadStreamEndian *in, uint16 addr, bool compressedData = false);
+	void loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr, bool compressedData = false);
 	void memsetVRAM(int addr, uint8 val, int len);
 	void fillRectWithTiles(int vramArea, int x, int y, int w, int h, uint16 nameTblEntry, bool incr = false, bool topToBottom = false, const uint16 *patternTable = 0);
 	void writeUint16VSRAM(int addr, uint16 value);

@@ -26,12 +26,31 @@
 #include "kyra/engine/eob.h"
 #include "kyra/graphics/screen_eob.h"
 #include "kyra/graphics/screen_eob_segacd.h"
+#include "kyra/gui/gui_eob_segacd.h"
 #include "kyra/resource/resource.h"
 #include "kyra/resource/resource_segacd.h"
 
 #include "common/system.h"
 
 namespace Kyra {
+
+int EoBEngine::clickedCamp(Button *button) {
+	uint32 startTime = _system->getMillis();
+	gui_resetAnimations();
+
+	if (_flags.platform == Common::kPlatformSegaCD)
+		snd_playSong(11);
+
+	EoBCoreEngine::clickedCamp(button);
+
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return button->arg;
+
+	gui_resetAnimations();
+	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
+
+	return button->arg;
+}
 
 void EoBEngine::gui_drawPlayField(bool refresh) {
 	if (_flags.platform != Common::kPlatformSegaCD) {
@@ -86,17 +105,6 @@ void EoBEngine::gui_drawPlayField(bool refresh) {
 	r->loadStreamToVRAM(str, 0x7920, false);
 	delete str;
 
-	/*
-// CAMP MENU
-str = _sres->resStreamEndian(8);
-_screen->sega_getRenderer()->loadStreamToVRAM(str, 0x20, true);
-delete str;
-_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 15, 0);
-_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 22, 21, 0x4001, true);
-_screen->sega_getRenderer()->render(0);
-_screen->sega_selectPalette(40, 2, true);
-*/
-
 	gui_setupPlayFieldHelperPages();
 
 	if (refresh && !_sceneDrawPage2)
@@ -123,14 +131,17 @@ _screen->sega_selectPalette(40, 2, true);
 	_screen->sega_fadeToNeutral(1);
 }
 
-void EoBEngine::gui_setupPlayFieldHelperPages() {
+void EoBEngine::gui_setupPlayFieldHelperPages(bool keepText) {
 	if (_flags.platform != Common::kPlatformSegaCD) {
 		EoBCoreEngine::gui_setupPlayFieldHelperPages();
 		return;
 	}
 
-	_txt->clearDim(0);
+	if (!keepText)
+		_txt->clearDim(0);
+
 	SegaRenderer *r = _screen->sega_getRenderer();
+	r->fillRectWithTiles(0, 0, 0, 22, 21, 0);
 	r->fillRectWithTiles(0, 22, 0, 18, 21, 0);
 	r->fillRectWithTiles(1, 0, 0, 40, 26, 0x2000, true, false, _playFldPattern2);
 	r->fillRectWithTiles(0, 0, 21, 40, 5, 0x2000, true, false, _textFieldPattern);
@@ -565,7 +576,6 @@ void EoBEngine::drawMapButton(const char *str, int x, int y) {
 }
 
 void EoBEngine::drawMapPage(int level) {
-	int temp = 0;
 	_screen->sega_clearTextBuffer(0);
 	int cs = _screen->setFontStyles(_screen->_currentFont, (_flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat) | Font::kStyleNarrow1);
 	_txt->printShadowedText(_mapStrings3[level - 1], 0, 0, 0xCC, 0, 48, 16, 0, false);
@@ -627,6 +637,213 @@ void EoBEngine::drawDialogueButtons() {
 	_screen->sega_loadTextBufferToVRAM(0, 0xA380, 7296);
 	_screen->sega_getRenderer()->render(0);
 }
+
+GUI_EoB_SegaCD::GUI_EoB_SegaCD(EoBEngine *vm) : GUI_EoB(vm), _vm(vm) {
+	_vm->_sres->loadContainer("ITEM");
+	uint8 *cm = _vm->_sres->resData(8, 0);
+	uint8 *cmdec = new uint8[47925];
+	uint16 decodeSize = READ_LE_UINT16(cm + 2);
+	_screen->decodeBIN(cm + 4, cmdec, decodeSize);
+	_campMenu = cmdec;
+	delete[] cm;
+}
+
+GUI_EoB_SegaCD::~GUI_EoB_SegaCD() {
+	delete[] _campMenu;
+}
+
+void GUI_EoB_SegaCD::drawCampMenu() {
+	_screen->sega_getRenderer()->loadToVRAM(_campMenu, 14784, 0x20);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 21, 0);
+	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 22, 21, 0x4001, true);
+	_screen->sega_selectPalette(40, 2, true);
+}
+
+bool GUI_EoB_SegaCD::confirmDialogue(int id) {
+	_screen->sega_clearTextBuffer(0);
+
+	int cs = _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : (Font::kStyleForceTwoByte | Font::kStyleFat);
+	if (id == 47) {
+		cs |= Font::kStyleNarrow2;
+		_screen->_charSpacing = 1;
+	}
+	cs = _screen->setFontStyles(_screen->_currentFont, cs);
+	_vm->_txt->printShadowedText(getMenuString(id), 0, 3, 0xFF, 0xCC, 160, 40, 0, false);
+	_screen->_charSpacing = 0;
+	_screen->setFontStyles(_screen->_currentFont, cs);
+
+	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 10240);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 0, 20, 20, 0);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 5, 20, 8, 0x6283, true);
+	_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+	_screen->copyRegion(0, 0, 0, 0, 176, 128, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+
+	Button *buttonList = initMenu(5);
+
+	int newHighlight = 0;
+	int lastHighlight = -1;
+	bool result = false;
+
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
+		if (newHighlight != lastHighlight) {
+			if (lastHighlight != -1)
+				drawMenuButton(_vm->gui_getButton(buttonList, lastHighlight + 33), false, false, true);
+			drawMenuButton(_vm->gui_getButton(buttonList, newHighlight + 33), false, true, true);
+			_screen->updateScreen();
+			lastHighlight = newHighlight;
+		}
+
+		int inputFlag = _vm->checkInput(buttonList, false, 0) & 0x80FF;
+		_vm->removeInputTop();
+
+		if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
+			result = lastHighlight == 0;
+			inputFlag = 0x8012 + lastHighlight;
+			runLoop = false;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP6] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT]) {
+			newHighlight ^= 1;
+		} else if (inputFlag == 0x8012) {
+			result = true;
+			runLoop = false;
+		} else if (inputFlag == 0x8013) {
+			result = false;
+			runLoop = false;
+		} else {
+			Common::Point p = _vm->getMousePos();
+			for (Button *b = buttonList; b; b = b->nextButton) {
+				if ((b->arg & 2) && _vm->posWithinRect(p.x, p.y, b->x, b->y, b->x + b->width, b->y + b->height))
+					newHighlight = b->index - 18;
+			}
+		}
+
+		if (!runLoop) {
+			Button *b = _vm->gui_getButton(buttonList, lastHighlight + 18);
+			drawMenuButton(b, true, true, true);
+			_screen->updateScreen();
+			_vm->_system->delayMillis(80);
+			drawMenuButton(b, false, true, true);
+			_screen->updateScreen();
+		}
+	}
+
+	releaseButtons(buttonList);
+
+	return result;
+}
+
+void GUI_EoB_SegaCD::displayTextBox(int id) {
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 20, 0);
+	_screen->sega_clearTextBuffer(0);
+	int cs = _screen->setFontStyles(_screen->_currentFont, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
+	_vm->_txt->printShadowedText(getMenuString(id), 0, 0, 0xFF, 0xCC, 160, 40, 0, false);
+	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 3200);
+	_screen->setFontStyles(_screen->_currentFont, cs);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 6, 20, 5, 0x6283, true);
+	_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+	_screen->copyRegion(0, 0, 0, 0, 176, 168, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+
+	_vm->resetSkipFlag();
+	while (!(_vm->shouldQuit() || _vm->skipFlag()))
+		_vm->delay(20);
+	_vm->resetSkipFlag();
+}
+
+void GUI_EoB_SegaCD::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill) {
+	if (!b)
+		return;
+	drawButtonIntern(b->index - 1, clicked ? 1 : 0);
+	drawButtonIntern(b->index - 1, 2);
+}
+
+void GUI_EoB_SegaCD::drawButtonIntern(int id, int op) {
+	assert(id < 22);
+	const SegaMenuButton &b = _menuButtons[id];
+	if (b.w == 0)
+		return;
+
+	if (op == 2) {
+		_screen->sega_getRenderer()->fillRectWithTiles(0, b.x, b.y, b.w, b.h, 0x4000 + b.nameTbl, true);
+	} else {
+		_screen->sega_getRenderer()->loadToVRAM(&_campMenu[(0x1CE + b.nameTbl2 + op * b.w * b.h) << 5], (b.w * b.h) << 5, b.nameTbl << 5);
+	}
+
+	if (op != 2) {
+		_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+		_screen->copyRegion(b.x << 3, b.y << 3, b.x << 3, b.y << 3, b.w << 3, b.h << 3, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+	}
+}
+
+void GUI_EoB_SegaCD::updateOptionsStrings() {
+	uint16 ntblInputMode[3] = { 0x34C, 0x360, 0x30C };
+	int speed = _vm->_configMouse ? _vm->_mouseSpeed : _vm->_padSpeed;
+
+	SegaRenderer *r = _screen->sega_getRenderer();
+	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configMouse ? 0x240 : 0x24C)) << 5], 0x180, 0x42E0);
+	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configMusic ? 0x258 : 0x264)) << 5], 0x180, 0x4460);
+	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configSounds ? 0x258 : 0x264)) << 5], 0x180, 0x45E0);	
+	r->loadToVRAM(&_campMenu[(0x1CE + ntblInputMode[_vm->_inputMode]) << 5], 0x280, 0x49A0);
+	r->loadToVRAM(&_campMenu[(0x444 + speed * 12) << 5], 0xC0, 0x48E0);
+
+	r->fillRectWithTiles(0, 15, 5, 3, 2, 0x4247, true);
+	r->fillRectWithTiles(0, 8, 5, 6, 2, 0x4217, true);
+	r->fillRectWithTiles(0, 8, 8, 6, 2, 0x4223, true);
+	r->fillRectWithTiles(0, 8, 11, 6, 2, 0x422F, true);
+	r->fillRectWithTiles(0, 8, 14, 10, 2, 0x424D, true);
+}
+
+void GUI_EoB_SegaCD::restParty_updateRestTime(int hours, bool init) {
+	SegaRenderer *r = _screen->sega_getRenderer();
+	if (init)
+		r->fillRectWithTiles(0, 1, 4, 20, 17, 0);
+	_screen->sega_clearTextBuffer(0);
+
+	int cs = _screen->setFontStyles(_screen->_currentFont, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
+	_vm->_txt->printShadowedText(getMenuString(42), 0, 0, 0xFF, 0xCC, 160, 48, 0, false);
+	_vm->_txt->printShadowedText(_vm->_menuStringsRest2[3], 0, 16, 0xFF, 0xCC, 160, 48, 0, false);
+	_vm->_txt->printShadowedText(Common::String::format("%3d", hours).c_str(), 117, 16, 0xFF, 0xCC, 160, 48, 0, false);
+	_screen->setFontStyles(_screen->_currentFont, cs);
+
+	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 5120);
+	r->fillRectWithTiles(0, 1, 4, 20, 2, 0x6000);
+	r->fillRectWithTiles(0, 1, 6, 20, 6, 0x6283, true);
+	r->render(Screen_EoB::kSegaRenderPage);
+	_screen->copyRegion(0, 0, 0, 0, 176, 128, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+	_vm->delay(160);
+}
+
+const GUI_EoB_SegaCD::SegaMenuButton GUI_EoB_SegaCD::_menuButtons[22] = {
+	{ 0x01e7, 0x0000, 0x0001, 0x0005, 0x000a, 0x0002 },
+	{ 0x01fb, 0x0028, 0x000b, 0x0005, 0x000a, 0x0002 },
+	{ 0x020f, 0x0050, 0x000b, 0x0008, 0x000a, 0x0002 },
+	{ 0x0223, 0x0078, 0x000b, 0x000b, 0x000a, 0x0002 },
+	{ 0x0237, 0x00a0, 0x0001, 0x000e, 0x000a, 0x0002 }, // opt
+	{ 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 }, // dummy
+	{ 0x01cf, 0x01c8, 0x000f, 0x0012, 0x0006, 0x0002 },
+
+	{ 0x025f, 0x0118, 0x0001, 0x000b, 0x000a, 0x0002 }, // load
+	{ 0x024b, 0x00c8, 0x0001, 0x0008, 0x000a, 0x0002 }, // save
+	{ 0x0273, 0x0140, 0x000b, 0x000e, 0x000a, 0x0002 }, // drop
+
+	{ 0x020b, 0x0198, 0x0001, 0x000e, 0x0006, 0x0002 },
+	{ 0x01cf, 0x01c8, 0x000f, 0x0012, 0x0006, 0x0002 },
+	{ 0x01f3, 0x01e0, 0x0001, 0x0008, 0x0006, 0x0002 },
+	{ 0x01ff, 0x01f8, 0x0001, 0x000b, 0x0006, 0x0002 },
+	{ 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 }, // dummy
+	{ 0x01e7, 0x0210, 0x0001, 0x0005, 0x0006, 0x0002 },
+	{ 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 }, // dummy
+
+	{ 0x01CF, 0x0168, 0x0003, 0x000A, 0x0006, 0x0002 }, // yes
+	{ 0x01db, 0x0180, 0x000d, 0x000a, 0x0006, 0x0002 }, // no
+
+	{ 0x01db, 0x01b0, 0x0001, 0x0012, 0x0006, 0x0002 },
+	{ 0x01cf, 0x01c8, 0x000f, 0x0012, 0x0006, 0x0002 },
+
+
+	{ 0x024d, 0x030c, 0x0001, 0x0011, 0x000a, 0x0002 }
+};
 
 } // End of namespace Kyra
 

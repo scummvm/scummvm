@@ -72,8 +72,13 @@ void SoundSegaCD_EoB::loadSfxFile(Common::String file) {
 }
 
 void SoundSegaCD_EoB::playTrack(uint8 track) {
-	if (!_musicEnabled || !_ready)
+	if (!_ready)
 		return;
+
+	if (!_musicEnabled) {
+		haltTrack();
+		return;
+	}
 
 	int loop = track >> 6;
 	track &= 0x7F;
@@ -83,7 +88,7 @@ void SoundSegaCD_EoB::playTrack(uint8 track) {
 }
 
 void SoundSegaCD_EoB::haltTrack() {
-	if (!_musicEnabled || !_ready)
+	if (!_ready)
 		return;
 	g_system->getAudioCDManager()->stop();
 }

@@ -33,6 +33,7 @@ class SegaCDResource;
 class SegaSequencePlayer;
 class EoBEngine : public EoBCoreEngine {
 friend class GUI_EoB;
+friend class GUI_EoB_SegaCD;
 friend class EoBSeqPlayerCommon;
 friend class EoBIntroPlayer;
 friend class EoBPC98FinalePlayer;
@@ -192,8 +193,10 @@ private:
 	SegaCDResource *_sres;
 
 	// GUI
+	int clickedCamp(Button *button) override;
+
 	void gui_drawPlayField(bool refresh) override;
-	void gui_setupPlayFieldHelperPages() override;
+	void gui_setupPlayFieldHelperPages(bool keepText = false) override;
 	void gui_drawWeaponSlotStatus(int x, int y, int status) override;
 	void gui_printInventoryDigits(int x, int y, int val) override;
 	void gui_drawCharacterStatsPage() override;

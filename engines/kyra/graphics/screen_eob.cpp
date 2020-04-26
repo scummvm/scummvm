@@ -68,6 +68,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_segaAnimator = 0;
 	_segaCustomPalettes = 0;
 	_palFaders = 0;
+	_defaultRenderBuffer = 0;
 	_specialColorReplace = false;
 	memset(_segaCurPalette, 0, sizeof(_segaCurPalette));
 }
@@ -84,6 +85,7 @@ Screen_EoB::~Screen_EoB() {
 	delete[] _cyclePalette;
 	delete[] _segaCustomPalettes;
 	delete[] _palFaders;
+	delete[] _defaultRenderBuffer;
 	delete _segaRenderer;
 	delete _segaAnimator;
 }
@@ -125,9 +127,10 @@ bool Screen_EoB::init() {
 			sega_initGraphics();
 			_segaCustomPalettes = new uint16[128];
 			_palFaders = new PaletteFader[4];
-			_textRenderBufferSize = SCREEN_W * _screenHeight;
-			_textRenderBuffer = new uint8[_textRenderBufferSize];
-			memset(_textRenderBuffer, 0, _textRenderBufferSize);
+			_defaultRenderBufferSize = SCREEN_W * _screenHeight;
+			_defaultRenderBuffer = new uint8[_defaultRenderBufferSize];
+			memset(_defaultRenderBuffer, 0, _defaultRenderBufferSize);
+			sega_setTextBuffer(0, 0);
 			memset(_segaCustomPalettes, 0, 128 * sizeof(uint16));
 		}
 

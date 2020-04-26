@@ -47,9 +47,14 @@ private:
 	uint8 fetchCharacter(char *dest, const char *&src);
 	void linefeed();
 
+	void clearTextBufferLine(uint16 y, uint16 lineHeight, uint16 pitch, uint8 col);
+	void copyTextBufferLine(uint16 srcY, uint16 dstY, uint16 lineHeight, uint16 pitch);
+
 	Screen_EoB *_screen;
 	SegaRenderer *_renderer;
 	EoBEngine *_engine;
+	uint8 *_msgRenderBuffer;
+	uint32 _msgRenderBufferSize;
 
 	int _curDim;
 	int _curPosY;

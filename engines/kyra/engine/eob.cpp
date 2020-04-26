@@ -23,6 +23,7 @@
 #ifdef ENABLE_EOB
 
 #include "kyra/engine/eob.h"
+#include "kyra/gui/gui_eob_segacd.h"
 #include "kyra/graphics/screen_eob_segacd.h"
 #include "kyra/resource/resource.h"
 #include "kyra/resource/resource_segacd.h"
@@ -33,6 +34,8 @@
 #include "common/system.h"
 
 namespace Kyra {
+
+class GUI_EoB_SegaCD;
 
 EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	: EoBCoreEngine(system, flags) {
@@ -154,6 +157,8 @@ Common::Error EoBEngine::init() {
 		assert(_seqPlayer);
 		_txt = new TextDisplayer_SegaCD(this, _screen);
 		assert(_txt);
+		_gui = new GUI_EoB_SegaCD(this);
+		assert(_gui);
 		_playFldPattern2 = new uint16[1040];
 		_tempPattern = new uint16[792];
 		_shakeBackBuffer1 = new uint8[120 * 6];
@@ -1018,7 +1023,7 @@ void EoBEngine::displayParchment(int id) {
 	int numPages = (id == 46) ? 3 : 1;
 	int curPage = (id == 46) ? 4 : id - 47;
 	for (int i = 0; i < numPages && !shouldQuit(); ++i) {
-		_screen->sega_copyToTextBuffer(data, 22464);
+		_screen->sega_loadTextBackground(data, 22464);
 		_txt->printShadowedText(strings[curPage++], 16, 16, 0x22, 0, 208, 216, 16, false);
 		_screen->sega_loadTextBufferToVRAM(0, 0x20, 22464);
 		r->fillRectWithTiles(0, 7, 0, 26, 27, 0x4001, true);
@@ -1027,10 +1032,8 @@ void EoBEngine::displayParchment(int id) {
 		_screen->sega_fadeToNeutral(1);
 
 		resetSkipFlag();
-		_allowSkip = true;
 		while (!(shouldQuit() || skipFlag()))
 			delay(20);
-		_allowSkip = false;
 		resetSkipFlag();
 
 		_screen->sega_fadeToBlack(1);

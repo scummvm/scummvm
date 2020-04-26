@@ -826,7 +826,7 @@ void EoBCoreEngine::initButtonData() {
 }
 
 void EoBCoreEngine::initMenus() {
-	static const EoBMenuButtonDef buttonDefs[] = {
+	static const EoBMenuButtonDef buttonDefsDefault[] = {
 		{  2,   12,  20, 158,  14,  20,  3  },
 		{  3,   12,  37, 158,  14,  52,  3  },
 		{  4,   12,  54, 158,  14,  26,  3  },
@@ -884,9 +884,48 @@ void EoBCoreEngine::initMenus() {
 		{  8,  128, 122,  40,  14,  19,  7  }
 	};
 
-	_menuButtonDefs = buttonDefs;
+	static const EoBMenuButtonDef buttonDefsSegaCD[] = {
+		{   0,   8,  40,  80,  16,  20,  3  },
+		{   0,   88, 40,  80,  16,  52,  3  },
+		{   0,   88, 64,  80,  16,  26,  3  },
+		{   0,   88, 88,  80,  16,  32,  3  },
+		{   0,   8, 112,  80,  16,   0,  3  },
 
-	static const EoBMenuDef menuDefs[] = {
+		{   0,   0,   0,   0,   0,   0,  0  },
+
+		{   0,  120,144,  48,  16,  19,  7  },
+
+		
+		{   0,   8,  88,  80,  16,   0,  3  }, //load
+		{   0,   8,  64,  80,  16,   0,  3  }, //save
+		{   0,   88,112,  80,  16,   0,  3  }, //drop
+
+		
+
+
+
+		{   0,   8, 112,  48,  16,   0,  3  },
+		{   0,  120,144,  48,  16,  19,  7  },
+		{   0,   8,  64,  48,  16,   0,  3  },
+		{   0,   8,  88,  48,  16,   0,  3  },
+		{   0,   0,   0,   0,   0,   0,  0  },
+		{   0,   8,  40,  48,  16,   0,  3  },
+		{   0, 120,  40,  24,  16,   0,  3  },
+		
+		{   0,  24,  80,  48,  16,  48,  3  },
+		{   0, 104,  80,  48,  16,  19,  3  },
+		
+		 
+
+		{   0,   88,112,  48,  16,   0,  3  },
+		{   0,  120, 40,  24,  16,   0,  3  },
+		{   0,   8,  40,  48,  16,   0,  3  },
+		{   0,   8, 136,  80,  16,   0,  3  }
+	};
+
+	_menuButtonDefs = (_flags.platform == Common::kPlatformSegaCD) ? buttonDefsSegaCD : buttonDefsDefault;
+
+	static const EoBMenuDef menuDefsDefault[7] = {
 		{  1, 10,  0, 7,  9 },
 		{  1, 10,  7, 5,  9 },
 		{  1, 10, 12, 3,  9 },
@@ -896,30 +935,43 @@ void EoBCoreEngine::initMenus() {
 		{ 48, 10, 34, 2,  9 }
 	};
 
+	static const EoBMenuDef menuDefsSegaCD[6] = {
+		{  -1, 0,  0, 10, -1 },
+		{  -1, 0,  0,  0, -1 },
+		{  -1, 0, 10,  7, -1 },
+		{  -1, 0,  0,  0, -1 },
+		{  -1, 0,  0,  0, -1 },
+		{  -1, 0, 17,  2, -1 }
+	};
+
 	delete[] _menuDefs;
-	_menuDefs = new EoBMenuDef[ARRAYSIZE(menuDefs)];
-	memcpy(_menuDefs, menuDefs, sizeof(menuDefs));
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		_menuDefs = new EoBMenuDef[ARRAYSIZE(menuDefsSegaCD)];
+		memcpy(_menuDefs, menuDefsSegaCD, sizeof(menuDefsSegaCD));
+	} else {
+		_menuDefs = new EoBMenuDef[ARRAYSIZE(menuDefsDefault)];
+		memcpy(_menuDefs, menuDefsDefault, sizeof(menuDefsDefault));
+		if (_flags.gameID == GI_EOB1) {
+			// assign EOB 1 style memorize/pray menu
+			_menuDefs[4].numButtons = 8;
+			_menuDefs[4].firstButtonStrId = 36;
+		}
 
-	if (_flags.gameID == GI_EOB1) {
-		// assign EOB 1 style memorize/pray menu
-		_menuDefs[4].numButtons = 8;
-		_menuDefs[4].firstButtonStrId = 36;
-	}
-
-	if (_flags.platform == Common::kPlatformFMTowns) {
-		// assign FM-Towns style options menu
-		_menuDefs[2].numButtons = 4;
-		_menuDefs[2].firstButtonStrId = 44;
-		_prefMenuPlatformOffset = 32;
-	} else if (_flags.platform == Common::kPlatformPC98) {
-		// assign PC-98 style options menu
-		_menuDefs[2].numButtons = 4;
-		_menuDefs[2].firstButtonStrId = 48;
-		_prefMenuPlatformOffset = 36;
-	} else if (_flags.platform == Common::kPlatformAmiga) {
-		// assign Amiga text colors
-		_menuDefs[0].titleCol = _menuDefs[1].titleCol = _menuDefs[2].titleCol = _menuDefs[4].titleCol = _menuDefs[6].titleCol = guiSettings()->colors.guiColorLightBlue;
-		_menuDefs[3].titleCol = _menuDefs[5].titleCol = guiSettings()->colors.guiColorWhite;
+		if (_flags.platform == Common::kPlatformFMTowns) {
+			// assign FM-Towns style options menu
+			_menuDefs[2].numButtons = 4;
+			_menuDefs[2].firstButtonStrId = 44;
+			_prefMenuPlatformOffset = 32;
+		} else if (_flags.platform == Common::kPlatformPC98) {
+			// assign PC-98 style options menu
+			_menuDefs[2].numButtons = 4;
+			_menuDefs[2].firstButtonStrId = 48;
+			_prefMenuPlatformOffset = 36;
+		} else if (_flags.platform == Common::kPlatformAmiga) {
+			// assign Amiga text colors
+			_menuDefs[0].titleCol = _menuDefs[1].titleCol = _menuDefs[2].titleCol = _menuDefs[4].titleCol = _menuDefs[6].titleCol = guiSettings()->colors.guiColorLightBlue;
+			_menuDefs[3].titleCol = _menuDefs[5].titleCol = guiSettings()->colors.guiColorWhite;
+		}
 	}
 }
 
