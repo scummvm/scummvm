@@ -25,10 +25,15 @@
 #include "common/debug.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
 #include "hdb/hdb.h"
+#include "hdb/input.h"
 
 namespace HDB {
 
@@ -186,6 +191,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
@@ -284,6 +290,90 @@ SaveStateDescriptor HDBMetaEngine::querySaveMetaInfos(const char *target, int sl
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray HDBMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace HDB;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "hdb", "Hyperspace Delivery Boy!");
+
+	Action *act;
+
+	act = new Action("LCLK", _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveUp, _("Move up"));
+	act->setCustomEngineActionEvent(kHDBActionUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Move down"));
+	act->setCustomEngineActionEvent(kHDBActionDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Move left"));
+	act->setCustomEngineActionEvent(kHDBActionLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Move right"));
+	act->setCustomEngineActionEvent(kHDBActionRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("USE", _("Use"));
+	act->setCustomEngineActionEvent(kHDBActionUse);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("CLEAR", _("Clear waypoints"));
+	act->setCustomEngineActionEvent(kHDBActionClearWaypoints);
+	act->addDefaultInputMapping("MOUSE_MIDDLE");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+#if 0
+	act = new Action("INV", _("Inventory"));
+	act->setCustomEngineActionEvent(kHDBActionInventory);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+#endif
+
+	act = new Action(kStandardActionPause, _("Pause"));
+	act->setCustomEngineActionEvent(kHDBActionPause);
+	act->addDefaultInputMapping("p");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionOpenMainMenu, _("Menu"));
+	act->setCustomEngineActionEvent(kHDBActionMenu);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("DEBUG", _("Debug"));
+	act->setCustomEngineActionEvent(kHDBActionDebug);
+	act->addDefaultInputMapping("F1");
+	engineKeyMap->addAction(act);
+
+	act = new Action("QUIT", _("Quit"));
+	act->setCustomEngineActionEvent(kHDBActionQuit);
+	act->addDefaultInputMapping("F10");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 bool HDBMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

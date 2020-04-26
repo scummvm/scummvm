@@ -189,12 +189,6 @@ Menu::Menu() {
 	_nebulaY = 0;		// Used as a flag
 	_fStars[0].y = 0;	// Used as a flag
 
-	_keyAssignUp = Common::KEYCODE_UP;
-	_keyAssignDown = Common::KEYCODE_DOWN;
-	_keyAssignLeft = Common::KEYCODE_LEFT;
-	_keyAssignRight = Common::KEYCODE_RIGHT;
-	_keyAssignUse = Common::KEYCODE_RETURN;
-
 	_gCheckEmpty = nullptr;
 	_gCheckOff = nullptr;
 	_gCheckOn = nullptr;
@@ -353,46 +347,6 @@ void Menu::readConfig() {
 		needFlush = true;
 	}
 
-	if (ConfMan.hasKey(CONFIG_KEY_UP)) {
-		_keyAssignUp = (Common::KeyCode)ConfMan.getInt(CONFIG_KEY_UP);
-		g_hdb->_input->assignKey(0, _keyAssignUp);
-	} else {
-		ConfMan.setInt(CONFIG_KEY_UP, _keyAssignUp);
-		needFlush = true;
-	}
-
-	if (ConfMan.hasKey(CONFIG_KEY_DOWN)) {
-		_keyAssignDown = (Common::KeyCode)ConfMan.getInt(CONFIG_KEY_DOWN);
-		g_hdb->_input->assignKey(1, _keyAssignDown);
-	} else {
-		ConfMan.setInt(CONFIG_KEY_DOWN, _keyAssignDown);
-		needFlush = true;
-	}
-
-	if (ConfMan.hasKey(CONFIG_KEY_LEFT)) {
-		_keyAssignLeft = (Common::KeyCode)ConfMan.getInt(CONFIG_KEY_LEFT);
-		g_hdb->_input->assignKey(2, _keyAssignLeft);
-	} else {
-		ConfMan.setInt(CONFIG_KEY_LEFT, _keyAssignLeft);
-		needFlush = true;
-	}
-
-	if (ConfMan.hasKey(CONFIG_KEY_RIGHT)) {
-		_keyAssignRight = (Common::KeyCode)ConfMan.getInt(CONFIG_KEY_RIGHT);
-		g_hdb->_input->assignKey(3, _keyAssignRight);
-	} else {
-		ConfMan.setInt(CONFIG_KEY_RIGHT, _keyAssignRight);
-		needFlush = true;
-	}
-
-	if (ConfMan.hasKey(CONFIG_KEY_USE)) {
-		_keyAssignUse = (Common::KeyCode)ConfMan.getInt(CONFIG_KEY_USE);
-		g_hdb->_input->assignKey(4, _keyAssignUse);
-	} else {
-		ConfMan.setInt(CONFIG_KEY_USE, _keyAssignUse);
-		needFlush = true;
-	}
-
 	if (ConfMan.hasKey(CONFIG_CHEAT)) {
 		g_hdb->setCheatingOn();
 		debug("Cheating enabled");
@@ -411,12 +365,6 @@ void Menu::writeConfig() {
 	ConfMan.setInt(CONFIG_MSTONE14, value);
 	value = g_hdb->getStarsMonkeystone21();
 	ConfMan.setInt(CONFIG_MSTONE21, value);
-
-	ConfMan.setInt(CONFIG_KEY_UP, _keyAssignUp);
-	ConfMan.setInt(CONFIG_KEY_DOWN, _keyAssignDown);
-	ConfMan.setInt(CONFIG_KEY_LEFT, _keyAssignLeft);
-	ConfMan.setInt(CONFIG_KEY_RIGHT, _keyAssignRight);
-	ConfMan.setInt(CONFIG_KEY_USE, _keyAssignUse);
 
 	if (g_hdb->getCheatingOn())
 		ConfMan.set(CONFIG_CHEAT, "1");

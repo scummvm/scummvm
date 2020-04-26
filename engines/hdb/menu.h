@@ -37,12 +37,6 @@ namespace HDB {
 #define	CONFIG_SOUNDCACHE	"sound_cache_max"
 #define	CONFIG_GFXCACHE		"gfx_cache_max"
 #define	CONFIG_CHEAT		"hypercheat"
-
-#define	CONFIG_KEY_UP		"keyup"
-#define	CONFIG_KEY_DOWN		"keydown"
-#define	CONFIG_KEY_LEFT		"keyleft"
-#define	CONFIG_KEY_RIGHT	"keyright"
-#define	CONFIG_KEY_USE		"keyuse"
 #define	CONFIG_VOICES		"voices"
 
 #define	TITLE_DELAY1		2				// time to wait before OOH OOH
@@ -209,7 +203,6 @@ public:
 	int	_optionsScrollX, _optionsXV, _oBannerY;
 	int	_nextScreen;
 
-	Common::KeyCode _keyAssignUp, _keyAssignDown, _keyAssignLeft, _keyAssignRight, _keyAssignUse;
 	Picture	*_contArrowUp, *_contArrowDown, *_contArrowLeft, *_contArrowRight, *_contAssign, *_warpPlaque;
 
 	Picture	*_sliderLeft, *_sliderMid, *_sliderRight, *_sliderKnob;

@@ -35,20 +35,8 @@ void Input::init() {
 	_stylusDown = false;
 	_buttons = 0;
 
-	_keyUp = Common::KEYCODE_UP;
-	_keyDown = Common::KEYCODE_DOWN;
-	_keyLeft = Common::KEYCODE_LEFT;
-	_keyRight = Common::KEYCODE_RIGHT;
-	_keyMenu = Common::KEYCODE_ESCAPE;
-	_keyUse = Common::KEYCODE_RETURN;
-	_keyInv = Common::KEYCODE_SPACE;
-	_keyDebug = Common::KEYCODE_F1;
-	_keyQuit = Common::KEYCODE_F10;
-
 	_mouseX = g_hdb->_screenWidth / 2;
 	_mouseY = g_hdb->_screenHeight / 2;
-
-	_mouseLButton = _mouseMButton = _mouseRButton = 0;
 }
 
 void Input::setButtons(uint16 b) {
@@ -278,9 +266,6 @@ void Input::stylusDown(int x, int y) {
 		return;
 	time = delay;
 
-	_stylusDown = true;
-	_stylusDownX = x;
-	_stylusDownY = y;
 	GameState gs = g_hdb->getGameState();
 
 	switch (gs) {
@@ -352,8 +337,8 @@ void Input::stylusDown(int x, int y) {
 			int mx, my;
 			g_hdb->_map->getMapXY(&mx, &my);
 
-			mx = ((mx + _stylusDownX) / kTileWidth) * kTileWidth;
-			my = ((my + _stylusDownY) / kTileHeight) * kTileHeight;
+			mx = ((mx + x) / kTileWidth) * kTileWidth;
+			my = ((my + y) / kTileHeight) * kTileHeight;
 			g_hdb->_ai->setPlayerXY(mx, my);
 
 			g_hdb->startMoveMap(x, y);
@@ -418,10 +403,6 @@ void Input::stylusDown(int x, int y) {
 	}
 }
 
-void Input::stylusUp(int x, int y) {
-	_stylusDown = false;
-}
-
 void Input::stylusMove(int x, int y) {
 	// In a cinematic?
 	if (g_hdb->_ai->playerLocked() || g_hdb->_ai->playerDead())
@@ -449,18 +430,16 @@ void Input::updateMouse(int newX, int newY) {
 		g_hdb->_gfx->showPointer(true);
 
 	// Check if LButton is being dragged
-	if (_mouseLButton)
+	if (_stylusDown)
 		stylusMove(_mouseX, _mouseY);
 }
 
-void Input::updateMouseButtons(int l, int m, int r) {
-	_mouseLButton += l;
-	_mouseMButton += m;
-	_mouseRButton += r;
+void Input::updateMouseButtons(bool isDown) {
+	_stylusDown = isDown;
 
 	// Check if LButton has been pressed
 	// Check if LButton has been lifted
-	if (_mouseLButton) {
+	if (isDown) {
 		if (g_hdb->isPPC()) {
 			stylusDown(_mouseX, _mouseY);
 			return;
@@ -476,36 +455,13 @@ void Input::updateMouseButtons(int l, int m, int r) {
 			}
 			stylusDown(_mouseX, _mouseY);
 		}
-	} else if (!_mouseLButton) {
-		stylusUp(_mouseX, _mouseY);
-	}
-
-	// Check if MButton has been pressed
-	if (_mouseMButton) {
-		if (g_hdb->getPause() && g_hdb->getGameState() == GAME_PLAY)
-			return;
-
-		g_hdb->_ai->clearWaypoints();
-		g_hdb->_sound->playSound(SND_POP);
-	}
-
-	// Check if RButton has been pressed
-	if (_mouseRButton) {
-		if (g_hdb->getPause() && g_hdb->getGameState() == GAME_PLAY)
-			return;
-
-		uint16 buttons = getButtons() | kButtonB;
-		setButtons(buttons);
-	} else if (!_mouseRButton) {
-		uint16 buttons = getButtons() & ~kButtonB;
-		setButtons(buttons);
 	}
 }
 
-void Input::updateKeys(Common::Event event, bool keyDown) {
+void Input::updateActions(Common::Event event, bool keyDown, bool fromMouse) {
 	static bool current = false, last = false;
 
-	if (keyDown && event.kbd.keycode == _keyQuit) {
+	if (keyDown && event.customType == kHDBActionQuit) {
 		g_hdb->quitGame();
 		return;
 	}
@@ -514,7 +470,7 @@ void Input::updateKeys(Common::Event event, bool keyDown) {
 
 	// PAUSE key pressed?
 	last = current;
-	if (keyDown && event.kbd.keycode == Common::KEYCODE_p && g_hdb->getGameState() == GAME_PLAY) {
+	if (keyDown && event.customType == kHDBActionPause && g_hdb->getGameState() == GAME_PLAY) {
 		current = true;
 		if (!last) {
 			g_hdb->togglePause();
@@ -524,50 +480,56 @@ void Input::updateKeys(Common::Event event, bool keyDown) {
 		current = false;
 
 	if (!g_hdb->getPause()) {
-		if (event.kbd.keycode == _keyUp) {
+		if (event.customType == kHDBActionUp) {
 			if (keyDown) {
 				buttons |= kButtonUp;
-				if (g_hdb->_gfx->getPointer())
+				if (g_hdb->_gfx->getPointer() && !fromMouse)
 					g_hdb->_gfx->showPointer(false);
 			} else {
 				buttons &= ~kButtonUp;
 			}
-		} else if (event.kbd.keycode == _keyDown) {
+		} else if (event.customType == kHDBActionDown) {
 			if (keyDown) {
 				buttons |= kButtonDown;
-				if (g_hdb->_gfx->getPointer())
+				if (g_hdb->_gfx->getPointer() && !fromMouse)
 					g_hdb->_gfx->showPointer(false);
 			} else {
 				buttons &= ~kButtonDown;
 			}
-		} else if (event.kbd.keycode == _keyLeft) {
+		} else if (event.customType == kHDBActionLeft) {
 			if (keyDown) {
 				buttons |= kButtonLeft;
-				if (g_hdb->_gfx->getPointer())
+				if (g_hdb->_gfx->getPointer() && !fromMouse)
 					g_hdb->_gfx->showPointer(false);
 			} else {
 				buttons &= ~kButtonLeft;
 			}
-		} else if (event.kbd.keycode == _keyRight) {
+		} else if (event.customType == kHDBActionRight) {
 			if (keyDown) {
 				buttons |= kButtonRight;
-				if (g_hdb->_gfx->getPointer())
+				if (g_hdb->_gfx->getPointer() && !fromMouse)
 					g_hdb->_gfx->showPointer(false);
 			} else {
 				buttons &= ~kButtonRight;
 			}
-		} else if (event.kbd.keycode == _keyUse) {
+		} else if (event.customType == kHDBActionUse) {
 			if (keyDown) {
 				buttons |= kButtonB;
-				if (g_hdb->_gfx->getPointer())
+				if (g_hdb->_gfx->getPointer() && !fromMouse)
 					g_hdb->_gfx->showPointer(false);
 			} else {
 				buttons &= ~kButtonB;
 			}
+		} else if (event.customType == kHDBActionClearWaypoints) {
+			if (keyDown) {
+				g_hdb->_ai->clearWaypoints();
+				g_hdb->_sound->playSound(SND_POP);
+			}
 		}
+		// TODO: Inventory key
 	}
 
-	if (event.kbd.keycode == _keyMenu) {
+	if (event.customType == kHDBActionMenu) {
 		if (keyDown) {
 			buttons |= kButtonA;
 			g_hdb->_gfx->showPointer(true);
@@ -576,7 +538,7 @@ void Input::updateKeys(Common::Event event, bool keyDown) {
 			buttons &= ~kButtonA;
 			g_hdb->_menu->setMenuKey(0);
 		}
-	} else if (event.kbd.keycode == _keyDebug) {
+	} else if (event.customType == kHDBActionDebug) {
 		if (keyDown)
 			buttons |= kButtonExit;
 		else
