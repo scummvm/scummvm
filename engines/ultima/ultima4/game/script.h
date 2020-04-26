@@ -412,7 +412,7 @@ private:
 	 */
 private:
 	typedef Std::map<Common::String, Action> ActionMap;
-	static ActionMap _actionMap;
+	ActionMap _actionMap;
 
 private:
 	void removeCurrentVariable(const Common::String &name);

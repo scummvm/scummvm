@@ -234,7 +234,6 @@ Conversation::Conversation() : _state(INTRO), _script(new Script()) {
 #ifdef IOS_ULTIMA4
 	U4IOS::incrementConversationCount();
 #endif
-
 }
 
 Conversation::~Conversation() {

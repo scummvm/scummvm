@@ -94,11 +94,6 @@ bool Script::Variable::isSet() const {
 	return _set;
 }
 
-/*
- * Static member variables
- */
-Script::ActionMap Script::_actionMap;
-
 Script::Script() : _vendorScriptDoc(nullptr), _scriptNode(nullptr), _debug(false), _state(STATE_UNLOADED),
 	_nounName("item"), _idPropName("id") {
 	_actionMap["context"]           = ACTION_SET_CONTEXT;
