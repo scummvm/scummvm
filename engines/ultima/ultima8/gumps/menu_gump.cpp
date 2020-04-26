@@ -119,7 +119,8 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 
 	if (!_nameEntryMode) {
 		SettingManager *settingman = SettingManager::get_instance();
-		bool endgame, quotes;
+		bool endgame = false;
+		bool quotes = false;
 		settingman->get("endgame", endgame);
 		settingman->get("quotes", quotes);
 
