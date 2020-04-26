@@ -168,6 +168,7 @@ _dialogs=auto
 _iconv=auto
 _tts=auto
 _gtk=auto
+_fribidi=auto
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
@@ -258,6 +259,7 @@ add_feature theoradec "libtheoradec" "_theoradec"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
+add_feature fribidi "FriBidi" "_fribidi"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -1076,6 +1078,9 @@ Optional Libraries:
   --with-mad-prefix=DIR    prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
 
+  --with-fribidi-prefix=DIR    prefix where libfribidi is installed
+  --disable-fribidi            disable libfribidi support [autodetect]
+
   --with-flac-prefix=DIR   prefix where libFLAC is installed (optional)
   --disable-flac           disable FLAC support [autodetect]
 
@@ -1233,6 +1238,8 @@ for ac_option in $@; do
 	--disable-flac)               _flac=no               ;;
 	--enable-mad)                 _mad=yes               ;;
 	--disable-mad)                _mad=no                ;;
+	--enable-fribidi)             _fribidi=yes           ;;
+	--disable-fribidi)            _fribidi=no            ;;
 	--enable-zlib)                _zlib=yes              ;;
 	--disable-zlib)               _zlib=no               ;;
 	--enable-sparkle)             _sparkle=yes           ;;
@@ -1354,6 +1361,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		MAD_CFLAGS="-I$arg/include"
 		MAD_LIBS="-L$arg/lib"
+		;;
+	--with-fribidi-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		FRIBIDI_CFLAGS="-I$arg/include"
+		FRIBIDI_LIBS="-L$arg/lib"
 		;;
 	--with-jpeg-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5495,6 +5507,26 @@ if test "$_pandoc" = yes ; then
 fi
 
 define_in_config_if_yes $_pandoc 'USE_PANDOC'
+
+#
+# Check for FriBidi
+#
+echocheck "FriBidi"
+if test "$_fribidi" = auto ; then
+	_fribidi=no
+	cat > $TMPC << EOF
+#include <fribidi/fribidi.h>
+int main(void) { return 0; }
+EOF
+	cc_check $FRIBIDI_CFLAGS $FRIBIDI_LIBS -lfribidi && _fribidi=yes
+fi
+if test "$_fribidi" = yes ; then
+	append_var LIBS "$FRIBIDI_LIBS -lfribidi"
+	append_var INCLUDES "$FRIBIDI_CFLAGS"
+fi
+define_in_config_if_yes "$_fribidi" 'USE_FRIBIDI'
+echo "$_fribidi"
+
 
 # Default to plain text output for pandoc
 if test -z "$_pandocformat" -o "$_pandocformat" = "default"; then

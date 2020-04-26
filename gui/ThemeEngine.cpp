@@ -919,7 +919,11 @@ void ThemeEngine::drawDDText(TextData type, TextColor color, const Common::Rect 
 		restoreBackground(dirty);
 
 	_vectorRenderer->setFgColor(_textColors[color]->r, _textColors[color]->g, _textColors[color]->b);
+#ifdef USE_TRANSLATION
+	_vectorRenderer->drawString(_texts[type]->_fontPtr, TransMan.convertBiDiString(text), area, alignH, alignV, deltax, ellipsis, dirty);
+#else
 	_vectorRenderer->drawString(_texts[type]->_fontPtr, text, area, alignH, alignV, deltax, ellipsis, dirty);
+#endif
 
 	addDirtyRect(dirty);
 }

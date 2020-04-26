@@ -39,6 +39,7 @@ parts:
       - libfreetype6-dev
       - zlib1g-dev
       - libunity-dev
+      - libfribidi-dev
     stage-packages:
       - libicu55
       - libasound2
