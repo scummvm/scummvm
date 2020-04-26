@@ -168,6 +168,13 @@ void MacText::chopChunk(Common::U32String &str) {
 
 	chunk->getFont()->wordWrapText(str, _maxWidth, text, w);
 
+	if (text.size() == 0) {
+		warning("chopChunk: too narrow width, >%d", _maxWidth);
+		chunk->text += str;
+
+		return;
+	}
+
 	chunk->text += text[0];
 
 	D(9, "** splitString, subchunk: \"%s\"", toPrintable(text[0].encode()).c_str());
