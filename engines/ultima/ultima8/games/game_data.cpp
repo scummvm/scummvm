@@ -475,9 +475,9 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
 void GameData::loadRemorseData() {
 	FileSystem *filesystem = FileSystem::get_instance();
 
-	Common::SeekableReadStream *fd = filesystem->ReadFile("@game/static/_fixed.dat");
+	Common::SeekableReadStream *fd = filesystem->ReadFile("@game/static/fixed.dat");
 	if (!fd)
-		error("Unable to load static/_fixed.dat");
+		error("Unable to load static/fixed.dat");
 
 	_fixed = new RawArchive(fd);
 
@@ -565,26 +565,26 @@ void GameData::loadRemorseData() {
 	delete globflex;
 
 	// Load fonts
-	Common::SeekableReadStream *fds = filesystem->ReadFile("@game/static/_fonts.flx");
+	Common::SeekableReadStream *fds = filesystem->ReadFile("@game/static/fonts.flx");
 	if (!fds)
-		error("Unable to load static/_fonts.flx");
+		error("Unable to load static/fonts.flx");
 
 	_fonts = new FontShapeArchive(fds, OTHER,
 	                             PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 	_fonts->setHVLeads();
 
 	// Load mouse
-	IDataSource *msds = filesystem->ReadFile("@game/static/_mouse.shp");
+	IDataSource *msds = filesystem->ReadFile("@game/static/mouse.shp");
 	if (!msds)
-		error("Unable to load static/_mouse.shp");
+		error("Unable to load static/mouse.shp");
 
 	_mouse = new Shape(msds, 0);
 	_mouse->setPalette(PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 	delete msds;
 
-	Common::SeekableReadStream *gumpds = filesystem->ReadFile("@game/static/_gumps.flx");
+	Common::SeekableReadStream *gumpds = filesystem->ReadFile("@game/static/gumps.flx");
 	if (!gumpds)
-		error("Unable to load static/_gumps.flx");
+		error("Unable to load static/gumps.flx");
 
 	_gumps = new GumpShapeArchive(gumpds, GUMPS,
 		PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
@@ -602,9 +602,9 @@ void GameData::loadRemorseData() {
 	_music = nullptr; //new MusicFlex(dummyds);
 	delete dummyrs;
 #if 0
-	Common::SeekableReadStream *mf = filesystem->ReadFile("@game/sound/_music.flx");
+	Common::SeekableReadStream *mf = filesystem->ReadFile("@game/sound/music.flx");
 	if (!mf)
-		error("Unable to load sound/_music.flx");
+		error("Unable to load sound/music.flx");
 
 	_music = new MusicFlex(mf);
 #endif
