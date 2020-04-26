@@ -129,6 +129,7 @@ public:
 	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
 private:
+	void chopChunk(Common::U32String &str);
 	void splitString(Common::U32String &s);
 	void render(int from, int to);
 	void recalcDims();

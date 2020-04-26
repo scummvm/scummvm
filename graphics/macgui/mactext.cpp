@@ -137,11 +137,47 @@ static const Common::U32String::value_type *readHex(uint16 *res, const Common::U
 	return s;
 }
 
-void MacText::splitString(Common::U32String &str) {
-	const Common::U32String::value_type *s = str.c_str();
+// Adds the given string to the end of the last line/chunk
+// while observing the _maxWidth
+void MacText::chopChunk(Common::U32String &str) {
+	int curLine = _textLines.size() - 1;
+	int curChunk = _textLines[curLine].chunks.size() - 1;
+	MacFontRun *chunk = &_textLines[curLine].chunks[curChunk];
 
-	Common::U32String tmp;
-	bool prevCR = false;
+	// Check if there is nothing to add, then remove the last chunk
+	// This happens when the previous run is finished only with
+	// empty formatting, or when we were adding text for the first time
+	if (chunk->text.empty() && str.empty()) {
+		_textLines[curLine].chunks.pop_back();
+
+		return;
+	}
+
+	Common::Array<Common::U32String> text;
+
+	int w = getLineWidth(curLine, true);
+
+	chunk->getFont()->wordWrapText(str, _maxWidth, text, w);
+
+	chunk->text += text[0];
+
+	// We do not overlap, so we're done
+	if (text.size() == 1)
+		return;
+
+	// Now add rest of the chunks
+	MacFontRun newchunk = _textLines[curLine].chunks[curChunk];
+
+	for (uint i = 1; i < text.size(); i++) {
+		newchunk.text = text[i];
+		_textLines[curLine].chunks.push_back(newchunk);
+	}
+}
+
+void MacText::splitString(Common::U32String &str) {
+	const Common::U32String::value_type *l = str.c_str();
+
+	Common::U32String line, tmp;
 
 	if (_textLines.empty()) {
 		_textLines.resize(1);
@@ -150,12 +186,11 @@ void MacText::splitString(Common::U32String &str) {
 
 	int curLine = _textLines.size() - 1;
 	int curChunk = _textLines[curLine].chunks.size() - 1;
-	bool nextChunk = false;
-	MacFontRun previousFormatting;
+	MacFontRun chunk = _textLines[curLine].chunks[curChunk];
 
 	debug(9, "******** splitString: \"%s\"", toPrintable(str.encode()).c_str());
 
-	while (*s) {
+	while (*l) {
 #if DEBUG
 		for (uint i = 0; i < _textLines.size(); i++) {
 			debugN(9, "%2d ", i);
@@ -163,15 +198,63 @@ void MacText::splitString(Common::U32String &str) {
 			for (uint j = 0; j < _textLines[i].chunks.size(); j++)
 				debugN(9, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
 
-			debug(9, " --> '%c' 0x%02x, \"%s\"", (*s > 0x20 ? *s : ' '), (byte)*s, Common::toPrintable(tmp.encode()).c_str());
+			debug(9, " --> '%c' 0x%02x, \"%s\"", (*s > 0x20 ? *l : ' '), (byte)*l, Common::toPrintable(tmp.encode()).c_str());
 		}
 #endif
 
-		if (*s == '\001') {
-			s++;
-			if (*s == '\001') {
+		line.clear();
+
+		// First, get the whole line
+		while (*l) {
+			if (*l == '\r') {
+				l++;
+
+				if (*l == '\n')	// Skip whole '\r\n'
+					l++;
+
+				break;
+			}
+
+			line += *l++;
+		}
+
+		// Now process whole line
+		const Common::U32String::value_type *s = line.c_str();
+
+		tmp.clear();
+
+		while (*s) {
+			// Scan till next font change or end of line
+			if (*s != '\001') {
+				tmp += *s;
+
+				s++;
+
+				if (*s)
+					continue;
+			}
+
+			if (*s)	// If it was '\001', skip it
+				s++;
+
+			if (*s == '\001') { // If next char is '\001' then copy it verbatim
 				// Copy it verbatim
-			} else if (*s == '\015') {
+				tmp += *s++;
+
+				if (*s)	// Check we reached end of line
+					continue;
+			}
+
+			// Okay, now we are either at the end of the line, or in the next
+			// chunk definition. That means, that we have to store the previous chunk
+			chopChunk(tmp);
+
+			// If it is end of the line, we're done
+			if (!*s) {
+				break;
+			}
+
+			if (*s == '\015') {	// binary format
 				s++;
 
 				uint16 fontId = *s++; fontId = (fontId << 8) | *s++;
@@ -184,14 +267,8 @@ void MacText::splitString(Common::U32String &str) {
 				debug(9, "******** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
 						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
-				previousFormatting = _currentFormatting;
-				_currentFormatting.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-
-				if (curLine == 0 && curChunk == 0 && tmp.empty())
-					previousFormatting = _currentFormatting;
-
-				nextChunk = true;
-			} else if (*s == '\016') {
+				chunk.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+			} else if (*s == '\016') {	// human-readable format
 				s++;
 
 				uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
@@ -206,109 +283,24 @@ void MacText::splitString(Common::U32String &str) {
 				debug(9, "******** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
 						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
-				previousFormatting = _currentFormatting;
-				_currentFormatting.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-
-				if (curLine == 0 && curChunk == 0 && tmp.empty())
-					previousFormatting = _currentFormatting;
-
-				nextChunk = true;
+				chunk.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 			} else {
 				error("MacText: formatting error, got %02x", *s);
 			}
-		} else if (*s == '\n' && prevCR) {	// treat \r\n as one
-			prevCR = false;
 
-			s++;
-			continue;
-		} else if (*s == '\r') {
-			prevCR = true;
+			// Push new formatting
+			_textLines[curLine].chunks.push_back(chunk);
 		}
 
-		if (*s == '\r' || *s == '\n' || nextChunk) {
-			Common::Array<Common::U32String> text;
-
-			if (!nextChunk)
-				previousFormatting = _currentFormatting;
-
-			int w = getLineWidth(curLine, true);
-
-			previousFormatting.getFont()->wordWrapText(tmp, _maxWidth, text, w);
-			tmp.clear();
-
-			if (text.size()) {
-				for (uint i = 0; i < text.size(); i++) {
-					_textLines[curLine].chunks[curChunk].text += text[i];
-
-					if ((text.size() > 1 || !nextChunk) && !(i == text.size() - 1 && nextChunk)) {
-						curLine++;
-						_textLines.resize(curLine + 1);
-						_textLines[curLine].chunks.push_back(previousFormatting);
-						curChunk = 0;
-					}
-				}
-
-				if (nextChunk) {
-					curChunk++;
-
-					_textLines[curLine].chunks.push_back(_currentFormatting);
-				} else {
-					_textLines[curLine].chunks[0] = _currentFormatting;
-				}
-			} else {
-				if (nextChunk) { // No text, replacing formatting
-					_textLines[curLine].chunks[curChunk] = _currentFormatting;
-				} else { // Otherwise it is an empty line
-					curLine++;
-					_textLines.resize(curLine + 1);
-					_textLines[curLine].chunks.push_back(previousFormatting);
-					curChunk = 0;
-				}
-			}
-
-			if (!nextChunk) // Don't skip next character
-				s++;
-
-			nextChunk = false;
-			continue;
+		if (!*l) { // If this is end of the string, we're done here
+			break;
 		}
 
-		tmp += *s;
-		s++;
+		// Add new line
+		curLine++;
+		_textLines.resize(curLine + 1);
+		_textLines[curLine].chunks.push_back(chunk);
 	}
-
-	if (tmp.size()) {
-		Common::Array<Common::U32String> text;
-		int w = getLineWidth(curLine, true);
-
-		_currentFormatting.getFont()->wordWrapText(tmp, _maxWidth, text, w);
-
-		if (text.size())
-			_textLines[curLine].chunks[curChunk].text = text[0];
-		else
-			warning("MacText::splitString(): Font resulted in 0 width for text '%s'", tmp.encode().c_str());
-
-		if (text.size() > 1) {
-			for (uint i = 1; i < text.size(); i++) {
-				curLine++;
-				_textLines.resize(curLine + 1);
-				_textLines[curLine].chunks.push_back(_currentFormatting);
-				_textLines[curLine].chunks[0].text = text[i];
-			}
-		}
-	}
-
-#if DEBUG
-	debug(9, "Result:");
-	for (uint i = 0; i < _textLines.size(); i++) {
-		debugN(9, "%2d ", i);
-
-		for (uint j = 0; j < _textLines[i].chunks.size(); j++)
-			debugN(9, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
-
-		debug(9, " --> '%c' 0x%02x, \"%s\"", (*s > 0x20 ? *s : ' '), (byte)*s, Common::toPrintable(tmp.encode()).c_str());
-	}
-#endif
 }
 
 void MacText::reallocSurface() {
