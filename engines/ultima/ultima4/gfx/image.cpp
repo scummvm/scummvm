@@ -47,7 +47,8 @@ Image *Image::create(int w, int h, bool paletted, Image::Type type) {
 void Image::create(int w, int h, bool paletted) {
 	_paletted = paletted;
 	_surface = new Graphics::ManagedSurface(w, h, paletted ?
-		Graphics::PixelFormat::createFormatCLUT8() : g_screen->format);
+		Graphics::PixelFormat::createFormatCLUT8() :
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 	_disposeAfterUse = DisposeAfterUse::YES;
 }
 
