@@ -36,6 +36,10 @@
 
 #ifdef USE_TRANSLATION
 
+#ifdef USE_FRIBIDI
+#include <fribidi/fribidi.h>
+#endif
+
 namespace Common {
 
 DECLARE_SINGLETON(TranslationManager);
@@ -449,6 +453,68 @@ bool TranslationManager::checkHeader(File &in) {
 
 	return true;
 }
+
+String TranslationManager::convertBiDiString(const String &input) {
+	if (getCurrentLanguage() != "he")		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
+		return input;
+
+	if (getCurrentCharset() != "iso-8859-8") {
+		warning("convertBiDiString: Unexpected charset is used with %s language: %s", getCurrentLanguage().c_str(), getCurrentCharset().c_str());
+		return input;
+	};
+
+	return TranslationManager::convertBiDiString(input, HE_ISR);
+}
+
+#ifdef USE_FRIBIDI
+String TranslationManager::convertBiDiString(const String &input, const Common::Language lang) {
+	if (lang != HE_ISR)		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
+		return input;
+
+	int buff_length = (input.size() + 2) * 2;		// it's more than enough, but it's better to be on the safe side
+	FriBidiChar *input_unicode = (FriBidiChar *)malloc(buff_length * sizeof(FriBidiChar));
+	FriBidiChar *visual_str = (FriBidiChar *)malloc(buff_length * sizeof(FriBidiChar));
+	char *output = (char *)malloc(buff_length);
+
+	FriBidiCharType pbase_dir = FRIBIDI_TYPE_ON;
+	FriBidiCharSet char_set = FRIBIDI_CHAR_SET_ISO8859_8;
+
+	FriBidiStrIndex length = fribidi_charset_to_unicode(char_set, input.c_str(), input.size(), input_unicode);
+
+	if (!fribidi_log2vis(
+		/* input */
+		input_unicode,
+		length,
+		&pbase_dir,
+		/* output */
+		visual_str,
+		NULL,			// position_L_to_V_list,
+		NULL,			// position_V_to_L_list,
+		NULL			// embedding_level_list
+	)) {
+		warning("convertBiDiString: calling fribidi_log2vis failed");
+		free(input_unicode);
+		free(visual_str);
+		free(output);
+		return input;
+	}
+
+	fribidi_unicode_to_charset(char_set, visual_str, length, output);
+
+	String result = String(output);
+	free(input_unicode);
+	free(visual_str);
+	free(output);
+
+	return result;
+}
+#else
+String TranslationManager::convertBiDiString(const String &input, const Common::Language lang) {
+	return input;
+}
+#endif
+
+
 
 } // End of namespace Common
 
