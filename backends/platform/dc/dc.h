@@ -64,7 +64,7 @@ public:
 
 	// Play cdrom audio track
 	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
-		Audio::Mixer::SoundType soundType) override;
+		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType) override;
 
 	// Stop cdrom audio track
 	void stop() override;
