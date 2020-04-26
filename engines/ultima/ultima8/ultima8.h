@@ -50,9 +50,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-#define DEFAULT_SCREEN_WIDTH 320
-#define DEFAULT_SCREEN_HEIGHT 200
-
 class Debugger;
 class Kernel;
 class MemoryManager;
@@ -215,6 +212,10 @@ public:
 		return _painting;
 	}
 
+	static const int U8_DEFAULT_SCREEN_WIDTH = 320;
+	static const int U8_DEFAULT_SCREEN_HEIGHT = 200;
+	static const int CRUSADER_DEFAULT_SCREEN_WIDTH = 640;
+	static const int CRUSADER_DEFAULT_SCREEN_HEIGHT = 480;
 
 	INTRINSIC(I_getCurrentTimerTick);
 	INTRINSIC(I_setAvatarInStasis);

@@ -50,6 +50,7 @@ Game *Game::createGame(GameInfo *info) {
 	case GameInfo::GAME_U8:
 		return new U8Game();
 	case GameInfo::GAME_REMORSE:
+	case GameInfo::GAME_REGRET:
 		return new RemorseGame();
 	default:
 		CANT_HAPPEN_MSG("createGame: invalid _game");

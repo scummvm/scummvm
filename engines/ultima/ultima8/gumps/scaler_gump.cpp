@@ -180,8 +180,13 @@ void ScalerGump::setupScaling() {
 	FORGET_OBJECT(_buffer1);
 	FORGET_OBJECT(_buffer2);
 
-	_swidth1 = 320;
-	_sheight1 = 200;
+	if (CoreApp::get_instance()->getGameInfo() && GAME_IS_U8) {
+		_swidth1 = Ultima8Engine::U8_DEFAULT_SCREEN_WIDTH;
+		_sheight1 = Ultima8Engine::U8_DEFAULT_SCREEN_HEIGHT;
+	} else {
+		_swidth1 = Ultima8Engine::CRUSADER_DEFAULT_SCREEN_WIDTH;
+		_sheight1 = Ultima8Engine::CRUSADER_DEFAULT_SCREEN_HEIGHT;
+	}
 	_swidth2 = 0;
 	_sheight2 = 0;
 	const Scaler *point = &Ultima8Engine::get_instance()->point_scaler;

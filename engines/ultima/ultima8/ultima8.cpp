@@ -276,8 +276,6 @@ void Ultima8Engine::startup() {
 	_objectManager = new ObjectManager();
 	_mouse = new Mouse();
 
-	GraphicSysInit();
-
 	// Audio Mixer
 	_audioMixer = new AudioMixer(_mixer);
 
@@ -286,12 +284,14 @@ void Ultima8Engine::startup() {
 	// We Attempt to startup _game
 	setupGameList();
 	GameInfo *info = getDefaultGame();
-	if (setupGame(info))
+
+	if (setupGame(info)) {
+		GraphicSysInit();
 		startupGame();
-	else
+	} else {
 		// Couldn't setup the game, should never happen?
 		CANT_HAPPEN_MSG("default game failed to initialize");
-
+	}
 	paint();
 }
 
@@ -305,6 +305,9 @@ void Ultima8Engine::startupGame() {
 	if (_gameInfo->_type == GameInfo::GAME_U8) {
 		_ucMachine = new UCMachine(U8Intrinsics, 256);
 	} else if (_gameInfo->_type == GameInfo::GAME_REMORSE) {
+		_ucMachine = new UCMachine(RemorseIntrinsics, 308);
+	} else if (_gameInfo->_type == GameInfo::GAME_REGRET) {
+		// TODO: Do these work the same as remorse?
 		_ucMachine = new UCMachine(RemorseIntrinsics, 308);
 	} else {
 		CANT_HAPPEN_MSG("Invalid game type.");
@@ -566,8 +569,13 @@ void Ultima8Engine::paint() {
 }
 
 void Ultima8Engine::GraphicSysInit() {
-	_settingMan->setDefault("width", DEFAULT_SCREEN_WIDTH);
-	_settingMan->setDefault("height", DEFAULT_SCREEN_HEIGHT);
+	if (GAME_IS_U8) {
+		_settingMan->setDefault("width", U8_DEFAULT_SCREEN_WIDTH);
+		_settingMan->setDefault("height", U8_DEFAULT_SCREEN_HEIGHT);
+	} else {
+		_settingMan->setDefault("width", CRUSADER_DEFAULT_SCREEN_WIDTH);
+		_settingMan->setDefault("height", CRUSADER_DEFAULT_SCREEN_HEIGHT);
+	}
 	_settingMan->setDefault("bpp", 16);
 
 	int width, height, bpp;
@@ -592,8 +600,8 @@ void Ultima8Engine::GraphicSysInit() {
 	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height, bpp);
 
 	if (!new_screen) {
-		perr << Common::String::format("Unable to set new video mode. Trying %dx%dx32", width, height) << Std::endl;
-		new_screen = RenderSurface::SetVideoMode(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT, 32);
+		perr << Common::String::format("Unable to set new video mode. Trying %dx%dx32", U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT) << Std::endl;
+		new_screen = RenderSurface::SetVideoMode(U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT, 32);
 	}
 
 	if (!new_screen) {
