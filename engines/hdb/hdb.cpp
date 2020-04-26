@@ -975,28 +975,16 @@ Common::Error HDBGame::run() {
 				_input->updateMouse(event.mouse.x, event.mouse.y);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				_input->updateMouseButtons(1, 0, 0);
+				_input->updateMouseButtons(true);
 				break;
 			case Common::EVENT_LBUTTONUP:
-				_input->updateMouseButtons(-1, 0, 0);
+				_input->updateMouseButtons(false);
 				break;
-			case Common::EVENT_MBUTTONDOWN:
-				_input->updateMouseButtons(0, 1, 0);
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_input->updateActions(event, true, true);
 				break;
-			case Common::EVENT_MBUTTONUP:
-				_input->updateMouseButtons(0, -1, 0);
-				break;
-			case Common::EVENT_RBUTTONDOWN:
-				_input->updateMouseButtons(0, 0, 1);
-				break;
-			case Common::EVENT_RBUTTONUP:
-				_input->updateMouseButtons(0, 0, -1);
-				break;
-			case Common::EVENT_KEYDOWN:
-				_input->updateKeys(event, true);
-				break;
-			case Common::EVENT_KEYUP:
-				_input->updateKeys(event, false);
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+				_input->updateActions(event, false, true);
 				break;
 			default:
 				break;
