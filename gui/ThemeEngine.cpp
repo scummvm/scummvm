@@ -1713,7 +1713,9 @@ bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &
 		Common::FSNode headerfile = node.getChild("THEMERC");
 		if (!headerfile.exists() || !headerfile.isReadable() || headerfile.isDirectory())
 			return false;
-		stream.open(headerfile);
+
+		if (!stream.open(headerfile))
+			return false;
 	}
 
 	if (stream.isOpen()) {
