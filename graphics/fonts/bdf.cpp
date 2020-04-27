@@ -420,6 +420,10 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				boxes[encoding] = box;
 			}
 		} else if (line.hasPrefix("FAMILY_NAME \"")) {
+			if (familyName != nullptr) {
+				warning("BdfFont::loadFont: Duplicated FAMILY_NAME");
+				delete[] familyName;
+			}
 			familyName = new char[line.size()];
 			Common::strlcpy(familyName, line.c_str() + 13, line.size() - 12);	// strlcpy() copies at most size-1 characters and then add a '\0'
 			char *p = &familyName[strlen(familyName)];
@@ -437,6 +441,10 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			}
 			*p = '\0'; // Remove last quote
 		} else if (line.hasPrefix("SLANT \"")) {
+			if (slant != nullptr) {
+				warning("BdfFont::loadFont: Duplicated SLANT");
+				delete[] slant;
+			}
 			slant = new char[line.size()];
 			Common::strlcpy(slant, line.c_str() + 7, line.size() - 6);  // strlcpy() copies at most size-1 characters and then add a '\0'
 			char *p = &slant[strlen(slant)];
