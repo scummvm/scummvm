@@ -34,16 +34,17 @@ namespace Ultima4 {
  * argument in the range 'a' - lastValidLetter.
  */
 class AlphaActionController : public WaitableController<int> {
-public:
-	AlphaActionController(char letter, const Common::String &p) : _lastValidLetter(letter), _prompt(p) {
-	}
-	bool keyPressed(int key) override;
-
-	static int get(char lastValidLetter, const Common::String &prompt, EventHandler *eh = nullptr);
-
 private:
 	char _lastValidLetter;
 	Common::String _prompt;
+public:
+	AlphaActionController(char letter, const Common::String &p) :
+		_lastValidLetter(letter), _prompt(p) {}
+
+	bool keyPressed(int key) override;
+	void keybinder(KeybindingAction action) override;
+
+	static int get(char lastValidLetter, const Common::String &prompt, EventHandler *eh = nullptr);
 };
 
 } // End of namespace Ultima4

@@ -38,8 +38,7 @@ class TextView;
 class MenuController : public WaitableController<void *> {
 public:
 	MenuController(Menu *menu, TextView *view);
-	bool keyPressed(int key);
-
+	bool keyPressed(int key) override;
 protected:
 	Menu *_menu;
 	TextView *_view;

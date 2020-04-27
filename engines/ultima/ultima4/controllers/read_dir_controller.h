@@ -42,11 +42,6 @@ public:
 	void setActive() override;
 
 	/**
-	 * Key was pressed
-	 */
-	bool keyPressed(int key) override;
-
-	/**
 	 * Handles keybinder actions
 	 */
 	void keybinder(KeybindingAction action) override;

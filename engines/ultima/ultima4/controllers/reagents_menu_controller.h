@@ -43,6 +43,8 @@ public:
 	 */
 	bool keyPressed(int key) override;
 
+	void keybinder(KeybindingAction action) override;
+
 private:
 	Ingredients *_ingredients;
 };

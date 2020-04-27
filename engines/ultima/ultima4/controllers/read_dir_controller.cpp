@@ -33,8 +33,8 @@ ReadDirController::ReadDirController() {
 }
 
 void ReadDirController::setActive() {
-	// Have the keybinder active for the direction keys
-	MetaEngine::setKeybindingsActive(true);
+	// Special mode for inputing directions
+	MetaEngine::setKeybindingMode(KBMODE_DIRECTION);
 }
 
 void ReadDirController::keybinder(KeybindingAction action) {
@@ -51,7 +51,7 @@ void ReadDirController::keybinder(KeybindingAction action) {
 	case KEYBIND_RIGHT:
 		_value = DIR_EAST;
 		break;
-	case KEYBIND_PASS:
+	case KEYBIND_ESCAPE:
 		_value = DIR_NONE;
 		doneWaiting();
 		break;
@@ -60,22 +60,6 @@ void ReadDirController::keybinder(KeybindingAction action) {
 	}
 
 	doneWaiting();
-}
-
-bool ReadDirController::keyPressed(int key) {
-	switch (key) {
-	case Common::KEYCODE_ESCAPE:
-	case Common::KEYCODE_SPACE:
-	case Common::KEYCODE_RETURN:
-		_value = DIR_NONE;
-		doneWaiting();
-		return true;
-
-	default:
-		break;
-	}
-
-	return false;
 }
 
 } // End of namespace Ultima4

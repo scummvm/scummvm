@@ -47,8 +47,9 @@ int Controller::getTimerInterval() {
 }
 
 void Controller::setActive() {
-	// Controllers by default won't use the keybindings
-	MetaEngine::setKeybindingsActive(false);
+	// By default, only the Escape action is turned on for controllers,
+	// to allow the different sorts of input prompts to be aborted
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 }
 
 void Controller::timerFired() {

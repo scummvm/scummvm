@@ -38,8 +38,9 @@ struct KeybindingRecord {
 	const char *_joy;
 };
 
-static const KeybindingRecord KEYS[] = {
+static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_INTERACT, "INTERACT", "Interact", "interact", "RETURN", nullptr },
+	{ KEYBIND_ESCAPE, "ESCAPE", "Abort Action", "", "ESCAPE", nullptr },
 	{ KEYBIND_UP, "UP", "Up", "move up", "UP", nullptr },
 	{ KEYBIND_DOWN, "DOWN", "Down", "move down", "DOWN", nullptr },
 	{ KEYBIND_LEFT, "LEFT", "Left", "move left", "LEFT", nullptr },
@@ -114,43 +115,64 @@ static const KeybindingRecord CHEAT_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
+static const KeybindingRecord INPUT_KEYS[] = {
+	{ KEYBIND_ESCAPE, "ESCAPE", "Abort Action", "", "ESCAPE", nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+};
+
+static const KeybindingRecord DIRECTION_KEYS[] = {
+	{ KEYBIND_ESCAPE, "ESCAPE", "Escape", nullptr, "ESCAPE", nullptr },
+	{ KEYBIND_UP, "UP", "Up", nullptr, "UP", nullptr },
+	{ KEYBIND_DOWN, "DOWN", "Down", nullptr, "DOWN", nullptr },
+	{ KEYBIND_LEFT, "LEFT", "Left", nullptr, "LEFT", nullptr },
+	{ KEYBIND_RIGHT, "RIGHT", "Right", nullptr, "RIGHT", nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+};
+
 struct KeysRecord {
 	const char *_id;
 	const char *_desc;
 	const KeybindingRecord *_keys;
 };
-static const KeysRecord KEYS_RECORDS[3] = {
-	{ "ultima4", "Ultima IV", KEYS },
+
+static const KeysRecord NORMAL_RECORDS[] = {
+	{ "ultima4", "Ultima IV", NORMAL_KEYS },
 	{ "ultima4_party", "Ultima IV - Party", PARTY_KEYS },
 	{ "ultima4_cheats", "Ultima IV - Cheats", CHEAT_KEYS },
+	{ nullptr, nullptr, nullptr }
 };
 
-Common::KeymapArray MetaEngine::initKeymaps() {
+static const KeysRecord INPUT_RECORDS[3] = {
+	{ "ultima4", "Ultima IV", INPUT_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
+
+static const KeysRecord DIRECTION_RECORDS[3] = {
+	{ "ultima4", "Ultima IV", DIRECTION_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
+
+static const KeysRecord *MODE_RECORDS[3] = {
+	NORMAL_RECORDS, INPUT_RECORDS, DIRECTION_RECORDS
+};
+
+Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
 	Common::KeymapArray keymapArray;
 	Common::Keymap *keyMap;
 	Common::Action *act;
+	const KeysRecord *recPtr = MODE_RECORDS[mode];
 
-	for (int kCtr = 0; kCtr < 3; ++kCtr) {
+	for (int kCtr = 0; recPtr->_id; ++recPtr, ++kCtr) {
 		// Core keymaps
 		keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame,
-			KEYS_RECORDS[kCtr]._id, _(KEYS_RECORDS[kCtr]._desc));
+			recPtr->_id, recPtr->_desc);
 		keymapArray.push_back(keyMap);
 
 		if (kCtr == 0) {
-			act = new Common::Action("LCLK", _("Interact via Left Click"));
-			act->setLeftClickEvent();
-			act->addDefaultInputMapping("MOUSE_LEFT");
-			act->addDefaultInputMapping("JOY_A");
-			keyMap->addAction(act);
-
-			act = new Common::Action("RCLK", _("Interact via Right Click"));
-			act->setRightClickEvent();
-			act->addDefaultInputMapping("MOUSE_RIGHT");
-			act->addDefaultInputMapping("JOY_B");
-			keyMap->addAction(act);
+			addMouseClickActions(*keyMap);
 		}
 
-		for (const KeybindingRecord *r = KEYS_RECORDS[kCtr]._keys; r->_id; ++r) {
+		for (const KeybindingRecord *r = recPtr->_keys; r->_id; ++r) {
 			act = new Common::Action(r->_id, _(r->_desc));
 			act->setCustomEngineActionEvent(r->_action);
 			act->addDefaultInputMapping(r->_key);
@@ -168,10 +190,31 @@ Common::KeymapArray MetaEngine::initKeymaps() {
 	return keymapArray;
 }
 
-void MetaEngine::setKeybindingsActive(bool isActive) {
-	g_engine->getEventManager()->getKeymapper()->setEnabled(isActive);
+void MetaEngine::addMouseClickActions(Common::Keymap &keyMap) {
+	Common::Action *act;
+
+	act = new Common::Action("LCLK", _("Interact via Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	keyMap.addAction(act);
+
+	act = new Common::Action("RCLK", _("Interact via Right Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	keyMap.addAction(act);
 }
 
+void MetaEngine::setKeybindingMode(KeybindingMode mode) {
+	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
+	mapper->cleanupGameKeymaps();
+
+	Common::KeymapArray arr = initKeymaps(mode);
+
+	for (uint idx = 0; idx < arr.size(); ++idx)
+		mapper->addGameKeymap(arr[idx]);
+}
 
 void MetaEngine::executeAction(KeybindingAction keyAction) {
 	Common::String methodName = getMethod(keyAction);
@@ -181,7 +224,7 @@ void MetaEngine::executeAction(KeybindingAction keyAction) {
 
 Common::String MetaEngine::getMethod(KeybindingAction keyAction) {
 	for (int kCtr = 0; kCtr < 3; ++kCtr) {
-		for (const KeybindingRecord *r = KEYS_RECORDS[kCtr]._keys; r->_id; ++r) {
+		for (const KeybindingRecord *r = NORMAL_RECORDS[kCtr]._keys; r->_id; ++r) {
 			if (r->_action == keyAction)
 				return r->_method;
 		}

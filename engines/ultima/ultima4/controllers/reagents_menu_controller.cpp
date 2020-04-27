@@ -65,17 +65,20 @@ bool ReagentsMenuController::keyPressed(int key) {
 		eventHandler->setControllerDone();
 		break;
 
-	case Common::KEYCODE_ESCAPE:
-		_ingredients->revert();
-		eventHandler->setControllerDone();
-		break;
-
 	default:
 		return MenuController::keyPressed(key);
 	}
 
 	return true;
 }
+
+void ReagentsMenuController::keybinder(KeybindingAction action) {
+	if (action == KEYBIND_ESCAPE) {
+		_ingredients->revert();
+		eventHandler->setControllerDone();
+	}
+}
+
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

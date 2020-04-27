@@ -34,11 +34,6 @@ bool AlphaActionController::keyPressed(int key) {
 	if (key >= 'A' && key <= toupper(_lastValidLetter)) {
 		_value = key - 'A';
 		doneWaiting();
-	} else if (key == Common::KEYCODE_SPACE || key == Common::KEYCODE_ESCAPE
-			|| key == Common::KEYCODE_RETURN) {
-		g_screen->screenMessage("\n");
-		_value = -1;
-		doneWaiting();
 	} else {
 		g_screen->screenMessage("\n%s", _prompt.c_str());
 		g_screen->update();
@@ -46,6 +41,14 @@ bool AlphaActionController::keyPressed(int key) {
 	}
 
 	return true;
+}
+
+void AlphaActionController::keybinder(KeybindingAction action) {
+	if (action == KEYBIND_ESCAPE) {
+		g_screen->screenMessage("\n");
+		_value = -1;
+		doneWaiting();
+	}
 }
 
 int AlphaActionController::get(char lastValidLetter, const Common::String &prompt, EventHandler *eh) {

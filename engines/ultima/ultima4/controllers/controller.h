@@ -68,7 +68,9 @@ public:
 	/**
 	 * Key was pressed
 	 */
-	virtual bool keyPressed(int key) = 0;
+	virtual bool keyPressed(int key) {
+		return false;
+	}
 
 	/**
 	 * Handles keybinder actions

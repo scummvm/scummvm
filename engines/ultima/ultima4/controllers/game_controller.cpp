@@ -332,7 +332,7 @@ void GameController::update(Location *location, MoveEvent &event) {
 
 void GameController::setActive() {
 	// The game controller has the keybindings enabled
-	MetaEngine::setKeybindingsActive(true);
+	MetaEngine::setKeybindingMode(KBMODE_NORMAL);
 }
 
 void GameController::keybinder(KeybindingAction action) {

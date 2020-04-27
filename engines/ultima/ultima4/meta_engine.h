@@ -38,7 +38,7 @@ enum KeybindingAction {
 	KEYBIND_QUIT_SAVE, KEYBIND_SPEED_UP, KEYBIND_SPEED_DOWN,
 	KEYBIND_SPEED_NORMAL, KEYBIND_READY_WEAPON, KEYBIND_SEARCH,
 	KEYBIND_STATS, KEYBIND_TALK, KEYBIND_TOGGLE_MUSIC, KEYBIND_USE,
-	KEYBIND_WEAR, KEYBIND_YELL, KEYBIND_INTERACT,
+	KEYBIND_WEAR, KEYBIND_YELL, KEYBIND_INTERACT, KEYBIND_ESCAPE,
 
 	KEYBIND_PARTY0, KEYBIND_PARTY1, KEYBIND_PARTY2, KEYBIND_PARTY3,
 	KEYBIND_PARTY4, KEYBIND_PARTY5, KEYBIND_PARTY6, KEYBIND_PARTY7,
@@ -54,17 +54,28 @@ enum KeybindingAction {
 	KEYBIND_NONE
 };
 
+enum KeybindingMode {
+	KBMODE_NORMAL,		///< Keys available when normal in-game
+	KBMODE_MINIMAL,		///< Minimal list available when reading input
+	KBMODE_DIRECTION	///< Mode for selecting direction
+};
+
 class MetaEngine {
 private:
 	/**
 	 * Get the method to execute
 	 */
 	static Common::String getMethod(KeybindingAction keyAction);
+
+	/**
+	 * Adds the default actions for the mouse buttons
+	 */
+	static void addMouseClickActions(Common::Keymap &keyMap);
 public:
 	/**
 	 * Initialize keymaps
 	 */
-	static Common::KeymapArray initKeymaps();
+	static Common::KeymapArray initKeymaps(KeybindingMode mode = KBMODE_NORMAL);
 
 	/**
 	 * Execute an engine keymap action
@@ -72,9 +83,9 @@ public:
 	static void executeAction(KeybindingAction keyAction);
 
 	/**
-	 * Enables/disables the keymaps when not waiting for an in-game action
+	 * Sets the current set of actions which are active
 	 */
-	static void setKeybindingsActive(bool isActive);
+	static void setKeybindingMode(KeybindingMode mode);
 };
 
 } // End of namespace Ultima4
