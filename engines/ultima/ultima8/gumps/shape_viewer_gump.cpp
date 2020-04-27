@@ -101,9 +101,9 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	if (!shape_) {
 		sprintf(buf1, "NULL");
 	} else {
-		sprintf(buf1, "Frame %d of %d", _curFrame, shape_->frameCount());
+		sprintf(buf1, "Frame %d of %d", _curFrame+1, shape_->frameCount());
 	}
-	sprintf(buf2, "%s  :  Shape %d, %s", _flexes[_curFlex].first.c_str(),
+	sprintf(buf2, "%s:  Shape %d, %s", _flexes[_curFlex].first.c_str(),
 	        _curShape, buf1);
 	rendtext = font->renderText(buf2, remaining);
 	rendtext->draw(surf, 20, 10);
