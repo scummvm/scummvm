@@ -172,6 +172,8 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 		return;
 
 	const ShapeFrame *frame			= s->getFrame(framenum);
+	if (!frame)
+		return;
 	const uint8		*srcpixels		= frame->_pixels;
 	const uint8		*srcmask		= frame->_mask;
 	const uint32	*pal			= untformed_pal?
