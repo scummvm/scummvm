@@ -461,7 +461,8 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 			break;
 		}
 
-		if (sizes[i]->getSize() > macFont.getSize() && candidate && sizes[i]->getSize() < candidate->getSize())
+		if ((!candidate && sizes[i]->getSize() > macFont.getSize())
+				|| (candidate && sizes[i]->getSize() < candidate->getSize()))
 			candidate = sizes[i];
 
 		if (sizes[i]->getSize() > maxSize->getSize())
