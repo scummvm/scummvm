@@ -1100,7 +1100,7 @@ bool ScScript::executeInstruction() {
 
 	}
 	default:
-		_gameRef->LOG(0, "Fatal: Invalid instruction %d ('%s', line %d, IP:0x%x)\n", inst, _filename, _currentLine, _iP - sizeof(uint32));
+		_gameRef->LOG(0, "Fatal: Invalid instruction %d ('%s', line %d, IP:0x%lx)\n", inst, _filename, _currentLine, _iP - sizeof(uint32));
 		_state = SCRIPT_FINISHED;
 		ret = STATUS_FAILED;
 	} // switch(instruction)
@@ -1450,7 +1450,7 @@ bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExter
 		stack->pushNULL();
 		return STATUS_OK;
 	}
-		
+
 	//////////////////////////////////////////////////////////////////////////
 	// SetValueToReg
 	// Used to switch game's windowed/fullscreen mode at games by HeroCraft
@@ -1620,7 +1620,7 @@ bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExter
 		stack->pushNULL();
 		return STATUS_OK;
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////////
 	// IRC_quit
 	// Used to disconnect from debug IRC server at games by Corbomite Games
