@@ -612,13 +612,12 @@ void GameData::loadRemorseData() {
 	dummyrs = filesystem->ReadFile("@data/empty.flx");
 	_soundFlex = new SoundFlex(dummyrs);
 	delete dummyrs;
-#if 0
+
 	Common::SeekableReadStream *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
 	if (!sndflx)
 		error("Unable to load sound/sound.flx");
 
 	_soundFlex = new SoundFlex(sndflx);
-#endif
 
 	loadTranslation();
 }

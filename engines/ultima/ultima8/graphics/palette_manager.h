@@ -43,6 +43,11 @@ public:
 	enum PalIndex {
 		Pal_Game = 0,
 		Pal_Movie = 1,
+		Pal_Diff = 2,	// Crusaders only
+		Pal_Misc = 3,	// Crusaders only
+		Pal_Misc2 = 4,	// Crusaders only
+		Pal_Star = 5,	// Crusaders only
+		Pal_Cred = 6,	// Crusader: No regret only
 		Pal_JPFontStart = 16
 	};
 

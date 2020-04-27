@@ -24,6 +24,7 @@
 
 #include "ultima/ultima8/audio/sound_flex.h"
 #include "ultima/ultima8/audio/sonarc_audio_sample.h"
+#include "ultima/ultima8/audio/raw_audio_sample.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
 namespace Ultima {
@@ -63,7 +64,13 @@ void SoundFlex::cache(uint32 index) {
 
 	if (!buf || !size) return;
 
-	_samples[index] = new SonarcAudioSample(buf, size);
+	if (Std::strncmp(reinterpret_cast<const char *>(buf), "ASFX", 4) == 0) {
+		// After the 32 byte header, ASFX (crusader audio) is just raw data in stereo
+		// TODO: Check that 22050/stereo is correct (seems like it?)
+		_samples[index] = new RawAudioSample(buf + 32, size - 32, 22050, true, true);
+	} else {
+		_samples[index] = new SonarcAudioSample(buf, size);
+	}
 }
 
 void SoundFlex::uncache(uint32 index) {

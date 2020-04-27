@@ -52,18 +52,38 @@ RemorseGame::~RemorseGame() {
 
 }
 
-bool RemorseGame::loadFiles() {
-	// Load palette
-	pout << "Load Palette" << Std::endl;
-	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile("@game/static/gamepal.pal");
+static bool loadPalette(const char *path, PaletteManager::PalIndex index) {
+	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile(path);
 	if (!pf) {
 		perr << "Unable to load static/gamepal.pal." << Std::endl;
 		return false;
 	}
 
 	Common::MemoryReadStream xfds(U8XFormPal, 1024);
-	PaletteManager::get_instance()->load(PaletteManager::Pal_Game, *pf, xfds);
+	PaletteManager::get_instance()->load(index, *pf, xfds);
 	delete pf;
+
+	return true;
+}
+
+bool RemorseGame::loadFiles() {
+	// Load palette
+	pout << "Load Palettes" << Std::endl;
+
+	if (!loadPalette("@game/static/gamepal.pal", PaletteManager::Pal_Game))
+		return false;
+	if (GAME_IS_REGRET) {
+		if (!loadPalette("@game/static/cred.pal", PaletteManager::Pal_Cred))
+			return false;
+	}
+	if (!loadPalette("@game/static/diff.pal", PaletteManager::Pal_Diff))
+		return false;
+	if (!loadPalette("@game/static/misc.pal", PaletteManager::Pal_Misc))
+		return false;
+	if (!loadPalette("@game/static/misc2.pal", PaletteManager::Pal_Misc2))
+		return false;
+	if (!loadPalette("@game/static/star.pal", PaletteManager::Pal_Star))
+		return false;
 
 	pout << "Load GameData" << Std::endl;
 	GameData::get_instance()->loadRemorseData();
