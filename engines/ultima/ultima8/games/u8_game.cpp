@@ -74,7 +74,7 @@ bool U8Game::loadFiles() {
 	pout << "Load Palette" << Std::endl;
 	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile("@game/static/u8pal.pal");
 	if (!pf) {
-		perr << "Unabl-e to load static/u8pal.pal." << Std::endl;
+		perr << "Unable to load static/u8pal.pal." << Std::endl;
 		return false;
 	}
 	pf->seek(4); // seek past header

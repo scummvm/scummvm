@@ -634,7 +634,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_frame = frame_num;
 	const ShapeFrame *_frame = si->_shape->getFrame(si->_frame);
 	if (!_frame) {
-		perr << "Invalid _shape: " << si->_shapeNum << "," << si->_frame
+		perr << "Invalid shape: " << si->_shapeNum << "," << si->_frame
 		     << Std::endl;
 		return;
 	}
