@@ -582,6 +582,9 @@ void Window::chooseWeapon(AIType wType) {
 	static AIType lastWeaponSelected = AI_NONE;
 	int	slot = g_hdb->_ai->queryInventoryTypeSlot(wType);
 
+	if (slot == -1)
+		return;
+
 	g_hdb->_sound->playSound(SND_MENU_SLIDER);
 
 	if (!g_hdb->getActionMode())

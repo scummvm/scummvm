@@ -743,6 +743,10 @@ void aiRailRiderAction(AIEntity *e) {
 			e->aiAction = aiRailRiderOnAction;
 			e->aiUse = aiRailRiderOnUse;
 			arrowPath = g_hdb->_ai->findArrowPath(e->tileX, e->tileY);
+
+			if (arrowPath == nullptr)
+				return;
+
 			e->dir = arrowPath->dir;
 			e->value1 = 0;	// Not in a tunnel
 		}
