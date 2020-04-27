@@ -427,7 +427,7 @@ void output(const char original[]) {
 	char *str, *copy;
 	char *symptr;
 
-	copy = strdup(original);
+	copy = scumm_strdup(original);
 	str = copy;
 
 	if (str[0] != '$' || str[1] != '$')
