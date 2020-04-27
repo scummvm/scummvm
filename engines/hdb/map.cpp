@@ -69,6 +69,7 @@ Map::Map() {
 	_iconNum = 0;
 	_iconListOffset = 0;
 	_infoNum = 0;
+	_infoListOffset = 0;
 }
 
 Map::~Map() {
@@ -1200,7 +1201,7 @@ void Map::centerMapXY(int x, int y) {
 			break;
 		}
 	}
-	
+
 	x = CLIP(x, minx, maxx);
 	y = CLIP(y, miny, maxy);
 

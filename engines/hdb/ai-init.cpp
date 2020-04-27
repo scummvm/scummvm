@@ -1046,6 +1046,23 @@ AI::AI() {
 	_touchplateOff = 0;
 	_templeTouchpOn = 0;
 	_templeTouchpOff = 0;
+
+	_slugLeftFrames = _slugRightFrames = _slugAttackFrames = 0;
+	_weaponSelected = AI_NONE;
+
+	_numGems = 0;
+	_numGooCups = 0;
+	_numMonkeystones = 0;
+
+	_useSwitchOff = _useSwitchOn = 0;
+	_useHolderEmpty = _useHolderEmpty = 0;
+
+	_useSwitch2Off = _useSwitch2On = 0;
+	_useMailsorter = _useAskcomp = _useTeleporter = 0;
+	_useHandswitchOn = _useHandswitchOff = 0;
+
+	_targetDoorN = _targetDoorP = _targetDoorS = _targetDoorNv = _targetDoorPv = 0;
+	_targetDoorSv = _targetDoor2N = _targetDoor2P = 0;
 }
 
 AI::~AI() {
