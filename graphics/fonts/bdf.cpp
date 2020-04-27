@@ -752,8 +752,12 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 	data.firstCharacter = src->_data.firstCharacter;
 	data.defaultCharacter = src->_data.defaultCharacter;
 	data.numCharacters = src->_data.numCharacters;
-	data.familyName = scumm_strdup(src->_data.familyName);
-	data.slant = scumm_strdup(src->_data.slant);
+	char *familyName = new char[1 + strlen(src->_data.familyName)];
+	strcpy(familyName, src->_data.familyName);
+	data.familyName = familyName;
+	char *slant = new char[1 + strlen(src->_data.slant)];
+	strcpy(slant, src->_data.slant);
+	data.slant = slant;
 
 	BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
 	for (int i = 0; i < data.numCharacters; ++i) {
