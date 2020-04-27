@@ -877,7 +877,7 @@ int read_agx(fc_type fc, rbool diag) {
 		rprintf("    Offset   Size   NumRec  RecSz\n");
 		rprintf("    ------  ------  ------  ------\n");
 		for (i = 0; i < AGX_NUMBLOCK; i++)
-			rprintf("%2d: %6d  %6d  %6d  %6d   %s\n", i,
+			rprintf("%2ld: %6d  %6d  %6d  %6d   %s\n", i,
 			        index[i].file_offset, index[i].blocksize,
 			        index[i].numrec, index[i].recsize, block_name[i]);
 	}

@@ -232,7 +232,7 @@ static void op_stack(int opnum) {
 /* This is called from the disassembler */
 void print_tos(void) {
 	if (sp > 0)
-		dbgprintf("TOS(%d)", stack[sp - 1]);
+		dbgprintf("TOS(%ld)", stack[sp - 1]);
 	else
 		debugout("TOS(xxx)");
 }

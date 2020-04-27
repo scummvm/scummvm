@@ -433,8 +433,8 @@ genfile openbin(fc_type fc, filetype ext, const char *err, rbool ferr)
    regardless of the EOL conventions of the platform, at least up to a point.
    It should work with files that have \n, \r, or \r\n termined lines.  */
 
-#define READLN_GRAIN 64 /* Granularity of readln() rrealloc requests 
-                this needs to be at least the size of a tab 
+#define READLN_GRAIN 64 /* Granularity of readln() rrealloc requests
+                this needs to be at least the size of a tab
                 character */
 #define DOS_EOF 26    /* Ctrl-Z is the DOS end-of-file marker */
 
@@ -603,7 +603,7 @@ buffreopen will be called before any major file activity
 		s = formal_name(fc, ext);
 		rprintf("Reading %s file %s (size:%ld)\n", rectype, s, filesize);
 		rfree(s);
-		rprintf("  Record size=  Formal:%d    File:%ld", minbuff, recsize);
+		rprintf("  Record size=  Formal:%ld    File:%ld", minbuff, recsize);
 	}
 	if (agx_file) return (long) filesize;
 	else return (long) recsize;
