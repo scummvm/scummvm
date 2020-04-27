@@ -178,6 +178,7 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 		}
 	}
 	break;
+	case Common::KEYCODE_COMMA:
 	case Common::KEYCODE_PAGEUP: {
 		if (_curFlex == 0)
 			_curFlex = _flexes.size() - 1;
@@ -190,6 +191,7 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 		_curFrame = 0;
 	}
 	break;
+	case Common::KEYCODE_PERIOD:
 	case Common::KEYCODE_PAGEDOWN: {
 		if (_curFlex + 1 == _flexes.size())
 			_curFlex = 0;
@@ -239,13 +241,13 @@ void ShapeViewerGump::U8ShapeViewer() {
 
 	Std::vector<Std::pair<Std::string, ShapeArchive *> > _flexes;
 	Std::pair<Std::string, ShapeArchive *> _flex;
-	_flex.first = "u8shapes";
+	_flex.first = "shapes";
 	_flex.second = gamedata->getMainShapes();
 	_flexes.push_back(_flex);
-	_flex.first = "u8gumps";
+	_flex.first = "gumps";
 	_flex.second = gamedata->getGumps();
 	_flexes.push_back(_flex);
-	_flex.first = "u8fonts";
+	_flex.first = "fonts";
 	_flex.second = gamedata->getFonts();
 	_flexes.push_back(_flex);
 	FileSystem *filesys = FileSystem::get_instance();
