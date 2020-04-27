@@ -53,7 +53,7 @@ struct SelectedText {
 
 class MacEditableText : public MacText, public MacWidget {
 public:
-	MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, Common::U32String s, const MacFont *font, int fgcolor, int bgcolor,
+	MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, int fgcolor, int bgcolor,
 			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
 	MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *font, int fgcolor, int bgcolor,
 			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
@@ -70,7 +70,7 @@ public:
 
 	virtual void setActive(bool active) override;
 
-	void appendText(Common::U32String str, const MacFont *macFont, bool skipAdd = false);
+	void appendText(const Common::U32String &str, const MacFont *macFont, bool skipAdd = false);
 	void appendText(const Common::String &str, const MacFont *macFont, bool skipAdd = false);
 	void clearText();
 
@@ -79,9 +79,9 @@ public:
 
 	void undrawCursor();
 
-	const Common::U32String getInput() { return _inputText; }
+	const Common::U32String &getInput() { return _inputText; }
 	void clearInput();
-	void appendInput(Common::U32String str);
+	void appendInput(const Common::U32String &str);
 	void appendInput(const Common::String &str);
 
 	Common::U32String getSelection(bool formatted = false, bool newlines = true);

@@ -90,7 +90,7 @@ void MacTextWindow::resize(int w, int h) {
 	_mactext->setMaxWidth(_maxWidth);
 }
 
-void MacTextWindow::appendText(Common::U32String str, const MacFont *macFont, bool skipAdd) {
+void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macFont, bool skipAdd) {
 	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), skipAdd);
 
 	_contentIsDirty = true;
@@ -497,7 +497,7 @@ void MacTextWindow::clearInput() {
 	_inputText.clear();
 }
 
-void MacTextWindow::appendInput(Common::U32String str) {
+void MacTextWindow::appendInput(const Common::U32String &str) {
 	_inputText += str;
 
 	drawInput();

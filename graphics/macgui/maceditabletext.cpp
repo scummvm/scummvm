@@ -45,7 +45,7 @@ enum {
 
 static void cursorTimerHandler(void *refCon);
 
-MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, Common::U32String s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
+MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
 		MacWidget(parent, x, y, w, h, true), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
 
 	_maxWidth = maxWidth;
@@ -126,7 +126,7 @@ void MacEditableText::resize(int w, int h) {
 	MacText::setMaxWidth(_maxWidth);
 }
 
-void MacEditableText::appendText(Common::U32String str, const MacFont *macFont, bool skipAdd) {
+void MacEditableText::appendText(const Common::U32String &str, const MacFont *macFont, bool skipAdd) {
 	MacText::appendTextDefault(str, skipAdd);
 
 	_contentIsDirty = true;
@@ -478,7 +478,7 @@ void MacEditableText::clearInput() {
 	_inputText.clear();
 }
 
-void MacEditableText::appendInput(Common::U32String str) {
+void MacEditableText::appendInput(const Common::U32String &str) {
 	_inputText += str;
 
 	drawInput();
