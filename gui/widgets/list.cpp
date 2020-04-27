@@ -62,6 +62,12 @@ ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, ui
 	_dictionarySelect = false;
 
 	_lastRead = -1;
+
+	_hlLeftPadding = _hlRightPadding = 0;
+	_leftPadding = _rightPadding = 0;
+	_topPadding = _bottomPadding = 0;
+
+	_scrollBarWidth = 0;
 }
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
