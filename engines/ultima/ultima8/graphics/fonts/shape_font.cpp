@@ -44,7 +44,11 @@ ShapeFont::~ShapeFont() {
 
 
 int ShapeFont::getWidth(char c) {
-	return getFrame(static_cast<unsigned char>(c))->_width;
+	const ShapeFrame *frame = getFrame(static_cast<unsigned char>(c));
+	if (frame)
+		return frame->_width;
+	else
+		return 0;
 }
 
 int ShapeFont::getHeight() {

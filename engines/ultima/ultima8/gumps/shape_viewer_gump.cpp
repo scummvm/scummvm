@@ -61,7 +61,8 @@ ShapeViewerGump::ShapeViewerGump(int x, int y, int width, int height,
                                  Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
                                  uint32 flags, int32 layer)
 		: ModalGump(x, y, width, height, 0, flags, layer),
-		_flexes(flexes), _curFlex(0), _curShape(0), _curFrame(0), _background(0) {
+		_flexes(flexes), _curFlex(0), _curShape(0), _curFrame(0),
+		_background(0), _fontNo(0) {
 	if (_flexes.size())
 		_flex = _flexes[0].second;
 	else
@@ -93,7 +94,10 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		surf->Paint(shape_, _curFrame, posx, posy);
 
 	RenderedText *rendtext;
-	Font *font = FontManager::get_instance()->getGameFont(0, true);
+	Font *font = FontManager::get_instance()->getGameFont(_fontNo, true);
+	if (!font)
+		return;
+
 	unsigned int remaining;
 
 	char buf1[50];
@@ -204,6 +208,14 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 		_curFrame = 0;
 	}
 	break;
+	case Common::KEYCODE_f: {
+		_fontNo++;
+		if (_fontNo >= GameData::get_instance()->getFonts()->getCount())
+		{
+			_fontNo = 0;
+		}
+	}
+			break;
 	case Common::KEYCODE_ESCAPE: {
 		Close();
 	}
