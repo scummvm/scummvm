@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-03-21 09:03+0100\n"
-"PO-Revision-Date: 2020-01-09 01:27+0000\n"
-"Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
+"PO-Revision-Date: 2020-04-27 16:15+0000\n"
+"Last-Translator: Zvika <haramaty.zvika@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 3.9.1\n"
+"X-Generator: Weblate 3.11\n"
 "X-Language-name: Hebrew\n"
 
 #: gui/about.cpp:102
@@ -242,7 +242,7 @@ msgstr "שפת המשחק. אפשרות זו לא תהפוך משחק בטורקית למשחק בעברית"
 #: gui/options.cpp:1146 gui/options.cpp:1159 gui/options.cpp:1173
 #: gui/options.cpp:1951 audio/null.cpp:41
 msgid "<default>"
-msgstr "<בחירת מחדל>"
+msgstr "<ברירת מחדל>"
 
 #: gui/editgamedialog.cpp:166
 msgid "Platform:"
@@ -1198,7 +1198,7 @@ msgstr "נגישות"
 
 #: gui/options.cpp:1778
 msgid "Apply"
-msgstr "להגיש מועמדות"
+msgstr "החל"
 
 #: gui/options.cpp:1868
 msgid "FluidSynth Settings"
@@ -1955,45 +1955,45 @@ msgstr "חודשי"
 
 #: common/updates.cpp:64
 msgid "<Bad value>"
-msgstr "<ערך גרוע>"
+msgstr "<ערך לא תקין>"
 
 #: engines/advancedDetector.cpp:139
 msgid "Illegitimate game copy detected. We provide no support in such cases"
-msgstr ""
+msgstr "נתגלה עותק לא חוקי של משחק. אנו לא מספקים תמיכה במקרים שכאלה"
 
 #: engines/dialogs.cpp:73
 msgid "~R~esume"
-msgstr "~ R ~ esume"
+msgstr "~ה~משך"
 
 #: engines/dialogs.cpp:75 engines/mohawk/dialogs.cpp:140
 msgid "~L~oad"
-msgstr "~ L ~ שבועה"
+msgstr "~ט~ען"
 
 #: engines/dialogs.cpp:79 backends/platform/3ds/options-dialog.cpp:45
 #: engines/mohawk/dialogs.cpp:141
 msgid "~S~ave"
-msgstr "~ S ~ ave"
+msgstr "~ש~מור"
 
 #: engines/dialogs.cpp:83
 msgid "~O~ptions"
-msgstr "~ O ~ ptions"
+msgstr "~א~פשרויות"
 
 #: engines/dialogs.cpp:88
 msgid "~H~elp"
-msgstr "~ H ~ מרפק"
+msgstr "~ע~זרה"
 
 #: engines/dialogs.cpp:90
 msgid "~A~bout"
-msgstr "~ התקף"
+msgstr "~א~ודות"
 
 #: engines/dialogs.cpp:93 engines/dialogs.cpp:169
 msgid "~R~eturn to Launcher"
-msgstr "~ R ~ חזור אל משגר"
+msgstr "~ח~זור אל משגר"
 
 #: engines/dialogs.cpp:95 engines/dialogs.cpp:171
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "~ R ~ חזור אל משגר"
+msgstr "~ח~זור אל משגר"
 
 #: engines/dialogs.cpp:103 engines/engine.cpp:763 engines/agi/saveload.cpp:759
 #: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:348
@@ -6046,7 +6046,7 @@ msgstr "סינון ספרייט דו-גלילי (SLOW)"
 
 #: engines/wintermute/detection.cpp:74
 msgid "Apply bilinear filtering to individual sprites"
-msgstr "החל סינון דו-גלילי על שודדים בודדים"
+msgstr "החל סינון בי-לינארי על דמויות בודדות"
 
 #: engines/wintermute/detection.cpp:243
 #, fuzzy
