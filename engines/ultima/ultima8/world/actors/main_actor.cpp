@@ -484,7 +484,7 @@ uint32 MainActor::I_isAvatarInCombat(const uint8 * /*args*/,
 
 void MainActor::useInventoryItem(uint32 shapenum) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		pout << "Can't: avatarInStasis" << Std::endl;
+		pout << "Can't use item: avatarInStasis" << Std::endl;
 		return;
 	}
 	LOOPSCRIPT(script, LS_SHAPE_EQUAL(shapenum));

@@ -1062,8 +1062,8 @@ bool Debugger::cmdName(int argc, const char **argv) {
 
 bool Debugger::cmdUseBackpack(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't: avatarInStasis\n");
-		return true;
+		debugPrintf("Can't use backpack: avatarInStasis\n");
+		return false;
 	}
 	MainActor *av = getMainActor();
 	Item *backpack = getItem(av->getEquip(7));
@@ -1074,8 +1074,8 @@ bool Debugger::cmdUseBackpack(int argc, const char **argv) {
 
 bool Debugger::cmdUseInventory(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't: avatarInStasis\n");
-		return true;
+		debugPrintf("Can't use inventory: avatarInStasis\n");
+		return false;
 	}
 	MainActor *av = getMainActor();
 	av->callUsecodeEvent_use();
@@ -1102,8 +1102,8 @@ bool Debugger::cmdUseKeyring(int argc, const char **argv) {
 
 bool Debugger::cmdBothButtonClick(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't: avatarInStasis\n");
-		return true;
+		debugPrintf("Can't jump: avatarInStasis\n");
+		return false;
 	}
 	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 
@@ -1115,8 +1115,8 @@ bool Debugger::cmdBothButtonClick(int argc, const char **argv) {
 
 bool Debugger::cmdToggleCombat(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't: avatarInStasis\n");
-		return true;
+		debugPrintf("Can't toggle combat: avatarInStasis\n");
+		return false;
 	}
 
 	MainActor *av = getMainActor();

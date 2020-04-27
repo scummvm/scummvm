@@ -152,7 +152,7 @@ void QuickAvatarMoverProcess::startMover(int x, int y, int z, int dir) {
 		Process *p = new QuickAvatarMoverProcess(x, y, z, dir);
 		Kernel::get_instance()->addProcess(p);
 	} else {
-		pout << "Can't: avatarInStasis" << Std::endl;
+		pout << "Can't quickmove: avatarInStasis" << Std::endl;
 	}
 }
 
