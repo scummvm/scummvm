@@ -1337,7 +1337,7 @@ void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
  * Screen/overlay management
  *********************************************************/
 void ThemeEngine::copyBackBufferToScreen() {
-	memcpy(_screen.getPixels(), _backBuffer.getPixels(), _screen.pitch * _screen.h);
+	memcpy(_screen.getPixels(), _backBuffer.getPixels(), (size_t)(_screen.pitch * _screen.h));
 }
 
 void ThemeEngine::updateScreen() {
