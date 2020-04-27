@@ -651,7 +651,7 @@ void KeyBinder::LoadGameSpecificKeys() {
 		ConsoleAddInfo("Loading %s", key_path);
 		LoadFromFileInternal(key_path);
 	} else // These aren't critical so failing to load doesn't matter much
-		ConsoleAddInfo("Couldn't find $s", key_path);
+		ConsoleAddInfo("Couldn't find %s", key_path);
 }
 
 void KeyBinder::LoadFromPatch() { // FIXME default should probably be system specific
