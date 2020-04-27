@@ -1312,7 +1312,7 @@ int scumm_compareDictionary(const char *s1, const char *s2) {
 //  Portable implementation of strdup.
 char *scumm_strdup(const char *in) {
 	const size_t len = strlen(in) + 1;
-	char *out = new char[len];
+	char *out = (char *)malloc(len);
 	if (out) {
 		strcpy(out, in);
 	}
