@@ -53,7 +53,7 @@ MacText::~MacText() {
 	delete _surface;
 }
 
-MacText::MacText(Common::U32String s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) {
+MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) {
 	_str = s;
 	_wm = wm;
 	_macFont = macFont;
@@ -146,7 +146,7 @@ static const Common::U32String::value_type *readHex(uint16 *res, const Common::U
 // Adds the given string to the end of the last line/chunk
 // while observing the _maxWidth and keeping this chunk's
 // formatting
-void MacText::chopChunk(Common::U32String &str) {
+void MacText::chopChunk(const Common::U32String &str) {
 	int curLine = _textLines.size() - 1;
 	int curChunk = _textLines[curLine].chunks.size() - 1;
 	MacFontRun *chunk = &_textLines[curLine].chunks[curChunk];
@@ -197,7 +197,7 @@ void MacText::chopChunk(Common::U32String &str) {
 	}
 }
 
-void MacText::splitString(Common::U32String &str) {
+void MacText::splitString(const Common::U32String &str) {
 	const Common::U32String::value_type *l = str.c_str();
 
 	D(9, "** splitString(\"%s\")", toPrintable(str.encode()).c_str());
@@ -545,7 +545,7 @@ uint getNewlinesInString(const Common::U32String &str) {
 	return newLines;
 }
 
-void MacText::appendText(Common::U32String str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
+void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
@@ -567,7 +567,7 @@ void MacText::appendText(const Common::String &str, int fontId, int fontSize, in
 	appendText(Common::U32String(str), fontId, fontSize, fontSlant, skipAdd);
 }
 
-void MacText::appendTextDefault(Common::U32String str, bool skipAdd) {
+void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	_currentFormatting = _defaultFormatting;
@@ -597,7 +597,7 @@ void MacText::clearText() {
 	recalcDims();
 }
 
-void MacText::replaceLastLine(Common::U32String str) {
+void MacText::replaceLastLine(const Common::U32String &str) {
 	int oldLen = MAX<int>(0, _textLines.size() - 1);
 
 	// TODO: Recalc length, adapt to _textLines

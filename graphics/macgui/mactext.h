@@ -91,7 +91,7 @@ class MacText {
 	friend class MacEditableText;
 
 public:
-	MacText(Common::U32String s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
+	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
 			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
 	MacText(const Common::String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
 			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
@@ -111,12 +111,12 @@ public:
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
 	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
 	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
-	void appendText(Common::U32String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
+	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendText(const Common::String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
-	void appendTextDefault(Common::U32String str, bool skipAdd = false);
+	void appendTextDefault(const Common::U32String &str, bool skipAdd = false);
 	void appendTextDefault(const Common::String &str, bool skipAdd = false);
 	void clearText();
-	void replaceLastLine(Common::U32String str);
+	void replaceLastLine(const Common::U32String &str);
 	void replaceLastLine(const Common::String &str);
 	void removeLastLine();
 	int getLineCount() { return _textLines.size(); }
@@ -131,8 +131,8 @@ public:
 	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
 private:
-	void chopChunk(Common::U32String &str);
-	void splitString(Common::U32String &s);
+	void chopChunk(const Common::U32String &str);
+	void splitString(const Common::U32String &s);
 	void render(int from, int to);
 	void recalcDims();
 	void reallocSurface();
