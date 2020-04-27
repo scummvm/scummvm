@@ -229,7 +229,12 @@ void String::decRefCount(int *oldRefCount) {
 			g_refCountPool->freeChunk(oldRefCount);
 			unlockMemoryPoolMutex();
 		}
+		// Coverity thinks that we always free memory, as it assumes
+		// (correctly) that there are cases when oldRefCount == 0
+		// Thus, DO NOT COMPILE, trick it and shut tons of false positives
+#ifndef __COVERITY__
 		delete[] _str;
+#endif
 
 		// Even though _str points to a freed memory block now,
 		// we do not change its value, because any code that calls
