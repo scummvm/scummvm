@@ -17,6 +17,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
 
+ Xeen:
+   - Add missing sprite drawer for enemies hit by Energy Blast
+
  Linux port:
    - Added option to use the system file browser instead of the ScummVM file browser.
 
