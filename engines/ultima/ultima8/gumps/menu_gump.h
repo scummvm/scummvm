@@ -56,7 +56,6 @@ public:
 
 protected:
 	bool _nameEntryMode;
-	MusicProcess::TrackState _oldMusicTrackState;
 	int16 _oldPalTransform[12];
 
 	virtual void selectEntry(int entry);

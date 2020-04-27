@@ -36,12 +36,14 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MusicProcess, Process)
 MusicProcess *MusicProcess::_theMusicProcess = nullptr;
 
 MusicProcess::MusicProcess() : _midiPlayer(nullptr), _state(PLAYBACK_NORMAL),
-		_currentTrack(0), _combatMusicActive(false) {
+		_currentTrack(0), _combatMusicActive(false),
+		_savedTrackState(nullptr) {
 	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 }
 
 MusicProcess::MusicProcess(MidiPlayer *player) : _midiPlayer(player),
-		_state(PLAYBACK_NORMAL), _currentTrack(0), _combatMusicActive(false)  {
+		_state(PLAYBACK_NORMAL), _currentTrack(0), _combatMusicActive(false),
+		_savedTrackState(nullptr) {
 	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 
 	_theMusicProcess = this;
@@ -50,6 +52,8 @@ MusicProcess::MusicProcess(MidiPlayer *player) : _midiPlayer(player),
 }
 
 MusicProcess::~MusicProcess() {
+	if (_savedTrackState)
+		delete _savedTrackState;
 	if (_midiPlayer)
 		_midiPlayer->stop();
 	_theMusicProcess = nullptr;
@@ -97,6 +101,21 @@ void MusicProcess::getTrackState(TrackState &trackState) const {
 void MusicProcess::setTrackState(const TrackState &trackState) {
 	_trackState = trackState;
 	_state = PLAYBACK_PLAY_WANTED;
+}
+
+void MusicProcess::saveTrackState() {
+	assert(!_savedTrackState);
+	_savedTrackState = new TrackState(_trackState);
+}
+
+void MusicProcess::restoreTrackState() {
+	if (_savedTrackState == nullptr)
+		return;
+
+	_trackState = *_savedTrackState;
+	_state = PLAYBACK_PLAY_WANTED;
+	delete _savedTrackState;
+	_savedTrackState = nullptr;
 }
 
 void MusicProcess::playMusic_internal(int track) {
@@ -153,7 +172,7 @@ void MusicProcess::playMusic_internal(int track) {
 		int xmidi_index = _midiPlayer->isFMSynth() ? 260 : 258;
 		MusicFlex::XMidiData *xmidi = musicflex->getXMidi(xmidi_index);
 
-		//warning("Doing a MIDI transition! trans: %d xmidi: %d speedhack: %d", trans, xmidi_index, speed_hack);
+		warning("Doing a MIDI transition! trans: %d xmidi: %d speedhack: %d", trans, xmidi_index, speed_hack);
 
 		if (xmidi && xmidi->_data) {
 			_midiPlayer->play(xmidi->_data, xmidi->_size, 1, trans, speed_hack);
@@ -232,9 +251,15 @@ void MusicProcess::run() {
 void MusicProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 
-	ws->writeUint32LE(static_cast<uint32>(_trackState._wanted));
-	ws->writeUint32LE(static_cast<uint32>(_trackState._lastRequest));
-	ws->writeUint32LE(static_cast<uint32>(_trackState._queued));
+	// When saving the game we want to remember the track state
+	// from before the menu was opened
+	const TrackState *stateToSave = _savedTrackState;
+	if (stateToSave == nullptr)
+		stateToSave = &_trackState;
+
+	ws->writeUint32LE(static_cast<uint32>(stateToSave->_wanted));
+	ws->writeUint32LE(static_cast<uint32>(stateToSave->_lastRequest));
+	ws->writeUint32LE(static_cast<uint32>(stateToSave->_queued));
 }
 
 bool MusicProcess::loadData(Common::ReadStream *rs, uint32 version) {

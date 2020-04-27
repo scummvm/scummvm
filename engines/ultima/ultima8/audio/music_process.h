@@ -75,6 +75,9 @@ private:
 
 	TrackState _trackState;
 
+	//! The track state temporarily saved when using the menu etc
+	TrackState *_savedTrackState;
+
 	//! Is the current music "combat" music
 	bool _combatMusicActive;
 
@@ -101,6 +104,11 @@ public:
 	void unqueueMusic();
 	//! Restore the last requested non-combat track (eg, at the end of combat)
 	void restoreMusic();
+
+	//! Save the current track state - used when the menu is opened
+	void saveTrackState();
+	//! Bring back the track state from before it was put on hold
+	void restoreTrackState();
 
 	INTRINSIC(I_playMusic);
 	INTRINSIC(I_musicStop);
