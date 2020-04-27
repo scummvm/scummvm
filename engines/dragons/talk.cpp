@@ -539,7 +539,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 	uint16 sequenceId;
 	TalkDialogEntry *selectedDialogText;
 	uint iniId;
-	short local_990 [5];
+	//short local_990 [5];
 	uint16 auStack2438 [195];
 	uint16 local_800 [1000];
 	Common::Array<TalkDialogEntry *> dialogEntries;
@@ -585,7 +585,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 			return true;
 		}
 		_vm->clearFlags(ENGINE_FLAG_8);
-		strcpy((char *)local_990, selectedDialogText->dialogText);
+		//strcpy((char *)local_990, selectedDialogText->dialogText);
 		UTF16ToUTF16Z(auStack2438, (uint16 *)(selectedDialogText->dialogText + 10));
 //		load_string_from_dragon_txt(selectedDialogText->textIndex1, (char *)local_800);
 		if (selectedDialogText->hasText) {
@@ -647,7 +647,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	uint uVar7;
 	uint16 uVar8;
 	TalkDialogEntry *talkDialogEntry;
-	uint16 local_390[5];
+	//uint16 local_390[5];
 	uint16 local_386 [195];
 	uint16 asStack512 [200];
 	uint16 numEntries;
@@ -672,7 +672,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 			if ((talkDialogEntry->flags & 1) == 0) {
 				local_60 = local_60 + 1;
 				talkDialogEntry->yPosMaybe = '\0';
-				strcpy((char *)&local_390, (char *)talkDialogEntry->dialogText);
+				//strcpy((char *)&local_390, (char *)talkDialogEntry->dialogText);
 				UTF16ToUTF16Z(local_386, (uint16 *)(&talkDialogEntry->dialogText[10]));
 				_dat_80083104 = local_386;
 				if (*local_386 == 0x20) {
