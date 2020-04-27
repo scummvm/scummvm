@@ -35,6 +35,7 @@ class ShapeFont : public Font, public Shape {
 	int _baseLine;
 	int _vLead;
 	int _hLead;
+	bool _crusaderCharMap;
 
 public:
 	ShapeFont(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
@@ -59,6 +60,8 @@ public:
 	void setHLead(int hl) {
 		_hLead = hl;
 	}
+
+	int charToFrameNum(char c) const;
 
 	void getStringSize(const Std::string &text,
 		int32 &width, int32 &height) override;

@@ -56,7 +56,7 @@ void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destma
 		size_t textsize = iter->_text.size();
 
 		for (size_t i = 0; i < textsize; ++i) {
-			surface->Paint(_font, static_cast<unsigned char>(iter->_text[i]),
+			surface->Paint(_font, _font->charToFrameNum(iter->_text[i]),
 			               line_x, line_y);
 
 			if (i == iter->_cursor) {
