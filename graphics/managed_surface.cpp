@@ -406,6 +406,8 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 			} else {
 				// Otherwise we have to manually decode and re-encode each pixel
 				if (srcFormat.bytesPerPixel == 1) {
+					assert(palette != nullptr);	// Catch the cases when palette is missing
+
 					// Get the palette color
 					const uint32 col = palette[srcVal];
 					rSrc = col & 0xff;
