@@ -55,7 +55,7 @@ Encoding::Encoding(const String &to, const String &from)
 char *Encoding::switchEndian(const char *string, int length, int bitCount) {
 	assert(bitCount % 8 == 0);
 	assert(length % (bitCount / 8) == 0);
-	char *newString = (char *) malloc(length);
+	char *newString = (char *)malloc(length);
 	if (!newString) {
 		warning("Could not allocate memory for string conversion");
 		return nullptr;
@@ -63,14 +63,15 @@ char *Encoding::switchEndian(const char *string, int length, int bitCount) {
 	if (bitCount == 16) {
 		int characterCount = length / 2;
 		for(int i = 0; i < characterCount ; i++)
-			((uint16 *) newString)[i] = SWAP_BYTES_16(((const uint16 *) string)[i]);
+			((uint16 *)newString)[i] = SWAP_BYTES_16(((const uint16 *)string)[i]);
 		return newString;
 	} else if (bitCount == 32) {
 		int characterCount = length / 4;
 		for(int i = 0; i < characterCount ; i++)
-			((uint32 *) newString)[i] = SWAP_BYTES_32(((const uint32 *) string)[i]);
+			((uint32 *)newString)[i] = SWAP_BYTES_32(((const uint32 *)string)[i]);
 		return newString;
 	} else {
+		free(newString);
 		return nullptr;
 	}
 }
@@ -86,71 +87,87 @@ char *Encoding::convert(const String &to, const String &from, const char *string
 char *Encoding::convertWithTransliteration(const String &to, const String &from, const char *string, size_t length) {
 	if (from.equalsIgnoreCase(to)) {
 		// don't convert, just copy the string and return it
-		char *result = (char *) calloc(sizeof(char), length + 4);
+		char *result = (char *)calloc(sizeof(char), length + 4);
+
 		if (!result) {
 			warning("Could not allocate memory for string conversion");
 			return nullptr;
 		}
+
 		memcpy(result, string, length);
 		return result;
 	}
+
 	if ((addUtfEndianness(to).equalsIgnoreCase("utf-16be") &&
-		addUtfEndianness(from).equalsIgnoreCase("utf-16le")) ||
-		(addUtfEndianness(to).equalsIgnoreCase("utf-16le") &&
-		addUtfEndianness(from).equalsIgnoreCase("utf-16be")) ||
-		(addUtfEndianness(to).equalsIgnoreCase("utf-32be") &&
-		addUtfEndianness(from).equalsIgnoreCase("utf-32le")) ||
-		(addUtfEndianness(to).equalsIgnoreCase("utf-32le") &&
-		addUtfEndianness(from).equalsIgnoreCase("utf-32be")))
-	{
+			addUtfEndianness(from).equalsIgnoreCase("utf-16le")) ||
+			(addUtfEndianness(to).equalsIgnoreCase("utf-16le") &&
+			addUtfEndianness(from).equalsIgnoreCase("utf-16be")) ||
+			(addUtfEndianness(to).equalsIgnoreCase("utf-32be") &&
+			addUtfEndianness(from).equalsIgnoreCase("utf-32le")) ||
+			(addUtfEndianness(to).equalsIgnoreCase("utf-32le") &&
+			addUtfEndianness(from).equalsIgnoreCase("utf-32be"))) {
 		// The encoding is the same, we just need to switch the endianness
 		if (to.hasPrefixIgnoreCase("utf-16"))
 			return switchEndian(string, length, 16);
 		else
 			return switchEndian(string, length, 32);
 	}
+
 	char *newString = nullptr;
 	String newFrom = from;
 	size_t newLength = length;
+
 	if (from.equalsIgnoreCase("iso-8859-5") &&
 			!to.hasPrefixIgnoreCase("utf")) {
 		// There might be some cyrillic characters, which need to be transliterated.
 		newString = transliterateCyrillic(string);
+
 		if (!newString)
 			return nullptr;
+
 		newFrom = "ASCII";
 	}
+
 	if (from.hasPrefixIgnoreCase("utf") &&
 			!to.hasPrefixIgnoreCase("utf") &&
 			!to.equalsIgnoreCase("iso-8859-5")) {
 		// There might be some cyrillic characters, which need to be transliterated.
 		char *tmpString;
-		if (from.hasPrefixIgnoreCase("utf-32"))
+		if (from.hasPrefixIgnoreCase("utf-32")) {
 			tmpString = nullptr;
-		else {
+		} else {
 			tmpString = conversion("UTF-32", from, string, length);
 			if (!tmpString)
 				return nullptr;
 			// find out the length in bytes of the tmpString
 			int i;
-			for (i = 0; ((const uint32 *)tmpString)[i]; i++) {}
+
+			for (i = 0; ((const uint32 *)tmpString)[i]; i++)
+				;
+
 			newLength = i * 4;
 			newFrom = "UTF-32";
 		}
+
 		if (tmpString != nullptr) {
-			newString = (char *) transliterateUTF32((const uint32 *) tmpString, newLength);
+			newString = (char *)transliterateUTF32((const uint32 *)tmpString, newLength);
 			free(tmpString);
-		} else
-			newString = (char *) transliterateUTF32((const uint32 *) string, newLength);
+		} else {
+			newString = (char *)transliterateUTF32((const uint32 *)string, newLength);
+		}
+
 		if (!newString)
 			return nullptr;
 	}
+
 	char *result;
 	if (newString != nullptr) {
 		result = conversion(to, newFrom, newString, newLength);
 		free(newString);
-	} else
+	} else {
 		result = conversion(to, newFrom, string, newLength);
+	}
+
 	return result;
 }
 
@@ -179,7 +196,8 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 
 	String toTranslit = String(to) + "//TRANSLIT";
 	iconv_t iconvHandle = iconv_open(toTranslit.c_str(), from);
-	if (iconvHandle == (iconv_t) -1)
+
+	if (iconvHandle == (iconv_t)-1)
 		return nullptr;
 
 	size_t inSize = length;
@@ -195,7 +213,7 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 	memcpy(src, string, length);
 #endif // ICONV_USES_CONST
 
-	char *buffer = (char *) calloc(sizeof(char), stringSize);
+	char *buffer = (char *)calloc(sizeof(char), stringSize);
 	if (!buffer) {
 #ifndef ICONV_USES_CONST
 		delete[] originalSrc;
@@ -213,9 +231,9 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 			if (errno == E2BIG) {
 				char *oldString = buffer;
 				stringSize *= 2;
-				buffer = (char *) realloc(buffer, stringSize);
+				buffer = (char *)realloc(buffer, stringSize);
 				if (!buffer) {
-					warning ("Cannot allocate memory for converting string");
+					warning("Cannot allocate memory for converting string");
 					error = true;
 					break;
 				}
@@ -231,7 +249,7 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 	iconv(iconvHandle, NULL, NULL, &dst, &outSize);
 	// Add a zero character to the end. Hopefuly UTF32 uses the most bytes from
 	// all possible encodings, so add 4 zero bytes.
-	buffer = (char *) realloc(buffer, stringSize + 4);
+	buffer = (char *)realloc(buffer, stringSize + 4);
 	memset(buffer + stringSize, 0, 4);
 
 #ifndef ICONV_USES_CONST
@@ -258,7 +276,7 @@ char *Encoding::convertTransManMapping(const char *to, const char *from, const c
 	String currentCharset = TransMan.getCurrentCharset();
 	if (currentCharset.equalsIgnoreCase(from)) {
 		// We can use the transMan mapping directly
-		uint32 *partialResult = (uint32 *) calloc(sizeof(uint32), (length + 1));
+		uint32 *partialResult = (uint32 *)calloc(sizeof(uint32), (length + 1));
 		if (!partialResult) {
 			warning("Couldn't allocate memory for encoding conversion");
 			return nullptr;
@@ -270,10 +288,10 @@ char *Encoding::convertTransManMapping(const char *to, const char *from, const c
 			}
 		} else {
 			for(unsigned i = 0; i < length; i++) {
-				partialResult[i] = mapping[(unsigned char) string[i]] & 0x7FFFFFFF;
+				partialResult[i] = mapping[(unsigned char)string[i]] & 0x7FFFFFFF;
 			}
 		}
-		char *finalResult = convert(to, "UTF-32", (char *) partialResult, length * 4);
+		char *finalResult = convert(to, "UTF-32", (char *)partialResult, length * 4);
 		free(partialResult);
 		return finalResult;
 	} else if (currentCharset.equalsIgnoreCase(to) && String(from).hasPrefixIgnoreCase("utf-32")) {
@@ -299,8 +317,8 @@ char *Encoding::convertTransManMapping(const char *to, const char *from, const c
 		}
 		// We can do reverse mapping
 		const uint32 *mapping = TransMan.getCharsetMapping();
-		const uint32 *src = (const uint32 *) string;
-		char *result = (char *) calloc(sizeof(char), (length + 4));
+		const uint32 *src = (const uint32 *)string;
+		char *result = (char *)calloc(sizeof(char), (length + 4));
 		if (!result) {
 			warning("Couldn't allocate memory for encoding conversion");
 			if (newString != nullptr)
@@ -416,13 +434,13 @@ char *Encoding::convertConversionTable(const char *to, const char *from, const c
 		}
 	}
 	if (table != nullptr) {
-		uint32 *utf32Result = (uint32 *) calloc(sizeof(uint32), length + 1);
+		uint32 *utf32Result = (uint32 *)calloc(sizeof(uint32), length + 1);
 		if (!utf32Result) {
 			warning("Could not allocate memory for encoding conversion");
 			return nullptr;
 		}
 		for (unsigned i = 0; i < length; i++) {
-			utf32Result[i] = table[(unsigned char) string[i]];
+			utf32Result[i] = table[(unsigned char)string[i]];
 		}
 		char *finalResult = convert(to, "utf-32", (char *)utf32Result, length * 4);
 		free(utf32Result);
@@ -435,12 +453,12 @@ char *Encoding::convertConversionTable(const char *to, const char *from, const c
 		}
 	}
 	if (table != nullptr) {
-		uint32 *utf32Result = (uint32 *) convert("utf-32", from, string, length);
+		uint32 *utf32Result = (uint32 *)convert("utf-32", from, string, length);
 		if (String(from).hasPrefixIgnoreCase("utf-16"))
 			length /= 2;
 		if (String(from).hasPrefixIgnoreCase("utf-32"))
 			length /= 4;
-		char *finalResult = (char *) calloc(sizeof(char), length +1);
+		char *finalResult = (char *)calloc(sizeof(char), length +1);
 		if (!finalResult) {
 			warning("Could not allocate memory for encoding conversion");
 			return nullptr;
@@ -474,14 +492,14 @@ static char g_cyrillicTransliterationTable[] = {
 };
 
 char *Encoding::transliterateCyrillic(const char *string) {
-	char *result = (char *) malloc(strlen(string) + 1);
+	char *result = (char *)malloc(strlen(string) + 1);
 	if (!result) {
 		warning("Could not allocate memory for encoding conversion");
 		return nullptr;
 	}
 	for(unsigned i = 0; i <= strlen(string); i++) {
-		if ((unsigned char) string[i] >= 160)
-			result[i] = g_cyrillicTransliterationTable[(unsigned char) string[i] - 160];
+		if ((unsigned char)string[i] >= 160)
+			result[i] = g_cyrillicTransliterationTable[(unsigned char)string[i] - 160];
 		else
 			result[i] = string[i];
 	}
@@ -489,7 +507,7 @@ char *Encoding::transliterateCyrillic(const char *string) {
 }
 
 uint32 *Encoding::transliterateUTF32(const uint32 *string, size_t length) {
-	uint32 *result = (uint32 *) malloc(length + 4);
+	uint32 *result = (uint32 *)malloc(length + 4);
 	if (!result) {
 		warning("Could not allocate memory for encoding conversion");
 		return nullptr;
@@ -505,13 +523,13 @@ uint32 *Encoding::transliterateUTF32(const uint32 *string, size_t length) {
 
 size_t Encoding::stringLength(const char *string, const String &encoding) {
 	if (encoding.hasPrefixIgnoreCase("UTF-16")) {
-		const uint16 *i = (const uint16 *) string;
+		const uint16 *i = (const uint16 *)string;
 		for (;*i != 0; i++) {}
-		return (const char *) i - string;
+		return (const char *)i - string;
 	} else if (encoding.hasPrefixIgnoreCase("UTF-32")) {
-		const uint32 *i = (const uint32 *) string;
+		const uint32 *i = (const uint32 *)string;
 		for (;*i != 0; i++) {}
-		return (const char *) i - string;
+		return (const char *)i - string;
 	} else {
 		const char *i = string;
 		for (;*i != 0; i++) {}
