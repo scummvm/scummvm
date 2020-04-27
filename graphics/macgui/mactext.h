@@ -106,6 +106,8 @@ public:
 				_defaultFormatting.setValues(_defaultFormatting.wm, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
 			}
 
+	const MacFontRun &getDefaultFormatting() { return _defaultFormatting; }
+
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
 	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
 	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);

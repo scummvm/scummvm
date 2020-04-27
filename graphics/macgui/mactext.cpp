@@ -101,7 +101,7 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 	} else {
-		_defaultFormatting.font = NULL;
+		_defaultFormatting.font = nullptr;
 	}
 
 	_defaultFormatting.wm = wm;

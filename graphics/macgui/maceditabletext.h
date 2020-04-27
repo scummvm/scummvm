@@ -68,9 +68,6 @@ public:
 	virtual bool draw(bool forceRedraw = false) override;
 	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
 
-	void setTextFont(const MacFont *macFont);
-	const MacFont *getTextFont();
-
 	virtual void setActive(bool active) override;
 
 	void appendText(Common::U32String str, const MacFont *macFont, bool skipAdd = false);
@@ -122,9 +119,6 @@ public:
 	int _scrollPos;
 
 private:
-	const MacFont *_font;
-	const Font *_fontRef;
-
 	ManagedSurface *_cursorSurface;
 
 	bool _inTextSelection;

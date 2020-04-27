@@ -52,7 +52,7 @@ MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, 
 
 	init();
 
-	_font = macFont;
+	setDefaultFormatting(macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 }
 
 MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
@@ -62,7 +62,7 @@ MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, 
 
 	init();
 
-	_font = macFont;
+	setDefaultFormatting(macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 }
 
 void MacEditableText::init() {
@@ -127,7 +127,7 @@ void MacEditableText::resize(int w, int h) {
 }
 
 void MacEditableText::appendText(Common::U32String str, const MacFont *macFont, bool skipAdd) {
-	MacText::appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), skipAdd);
+	MacText::appendTextDefault(str, skipAdd);
 
 	_contentIsDirty = true;
 
@@ -149,18 +149,6 @@ void MacEditableText::clearText() {
 	_scrollbarIsDirty = true;
 
 	updateCursorPos();
-}
-
-void MacEditableText::setTextFont(const MacFont *font) {
-	_font = font;
-
-	_fontRef = _wm->_fontMan->getFont(*font);
-
-	MacText::setDefaultFormatting(font->getId(), font->getSlant(), font->getSize(), 0, 0, 0);
-}
-
-const MacFont *MacEditableText::getTextFont() {
-	return _font;
 }
 
 bool MacEditableText::draw(bool forceRedraw) {
@@ -463,14 +451,20 @@ void MacEditableText::drawInput() {
 
 	Common::Array<Common::U32String> text;
 
+	const Font *fontRef = getDefaultFormatting().font;
+
+	if (fontRef == nullptr) {
+		error("MacEditableText::drawInput(): default font is not set");
+	}
+
 	// Now recalc new text height
-	_fontRef->wordWrapText(_inputText, _maxWidth, text);
+	fontRef->wordWrapText(_inputText, _maxWidth, text);
 	_inputTextHeight = MAX((uint)1, text.size()); // We always have line to clean
 
 	// And add new input line to the text
-	appendText(_inputText, _font, true);
+	appendTextDefault(_inputText, true);
 
-	_cursorX = _inputText.empty() ? 0 : _fontRef->getStringWidth(text[_inputTextHeight - 1]);
+	_cursorX = _inputText.empty() ? 0 : fontRef->getStringWidth(text[_inputTextHeight - 1]);
 
 	updateCursorPos();
 
