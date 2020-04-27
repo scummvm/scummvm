@@ -633,11 +633,11 @@ bool BdfFont::cacheFontData(const BdfFont &font, const Common::String &filename)
 BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	const uint32 magic = stream.readUint32BE();
 	if (magic != BDF_FONTCACHE_TAG)
-		return 0;
+		return nullptr;
 
 	const uint32 version = stream.readUint32BE();
 	if (version != BDF_FONTCACHE_VERSION)
-		return 0;
+		return nullptr;
 
 	BdfFontData data;
 
@@ -653,7 +653,12 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	data.numCharacters = stream.readUint16BE();
 
 	if (stream.err() || stream.eos())
-		return 0;
+		return nullptr;
+
+	if (data.numCharacters == 0) {
+		warning("BdfFont::loadFromCache(): Requested to load 0 characters font");
+		return nullptr;
+	}
 
 	byte **bitmaps = new byte *[data.numCharacters];
 	byte *advances = 0;
@@ -665,7 +670,7 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 			for (int j = 0; j < i; ++j)
 				delete[] bitmaps[i];
 			delete[] bitmaps;
-			return 0;
+			return nullptr;
 		}
 
 		if (size) {
@@ -698,7 +703,7 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 		delete[] bitmaps;
 		delete[] advances;
 		delete[] boxes;
-		return 0;
+		return nullptr;
 	}
 
 	data.bitmaps = bitmaps;
@@ -711,13 +716,18 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 
 BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 	if (!src) {
-		warning("Empty font reference in scale font");
-		return NULL;
+		warning("BdfFont::scaleFont(): Empty font reference in scale font");
+		return nullptr;
 	}
 
 	if (src->getFontSize() == 0) {
-		warning("Requested to scale 0 size font");
-		return NULL;
+		warning("BdfFont::scaleFont(): Requested to scale 0 size font");
+		return nullptr;
+	}
+
+	if (src->_data.numCharacters == 0) {
+		warning("BdfFont::scaleFont(): Requested to scale 0 characters font");
+		return nullptr;
 	}
 
 	float scale = (float)newSize / (float)src->getFontSize();
