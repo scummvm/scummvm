@@ -1215,82 +1215,82 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// J.U.L.I.A.: Among the Stars (HD Ready Version) (Steam, January 2017) (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "HD Ready Version",
+	WME_WINENTRY("juliastars", "HD Ready Version/Steam",
 		WME_ENTRY2s("data_sd.dcp", "9949302dfaea943113e2f0ee0dd468be", 4249680,
 					"data_sd.dcp", "9949302dfaea943113e2f0ee0dd468be", 4249680), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (Full HD Version) (Steam, January 2017) (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "Full HD Version",
+	WME_WINENTRY("juliastars", "Full HD Version/Steam",
 		WME_ENTRY2s("data_hd.dcp", "fd579fa333f117882190993ea4f3bba5", 5164463,
 					"data_hd.dcp", "fd579fa333f117882190993ea4f3bba5", 5164463), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (HD Ready Version) (Steam, November 2016) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "HD Ready Version",
+	WME_WINENTRY("juliastars", "HD Ready Version/Steam",
 		WME_ENTRY2s("data_sd.dcp", "dfaf7e730a66412f68d11cddb0c8737d", 4505667,
 					"german_sd.dcp", "23ceb8625cebfe32aaa5950e89ac68ba", 123326075), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (Full HD Version) (Steam, November 2016) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "Full HD Version",
+	WME_WINENTRY("juliastars", "Full HD Version/Steam",
 		WME_ENTRY2s("data_hd.dcp", "f40b3d0778e37c61cf309d214446d233", 5264780,
 					"german_hd.dcp", "8d85f83a3fc8f1bec4e5ba2158b05b1e", 152499998), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (HD Ready Version) (Steam) (Spanish fanmade translation)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "HD Ready Version",
+	WME_WINENTRY("juliastars", "HD Ready Version/Steam",
 		WME_ENTRY2s("data_sd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554,
 					"data_sd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (Full HD Version) (Steam) (Spanish fanmade translation)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "Full HD Version",
+	WME_WINENTRY("juliastars", "Full HD Version/Steam",
 		WME_ENTRY2s("data_hd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554,
 					"data_hd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
-	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GoG) (English)
+	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GOG) (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "HD Ready Version",
+	WME_WINENTRY("juliastars", "HD Ready Version/GOG",
 		WME_ENTRY2s("data_sd.dcp", "da1f147a5f2ee6eb0750678a8b955c93", 4526792,
 					"data_sd.dcp", "da1f147a5f2ee6eb0750678a8b955c93", 4526792), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
-	// J.U.L.I.A.: Among the Stars (Full HD Version) (GoG) (English)
+	// J.U.L.I.A.: Among the Stars (Full HD Version) (GOG) (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "Full HD Version",
+	WME_WINENTRY("juliastars", "Full HD Version/GOG",
 		WME_ENTRY2s("data_hd.dcp", "91dcb65523da943f22fca0c025a2ce8e", 5281911,
 					"data_hd.dcp", "91dcb65523da943f22fca0c025a2ce8e", 5281911), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
-	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GoG) (German)
+	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GOG) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "HD Ready Version",
+	WME_WINENTRY("juliastars", "HD Ready Version/GOG",
 		WME_ENTRY2s("data_sd.dcp", "070d13b70e35cd95855ddc1687446631", 4526795,
 					"german_sd.dcp", "85eb39225083465225c30261a6bcd63e", 123326134), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
-	// J.U.L.I.A.: Among the Stars (Full HD Version) (GoG) (German)
+	// J.U.L.I.A.: Among the Stars (Full HD Version) (GOG) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "Full HD Version",
+	WME_WINENTRY("juliastars", "Full HD Version/GOG",
 		WME_ENTRY2s("data_hd.dcp", "7973ca635255d3791123fd750cb848f2", 5281925,
 					"german_hd.dcp", "19a771b1a933b71b889026d53734b0c0", 152500044), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
-	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GoG) (Spanish fanmade translation)
+	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GOG) (Spanish fanmade translation)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "HD Ready Version",
+	WME_WINENTRY("juliastars", "HD Ready Version/GOG",
 		WME_ENTRY2s("data_sd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935,
 					"data_sd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
-	// J.U.L.I.A.: Among the Stars (Full HD Version) (GoG) (Spanish fanmade translation)
+	// J.U.L.I.A.: Among the Stars (Full HD Version) (GOG) (Spanish fanmade translation)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "Full HD Version",
+	WME_WINENTRY("juliastars", "Full HD Version/GOG",
 		WME_ENTRY2s("data_hd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935,
 					"data_hd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Untold (Steam, January 2016)
-	WME_WINENTRY("juliauntold", "",
+	WME_WINENTRY("juliauntold", "Steam",
 		WME_ENTRY1s("data.dcp", "fe995e26253f6e0a925dd7850fce17a9", 26459827), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
 
-	// J.U.L.I.A.: Untold (GoG)
-	WME_WINENTRY("juliauntold", "",
+	// J.U.L.I.A.: Untold (GOG)
+	WME_WINENTRY("juliauntold", "GOG",
 		WME_ENTRY1s("data.dcp", "b0aefd82647a26425fe3ee21aabb6283", 26462676), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
 
 	// K'NOSSOS
