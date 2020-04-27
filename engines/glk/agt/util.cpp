@@ -180,26 +180,14 @@ void *rrealloc(void *old, long size) {
 }
 
 char *rstrdup(const char *s) {
-	char *t;
-#ifndef HAVE_STRDUP
-	int i;
-#endif
-
 	if (s == NULL) return NULL;
-#ifdef HAVE_STRDUP
-	t = strdup(s);
-#else
-	t = (char *)malloc((strlen(s) + 1) * sizeof(char));
-#endif
+
+	char *t = scumm_strdup(s);
 	if (t == NULL && rm_trap) {
 		error("Memory duplication error: Out of memory.");
 	}
 	if (rm_acct) ralloc_cnt++;
-#ifndef HAVE_STRDUP
-	for (i = 0; s[i] != 0; i++)
-		t[i] = s[i];
-	t[i] = 0;
-#endif
+
 	return t;
 }
 
