@@ -708,7 +708,7 @@ static void handleHelpCommand() {
 /*----------------------------------------------------------------------*/
 static const DebugParseEntry *findEntry(char *command, const DebugParseEntry *entry) {
 	while (entry->command != NULL) {
-		if (strncasecmp(command, entry->command, strlen(command)) == 0)
+		if (scumm_strnicmp(command, entry->command, strlen(command)) == 0)
 			return entry;
 		entry++;
 	}
@@ -881,7 +881,7 @@ static void handleTraceCommand() {
 /*----------------------------------------------------------------------*/
 static void handleBreakCommand(int fileNumber) {
 	char *parameter = strtok(NULL, ":");
-	if (parameter != NULL && isalpha((int)parameter[0])) {
+	if (parameter != NULL && Common::isAlpha((int)parameter[0])) {
 		fileNumber = sourceFileNumber(parameter);
 		if (fileNumber == -1) {
 			printf("No such file: '%s'\n", parameter);
@@ -946,7 +946,7 @@ static void handleClassesCommand(CONTEXT) {
 		output("Classes:");
 		showClassHierarchy(1, 0);
 		listInstances(context, parameter);
-	} else if (isdigit((int)parameter[0]))
+	} else if (Common::isDigit((int)parameter[0]))
 		showClass(atoi(parameter));
 	else {
 		printf("You have to give a class index to display. You can't use names (yet).");
@@ -971,7 +971,7 @@ static void handleInstancesCommand(CONTEXT) {
 
 	if (parameter == NULL || strchr(parameter, '*') != 0)
 		listInstances(context, parameter);
-	else if (isdigit((int)parameter[0]))
+	else if (Common::isDigit((int)parameter[0]))
 		showInstance(context, atoi(parameter));
 	else {
 		for (i = 1; i < header->instanceMax; i++)

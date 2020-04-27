@@ -191,7 +191,7 @@ Aptr getInstanceAttribute(int instance, int attribute) {
 
 /*======================================================================*/
 char *getInstanceStringAttribute(int instance, int attribute) {
-	return strdup((char *)fromAptr(getInstanceAttribute(instance, attribute)));
+	return scumm_strdup((char *)fromAptr(getInstanceAttribute(instance, attribute)));
 }
 
 
@@ -481,7 +481,7 @@ void sayInstance(CONTEXT, int instance) {
 						output((char *)pointerTo(dict[wrds[i]].wrd));
 					/* ... and then the noun, capitalized if necessary */
 					if (header->capitalizeNouns) {
-						capitalized = strdup((char *)pointerTo(dict[wrds[params[p].lastWord]].wrd));
+						capitalized = scumm_strdup((char *)pointerTo(dict[wrds[params[p].lastWord]].wrd));
 						capitalized[0] = IsoToUpperCase(capitalized[0]);
 						output(capitalized);
 						deallocate(capitalized);
@@ -491,7 +491,7 @@ void sayInstance(CONTEXT, int instance) {
 				return;
 			}
 #endif
-	
+
 	bool flag;
 	FUNC1(mention, flag, instance)
 	if (!flag)
@@ -525,7 +525,7 @@ static void sayLiteral(int literal) {
 	if (isANumeric(literal))
 		sayInteger(literals[literal - header->instanceMax].value);
 	else {
-		str = (char *)strdup((char *)fromAptr(literals[literal - header->instanceMax].value));
+		str = (char *)scumm_strdup((char *)fromAptr(literals[literal - header->instanceMax].value));
 		sayString(str);
 	}
 }
