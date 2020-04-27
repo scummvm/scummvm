@@ -101,7 +101,7 @@ void AI::processCines() {
 				memset(func, 0, 64);
 
 				if (_cine[i]->title)
-					strcpy(func, _cine[i]->title);
+					Common::strlcpy(func, _cine[i]->title, 64);
 
 				cineCleanup();
 				if (func[0])

@@ -256,7 +256,7 @@ bool HDBGame::restartMap() {
 
 		_lua->saveGlobalNumber("map12_complete", 1);
 
-		strcpy(_lastMapname, "MAP12");
+		Common::strlcpy(_lastMapname, "MAP12", 64);
 	}
 
 	if (!strcmp(_currentLuaName, "MAP06.LUA")) {
@@ -888,13 +888,13 @@ void HDBGame::setInMapName(const char *name) {
 	for (uint i = 0; i < ARRAYSIZE(mapNames); i++) {
 		if (!scumm_stricmp(name, mapNames[i].fName)) {
 			memset(&_inMapName, 0, 32);
-			strcpy(_inMapName, mapNames[i].printName);
+			Common::strlcpy(_inMapName, mapNames[i].printName, 32);
 			return;
 		}
 	}
 
 	memset(&_inMapName, 0, 32);
-	strcpy(_inMapName, name);
+	Common::strlcpy(_inMapName, name, 32);
 }
 
 Common::Error HDBGame::run() {

@@ -96,7 +96,7 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 	MPCEntry *file = NULL;
 
 	char fname[128];
-	strcpy(fname, string);
+	Common::strlcpy(fname, string, 128);
 	char *pDest = strrchr(fname, '.');
 	if (pDest)
 		*pDest = '_';
@@ -143,7 +143,7 @@ int32 FileMan::getLength(const char *string, DataType type) {
 	MPCEntry *file = NULL;
 
 	char fname[128];
-	strcpy(fname, string);
+	Common::strlcpy(fname, string, 128);
 	char *pDest = strrchr(fname, '.');
 	if (pDest)
 		*pDest = '_';

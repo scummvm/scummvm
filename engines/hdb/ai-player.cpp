@@ -60,7 +60,7 @@ void aiPlayerInit(AIEntity *e) {
 	}
 
 	e->moveSpeed = kPlayerMoveSpeed;
-	strcpy(e->entityName, "player");
+	Common::strlcpy(e->entityName, "player", 32);
 	g_hdb->_ai->assignPlayer(e);
 }
 
@@ -1175,7 +1175,7 @@ void aiRoboStunnerAction(AIEntity *e) {
 
 void aiRoboStunnerInit(AIEntity *e) {
 	e->aiAction = aiRoboStunnerAction;
-	strcpy(e->printedName, "Robostunner");
+	Common::strlcpy(e->printedName, "Robostunner", 32);
 }
 
 void aiRoboStunnerInit2(AIEntity *e) {
@@ -1183,7 +1183,7 @@ void aiRoboStunnerInit2(AIEntity *e) {
 }
 
 void aiClubInit(AIEntity *e) {
-	strcpy(e->printedName, "Creature Clubber");
+	Common::strlcpy(e->printedName, "Creature Clubber", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1192,7 +1192,7 @@ void aiClubInit2(AIEntity *e) {
 }
 
 void aiSlugSlingerInit(AIEntity *e) {
-	strcpy(e->printedName, "Slugslinger");
+	Common::strlcpy(e->printedName, "Slugslinger", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1201,7 +1201,7 @@ void aiSlugSlingerInit2(AIEntity *e) {
 }
 
 void aiEnvelopeGreenInit(AIEntity *e) {
-	strcpy(e->printedName, "Green envelope");
+	Common::strlcpy(e->printedName, "Green envelope", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1234,7 +1234,7 @@ void aiGemGreenInit2(AIEntity *e) {
 }
 
 void aiTeaCupInit(AIEntity *e) {
-	strcpy(e->printedName, "a Teacup");
+	Common::strlcpy(e->printedName, "a Teacup", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1243,7 +1243,7 @@ void aiTeaCupInit2(AIEntity *e) {
 }
 
 void aiCookieInit(AIEntity *e) {
-	strcpy(e->printedName, "a Cookie");
+	Common::strlcpy(e->printedName, "a Cookie", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1252,7 +1252,7 @@ void aiCookieInit2(AIEntity *e) {
 }
 
 void aiBurgerInit(AIEntity *e) {
-	strcpy(e->printedName, "a Burger");
+	Common::strlcpy(e->printedName, "a Burger", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1261,7 +1261,7 @@ void aiBurgerInit2(AIEntity *e) {
 }
 
 void aiBookInit(AIEntity *e) {
-	strcpy(e->printedName, "a Book");
+	Common::strlcpy(e->printedName, "a Book", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1270,7 +1270,7 @@ void aiBookInit2(AIEntity *e) {
 }
 
 void aiClipboardInit(AIEntity *e) {
-	strcpy(e->printedName, "a Clipboard");
+	Common::strlcpy(e->printedName, "a Clipboard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1279,7 +1279,7 @@ void aiClipboardInit2(AIEntity *e) {
 }
 
 void aiNoteInit(AIEntity *e) {
-	strcpy(e->printedName, "a Note");
+	Common::strlcpy(e->printedName, "a Note", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1288,7 +1288,7 @@ void aiNoteInit2(AIEntity *e) {
 }
 
 void aiKeycardWhiteInit(AIEntity *e) {
-	strcpy(e->printedName, "a White keycard");
+	Common::strlcpy(e->printedName, "a White keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1297,7 +1297,7 @@ void aiKeycardWhiteInit2(AIEntity *e) {
 }
 
 void aiKeycardBlueInit(AIEntity *e) {
-	strcpy(e->printedName, "a Blue keycard");
+	Common::strlcpy(e->printedName, "a Blue keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1306,7 +1306,7 @@ void aiKeycardBlueInit2(AIEntity *e) {
 }
 
 void aiKeycardRedInit(AIEntity *e) {
-	strcpy(e->printedName, "a Red keycard");
+	Common::strlcpy(e->printedName, "a Red keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1315,7 +1315,7 @@ void aiKeycardRedInit2(AIEntity *e) {
 }
 
 void aiKeycardGreenInit(AIEntity *e) {
-	strcpy(e->printedName, "a Green keycard");
+	Common::strlcpy(e->printedName, "a Green keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1324,7 +1324,7 @@ void aiKeycardGreenInit2(AIEntity *e) {
 }
 
 void aiKeycardPurpleInit(AIEntity *e) {
-	strcpy(e->printedName, "a Purple keycard");
+	Common::strlcpy(e->printedName, "a Purple keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1333,7 +1333,7 @@ void aiKeycardPurpleInit2(AIEntity *e) {
 }
 
 void aiKeycardBlackInit(AIEntity *e) {
-	strcpy(e->printedName, "a Black keycard");
+	Common::strlcpy(e->printedName, "a Black keycard", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1342,7 +1342,7 @@ void aiKeycardBlackInit2(AIEntity *e) {
 }
 
 void aiSeedInit(AIEntity *e) {
-	strcpy(e->printedName, "some Henscratch");
+	Common::strlcpy(e->printedName, "some Henscratch", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1351,7 +1351,7 @@ void aiSeedInit2(AIEntity *e) {
 }
 
 void aiSodaInit(AIEntity *e) {
-	strcpy(e->printedName, "a Dr. Frostee");
+	Common::strlcpy(e->printedName, "a Dr. Frostee", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1360,7 +1360,7 @@ void aiSodaInit2(AIEntity *e) {
 }
 
 void aiDollyTool1Init(AIEntity *e) {
-	strcpy(e->printedName, "Dolly's Wrench");
+	Common::strlcpy(e->printedName, "Dolly's Wrench", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1369,7 +1369,7 @@ void aiDollyTool1Init2(AIEntity *e) {
 }
 
 void aiDollyTool2Init(AIEntity *e) {
-	strcpy(e->printedName, "Dolly's Torch");
+	Common::strlcpy(e->printedName, "Dolly's Torch", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1378,7 +1378,7 @@ void aiDollyTool2Init2(AIEntity *e) {
 }
 
 void aiDollyTool3Init(AIEntity *e) {
-	strcpy(e->printedName, "Dolly's EMF Resonator");
+	Common::strlcpy(e->printedName, "Dolly's EMF Resonator", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1387,7 +1387,7 @@ void aiDollyTool3Init2(AIEntity *e) {
 }
 
 void aiDollyTool4Init(AIEntity *e) {
-	strcpy(e->printedName, "Dolly's Toolbox");
+	Common::strlcpy(e->printedName, "Dolly's Toolbox", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1396,7 +1396,7 @@ void aiDollyTool4Init2(AIEntity *e) {
 }
 
 void aiRouterInit(AIEntity *e) {
-	strcpy(e->printedName, "a Computer Router");
+	Common::strlcpy(e->printedName, "a Computer Router", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1405,7 +1405,7 @@ void aiRouterInit2(AIEntity *e) {
 }
 
 void aiSlicerInit(AIEntity *e) {
-	strcpy(e->printedName, "a Pizza Slicer");
+	Common::strlcpy(e->printedName, "a Pizza Slicer", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1414,7 +1414,7 @@ void aiSlicerInit2(AIEntity *e) {
 }
 
 void aiPackageInit(AIEntity *e) {
-	strcpy(e->printedName, "a Package");
+	Common::strlcpy(e->printedName, "a Package", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1501,7 +1501,7 @@ void aiIceBlockInit2(AIEntity *e) {
 }
 
 void aiCabKeyInit(AIEntity *e) {
-	strcpy(e->printedName, "a Cabinet key");
+	Common::strlcpy(e->printedName, "a Cabinet key", 32);
 }
 
 void aiCabKeyInit2(AIEntity *e) {
@@ -1509,7 +1509,7 @@ void aiCabKeyInit2(AIEntity *e) {
 }
 
 void aiItemChickenInit(AIEntity *e) {
-	strcpy(e->printedName, "Cooper's chicken");
+	Common::strlcpy(e->printedName, "Cooper's chicken", 32);
 }
 
 void aiItemChickenInit2(AIEntity *e) {
@@ -1517,7 +1517,7 @@ void aiItemChickenInit2(AIEntity *e) {
 }
 
 void aiPdaInit(AIEntity *e) {
-	strcpy(e->printedName, "a P.D.A.");
+	Common::strlcpy(e->printedName, "a P.D.A.", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1536,12 +1536,12 @@ void aiCellInit2(AIEntity *e) {
 }
 
 void aiCellInit(AIEntity *e) {
-	strcpy(e->printedName, "Energy Cell");
+	Common::strlcpy(e->printedName, "Energy Cell", 32);
 	e->aiAction = aiGetItemAction;
 }
 
 void aiEnvelopeWhiteInit(AIEntity *e) {
-	strcpy(e->printedName, "White envelope");
+	Common::strlcpy(e->printedName, "White envelope", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1550,7 +1550,7 @@ void aiEnvelopeWhiteInit2(AIEntity *e) {
 }
 
 void aiEnvelopeBlueInit(AIEntity *e) {
-	strcpy(e->printedName, "Blue envelope");
+	Common::strlcpy(e->printedName, "Blue envelope", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1559,7 +1559,7 @@ void aiEnvelopeBlueInit2(AIEntity *e) {
 }
 
 void aiEnvelopeRedInit(AIEntity *e) {
-	strcpy(e->printedName, "Red envelope");
+	Common::strlcpy(e->printedName, "Red envelope", 32);
 	e->aiAction = aiGetItemAction;
 }
 
@@ -1569,7 +1569,7 @@ void aiEnvelopeRedInit2(AIEntity *e) {
 
 void aiTransceiverInit(AIEntity *e) {
 	e->aiAction = aiTransceiverAction;
-	strcpy(e->printedName, "Transceiver");
+	Common::strlcpy(e->printedName, "Transceiver", 32);
 }
 
 void aiTransceiverInit2(AIEntity *e) {

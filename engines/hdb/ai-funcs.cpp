@@ -61,13 +61,13 @@ AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, 
 	e->animFrame = 0;
 
 	if (funcInit)
-		strcpy(e->luaFuncInit, funcInit);
+		Common::strlcpy(e->luaFuncInit, funcInit, 32);
 
 	if (funcAction)
-		strcpy(e->luaFuncAction, funcAction);
+		Common::strlcpy(e->luaFuncAction, funcAction, 32);
 
 	if (funcUse)
-		strcpy(e->luaFuncUse, funcUse);
+		Common::strlcpy(e->luaFuncUse, funcUse, 32);
 
 	if (e->luaFuncInit[0] == '*')
 		e->luaFuncInit[0] = 0;
@@ -436,10 +436,10 @@ bool AI::cacheEntGfx(AIEntity *e, bool initFlag) {
 					const char *str1 = g_hdb->_lua->getStringOffStack();
 					const char *str2 = g_hdb->_lua->getStringOffStack();
 					if (str1)
-						strcpy(e->entityName, str1);
+						Common::strlcpy(e->entityName, str1, 32);
 
 					if (str2)
-						strcpy(e->printedName, str2);
+						Common::strlcpy(e->printedName, str2, 32);
 				}
 			} else if (e->aiInit2)
 				e->aiInit2(e);
@@ -721,8 +721,8 @@ void AI::initAllEnts() {
 		(*it)->aiInit((*it));
 		if ((*it)->luaFuncInit[0]) {
 			if (g_hdb->_lua->callFunction((*it)->luaFuncInit, 2)) {
-				strcpy((*it)->entityName, g_hdb->_lua->getStringOffStack());
-				strcpy((*it)->printedName, g_hdb->_lua->getStringOffStack());
+				Common::strlcpy((*it)->entityName, g_hdb->_lua->getStringOffStack(), 32);
+				Common::strlcpy((*it)->printedName, g_hdb->_lua->getStringOffStack(), 32);
 			} else
 				warning("'%s' doesn't exists", (*it)->luaFuncInit);
 		}

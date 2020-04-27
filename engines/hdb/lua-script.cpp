@@ -168,7 +168,7 @@ void LuaScript::saveGlobalNumber(const char *global, double value) {
 	}
 
 	Global *g = new Global;
-	strcpy(g->global, global);
+	Common::strlcpy(g->global, global, 32);
 	g->valueOrString = 0;
 	g->value = value;
 
@@ -183,15 +183,15 @@ void LuaScript::saveGlobalString(const char *global, const char *string) {
 	for (uint i = 0; i < _globals.size(); i++) {
 		if (!scumm_stricmp(global, _globals[i]->global)) {
 			_globals[i]->valueOrString = 1;
-			strcpy(_globals[i]->string, string);
+			Common::strlcpy(_globals[i]->string, string, 32);
 			return;
 		}
 	}
 
 	Global *g = new Global;
-	strcpy(g->global, global);
+	Common::strlcpy(g->global, global, 32);
 	g->valueOrString = 1;
-	strcpy(g->string, string);
+	Common::strlcpy(g->string, string, 32);
 
 	_globals.push_back(g);
 }

@@ -1211,7 +1211,7 @@ void AI::init() {
 
 	_dummyPlayer.type = AI_GUY;
 	_dummyLaser.type = AI_LASERBEAM;
-	strcpy(_dummyPlayer.entityName, "Virtual Player");
+	Common::strlcpy(_dummyPlayer.entityName, "Virtual Player", 32);
 	_numDeliveries = 0;
 	_playerRunning = false;
 	_weaponSelGfx = NULL;

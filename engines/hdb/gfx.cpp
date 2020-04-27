@@ -234,7 +234,7 @@ void Gfx::init() {
 	// Add Animating Tile Info
 	int found = -1;
 	char search[32];
-	strcpy(search, "anim_");
+	Common::strlcpy(search, "anim_", 32);
 	for (index = 0; index < _numTiles; index++) {
 		// IF we have not found a start, look for it
 		// ELSE IF we have found a start and are in the middle of an anim group
@@ -247,7 +247,7 @@ void Gfx::init() {
 			_tLookupArray[index - 1].animIndex = index;
 		else if (strncmp(_tLookupArray[index].filename, search, strlen(search)) && found >= 0) {
 			_tLookupArray[index - 1].animIndex = found;
-			strcpy(search, "anim_");
+			Common::strlcpy(search, "anim_", 32);
 			found = -1;
 			if (!strncmp(_tLookupArray[index].filename, search, strlen(search)))
 				index--;
@@ -739,7 +739,7 @@ Tile *Gfx::getTileGfx(const char *name, int32 size) {
 	}
 
 	GfxCache *gc = new GfxCache;
-	strcpy(gc->name, name);
+	Common::strlcpy(gc->name, name, 32);
 	gc->tileGfx = loadTile(name);
 	gc->status = false;
 	if (size == -1)
@@ -773,7 +773,7 @@ Picture *Gfx::getPicGfx(const char *name, int32 size) {
 	}
 
 	GfxCache *gc = new GfxCache;
-	strcpy(gc->name, name);
+	Common::strlcpy(gc->name, name, 32);
 	gc->picGfx = loadPic(name);
 	gc->status = true;
 	if (size == -1)

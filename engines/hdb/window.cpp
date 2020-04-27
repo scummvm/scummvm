@@ -626,13 +626,13 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	_dialogInfo.luaMore[0] = 0;
 
 	_dialogInfo.tileIndex = tileIndex;
-	strcpy(_dialogInfo.title, title);
+	Common::strlcpy(_dialogInfo.title, title, 128);
 	_dialogInfo.active = true;
 
 	if (strlen(string) > sizeof(_dialogInfo.string))
-		strncpy(_dialogInfo.string, string, sizeof(_dialogInfo.string) - 1);
+		Common::strlcpy(_dialogInfo.string, string, 128);
 	else
-		strcpy(_dialogInfo.string, string);
+		Common::strlcpy(_dialogInfo.string, string, 128);
 
 	int e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
@@ -662,7 +662,7 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 
 	_dialogInfo.more = more;
 	if (luaMore)
-		strcpy(_dialogInfo.luaMore, luaMore);
+		Common::strlcpy(_dialogInfo.luaMore, luaMore, 64);
 	g_hdb->_sound->playSound(SND_MOVE_SELECTION);
 }
 
@@ -849,13 +849,13 @@ void Window::openDialogChoice(const char *title, const char *text, const char *f
 	for (int i = 0; i < 10; i++)
 		_dialogChoiceInfo.choices[i][0] = 0;
 
-	strcpy(_dialogChoiceInfo.title, title);
-	strcpy(_dialogChoiceInfo.text, text);
-	strcpy(_dialogChoiceInfo.func, func);
+	Common::strlcpy(_dialogChoiceInfo.title, title, 64);
+	Common::strlcpy(_dialogChoiceInfo.text, text, 160);
+	Common::strlcpy(_dialogChoiceInfo.func, func, 64);
 	_dialogChoiceInfo.numChoices = numChoices;
 
 	for (int i = 0; i < numChoices; i++)
-		strcpy(_dialogChoiceInfo.choices[i], choices[i]);
+		Common::strlcpy(_dialogChoiceInfo.choices[i], choices[i], 64);
 	_dialogChoiceInfo.active = true;
 
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
@@ -989,7 +989,7 @@ void Window::openMessageBar(const char *title, int time) {
 			for (i = 0; i < _numMsgQueue; i++)
 				if (!scumm_stricmp(_msgQueueStr[i], title))
 					return;
-			strcpy(_msgQueueStr[_numMsgQueue], title);
+			Common::strlcpy(_msgQueueStr[_numMsgQueue], title, 128);
 			_msgQueueWait[_numMsgQueue] = time;
 			_numMsgQueue++;
 		}
@@ -998,7 +998,7 @@ void Window::openMessageBar(const char *title, int time) {
 
 	_msgInfo.y = 0;
 	_msgInfo.timer = (time * kGameFPS);
-	strcpy(_msgInfo.title, title);
+	Common::strlcpy(_msgInfo.title, title, 128);
 
 	int	e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
@@ -1058,7 +1058,7 @@ void Window::nextMsgQueued() {
 		return;
 	}
 
-	strcpy(_msgInfo.title, _msgQueueStr[0]);
+	Common::strlcpy(_msgInfo.title, _msgQueueStr[0], 128);
 	_msgInfo.timer = (_msgQueueWait[0] * kGameFPS);
 
 	int e1, e2, e3, e4;
@@ -1075,7 +1075,7 @@ void Window::nextMsgQueued() {
 	_msgInfo.y = (g_hdb->_screenHeight >> 2) - (_msgInfo.height >> 1);
 
 	for (int xx = 0; xx < _numMsgQueue - 1; xx++) {
-		strcpy(_msgQueueStr[xx], _msgQueueStr[xx + 1]);
+		Common::strlcpy(_msgQueueStr[xx], _msgQueueStr[xx + 1], 128);
 		_msgQueueWait[xx] = _msgQueueWait[xx + 1];
 	}
 
@@ -1890,7 +1890,7 @@ void Window::textOut(const char *text, int x, int y, int timer) {
 
 	t->x = x;
 	t->y = y;
-	strcpy(t->text, text);
+	Common::strlcpy(t->text, text, 128);
 	t->timer = g_system->getMillis() + (uint32)(timer << 4);
 
 	if (x < 0) {
