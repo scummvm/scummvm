@@ -509,9 +509,9 @@ void SaveLoadChooserSimple::reflowLayout() {
 			textLines++; // add a line of padding at the bottom
 
 		if (_thumbnailSupport) {
-			_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);	
+			_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);
 			_gfxWidget->setVisible(true);
-		} else { 
+		} else {
 			// choose sensible values for displaying playtime and date/time when a thumbnail is not being used
 			thumbH = 0;
 			thumbY = y;
@@ -923,7 +923,8 @@ void SaveLoadChooserGrid::reflowLayout() {
 
 	int16 x, y;
 	uint16 w;
-	g_gui.xmlEval()->getWidgetData("SaveLoadChooser.List", x, y, w, availableHeight);
+	if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.List", x, y, w, availableHeight))
+		error("Could not load widget position for 'SaveLoadChooser.List'");
 
 	const int16 buttonWidth = kThumbnailWidth + 6;
 	const int16 buttonHeight = kThumbnailHeight2 + 6;
