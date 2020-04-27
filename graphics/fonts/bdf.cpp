@@ -252,6 +252,12 @@ byte *loadCharacter(Common::SeekableReadStream &stream, int &encoding, int &adva
 			box.yOffset = yOffset;
 		} else if (line == "BITMAP") {
 			const uint bytesPerRow = (box.width + 7) / 8;
+
+			if (bitmap) {
+				warning("Bdf::loadCharacter(): Double BITMAP definitions");
+				delete[] bitmap;
+			}
+
 			byte *dst = bitmap = new byte[box.height * bytesPerRow];
 
 			for (int y = 0; y < box.height; ++y) {
