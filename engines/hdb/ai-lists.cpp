@@ -362,7 +362,7 @@ HereT *AI::findHere(int x, int y) {
 		if ((*it)->x == x && (*it)->y == y)
 			return *it;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFuncUse) {
@@ -525,11 +525,11 @@ bool AI::autoActive(int x, int y) {
 }
 
 CallbackDef allCallbacks[] = {
-	{NO_FUNCTION, NULL},
+	{NO_FUNCTION, nullptr},
 	{AI_BARREL_EXPLOSION_END, aiBarrelExplosionEnd},
 	{CALLBACK_DOOR_OPEN_CLOSE, callbackDoorOpenClose},
 	{CALLBACK_AUTODOOR_OPEN_CLOSE, callbackAutoDoorOpenClose},
-	{CALLBACK_END, NULL}
+	{CALLBACK_END, nullptr}
 };
 
 void AI::addCallback(CallbackType type, int x, int y, int delay) {
@@ -801,7 +801,7 @@ ArrowPath *AI::findArrowPath(int x, int y) {
 		if ((*it)->tileX == x && (*it)->tileY == y)
 			return *it;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void AI::addToTriggerList(char *luaFuncInit, char *luaFuncUse, int x, int y, int value1, int value2, char *id) {

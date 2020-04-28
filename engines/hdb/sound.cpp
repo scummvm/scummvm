@@ -1402,7 +1402,7 @@ const SoundLookUp soundList[] =  {
 	{DEMO_SCIENTIST_01,		DEMO_SCIENTIST_01_MP3,		"DEMO_SCIENTIST_01"},
 	{DEMO_SCIENTIST_02,		DEMO_SCIENTIST_02_MP3,		"DEMO_SCIENTIST_02"},
 
-	{LAST_SOUND,			NULL,						NULL}
+	{LAST_SOUND,			nullptr,						nullptr}
 };
 
 Sound::Sound() {

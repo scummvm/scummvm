@@ -38,7 +38,7 @@
 namespace HDB {
 
 Gfx::Gfx() {
-	_tLookupArray = NULL;
+	_tLookupArray = nullptr;
 	_starsInfo.active = false;
 	_gfxCache = new Common::Array<GfxCache *>;
 	_globalSurface.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);
@@ -116,7 +116,7 @@ Gfx::~Gfx() {
 	_globalSurface.free();
 	for (int i = 0; i < _numTiles; i++) {
 		delete _tLookupArray[i].tData;
-		_tLookupArray[i].tData = NULL;
+		_tLookupArray[i].tData = nullptr;
 	}
 	delete[] _tLookupArray;
 	for (int i = 0; i < 8; i++)
@@ -218,7 +218,7 @@ void Gfx::init() {
 	int index = 0, skyIndex = 0;
 	for (; index < _numTiles; index++) {
 		_tLookupArray[index].filename = tileData->operator[](index);
-		_tLookupArray[index].tData = NULL;
+		_tLookupArray[index].tData = nullptr;
 		_tLookupArray[index].skyIndex = 0;
 		_tLookupArray[index].animIndex = index;
 		// Check if the loaded Tile is a Sky Tile
@@ -259,7 +259,7 @@ void Gfx::init() {
 	_tileSkyStars = getTileIndex(TILE_SKY_STARS);
 	_tileSkyStarsLeft = getTileIndex(TILE_SKY_STARS_LEFT_SLOW);
 	_tileSkyClouds = getTileIndex(TILE_SKY_CLOUDS); // Not completely sure about this filename.
-	_skyClouds = NULL;
+	_skyClouds = nullptr;
 
 	if (!g_hdb->isPPC()) {
 		// Load Mouse Pointer and Display Cursor
@@ -281,12 +281,12 @@ void Gfx::init() {
 		_snowflake = getPicture(PIC_SNOWFLAKE);
 	} else {
 		for (int i = 0; i < 8; i++)
-			_mousePointer[i] = NULL;
+			_mousePointer[i] = nullptr;
 
 		for (int i = 0; i < 4; i++)
-			_starField[i] = NULL;
+			_starField[i] = nullptr;
 
-		_snowflake = NULL;
+		_snowflake = nullptr;
 
 		_showCursor = false;
 	}
@@ -588,7 +588,7 @@ void Gfx::turnOnSnow() {
 Picture *Gfx::loadPic(const char *picName) {
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(picName, TYPE_PIC);
 	if (!stream)
-		return NULL;
+		return nullptr;
 
 	Picture *pic = new Picture;
 	pic->load(stream);
@@ -599,7 +599,7 @@ Picture *Gfx::loadPic(const char *picName) {
 Tile *Gfx::loadTile(const char *tileName) {
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(tileName, TYPE_TILE32);
 	if (!stream)
-		return NULL;
+		return nullptr;
 
 	Tile *tile = new Tile;
 	tile->load(stream);
@@ -610,7 +610,7 @@ Tile *Gfx::loadTile(const char *tileName) {
 Tile *Gfx::loadIcon(const char *tileName) {
 	Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(tileName, TYPE_ICON32);
 	if (!stream)
-		return NULL;
+		return nullptr;
 
 	Tile *tile = new Tile;
 	tile->load(stream);
@@ -630,15 +630,15 @@ Tile *Gfx::getTile(int index) {
 	if (index < 0 || index > _numTiles) {
 		if (index != 0xFFFF)
 			debug(6, "getTile(%d): wrong index > %d", index, _numTiles);
-		return NULL;
+		return nullptr;
 	}
 	if (_tLookupArray[index].skyIndex) {
 		debug(6, "getTile(%d): sky tile (%d)", index, _tLookupArray[index].skyIndex);
-		// We don't draw Sky Tiles, so return NULL
-		return NULL;
+		// We don't draw Sky Tiles, so return nullptr
+		return nullptr;
 	}
 
-	if (_tLookupArray[index].tData == NULL) {
+	if (_tLookupArray[index].tData == nullptr) {
 		Common::SeekableReadStream *stream = g_hdb->_fileMan->findFirstData(_tLookupArray[index].filename, TYPE_TILE32);
 		Tile *tile = new Tile;
 		tile->load(stream);
@@ -805,7 +805,7 @@ void Gfx::setSky(int skyIndex) {
 	// Clear memory used by last sky
 	if (tileIndex != _tileSkyClouds && _skyClouds) {
 		delete _skyClouds;
-		_skyClouds = NULL;
+		_skyClouds = nullptr;
 	}
 
 	// Setup current sky

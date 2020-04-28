@@ -122,7 +122,7 @@ void aiPlayerAction(AIEntity *e) {
 	static const int xvAhead[5] = {9, 0, 0, -1, 1};
 	static const int yvAhead[5] = {9, -1, 1, 0, 0};
 
-	AIEntity *hit = NULL;
+	AIEntity *hit = nullptr;
 
 	// Draw the STUN lightning if it exists
 	if (e->sequence) {
@@ -307,7 +307,7 @@ void aiPlayerAction(AIEntity *e) {
 		}
 		if ((!e->animFrame) && (e->animDelay == e->animCycle)) {
 			e->state = stand[e->dir];
-			e->aiDraw = NULL;
+			e->aiDraw = nullptr;
 			switch (e->state) {
 			case STATE_ATK_CLUB_UP:
 				e->draw = e->standupGfx[0];
@@ -333,7 +333,7 @@ void aiPlayerAction(AIEntity *e) {
 		cycleFrames(e, g_hdb->_ai->_stunUpFrames);
 		if (!e->animFrame && e->animDelay == e->animCycle) {
 			e->state = stand[e->dir];
-			e->aiDraw = NULL;
+			e->aiDraw = nullptr;
 			e->sequence = 0;
 		}
 		return;
@@ -342,7 +342,7 @@ void aiPlayerAction(AIEntity *e) {
 		cycleFrames(e, g_hdb->_ai->_stunDownFrames);
 		if (!e->animFrame && e->animDelay == e->animCycle) {
 			e->state = stand[e->dir];
-			e->aiDraw = NULL;
+			e->aiDraw = nullptr;
 			e->sequence = 0;
 		}
 		return;
@@ -351,7 +351,7 @@ void aiPlayerAction(AIEntity *e) {
 		cycleFrames(e, g_hdb->_ai->_stunLeftFrames);
 		if (!e->animFrame && e->animDelay == e->animCycle) {
 			e->state = stand[e->dir];
-			e->aiDraw = NULL;
+			e->aiDraw = nullptr;
 			e->sequence = 0;
 		}
 		return;
@@ -360,7 +360,7 @@ void aiPlayerAction(AIEntity *e) {
 		cycleFrames(e, g_hdb->_ai->_stunRightFrames);
 		if (!e->animFrame && e->animDelay == e->animCycle) {
 			e->state = stand[e->dir];
-			e->aiDraw = NULL;
+			e->aiDraw = nullptr;
 			e->sequence = 0;
 		}
 		return;
@@ -977,15 +977,15 @@ void aiSlugAttackAction(AIEntity *e) {
 
 	AIEntity *hit = g_hdb->_ai->findEntityIgnore(e->tileX, e->tileY, e);
 	if (hit && hit->type == AI_GUY)
-		hit = NULL;
+		hit = nullptr;
 
 	// don't hit anything you can walk through...
 	if (hit && true == g_hdb->_ai->getTableEnt(hit->type))
-		hit = NULL;
+		hit = nullptr;
 
 	// don't hit floating stuff
 	if (hit && hit->state == STATE_FLOATING)
-		hit = NULL;
+		hit = nullptr;
 
 	uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
 	uint32 fg_flags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
@@ -1103,7 +1103,7 @@ void aiSlugAttackInit(AIEntity *e) {
 
 	e->moveSpeed = kPlayerMoveSpeed << 1;
 	g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
-	e->draw = NULL;					// use custom draw function
+	e->draw = nullptr;					// use custom draw function
 	e->aiDraw = aiSlugAttackDraw;
 	e->state = STATE_MOVEDOWN;		// so it will draw & animate
 	e->aiAction = aiSlugAttackAction;
@@ -1452,10 +1452,10 @@ void aiMagicEggInit2(AIEntity *e) {
 
 void aiMagicEggUse(AIEntity *e) {
 	if (!scumm_strnicmp(e->luaFuncAction, "ai_", 3) || !scumm_strnicmp(e->luaFuncAction, "item_", 5)) {
-		AIEntity *spawned = NULL;
+		AIEntity *spawned = nullptr;
 		for (int i = 0; aiEntList[i].type != END_AI_TYPES; ++i) {
 			if (!scumm_stricmp(aiEntList[i].luaName, e->luaFuncAction)) {
-				spawned = g_hdb->_ai->spawn(aiEntList[i].type, e->dir, e->tileX, e->tileY, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
+				spawned = g_hdb->_ai->spawn(aiEntList[i].type, e->dir, e->tileX, e->tileY, nullptr, nullptr, nullptr, DIR_NONE, e->level, 0, 0, 1);
 				break;
 			}
 		}
@@ -1603,7 +1603,7 @@ void aiMonkeystoneAction(AIEntity *e) {
 			g_hdb->_lua->callFunction(e->luaFuncUse, 0);
 
 		g_hdb->_ai->addToInventory(e);
-		aiMonkeystoneUse(NULL);
+		aiMonkeystoneUse(nullptr);
 	}
 }
 

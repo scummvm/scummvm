@@ -215,7 +215,7 @@ void Window::init() {
 	_gfxIndent = g_hdb->_gfx->loadPic(MENU_DELIVERY_INDENTATION);
 	_gfxArrowTo = g_hdb->_gfx->loadPic(MENU_ARROW_DELIVERTO);
 
-	_gfxTry = _gfxAgain = NULL; // They will be loaded when needed
+	_gfxTry = _gfxAgain = nullptr; // They will be loaded when needed
 
 	_gfxInvSelect = g_hdb->_gfx->loadPic(INVENTORY_NORMAL);
 	_gfxHandright = g_hdb->_gfx->loadPic(MENU_HAND_POINTRIGHT);
@@ -251,7 +251,7 @@ void Window::init() {
 		_dlvsInfo.y = 272;
 	}
 
-	_gemGfx = NULL;
+	_gemGfx = nullptr;
 
 	restartSystem();
 }
@@ -268,11 +268,11 @@ void Window::save(Common::OutSaveFile *out) {
 	memcpy(&_tempPzInfo, &_pzInfo, sizeof(_pzInfo));
 
 	for (i = 0; i < 10; i++) {
-		_tempPzInfo.gfxNumber[i] = NULL;
+		_tempPzInfo.gfxNumber[i] = nullptr;
 		if (i < 2)
-			_tempPzInfo.gfxFace[i] = NULL;
+			_tempPzInfo.gfxFace[i] = nullptr;
 	}
-	_tempPzInfo.gfxPanic = _tempPzInfo.gfxZone = NULL;
+	_tempPzInfo.gfxPanic = _tempPzInfo.gfxZone = nullptr;
 
 	out->writeByte(_tempPzInfo.active);
 	out->writeSint32LE(_tempPzInfo.sequence);
@@ -401,11 +401,11 @@ void Window::loadSaveFile(Common::InSaveFile *in) {
 
 	// Load Panic Zone Info
 	for (i = 0; i < 10; i++) {
-		_pzInfo.gfxNumber[i] = NULL;
+		_pzInfo.gfxNumber[i] = nullptr;
 		if (i < 2)
-			_pzInfo.gfxFace[i] = NULL;
+			_pzInfo.gfxFace[i] = nullptr;
 	}
-	_pzInfo.gfxPanic = _pzInfo.gfxZone = NULL;
+	_pzInfo.gfxPanic = _pzInfo.gfxZone = nullptr;
 
 	_pzInfo.active = in->readByte();
 	_pzInfo.sequence = in->readSint32LE();
@@ -624,7 +624,7 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	if (_dialogInfo.active)
 		return;
 
-	_dialogInfo.gfx = NULL;
+	_dialogInfo.gfx = nullptr;
 	_dialogInfo.el = _dialogInfo.er = _dialogInfo.et = _dialogInfo.eb = 0;
 	_dialogInfo.luaMore[0] = 0;
 
@@ -1120,7 +1120,7 @@ void Window::drawInventory() {
 		int drawY = _invWinInfo.y + 16;
 
 		// Draw Inv Items
-		AIEntity *sel = NULL;
+		AIEntity *sel = nullptr;
 		if (_invWinInfo.selection >= g_hdb->_ai->getInvAmount())
 			_invWinInfo.selection = g_hdb->_ai->getInvAmount() - 1;
 
@@ -1185,7 +1185,7 @@ void Window::drawInventory() {
 		int drawY = _invWinInfo.y;
 
 		// Draw Inv Items
-		AIEntity *sel = NULL;
+		AIEntity *sel = nullptr;
 		if (_invWinInfo.selection >= g_hdb->_ai->getInvAmount())
 			_invWinInfo.selection = g_hdb->_ai->getInvAmount() - 1;
 
@@ -1733,7 +1733,7 @@ void Window::drawTryAgain() {
 	if (!g_hdb->_ai->playerDead())
 		return;
 
-	if (NULL == _gfxTry) {
+	if (nullptr == _gfxTry) {
 		_gfxTry = g_hdb->_gfx->loadPic(GAME_TRY);
 		_gfxAgain = g_hdb->_gfx->loadPic(GAME_AGAIN);
 		_gfxLevelRestart = g_hdb->_gfx->loadPic(GAME_TA_LEVELRESTART);
@@ -1756,7 +1756,7 @@ void Window::clearTryAgain() {
 	delete _gfxAgain;
 	delete _gfxLevelRestart;
 
-	_gfxTry = _gfxAgain = _gfxLevelRestart = NULL;
+	_gfxTry = _gfxAgain = _gfxLevelRestart = nullptr;
 }
 
 void Window::loadPanicZoneGfx() {
