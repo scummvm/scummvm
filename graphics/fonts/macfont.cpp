@@ -611,7 +611,11 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 	return new MacFONTFont(data);
 }
 
-#define howmany(x, y)	(((x)+((y)-1))/(y))
+// Fix compilation warning.
+// On AmigaOS4 howmany is already defined in sys/time.h.
+#ifndef __amigaos4__
+	#define howmany(x, y)	(((x)+((y)-1))/(y))
+#endif
 
 static void countupScore(int *dstGray, int x, int y, int bbw, int bbh, float scale) {
 	int newbbw = bbw * scale;
