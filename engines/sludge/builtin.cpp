@@ -842,8 +842,10 @@ builtIn(anim) {
 
 	// Load the required sprite bank
 	LoadedSpriteBank *sprBanky = g_sludge->_gfxMan->loadBankForAnim(fileNumber);
-	if (!sprBanky)
+	if (!sprBanky) {
+		delete ba;
 		return BR_ERROR;    // File not found, fatal done already
+	}
 	ba->theSprites = sprBanky;
 
 	// Return value
