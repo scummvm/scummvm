@@ -99,6 +99,12 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *too
 	_dictionarySelect = false;
 
 	_lastRead = -1;
+
+	_hlLeftPadding = _hlRightPadding = 0;
+	_leftPadding = _rightPadding = 0;
+	_topPadding = _bottomPadding = 0;
+
+	_scrollBarWidth = 0;
 }
 
 bool ListWidget::containsWidget(Widget *w) const {
