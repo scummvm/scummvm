@@ -24,6 +24,7 @@
 #define COMMON_ACHIEVEMENTS_H
 
 #include "common/array.h"
+#include "common/ini-file.h"
 #include "common/singleton.h"
 #include "common/str.h"
 
@@ -70,7 +71,7 @@ public:
 
 	bool setActiveDomain(AchievementsPlatform platform, const String &appId);
 	bool unsetActiveDomain();
-	bool isReady() { return _achDomainId.size() > 0 && _statDomainId.size() > 0; }
+	bool isReady() { return _iniFile != nullptr; }
 
 	// Methods to manipulate individual achievements 
 	bool setAchievement(const String &id, const String &displayedMessage);
@@ -88,8 +89,8 @@ public:
 	bool resetAllStats();
 
 private:
-	String _achDomainId;
-	String _statDomainId;
+	INIFile* _iniFile;
+	String _iniFileName;
 };
 
 /** Shortcut for accessing the achievements manager. */
