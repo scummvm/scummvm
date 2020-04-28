@@ -377,6 +377,8 @@ Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&bl
 					(mirror ? &rect_h : &rect_none),
 					TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
 					(int)blitted->w, (int)blitted->h, Graphics::BLEND_MULTIPLY);
+		} else {
+			curLight[0] = curLight[1] = curLight[2] = 255;
 		}
 	} else {
 		curLight[0] = curLight[1] = curLight[2] = 255;
