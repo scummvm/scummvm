@@ -719,6 +719,7 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	data.boxes = boxes;
 	data.familyName = nullptr;
 	data.slant = nullptr;
+	data.size = data.height;
 	return new BdfFont(data, DisposeAfterUse::YES);
 }
 
@@ -744,6 +745,7 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 
 	data.maxAdvance = (int)((float)src->_data.maxAdvance * scale);
 	data.height = (int)((float)src->_data.height * scale);
+	data.size = (int)((float)src->_data.size * scale);
 	data.defaultBox.width = (int)((float)src->_data.defaultBox.width * scale);
 	data.defaultBox.height = (int)((float)src->_data.defaultBox.height * scale);
 	data.defaultBox.xOffset = (int)((float)src->_data.defaultBox.xOffset * scale);
