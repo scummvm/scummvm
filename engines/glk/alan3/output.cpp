@@ -429,7 +429,7 @@ void output(const char *original) {
 		capitalize = strchr("!?.", str[strlen(str) - 1]) != 0;
 
 	anyOutput = TRUE;
-	delete[] copy;
+	free(copy);
 }
 
 
