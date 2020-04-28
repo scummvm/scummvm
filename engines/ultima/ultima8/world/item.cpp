@@ -72,7 +72,8 @@ Item::Item()
 	  _flags(0), _quality(0), _npcNum(0), _mapNum(0),
 	  _extendedFlags(0), _parent(0),
 	  _cachedShape(nullptr), _cachedShapeInfo(nullptr),
-	  _gump(0), _gravityPid(0), _lastSetup(0) {
+	  _gump(0), _gravityPid(0), _lastSetup(0),
+	  _ix(0), _iy(0), _iz(0) {
 }
 
 
@@ -896,6 +897,8 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		bool we_were_released = false;
 		for (it = collisions.begin(); it != collisions.end(); it++) {
 			Item *item = getItem(it->_item);
+			if (!item)
+				continue; // shouldn't happen..
 
 			// Hitting us at the start and end, don't do anything
 			if (!_parent && it->_hitTime == 0x0000 &&
@@ -2837,7 +2840,7 @@ uint32 Item::I_canReach(const uint8 *args, unsigned int /*argsize*/) {
 
 	// TODO: add cheat to make this always return 1
 
-	if (item->canReach(other, range))
+	if (item && item->canReach(other, range))
 		return 1;
 	else
 		return 0;

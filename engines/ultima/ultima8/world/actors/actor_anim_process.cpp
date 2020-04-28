@@ -59,14 +59,17 @@ static const int watchactor = WATCHACTOR;
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(ActorAnimProcess, Process)
 
-ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(nullptr) {
-
+ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(nullptr),
+	_dir(0), _action(Animation::walk), _steps(0), _firstFrame(true),
+	_currentStep(0), _repeatCounter(0), _animAborted(false),
+	_attackedSomething(false) {
 }
 
 ActorAnimProcess::ActorAnimProcess(Actor *actor_, Animation::Sequence action_,
                                    uint32 dir_, uint32 steps_) :
 		_dir(dir_), _action(action_), _steps(steps_), _tracker(nullptr),
-		_firstFrame(true), _currentStep(0) {
+		_firstFrame(true), _currentStep(0), _repeatCounter(0),
+		_animAborted(false), _attackedSomething(false)  {
 	assert(actor_);
 	_itemNum = actor_->getObjId();
 

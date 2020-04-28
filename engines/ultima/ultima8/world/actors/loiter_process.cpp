@@ -34,13 +34,12 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(LoiterProcess, Process)
 
-LoiterProcess::LoiterProcess() : Process() {
+LoiterProcess::LoiterProcess() : Process(), _count(0) {
 }
 
-LoiterProcess::LoiterProcess(Actor *actor, int32 c) {
+LoiterProcess::LoiterProcess(Actor *actor, int32 c) : _count(c) {
 	assert(actor);
 	_itemNum = actor->getObjId();
-	_count = c;
 
 	_type = 0x205; // CONSTANT!
 }

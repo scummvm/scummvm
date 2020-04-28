@@ -40,12 +40,13 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(BookGump, ModalGump)
 // TODO: Remove all the hacks
 
 BookGump::BookGump()
-	: ModalGump() {
+	: ModalGump(), _textWidgetL(0), _textWidgetR(0) {
 
 }
 
 BookGump::BookGump(ObjId owner_, const Std::string &msg) :
-	ModalGump(0, 0, 100, 100, owner_), _text(msg) {
+	ModalGump(0, 0, 100, 100, owner_), _text(msg),
+	_textWidgetL(0), _textWidgetR(0) {
 }
 
 BookGump::~BookGump(void) {

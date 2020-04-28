@@ -46,7 +46,7 @@ MiniMapGump::MiniMapGump(int x, int y) :
 		TEX_FMT_NATIVE);
 }
 
-MiniMapGump::MiniMapGump() : Gump() {
+MiniMapGump::MiniMapGump() : Gump() , _lastMapNum(0){
 }
 
 MiniMapGump::~MiniMapGump(void) {

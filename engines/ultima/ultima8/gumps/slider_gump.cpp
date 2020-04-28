@@ -40,14 +40,15 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(SliderGump, ModalGump)
 
-SliderGump::SliderGump() : ModalGump(), _renderedText(nullptr) {
+SliderGump::SliderGump() : ModalGump(), _renderedText(nullptr), _min(0), _max(0),
+		_delta(0), _value(0), _usecodeNotifyPID(0), _renderedValue(-1) {
 }
 
 
 SliderGump::SliderGump(int x, int y, int16 min, int16 max,
                        int16 value_, int16 delta)
 	: ModalGump(x, y, 5, 5), _min(min), _max(max), _delta(delta), _value(value_),
-	  _usecodeNotifyPID(0), _renderedText(nullptr) {
+	  _usecodeNotifyPID(0), _renderedText(nullptr), _renderedValue(-1) {
 }
 
 SliderGump::~SliderGump() {

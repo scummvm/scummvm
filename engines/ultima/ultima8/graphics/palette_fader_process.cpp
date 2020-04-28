@@ -33,7 +33,8 @@ PaletteFaderProcess *PaletteFaderProcess::_fader = nullptr;
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(PaletteFaderProcess, Process)
 
-PaletteFaderProcess::PaletteFaderProcess() : Process() {
+PaletteFaderProcess::PaletteFaderProcess() : Process(), _priority(0),
+	_counter(0), _maxCounter(0) {
 }
 
 PaletteFaderProcess::PaletteFaderProcess(PalTransforms trans,

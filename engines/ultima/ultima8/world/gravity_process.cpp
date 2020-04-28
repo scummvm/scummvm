@@ -165,6 +165,8 @@ void GravityProcess::run() {
 
 		bool termFlag = true;
 		Item *hititem = getItem(hititemid);
+		if (!hititem)
+			return; // shouldn't happen..
 		if (_zSpeed < -2 && !p_dynamic_cast<Actor *>(item)) {
 #ifdef BOUNCE_DIAG
 			pout << "item " << _itemNum << " bounce ["

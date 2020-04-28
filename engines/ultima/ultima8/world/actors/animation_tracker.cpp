@@ -57,7 +57,8 @@ bool AnimationTracker::init(Actor *actor_, Animation::Sequence action_,
 	uint32 shape = actor_->getShape();
 	_animAction = GameData::get_instance()->getMainShapes()->
 	             getAnim(shape, action_);
-	if (!_animAction) return false;
+	if (!_animAction)
+		return false;
 
 	_dir = dir_;
 
@@ -102,7 +103,7 @@ bool AnimationTracker::init(Actor *actor_, Animation::Sequence action_,
 unsigned int AnimationTracker::getNextFrame(unsigned int frame) const {
 	frame++;
 
-	if (frame == _endFrame)
+	if (!_animAction || frame == _endFrame)
 		return _endFrame;
 
 	// loop if necessary

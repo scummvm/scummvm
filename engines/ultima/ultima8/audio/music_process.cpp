@@ -119,7 +119,7 @@ void MusicProcess::restoreTrackState() {
 }
 
 void MusicProcess::playMusic_internal(int track) {
-	if (track < 0 || track > 128) {
+	if (track < 0 || track >= 128) {
 		playMusic_internal(0);
 		return;
 	}

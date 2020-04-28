@@ -33,16 +33,14 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(AmbushProcess, Process)
 
-AmbushProcess::AmbushProcess() : Process() {
+AmbushProcess::AmbushProcess() : Process(), _delayCount(0) {
 
 }
 
-AmbushProcess::AmbushProcess(Actor *actor_) {
-	assert(actor_);
-	_itemNum = actor_->getObjId();
+AmbushProcess::AmbushProcess(Actor *actor) : _delayCount(0) {
+	assert(actor);
+	_itemNum = actor->getObjId();
 	_type = 0x21E; // CONSTANT !
-
-	_delayCount = 0;
 }
 
 void AmbushProcess::run() {
@@ -53,6 +51,12 @@ void AmbushProcess::run() {
 	_delayCount = 10;
 
 	Actor *a = getActor(_itemNum);
+	if (!a) {
+	   // this shouldn't happen
+	   terminate();
+	   return;
+	}
+
 	CombatProcess *cp = a->getCombatProcess();
 	if (!cp) {
 		// this shouldn't have happened

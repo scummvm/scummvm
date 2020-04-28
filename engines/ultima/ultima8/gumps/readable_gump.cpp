@@ -43,7 +43,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(ReadableGump, ModalGump)
 const int jpsub_font = 6;
 
 ReadableGump::ReadableGump()
-	: ModalGump() {
+	: ModalGump(), _shapeNum(0), _fontNum(0) {
 
 }
 

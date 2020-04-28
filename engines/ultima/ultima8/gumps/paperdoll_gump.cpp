@@ -266,9 +266,11 @@ bool PaperdollGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
                                       int32 lerp_factor) {
 
 	Item *item = getItem(itemid);
-	Item *parent_ = item->getParentAsContainer();
-	if (!parent_) return false;
-	if (parent_->getObjId() != _owner) return false;
+	if (!item)
+		return false; // item gone - shouldn't happen?
+	Item *parent = item->getParentAsContainer();
+	if (!parent || parent->getObjId() != _owner)
+		return false;
 
 	//!!! need to use lerp_factor
 

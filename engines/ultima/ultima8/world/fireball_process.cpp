@@ -40,7 +40,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(FireballProcess, Process)
 
 FireballProcess::FireballProcess()
-	: Process() {
+	: Process(), _xSpeed(0), _ySpeed(0), _age(0), _target(0) {
 
 }
 

@@ -32,18 +32,15 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(UCProcess, Process)
 
-UCProcess::UCProcess() : Process() { // !! fixme
+UCProcess::UCProcess() : Process(), _classId(0xFFFF), _ip(0xFFFF),
+		_bp(0x0000), _temp32(0) { // !! fixme
 	_usecode = GameData::get_instance()->getMainUsecode();
 }
 
 UCProcess::UCProcess(uint16 classid_, uint16 offset_, uint32 this_ptr,
                      int thissize, const uint8 *args, int argsize)
-	: Process() {
-	_classId = 0xFFFF;
-	_ip = 0xFFFF;
-	_bp = 0x0000;
+	: Process(), _classId(0xFFFF), _ip(0xFFFF), _bp(0x0000), _temp32(0) {
 	_usecode = GameData::get_instance()->getMainUsecode();
-	_temp32 = 0;
 
 	load(classid_, offset_, this_ptr, thissize, args, argsize);
 }

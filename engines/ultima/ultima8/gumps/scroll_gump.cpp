@@ -40,12 +40,12 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(ScrollGump, ModalGump)
 // TODO: Remove all the hacks
 
 ScrollGump::ScrollGump()
-	: ModalGump() {
+	: ModalGump(), _textWidget(0) {
 
 }
 
 ScrollGump::ScrollGump(ObjId owner_, Std::string msg) :
-	ModalGump(0, 0, 100, 100, owner_), _text(msg) {
+	ModalGump(0, 0, 100, 100, owner_), _text(msg), _textWidget(0) {
 }
 
 ScrollGump::~ScrollGump(void) {

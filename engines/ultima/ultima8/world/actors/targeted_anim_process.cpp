@@ -31,14 +31,12 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(TargetedAnimProcess, ActorAnimProcess)
 
-TargetedAnimProcess::TargetedAnimProcess() : ActorAnimProcess() {
-
+TargetedAnimProcess::TargetedAnimProcess() : ActorAnimProcess(),
+		_x(0), _y(0), _z(0) {
 }
 
-TargetedAnimProcess::TargetedAnimProcess(Actor *actor_, Animation::Sequence action_, uint32 dir_, int32 coords[3]) : ActorAnimProcess(actor_, action_, dir_) {
-	_x = coords[0];
-	_y = coords[1];
-	_z = coords[2];
+TargetedAnimProcess::TargetedAnimProcess(Actor *actor_, Animation::Sequence action_, uint32 dir_, int32 coords[3]) : ActorAnimProcess(actor_, action_, dir_),
+		_x(coords[0]), _y(coords[1]), _z(coords[2]) {
 }
 
 bool TargetedAnimProcess::init() {

@@ -140,7 +140,8 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_frameSkip(false), _frameLimit(true), _interpolate(true), _animationRate(100),
 		_avatarInStasis(false), _paintEditorItems(false), _inversion(0), _painting(false),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
-		_ttfOverrides(false), _audioMixer(0) {
+		_ttfOverrides(false), _audioMixer(0), _memoryManager(nullptr), _scalerGump(nullptr),
+		_inverterGump(nullptr), _lerpFactor(256), _inBetweenFrame(false) {
 	_application = this;
 
 	for (uint16 key = 0; key < HID_LAST; ++key) {
@@ -313,7 +314,7 @@ void Ultima8Engine::startupGame() {
 		CANT_HAPPEN_MSG("Invalid game type.");
 	}
 
-	_inBetweenFrame = 0;
+	_inBetweenFrame = false;
 	_lerpFactor = 256;
 
 	// Initialize _world

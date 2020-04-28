@@ -38,7 +38,10 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(Gump, Object)
 
-Gump::Gump() : Object(), _parent(nullptr), _children() {
+Gump::Gump() : Object(), _parent(nullptr), _owner(0),
+	_x(0), _y(0), _flags(0), _layer(0), _index(-1),
+	_shape(nullptr), _frameNum(0), _focusChild(nullptr),
+	_notifier(0), _processResult(0) {
 }
 
 Gump::Gump(int inX, int inY, int width, int height, uint16 inOwner,

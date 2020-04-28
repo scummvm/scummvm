@@ -554,6 +554,7 @@ protected:
 
 	// This is stuff that is used for displaying and interpolation
 	struct Lerped {
+		Lerped() : _x(0), _y(0), _z(0), _shape(0), _frame(0) {};
 		int32 _x, _y, _z;
 		uint32 _shape, _frame;
 	};

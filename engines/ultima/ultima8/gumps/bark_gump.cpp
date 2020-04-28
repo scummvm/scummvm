@@ -36,13 +36,14 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(BarkGump, ItemRelativeGump)
 // TODO: Remove all the hacks
 
 BarkGump::BarkGump() : ItemRelativeGump(), _counter(0), _textWidget(0),
-		_speechShapeNum(0), _speechLength(0), _totalTextHeight(0) {
+		_speechShapeNum(0), _speechLength(0), _totalTextHeight(0),
+		_textDelay(20) {
 }
 
 BarkGump::BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum) :
 	ItemRelativeGump(0, 0, 100, 100, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
 	_barked(msg), _counter(100), _speechShapeNum(speechShapeNum),
-	_speechLength(0), _totalTextHeight(0), _textWidget(0) {
+	_speechLength(0), _totalTextHeight(0), _textWidget(0), _textDelay(20) {
 	SettingManager::get_instance()->get("textdelay", _textDelay);
 }
 
@@ -208,8 +209,9 @@ bool BarkGump::loadData(Common::ReadStream *rs, uint32 version) {
 		_barked = "";
 	}
 
-
 	TextWidget *widget = p_dynamic_cast<TextWidget *>(getGump(_textWidget));
+	if (!widget)
+		return false;
 
 	SettingManager::get_instance()->get("textdelay", _textDelay);
 

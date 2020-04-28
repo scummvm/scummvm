@@ -64,8 +64,9 @@ GameMapGump::GameMapGump() :
 }
 
 GameMapGump::GameMapGump(int x, int y, int width, int height) :
-	Gump(x, y, width, height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP, LAYER_GAMEMAP),
-	_displayList(0), _displayDragging(false) {
+		Gump(x, y, width, height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP, LAYER_GAMEMAP),
+		_displayList(0), _displayDragging(false), _draggingShape(0), _draggingFrame(0),
+		_draggingFlags(0) {
 	// Offset the gump. We want 0,0 to be the centre
 	_dims.x -= _dims.w / 2;
 	_dims.y -= _dims.h / 2;

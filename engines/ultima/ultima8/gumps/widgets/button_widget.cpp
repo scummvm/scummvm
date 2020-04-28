@@ -37,14 +37,15 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ButtonWidget, Gump)
 
 ButtonWidget::ButtonWidget() : Gump(), _shapeUp(nullptr), _shapeDown(nullptr),
-		_mouseOver(false), _origW(0), _origH(0) {
+		_mouseOver(false), _origW(0), _origH(0), _frameNumUp(0),
+		_frameNumDown(0), _mouseOverBlendCol(0), _textWidget(0) {
 }
 
 ButtonWidget::ButtonWidget(int x, int y, Std::string txt, bool gamefont,
                            int font, uint32 mouseOverBlendCol,
                            int w, int h, int32 layer) :
 	Gump(x, y, w, h, 0, 0, layer), _shapeUp(nullptr), _shapeDown(nullptr),
-	_mouseOver(false), _origW(w), _origH(h) {
+	_mouseOver(false), _origW(w), _origH(h), _frameNumUp(0), _frameNumDown(0) {
 	TextWidget *widget = new TextWidget(0, 0, txt, gamefont, font, w, h);
 	_textWidget = widget->getObjId();
 	_mouseOverBlendCol = mouseOverBlendCol;

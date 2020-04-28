@@ -73,7 +73,7 @@ void CombatProcess::run() {
 	// They should not try to approach.
 
 	Actor *a = getActor(_itemNum);
-	if (!a->hasFlags(Item::FLG_FASTAREA))
+	if (!a || !a->hasFlags(Item::FLG_FASTAREA))
 		return;
 
 	Actor *t = getActor(_target);
@@ -239,6 +239,8 @@ ObjId CombatProcess::seekTarget() {
 
 int CombatProcess::getTargetDirection() {
 	Actor *a = getActor(_itemNum);
+	if (!a)
+		return 0; // shouldn't happen
 	Actor *t = getActor(_target);
 
 	return a->getDirToItemCentre(*t);
@@ -246,6 +248,8 @@ int CombatProcess::getTargetDirection() {
 
 void CombatProcess::turnToDirection(int direction) {
 	Actor *a = getActor(_itemNum);
+	if (!a)
+		return;
 	int curdir = a->getDir();
 	int step = 1;
 	if ((curdir - direction + 8) % 8 < 4) step = -1;
@@ -275,6 +279,8 @@ void CombatProcess::turnToDirection(int direction) {
 
 bool CombatProcess::inAttackRange() {
 	Actor *a = getActor(_itemNum);
+	if (!a)
+		return false; // shouldn't happen
 	ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
@@ -298,6 +304,8 @@ bool CombatProcess::inAttackRange() {
 
 void CombatProcess::waitForTarget() {
 	Actor *a = getActor(_itemNum);
+	if (!a)
+		return; // shouldn't happen
 	ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
