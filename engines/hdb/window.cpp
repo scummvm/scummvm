@@ -632,10 +632,8 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	Common::strlcpy(_dialogInfo.title, title, 128);
 	_dialogInfo.active = true;
 
-	if (strlen(string) > sizeof(_dialogInfo.string))
-		Common::strlcpy(_dialogInfo.string, string, 128);
-	else
-		Common::strlcpy(_dialogInfo.string, string, 128);
+	// This could need to be truncated
+	Common::strlcpy(_dialogInfo.string, string, 128);
 
 	int e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
