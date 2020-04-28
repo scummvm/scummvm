@@ -77,6 +77,32 @@ static const SludgeGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"robinsrescue",
+			"v1.0",
+			AD_ENTRY1s("Gamedata.slg", "16cbf2bf916ed89f9c1b14fab133cf96", 14413754),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"robinsrescue",
+			"v1.0",
+			AD_ENTRY1s("robins_rescue.slg", "16cbf2bf916ed89f9c1b14fab133cf96", 14413754),
+			Common::EN_ANY,
+			Common::kPlatformLinux,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
 			"outoforder",
 			"",
 			AD_ENTRY1s("gamedata", "4d72dbad0ff170169cd7e4e7e389a90d", 21122647),
