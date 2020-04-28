@@ -156,6 +156,71 @@ static const SludgeGameDescription gameDescriptions[] = {
 	{
 		{
 			"mandy",
+			"v1.2",
+			AD_ENTRY1s("data", "df4a0c113b93b89ff2fe7991fb018bae", 7099447),
+			Common::SK_SVK,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"mandy",
+			"v1.2",
+			AD_ENTRY1s("data", "df4a0c113b93b89ff2fe7991fb018bae", 7099447),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		1
+	},
+
+	{
+		{
+			"mandy",
+			"v1.3",
+			AD_ENTRY1s("data", "b732ffe04367c787c6ce70fbcb7aa6aa", 7100976),
+			Common::SK_SVK,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"mandy",
+			"v1.3",
+			AD_ENTRY1s("data", "b732ffe04367c787c6ce70fbcb7aa6aa", 7100976),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		1
+	},
+
+	{
+		{
+			"mandy",
+			"v1.3",
+			AD_ENTRY1s("data", "b732ffe04367c787c6ce70fbcb7aa6aa", 7100976),
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		2
+	},
+
+	{
+		{
+			"mandy",
 			"v1.4",
 			AD_ENTRY1s("data", "705f6ca5f5da0c40c1f547231dd5139f", 7141292),
 			Common::SK_SVK,
