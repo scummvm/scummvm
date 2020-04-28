@@ -270,6 +270,97 @@ static const SludgeGameDescription gameDescriptions[] = {
 		3
 	},
 
+	{
+		{
+			"nsc",
+			"v1.03",
+			AD_ENTRY1s("gamedata", "57f318cc09e93a1e0685b790a956ebdc", 12733871),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"gjgagsas",
+			"",
+			AD_ENTRY1s("gamedata.slg", "f438946f2ee79d52918f44c4a67eb37b", 27527984),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"tsotc",
+			"v6",
+			AD_ENTRY1s("gamedata.slg", "7d677e79fb842df00c4602864da13829", 34740918),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"atw",
+			"",
+			AD_ENTRY1s("atw.slg", "41ae22ac9fa5051e0499468a9fbe600e", 27808575),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"leptonsquest",
+			"",
+			AD_ENTRY1s("game.slg", "763d4020dcd55a4af4c01664f79584da", 71233234),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"leptonsquest",
+			"",
+			AD_ENTRY1s("Gamedata.slg", "763d4020dcd55a4af4c01664f79584da", 71233239),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"leptonsquest",
+			"",
+			AD_ENTRY1s("LeptonsQuest.slg", "763d4020dcd55a4af4c01664f79584da", 71233239),
+			Common::EN_ANY,
+			Common::kPlatformLinux,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
