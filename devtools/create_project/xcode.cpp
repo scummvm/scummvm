@@ -404,14 +404,14 @@ void XcodeProvider::setupCopyFilesBuildPhase() {
 	// Nothing to do here
 }
 
-#define DEF_SYSFRAMEWORK(framework) properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
-	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++);
+#define DEF_SYSFRAMEWORK(framework) { properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
+	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++); }
 
-#define DEF_SYSTBD(lib) properties[lib".tbd"] = FileProperty("sourcecode.text-based-dylib-definition", lib".tbd", "usr/lib/" lib ".tbd", "SDKROOT"); \
-	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".tbd"), lib".tbd", fwOrder++);
+#define DEF_SYSTBD(lib) { properties[lib".tbd"] = FileProperty("sourcecode.text-based-dylib-definition", lib".tbd", "usr/lib/" lib ".tbd", "SDKROOT"); \
+	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".tbd"), lib".tbd", fwOrder++); }
 
-#define DEF_LOCALLIB_STATIC_PATH(path,lib,absolute) properties[lib".a"] = FileProperty("archive.ar", lib ".a", path, (absolute ? "\"<absolute>\"" : "\"<group>\"")); \
-	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++);
+#define DEF_LOCALLIB_STATIC_PATH(path,lib,absolute) { properties[lib".a"] = FileProperty("archive.ar", lib ".a", path, (absolute ? "\"<absolute>\"" : "\"<group>\"")); \
+	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++); }
 
 #define DEF_LOCALLIB_STATIC(lib) DEF_LOCALLIB_STATIC_PATH(lib ".a", lib, false)
 
@@ -498,13 +498,15 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (setup.useSDL2) {
 		DEF_LOCALLIB_STATIC("libSDL2main");
 		DEF_LOCALLIB_STATIC("libSDL2");
-		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
 			DEF_LOCALLIB_STATIC("libSDL2_net");
+		}
 	} else {
 		DEF_LOCALLIB_STATIC("libSDLmain");
 		DEF_LOCALLIB_STATIC("libSDL");
-		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
 			DEF_LOCALLIB_STATIC("libSDL_net");
+		}
 	}
 
 	frameworksGroup->_properties["children"] = children;
