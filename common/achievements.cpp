@@ -22,7 +22,6 @@
 
 
 #include "common/achievements.h"
-#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -33,6 +32,7 @@ DECLARE_SINGLETON(AchievementsManager);
 
 
 AchievementsManager::AchievementsManager() {
+	_iniFile = nullptr;
 	unsetActiveDomain();
 }
 
@@ -41,14 +41,13 @@ AchievementsManager::~AchievementsManager() {
 }
 
 bool AchievementsManager::setActiveDomain(AchievementsPlatform platform, const String &appId) {
-	String suffix = platform == STEAM_ACHIEVEMENTS ? "steam-" + appId :
+	String prefix = platform == STEAM_ACHIEVEMENTS ? "steam-" + appId :
 					platform == GALAXY_ACHIEVEMENTS ? "galaxy-" + appId :
 					appId;
 
-	String achDomainId = "achievements-" + suffix;
-	String statDomainId = "statistics-" + suffix;
+	String iniFileName = prefix + ".dat";
 
-	if (_achDomainId == achDomainId && _statDomainId == statDomainId) {
+	if (_iniFileName == iniFileName) {
 		return true;
 	}
 
@@ -56,24 +55,21 @@ bool AchievementsManager::setActiveDomain(AchievementsPlatform platform, const S
 		unsetActiveDomain();
 	}
 
-	ConfMan.addMiscDomain(achDomainId);
-	ConfMan.addMiscDomain(statDomainId);
+	_iniFileName = iniFileName;
 
-	_achDomainId = achDomainId;
-	_statDomainId = statDomainId;
+	_iniFile = new Common::INIFile();
+	_iniFile->loadFromSaveFile(_iniFileName); // missing file is OK
+
 	return true;
 }
 
 
 bool AchievementsManager::unsetActiveDomain() {
-	if (!isReady()) {
-		return true;
-	}
+	_iniFileName = "";
 
-	ConfMan.flushToDisk();
+	delete _iniFile;
+	_iniFile = nullptr;
 
-	_achDomainId = "";
-	_statDomainId = "";
 	return true;
 }
 
@@ -88,8 +84,8 @@ bool AchievementsManager::setAchievement(const String &id, const String &display
 
 	debug("AchievementsManager::setAchievement('%s'): Achievement unlocked!", id.c_str());
 
-	ConfMan.setBool(id, true, _achDomainId);
-	ConfMan.flushToDisk();
+	_iniFile->setKey(id, "achievements", "true");
+	_iniFile->saveToSaveFile(_iniFileName);
 
 	if (!displayedMessage.empty() && g_system) {
 		String msg;
@@ -106,7 +102,7 @@ bool AchievementsManager::isAchieved(const String &id) {
 		return false;
 	}
 
-	return ConfMan.hasKey(id, _achDomainId) && ConfMan.getBool(id, _achDomainId);
+	return _iniFile->hasKey(id, "achievements");
 }
 
 
@@ -115,8 +111,8 @@ bool AchievementsManager::clearAchievement(const String &id) {
 		return false;
 	}
 
-	ConfMan.removeKey(id, _achDomainId);
-	ConfMan.flushToDisk();
+	_iniFile->removeKey(id, "achievements");
+	_iniFile->saveToSaveFile(_iniFileName);
 	return true;
 }
 
@@ -127,8 +123,8 @@ bool AchievementsManager::setStatFloat(const String &id, float value) {
 	}
 
 	String tmp = Common::String::format("%8.8f", value);
-	ConfMan.set(id, tmp, _statDomainId);
-	ConfMan.flushToDisk();
+	_iniFile->setKey(id, "statistics", tmp);
+	_iniFile->saveToSaveFile(_iniFileName);
 	return 0;
 }
 
@@ -138,7 +134,8 @@ float AchievementsManager::getStatFloat(const String &id) {
 		return 0.0;
 	}
 
-	String tmp = ConfMan.get(id, _statDomainId);
+	String tmp;
+	_iniFile->getKey(id, "statistics", tmp);
 	return atof(tmp.c_str());
 }
 
@@ -148,8 +145,9 @@ bool AchievementsManager::setStatInt(String const &id, int value) {
 		return false;
 	}
 
-	ConfMan.setInt(id, value, _statDomainId);
-	ConfMan.flushToDisk();
+	String tmp = Common::String::format("%d", value);
+	_iniFile->setKey(id, "statistics", tmp);
+	_iniFile->saveToSaveFile(_iniFileName);
 	return 0;
 }
 
@@ -159,7 +157,9 @@ int AchievementsManager::getStatInt(String const &id) {
 		return 0;
 	}
 
-	return ConfMan.getInt(id, _statDomainId);
+	String tmp;
+	_iniFile->getKey(id, "statistics", tmp);
+	return atol(tmp.c_str());
 }
 
 
@@ -168,8 +168,8 @@ bool AchievementsManager::resetAllAchievements() {
 		return false;
 	}
 
-	ConfMan.removeMiscDomain(_achDomainId);
-	ConfMan.flushToDisk();
+	_iniFile->removeSection("achievements");
+	_iniFile->saveToSaveFile(_iniFileName);
 	return 0;
 }
 
@@ -179,8 +179,8 @@ bool AchievementsManager::resetAllStats() {
 		return false;
 	}
 
-	ConfMan.removeMiscDomain(_statDomainId);
-	ConfMan.flushToDisk();
+	_iniFile->removeSection("statistics");
+	_iniFile->saveToSaveFile(_iniFileName);
 	return 0;
 }
 
