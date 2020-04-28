@@ -86,7 +86,7 @@ void Minigame3::run() {
 	uint16 local_1de;
 	Actor *tearBlinkActorTbl2[4];
 	Actor *tearBlinkActorTbl[4];
-	int16 local_1c8;
+	int16 local_1c8 = 0;
 	int16 local_1c6;
 	uint16 local_1c2;
 	int16 local_1c0;
