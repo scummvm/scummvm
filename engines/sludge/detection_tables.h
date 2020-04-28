@@ -91,10 +91,49 @@ static const SludgeGameDescription gameDescriptions[] = {
 	{
 		{
 			"frasse",
-			"",
-			AD_ENTRY1s("Gamedata.slg", "e4eb4eca6117bb9b77870bb74af453b4", 88582819),
+			"v1.03",
+			AD_ENTRY1s("gamedata", "5a985d772f9909a8cc98e1e9edf0875d", 38186227),
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"frasse",
+			"v1.04",
+			AD_ENTRY1s("gamedata", "13934872c16391de3ddd6644e3bfcd15", 38154596),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"frasse",
+			"v2.02",
+			AD_ENTRY1s("Gamedata.slg", "25e4a63ae10f69f5032c58ad2fd51fac", 88582783),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"frasse",
+			"v2.03",
+			AD_ENTRY1s("Gamedata.slg", "e4eb4eca6117bb9b77870bb74af453b4", 88582819),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
 		},
