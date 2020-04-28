@@ -28,8 +28,7 @@ namespace Ultima {
 namespace Ultima4 {
 
 
-ReadDirController::ReadDirController() {
-	_value = DIR_NONE;
+ReadDirController::ReadDirController() : WaitableController<Direction>(DIR_NONE) {
 }
 
 void ReadDirController::setActive() {

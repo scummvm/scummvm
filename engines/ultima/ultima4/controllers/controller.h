@@ -104,11 +104,21 @@ void Controller_endWait();
  */
 template<class T>
 class WaitableController : public Controller {
+private:
+	bool _exitWhenDone;
+	T _defaultValue;
+protected:
+	T _value;
+	void doneWaiting() {
+		if (_exitWhenDone)
+			Controller_endWait();
+	}
 public:
-	WaitableController() : _exitWhenDone(false) {}
+	WaitableController(T defaultValue) : _defaultValue(defaultValue),
+		_value(defaultValue), _exitWhenDone(false) {}
 
 	virtual T getValue() {
-		return _value;
+		return shouldQuit() ? _defaultValue : _value;
 	}
 
 	virtual T waitFor() {
@@ -116,16 +126,6 @@ public:
 		Controller_startWait();
 		return getValue();
 	}
-
-protected:
-	T _value;
-	void doneWaiting() {
-		if (_exitWhenDone)
-			Controller_endWait();
-	}
-
-private:
-	bool _exitWhenDone;
 };
 
 class TurnCompleter {

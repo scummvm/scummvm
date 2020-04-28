@@ -39,7 +39,7 @@ private:
 	Common::String _prompt;
 public:
 	AlphaActionController(char letter, const Common::String &p) :
-		_lastValidLetter(letter), _prompt(p) {}
+		WaitableController<int>(-1), _lastValidLetter(letter), _prompt(p) {}
 
 	bool keyPressed(int key) override;
 	void keybinder(KeybindingAction action) override;

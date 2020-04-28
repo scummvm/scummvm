@@ -27,7 +27,8 @@
 namespace Ultima {
 namespace Ultima4 {
 
-ReadStringController::ReadStringController(int maxlen, int screenX, int screenY, const Common::String &accepted_chars) {
+ReadStringController::ReadStringController(int maxlen, int screenX, int screenY,
+		const Common::String &accepted_chars) : WaitableController<Common::String>("") {
 	_maxLen = maxlen;
 	_screenX = screenX;
 	_screenY = screenY;
@@ -35,7 +36,8 @@ ReadStringController::ReadStringController(int maxlen, int screenX, int screenY,
 	_accepted = accepted_chars;
 }
 
-ReadStringController::ReadStringController(int maxlen, TextView *view, const Common::String &accepted_chars) {
+ReadStringController::ReadStringController(int maxlen, TextView *view,
+		const Common::String &accepted_chars) : WaitableController<Common::String>("") {
 	_maxLen = maxlen;
 	_screenX = view->getCursorX();
 	_screenY = view->getCursorY();

@@ -86,15 +86,21 @@ CombatMap *getCombatMap(Map *punknown) {
  * CombatController class implementation
  */
 CombatController::CombatController() : _map(nullptr) {
+	init();
+
 	g_context->_party->addObserver(this);
 }
 
 CombatController::CombatController(CombatMap *m) : _map(m) {
+	init();
+
 	g_game->setMap(_map, true, nullptr, this);
 	g_context->_party->addObserver(this);
 }
 
-CombatController::CombatController(MapId id) {
+CombatController::CombatController(MapId id) : _map(nullptr) {
+	init();
+
 	_map = getCombatMap(mapMgr->get(id));
 	g_game->setMap(_map, true, nullptr, this);
 	g_context->_party->addObserver(this);
@@ -103,6 +109,21 @@ CombatController::CombatController(MapId id) {
 
 CombatController::~CombatController() {
 	g_context->_party->deleteObserver(this);
+}
+
+void CombatController::init() {
+	_focus = 0;
+	Common::fill(&creatureTable[0], &creatureTable[AREA_CREATURES],
+		(const Creature *)nullptr);
+	_creature = nullptr;
+
+	_camping = false;
+	_forceStandardEncounterSize = false;
+	_placePartyOnMap = false;
+	_placeCreaturesOnMap = false;
+	_winOrLose = false;
+	_showMessage = false;
+	_exitDir = DIR_NONE;
 }
 
 // Accessor Methods
@@ -179,6 +200,8 @@ void CombatController::initDungeonRoom(int room, Direction from) {
 	ASSERT(g_context->_location->_prev->_context & CTX_DUNGEON, "Error: called initDungeonRoom from non-dungeon context");
 	{
 		Dungeon *dng = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);
+		assert(dng);
+
 		byte *party_x = &dng->_rooms[room]._partyNorthStartX[0],
 			*party_y = &dng->_rooms[room]._partyNorthStartY[0];
 
@@ -947,7 +970,9 @@ bool CombatController::keyPressed(int key) {
 	case 't':
 		if (settings._debug && _map->isDungeonRoom()) {
 			Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);
+			assert(dungeon);
 			Trigger *triggers = dungeon->_rooms[dungeon->_currentRoom]._triggers;
+			assert(triggers);
 			int i;
 
 			g_screen->screenMessage("Triggers!\n");

@@ -33,6 +33,8 @@ namespace Ultima4 {
  */
 class ZtatsController : public WaitableController<void *> {
 public:
+	ZtatsController() : WaitableController<void *>(nullptr) {}
+
 	bool keyPressed(int key) override;
 	void keybinder(KeybindingAction action) override;
 };

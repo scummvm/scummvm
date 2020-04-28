@@ -929,15 +929,14 @@ bool Debugger::cmdReadyWeapon(int argc, const char **argv) {
 	// get the weapon to use
 	g_context->_stats->setView(STATS_WEAPONS);
 	printN("Weapon: ");
-	WeaponType weapon = (WeaponType)AlphaActionController::get(WEAP_MAX + 'a' - 1, "Weapon: ");
+	int weapon = AlphaActionController::get(WEAP_MAX + 'a' - 1, "Weapon: ");
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
 	if (weapon == -1)
 		return isDebuggerActive();
 
 	PartyMember *p = g_context->_party->member(player);
-	const Weapon *w = g_weapons->get(weapon);
-
-
+	const Weapon *w = g_weapons->get((WeaponType)weapon);
+ 
 	if (!w) {
 		print("");
 		return isDebuggerActive();

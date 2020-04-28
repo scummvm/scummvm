@@ -28,7 +28,8 @@
 namespace Ultima {
 namespace Ultima4 {
 
-MenuController::MenuController(Menu *menu, TextView *view) {
+MenuController::MenuController(Menu *menu, TextView *view) :
+		WaitableController<void *>(nullptr) {
 	this->_menu = menu;
 	this->_view = view;
 }

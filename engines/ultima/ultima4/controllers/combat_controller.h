@@ -200,6 +200,8 @@ protected:
 private:
 	CombatController(const CombatController &);
 	const CombatController &operator=(const CombatController &);
+
+	void init();
 };
 
 /**
