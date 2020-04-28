@@ -101,10 +101,8 @@ public:
 	int getInterLinear() { return _interLinear; }
 	void setInterLinear(int interLinear);
 	void setMaxWidth(int maxWidth);
-	void setDefaultFormatting(uint16 fontId_, byte textSlant_, uint16 fontSize_,
-			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
-				_defaultFormatting.setValues(_defaultFormatting.wm, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
-			}
+	void setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
+			uint16 palinfo1, uint16 palinfo2, uint16 palinfo3);
 
 	const MacFontRun &getDefaultFormatting() { return _defaultFormatting; }
 

@@ -127,6 +127,16 @@ void MacText::setMaxWidth(int maxWidth) {
 	_fullRefresh = true;
 }
 
+void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
+		uint16 palinfo1, uint16 palinfo2, uint16 palinfo3) {
+	_defaultFormatting.setValues(_defaultFormatting.wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+
+	MacFont macFont = MacFont(fontId, fontSize, textSlant);
+
+	_defaultFormatting.font = _wm->_fontMan->getFont(macFont);
+}
+
+
 static const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len) {
 	*res = 0;
 
