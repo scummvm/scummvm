@@ -163,6 +163,7 @@ void Tile::loadImage() {
 			// Draw the tile from the image we found to our tile image
 			if (subimage) {
 				Image *tiles = info->_image;
+				assert(tiles);
 				tiles->drawSubRectOn(_image, 0, 0, subimage->x * _scale, subimage->y * _scale, subimage->width * _scale, subimage->height * _scale);
 			} else info->_image->drawOn(_image, 0, 0);
 		}

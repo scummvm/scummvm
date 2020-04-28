@@ -218,6 +218,9 @@ struct SaveGameMonsterRecord {
 	byte _unused1;
 	byte _unused2;
 
+	SaveGameMonsterRecord() : _tile(0), _x(0), _y(0), _prevTile(0),
+		_prevX(0), _prevY(0), _unused1(0), _unused2(0) {}
+
 	static void synchronize(SaveGameMonsterRecord *monsterTable, Common::Serializer &s);
 };
 

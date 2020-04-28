@@ -233,18 +233,11 @@ int MapCoords::distance(const MapCoords &c, const Map *map) const {
 
 /*-------------------------------------------------------------------*/
 
-Map::Map() {
+Map::Map() : _id(0), _type(WORLD), _width(0), _height(0), _levels(1),
+		_chunkWidth(0), _chunkHeight(0), _offset(0), _flags(0),
+		_borderBehavior(BORDER_WRAP), _music(Music::NONE),
+		_tileSet(nullptr), _tileMap(nullptr) {
 	_annotations = new AnnotationMgr();
-	_flags = 0;
-	_width = 0;
-	_height = 0;
-	_levels = 1;
-	_chunkWidth = 0;
-	_chunkHeight = 0;
-	_offset = 0;
-	_id = 0;
-	_tileSet = nullptr;
-	_tileMap = nullptr;
 }
 
 Map::~Map() {
@@ -718,6 +711,7 @@ bool Map::fillMonsterTable() {
 		// Moving objects first
 		if ((obj->getType() == Object::CREATURE) && (obj->getMovementBehavior() != MOVEMENT_FIXED)) {
 			Creature *c = dynamic_cast<Creature *>(obj);
+			assert(c);
 			// Whirlpools and storms are separated from other moving objects
 			if (c->getId() == WHIRLPOOL_ID || c->getId() == STORM_ID)
 				monsters.push_back(obj);

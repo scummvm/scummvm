@@ -34,7 +34,7 @@ namespace Ultima4 {
  */
 class MapTile {
 public:
-	MapTile() : _id(0), _frame(0) {
+	MapTile() : _id(0), _frame(0), _freezeAnimation(false) {
 	}
 	MapTile(const TileId &i, byte f = 0) : _id(i), _frame(f), _freezeAnimation(false) {
 	}

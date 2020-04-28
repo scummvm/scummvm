@@ -69,6 +69,8 @@ void Shrines::loadAdvice() {
 
 bool shrineCanEnter(const Portal *p) {
 	Shrine *shrine = dynamic_cast<Shrine *>(mapMgr->get(p->_destid));
+	assert(shrine);
+
 	if (!g_context->_party->canEnterShrine(shrine->getVirtue())) {
 		g_screen->screenMessage("Thou dost not bear the rune of entry!  A strange force keeps you out!\n");
 		return 0;
@@ -86,7 +88,7 @@ bool isShrine(Map *punknown) {
 
 /*-------------------------------------------------------------------*/
 
-Shrine::Shrine() {}
+Shrine::Shrine() : _virtue(VIRT_HONESTY) {}
 
 Common::String Shrine::getName() {
 	if (_name.empty()) {

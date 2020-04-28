@@ -127,6 +127,7 @@ bool MapLoader::isChunkCompressed(Map *map, int chunk) {
 
 bool CityMapLoader::load(Map *map) {
 	City *city = dynamic_cast<City *>(map);
+	assert(city);
 
 	uint i, j;
 	Person *people[CITY_MAX_PERSONS];
@@ -282,6 +283,7 @@ bool ConMapLoader::load(Map *map) {
 
 bool DngMapLoader::load(Map *map) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(map);
+	assert(dungeon);
 
 	Common::File *dng = u4fopen(dungeon->_fname);
 	if (!dng)

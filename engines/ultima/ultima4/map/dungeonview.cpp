@@ -297,6 +297,7 @@ DungeonGraphicType DungeonView::tilesToGraphic(const Std::vector<MapTile> &tiles
 	 * token
 	 */
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
+	assert(dungeon);
 	DungeonToken token = dungeon->tokenForTile(tile);
 
 	switch (token) {

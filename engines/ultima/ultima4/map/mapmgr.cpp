@@ -172,6 +172,7 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 
 	if (isCombatMap(map)) {
 		CombatMap *cm = dynamic_cast<CombatMap *>(map);
+		assert(cm);
 		cm->setContextual(mapConf.getBool("contextual"));
 	}
 

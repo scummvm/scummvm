@@ -86,7 +86,7 @@ enum DungeonToken {
 
 class Dungeon : public Map {
 public:
-	Dungeon() {}
+	Dungeon();
 
 	// Members
 	/**

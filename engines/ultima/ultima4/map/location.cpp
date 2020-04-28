@@ -233,10 +233,12 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 int Location::getCurrentPosition(MapCoords *coords) {
 	if (_context & CTX_COMBAT) {
 		CombatController *cc = dynamic_cast<CombatController *>(eventHandler->getController());
+		assert(cc);
 		PartyMemberVector *party = cc->getParty();
 		*coords = (*party)[cc->getFocus()]->getCoords();
-	} else
+	} else {
 		*coords = this->_coords;
+	}
 
 	return 1;
 }

@@ -216,7 +216,7 @@ void Ultima4Engine::quitGame() {
 
 	// Do an event poll to all the quit message to be processed
 	Common::Event e;
-	g_system->getEventManager()->pollEvent(e);
+	(void)g_system->getEventManager()->pollEvent(e);
 }
 
 } // End of namespace Ultima4

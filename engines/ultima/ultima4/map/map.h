@@ -260,31 +260,28 @@ public:
 	uint translateToRawTileIndex(MapTile &tile) const;
 
 public:
-	MapId           _id;
-	Common::String  _fname;
-	Type            _type;
-	uint    _width,
-	         _height,
-	         _levels;
-	uint    _chunkWidth,
-	         _chunkHeight;
-	uint    _offset;
+	MapId _id;
+	Common::String _fname;
+	Type _type;
+	uint _width, _height, _levels;
+	uint _chunkWidth, _chunkHeight;
+	uint _offset;
 
-	Source          _baseSource;
+	Source _baseSource;
 	Common::List<Source> _extraSources;
 
-	CompressedChunkList     _compressedChunks;
-	BorderBehavior          _borderBehavior;
+	CompressedChunkList _compressedChunks;
+	BorderBehavior _borderBehavior;
 
-	PortalList      _portals;
-	AnnotationMgr  *_annotations;
-	int             _flags;
-	Music::Type     _music;
-	MapData         _data;
-	ObjectDeque     _objects;
+	PortalList _portals;
+	AnnotationMgr *_annotations;
+	int _flags;
+	Music::Type _music;
+	MapData _data;
+	ObjectDeque _objects;
 	Std::map<Common::String, MapCoords> _labels;
-	Tileset        *_tileSet;
-	TileMap        *_tileMap;
+	Tileset *_tileSet;
+	TileMap *_tileMap;
 
 	// u4dos compatibility
 	SaveGameMonsterRecord _monsterTable[MONSTERTABLE_SIZE];

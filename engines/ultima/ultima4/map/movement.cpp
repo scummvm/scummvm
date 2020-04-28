@@ -325,6 +325,7 @@ int moveCombatObject(int act, Map *map, Creature *obj, MapCoords target) {
 void movePartyMember(MoveEvent &event) {
 	CombatController *ct = dynamic_cast<CombatController *>(eventHandler->getController());
 	CombatMap *cm = getCombatMap();
+	assert(cm && ct);
 	int member = ct->getFocus();
 	MapCoords newCoords;
 	PartyMemberVector *party = ct->getParty();
@@ -371,9 +372,10 @@ void movePartyMember(MoveEvent &event) {
 		// Handle dungeon room triggers
 		if (cm->isDungeonRoom()) {
 			Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);
-			int i;
+			assert(dungeon);
 			Trigger *triggers = dungeon->_rooms[dungeon->_currentRoom]._triggers;
 
+			int i;
 			for (i = 0; i < 4; i++) {
 				/*const Creature *m = creatures.getByTile(triggers[i].tile);*/
 

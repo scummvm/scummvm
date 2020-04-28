@@ -63,6 +63,8 @@ public:
 	typedef Common::HashMap<TileId, Tile *> TileIdMap;
 	typedef Common::HashMap<Common::String, Tile *> TileStrMap;
 public:
+	Tileset() : _totalFrames(0), _extends(nullptr) {}
+
 	/**
 	 * Loads a tileset.
 	 */

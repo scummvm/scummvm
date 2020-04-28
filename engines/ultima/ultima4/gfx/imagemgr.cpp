@@ -68,7 +68,7 @@ void ImageMgr::destroy() {
 	}
 }
 
-ImageMgr::ImageMgr() {
+ImageMgr::ImageMgr() : _baseSet(nullptr) {
 	settings.addObserver(this);
 }
 
@@ -339,7 +339,7 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 		im->setPaletteIndex(15, im->setColor(226, 226, 255));
 
 		// update the color of "Origin Systems, Inc."
-		im->setPaletteIndex(9, im->setColor(129, 129, 255));
+		(void)im->setPaletteIndex(9, im->setColor(129, 129, 255));
 
 #ifdef TODO
 		borderInfo->_image->save("border.png");

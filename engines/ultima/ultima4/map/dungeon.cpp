@@ -44,6 +44,12 @@ bool isDungeon(Map *punknown) {
 		return false;
 }
 
+Dungeon::Dungeon() : _nRooms(0), _rooms(nullptr),
+		_roomMaps(nullptr), _currentRoom(0) {
+	Common::fill(&_partyStartX[0], &_partyStartX[8], 0);
+	Common::fill(&_partyStartY[0], &_partyStartY[8], 0);
+}
+
 Common::String Dungeon::getName() {
 	return _name;
 }
@@ -94,6 +100,8 @@ byte Dungeon::subTokenAt(MapCoords coords) {
 
 void dungeonSearch(void) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
+	assert(dungeon);
+
 	DungeonToken token = dungeon->currentToken();
 	Annotation::List a = dungeon->_annotations->allAt(g_context->_location->_coords);
 	const ItemLocation *item;
@@ -138,6 +146,7 @@ void dungeonDrinkFountain() {
 		return;
 
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
+	assert(dungeon);
 	FountainType type = (FountainType) dungeon->currentSubToken();
 
 	switch (type) {
@@ -245,6 +254,8 @@ void dungeonTouchOrb() {
 
 bool dungeonHandleTrap(TrapType trap) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
+	assert(dungeon);
+
 	switch ((TrapType)dungeon->currentSubToken()) {
 	case TRAP_WINDS:
 		g_screen->screenMessage("\nWinds!\n");
