@@ -94,8 +94,10 @@ bool Script::Variable::isSet() const {
 	return _set;
 }
 
-Script::Script() : _vendorScriptDoc(nullptr), _scriptNode(nullptr), _debug(false), _state(STATE_UNLOADED),
-	_nounName("item"), _idPropName("id") {
+Script::Script() : _vendorScriptDoc(nullptr), _scriptNode(nullptr),
+		_debug(false), _state(STATE_UNLOADED), _currentScript(nullptr),
+		_currentItem(nullptr), _inputType(INPUT_CHOICE), _inputMaxLen(0),
+		_nounName("item"), _idPropName("id"), _iterator(0) {
 	_actionMap["context"]           = ACTION_SET_CONTEXT;
 	_actionMap["unset_context"]     = ACTION_UNSET_CONTEXT;
 	_actionMap["end"]               = ACTION_END;

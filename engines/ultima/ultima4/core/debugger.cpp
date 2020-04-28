@@ -170,10 +170,12 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 	bool result = Shared::Debugger::handleCommand(argc, argv, keepRunning);
 
 	if (result) {
-		if (!isActive() && !_dontEndTurn)
+		if (!isActive() && !_dontEndTurn) {
 			g_game->finishTurn();
-		else if (_dontEndTurn && eventHandler->getController() == g_game)
+		} else if (_dontEndTurn && eventHandler->getController() == g_game) {
+			assert(g_context);
 			g_context->_location->_turnCompleter->finishTurn();
+		}
 	}
 
 	_dontEndTurn = false;
@@ -1196,8 +1198,8 @@ bool Debugger::cmdCollisions(int argc, const char **argv) {
 
 bool Debugger::cmdCompanions(int argc, const char **argv) {
 	for (int m = g_ultima->_saveGame->_members; m < 8; m++) {
-		if (g_context->_party->canPersonJoin(g_ultima->_saveGame->_players[m].name, nullptr)) {
-			g_context->_party->join(g_ultima->_saveGame->_players[m].name);
+		if (g_context->_party->canPersonJoin(g_ultima->_saveGame->_players[m]._name, nullptr)) {
+			g_context->_party->join(g_ultima->_saveGame->_players[m]._name);
 		}
 	}
 
@@ -1592,7 +1594,7 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 	coords.move(dir, g_context->_location->_map);
 
 	if (coords != g_context->_location->_coords) {
-		bool ok = false;
+		bool ok;
 		MapTile *ground = g_context->_location->_map->tileAt(coords, WITHOUT_OBJECTS);
 
 		switch (transport) {
@@ -1606,6 +1608,7 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 			ok = ground->getTileType()->isWalkable();
 			break;
 		default:
+			ok = false;
 			break;
 		}
 

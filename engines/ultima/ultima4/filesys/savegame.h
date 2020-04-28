@@ -198,8 +198,8 @@ struct SaveGamePlayerRecord {
 	unsigned short _mp;
 	unsigned short _unknown;
 	WeaponType _weapon;
-	ArmorType armor;
-	char name[16];
+	ArmorType _armor;
+	char _name[16];
 	SexType _sex;
 	ClassType _class;
 	StatusType _status;

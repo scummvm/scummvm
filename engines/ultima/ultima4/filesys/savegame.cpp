@@ -37,6 +37,7 @@ namespace Ultima4 {
 
 void SaveGame::save(Common::WriteStream *stream) {
 	Common::Serializer ser(nullptr, stream);
+	assert(g_context);
 
 	if (g_context->_location) {
 		if (g_context->_location->_prev) {
@@ -139,6 +140,8 @@ void SaveGame::save(Common::WriteStream *stream) {
 
 void SaveGame::load(Common::SeekableReadStream *stream) {
 	Common::Serializer *ser = nullptr;
+	assert(g_context);
+
 	if (stream) {
 		ser = new Common::Serializer(stream, nullptr);
 		synchronize(*ser);
@@ -352,8 +355,8 @@ void SaveGamePlayerRecord::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_mp);
 	s.syncAsUint16LE(_unknown);
 	s.syncAsUint16LE(_weapon);
-	s.syncAsUint16LE(armor);
-	s.syncBytes((byte *)name, 16);
+	s.syncAsUint16LE(_armor);
+	s.syncBytes((byte *)_name, 16);
 	s.syncAsByte(_sex);
 	s.syncAsByte(_class);
 	s.syncAsByte(_status);
@@ -371,10 +374,10 @@ void SaveGamePlayerRecord::init() {
 	_mp = 0;
 	_unknown = 0;
 	_weapon = WEAP_HANDS;
-	armor = ARMR_NONE;
+	_armor = ARMR_NONE;
 
 	for (i = 0; i < 16; ++i)
-		name[i] = '\0';
+		_name[i] = '\0';
 
 	_sex = SEX_MALE;
 	_class = CLASS_MAGE;

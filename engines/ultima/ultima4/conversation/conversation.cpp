@@ -230,7 +230,8 @@ Common::String Dialogue::dump(const Common::String &arg) {
  * Conversation class
  */
 
-Conversation::Conversation() : _state(INTRO), _script(new Script()) {
+Conversation::Conversation() : _state(INTRO), _script(new Script()),
+		_question(nullptr), _quant(0), _player(0), _price(0) {
 #ifdef IOS_ULTIMA4
 	U4IOS::incrementConversationCount();
 #endif

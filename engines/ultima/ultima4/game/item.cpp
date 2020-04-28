@@ -572,8 +572,8 @@ void useStone(int item) {
 	 * in the abyss, on an altar to place the stones
 	 */
 	else if ((g_context->_location->_map->_id == MAP_ABYSS) &&
-	         (g_context->_location->_context & CTX_DUNGEON) &&
-	         (dynamic_cast<Dungeon *>(g_context->_location->_map)->currentToken() == DUNGEON_ALTAR)) {
+			(g_context->_location->_context & CTX_DUNGEON) &&
+			(static_cast<Dungeon *>(g_context->_location->_map)->currentToken() == DUNGEON_ALTAR)) {
 
 		int virtueMask = getBaseVirtues((Virtue)g_context->_location->_coords.z);
 		if (virtueMask > 0)

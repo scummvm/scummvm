@@ -59,8 +59,8 @@ public:
 	~Context();
 
 	Party *_party;
-	class Location *_location;
-	int _line, col;
+	Location *_location;
+	int _line, _col;
 	StatsArea *_stats;
 	int _moonPhase;
 	int _windDirection;
@@ -71,8 +71,8 @@ public:
 	int _opacity;
 	TransportContext _transportContext;
 	uint32 _lastCommandTime;
-	class Object *_lastShip;
-
+	Object *_lastShip;
+public:
 	/**
 	 * Provides scripts with information
 	 */

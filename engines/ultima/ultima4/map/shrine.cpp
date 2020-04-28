@@ -131,7 +131,7 @@ void Shrine::enter() {
 		U4IOS::IOSConversationHelper inputVirture;
 		inputVirture.beginConversation(U4IOS::UIKeyboardTypeDefault, "Upon which virtue dost thou meditate?");
 #endif
-		virtue = ReadStringController::get(32, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
+		virtue = ReadStringController::get(32, TEXT_AREA_X + g_context->_col, TEXT_AREA_Y + g_context->_line);
 #ifdef IOS_ULTIMA4
 	}
 #endif
@@ -237,7 +237,7 @@ void Shrine::askMantra() {
 		U4IOS::IOSConversationHelper mantraHelper;
 		mantraHelper.beginConversation(U4IOS::UIKeyboardTypeASCIICapable, "Mantra?");
 #endif
-		mantra = ReadStringController::get(4, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
+		mantra = ReadStringController::get(4, TEXT_AREA_X + g_context->_col, TEXT_AREA_Y + g_context->_line);
 		g_screen->screenMessage("\n");
 #ifdef IOS_ULTIMA4
 	}

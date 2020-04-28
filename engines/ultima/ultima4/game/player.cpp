@@ -165,11 +165,11 @@ const Weapon *PartyMember::getWeapon() const {
 }
 
 const Armor *PartyMember::getArmor() const {
-	return g_armors->get(_player->armor);
+	return g_armors->get(_player->_armor);
 }
 
 Common::String PartyMember::getName() const {
-	return _player->name;
+	return _player->_name;
 }
 
 SexType PartyMember::getSex() const {
@@ -368,7 +368,7 @@ EquipError PartyMember::setArmor(const Armor *a) {
 	if (type != ARMR_NONE)
 		_party->_saveGame->_armor[type]--;
 
-	_player->armor = type;
+	_player->_armor = type;
 	notifyOfChange();
 
 	return EQUIP_SUCCEEDED;
@@ -413,9 +413,11 @@ bool PartyMember::applyDamage(int damage, bool) {
 	if (isCombatMap(g_context->_location->_map) && getStatus() == STAT_DEAD) {
 		Coords p = getCoords();
 		Map *map = getMap();
+
+		assert(_party);
 		map->_annotations->add(p, g_tileSets->findTileByName("corpse")->getId())->setTTL(_party->size() * 2);
 
-		if (_party) {
+		{
 			_party->setChanged();
 			PartyEvent event(PartyEvent::PLAYER_KILLED, this);
 			event._player = this;
@@ -437,7 +439,7 @@ int PartyMember::getAttackBonus() const {
 }
 
 int PartyMember::getDefense() const {
-	return g_armors->get(_player->armor)->getDefense();
+	return g_armors->get(_player->_armor)->getDefense();
 }
 
 bool PartyMember::dealDamage(Creature *m, int damage) {
@@ -787,15 +789,20 @@ void Party::applyEffect(TileEffect effect) {
 		case EFFECT_NONE:
 		case EFFECT_ELECTRICITY:
 			_members[i]->applyEffect(effect);
+			break;
 		case EFFECT_LAVA:
 		case EFFECT_FIRE:
 		case EFFECT_SLEEP:
 			if (xu4_random(2) == 0)
 				_members[i]->applyEffect(effect);
+			break;
 		case EFFECT_POISONFIELD:
 		case EFFECT_POISON:
 			if (xu4_random(5) == 0)
 				_members[i]->applyEffect(effect);
+			break;
+		default:
+			break;
 		}
 	}
 }
@@ -833,7 +840,7 @@ bool Party::canPersonJoin(Common::String name, Virtue *v) {
 		return 0;
 
 	for (i = 1; i < 8; i++) {
-		if (name == _saveGame->_players[i].name) {
+		if (name == _saveGame->_players[i]._name) {
 			if (v)
 				*v = (Virtue) _saveGame->_players[i]._class;
 			return true;
@@ -970,7 +977,7 @@ bool Party::isPersonJoined(Common::String name) {
 		return false;
 
 	for (i = 1; i < _saveGame->_members; i++) {
-		if (name == _saveGame->_players[i].name)
+		if (name == _saveGame->_players[i]._name)
 			return true;
 	}
 	return false;
@@ -981,7 +988,7 @@ CannotJoinError Party::join(Common::String name) {
 	SaveGamePlayerRecord tmp;
 
 	for (i = _saveGame->_members; i < 8; i++) {
-		if (name == _saveGame->_players[i].name) {
+		if (name == _saveGame->_players[i]._name) {
 
 			/* ensure avatar is experienced enough */
 			if (_saveGame->_members + 1 > (_saveGame->_players[0]._hpMax / 100))

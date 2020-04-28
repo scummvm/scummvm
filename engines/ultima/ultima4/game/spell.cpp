@@ -783,6 +783,7 @@ static int spellYup(int unused) {
 		return 0;
 	/* staying in the dungeon */
 	else if (coords.z > 0) {
+		assert(dungeon);
 		for (int i = 0; i < 0x20; i++) {
 			coords = MapCoords(xu4_random(8), xu4_random(8), g_context->_location->_coords.z - 1);
 			if (dungeon->validTeleportLocation(coords)) {
@@ -805,6 +806,7 @@ static int spellYup(int unused) {
 static int spellZdown(int unused) {
 	MapCoords coords = g_context->_location->_coords;
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
+	assert(dungeon);
 
 	/* can't cast in the Abyss */
 	if (g_context->_location->_map->_id == MAP_ABYSS)

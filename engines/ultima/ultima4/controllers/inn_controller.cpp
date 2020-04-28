@@ -125,17 +125,18 @@ void InnController::maybeMeetIsaac() {
 			}
 
 			// Otherwise, we need to create Isaac
-			Person *Isaac;
-			Isaac = new Person(creatureMgr->getById(GHOST_ID)->getTile());
+			Person *isaac = new Person(creatureMgr->getById(GHOST_ID)->getTile());
 
-			Isaac->setMovementBehavior(MOVEMENT_WANDER);
+			isaac->setMovementBehavior(MOVEMENT_WANDER);
 
-			Isaac->setDialogue(city->_extraDialogues[0]);
-			Isaac->getStart() = coords;
-			Isaac->setPrevTile(Isaac->getTile());
+			isaac->setDialogue(city->_extraDialogues[0]);
+			isaac->getStart() = coords;
+			isaac->setPrevTile(isaac->getTile());
 
 			// Add Isaac near the Avatar
-			city->addPerson(Isaac);
+			city->addPerson(isaac);
+
+			delete isaac;
 		}
 	}
 }

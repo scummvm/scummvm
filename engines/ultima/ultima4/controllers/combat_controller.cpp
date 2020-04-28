@@ -113,7 +113,7 @@ CombatController::~CombatController() {
 
 void CombatController::init() {
 	_focus = 0;
-	Common::fill(&creatureTable[0], &creatureTable[AREA_CREATURES],
+	Common::fill(&_creatureTable[0], &_creatureTable[AREA_CREATURES],
 		(const Creature *)nullptr);
 	_creature = nullptr;
 
@@ -179,7 +179,7 @@ void CombatController::init(class Creature *m) {
 
 	/* initialize creature info */
 	for (i = 0; i < AREA_CREATURES; i++) {
-		creatureTable[i] = nullptr;
+		_creatureTable[i] = nullptr;
 	}
 
 	for (i = 0; i < AREA_PLAYERS; i++) {
@@ -224,7 +224,7 @@ void CombatController::initDungeonRoom(int room, Direction from) {
 		for (i = 0; i < AREA_CREATURES; i++) {
 			if (dng->_rooms[room]._creatureTiles[i] > 0) {
 				_placeCreaturesOnMap = true;
-				creatureTable[i] = creatureMgr->getByTile(dng->_rooms[room]._creatureTiles[i]);
+				_creatureTable[i] = creatureMgr->getByTile(dng->_rooms[room]._creatureTiles[i]);
 			}
 			_map->creature_start[i].x = dng->_rooms[room]._creatureStartX[i];
 			_map->creature_start[i].y = dng->_rooms[room]._creatureStartY[i];
@@ -416,7 +416,7 @@ void CombatController::fillCreatureTable(const Creature *creature) {
 			/* find a free spot in the creature table */
 			do {
 				j = xu4_random(AREA_CREATURES) ;
-			} while (creatureTable[j] != nullptr);
+			} while (_creatureTable[j] != nullptr);
 
 			/* see if creature is a leader or leader's leader */
 			if (creatureMgr->getById(baseCreature->getLeader()) != baseCreature && /* leader is a different creature */
@@ -429,7 +429,7 @@ void CombatController::fillCreatureTable(const Creature *creature) {
 			}
 
 			/* place this creature in the creature table */
-			creatureTable[j] = current;
+			_creatureTable[j] = current;
 		}
 	}
 }
@@ -499,7 +499,7 @@ void CombatController::placeCreatures() {
 	int i;
 
 	for (i = 0; i < AREA_CREATURES; i++) {
-		const Creature *m = creatureTable[i];
+		const Creature *m = _creatureTable[i];
 		if (m)
 			_map->addCreature(m, _map->creature_start[i]);
 	}

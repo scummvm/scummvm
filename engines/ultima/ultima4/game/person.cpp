@@ -208,7 +208,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 						U4IOS::IOSConversationHelper ipadNumberInput;
 						ipadNumberInput.beginConversation(U4IOS::UIKeyboardTypeNumberPad, "Amount?");
 #endif
-						int val = ReadIntController::get(script->getInputMaxLen(), TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
+						int val = ReadIntController::get(script->getInputMaxLen(), TEXT_AREA_X + g_context->_col, TEXT_AREA_Y + g_context->_line);
 						script->setVar(script->getInputName(), val);
 					}
 					break;
@@ -218,7 +218,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 						U4IOS::IOSConversationHelper ipadNumberInput;
 						ipadNumberInput.beginConversation(U4IOS::UIKeyboardTypeDefault);
 #endif
-						Common::String str = ReadStringController::get(script->getInputMaxLen(), TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
+						Common::String str = ReadStringController::get(script->getInputMaxLen(), TEXT_AREA_X + g_context->_col, TEXT_AREA_Y + g_context->_line);
 						if (str.size()) {
 							lowercase(str);
 							script->setVar(script->getInputName(), str);

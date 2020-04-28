@@ -85,7 +85,7 @@ void GameController::init() {
 	// initialize the global game context, conversation and game state variables
 	g_context = new Context();
 	g_context->_line = TEXT_AREA_H - 1;
-	g_context->col = 0;
+	g_context->_col = 0;
 	g_context->_stats = new StatsArea();
 	g_context->_moonPhase = 0;
 	g_context->_windDirection = DIR_NORTH;
@@ -156,6 +156,7 @@ void GameController::setMap(Map *map, bool saveLocation, const Portal *portal, T
 
 	if (isCity(map)) {
 		City *city = dynamic_cast<City *>(map);
+		assert(city);
 		city->addPeople();
 	}
 }
@@ -249,6 +250,8 @@ void GameController::finishTurn() {
 
 	if (g_context->_location->_context == CTX_DUNGEON) {
 		Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
+		assert(dungeon);
+
 		if (g_context->_party->getTorchDuration() <= 0)
 			g_screen->screenMessage("It's Dark!\n");
 		else g_context->_party->burnTorch();
@@ -320,10 +323,13 @@ void GameController::update(Location *location, MoveEvent &event) {
 	case Map::DUNGEON:
 		avatarMovedInDungeon(event);
 		break;
-	case Map::COMBAT:
+	case Map::COMBAT: {
 		// FIXME: let the combat controller handle it
-		dynamic_cast<CombatController *>(eventHandler->getController())->movePartyMember(event);
+		CombatController *ctl = dynamic_cast<CombatController *>(eventHandler->getController());
+		assert(ctl);
+		ctl->movePartyMember(event);
 		break;
+	}
 	default:
 		avatarMoved(event);
 		break;
@@ -523,8 +529,9 @@ void GameController::avatarMoved(MoveEvent &event) {
 }
 
 void GameController::avatarMovedInDungeon(MoveEvent &event) {
-	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
 	Direction realDir = dirNormalize((Direction)g_ultima->_saveGame->_orientation, event._dir);
+	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
+	assert(dungeon);
 
 	if (!settings._filterMoveMessages) {
 		if (event._userEvent) {
@@ -562,6 +569,7 @@ void GameController::avatarMovedInDungeon(MoveEvent &event) {
 				room = (0x10 * (g_context->_location->_coords.z / 2)) + room;
 
 			Dungeon *dng = dynamic_cast<Dungeon *>(g_context->_location->_map);
+			assert(dng);
 			dng->_currentRoom = room;
 
 			/* set the map and start combat! */

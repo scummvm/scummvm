@@ -153,39 +153,39 @@ void EventHandler::run() {
 
 	while (!_ended && !_controllerDone) {
 		Common::Event event;
-		g_system->getEventManager()->pollEvent(event);
+		if (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				handleKeyDownEvent(event, getController(), _updateScreen);
+				break;
 
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			handleKeyDownEvent(event, getController(), _updateScreen);
-			break;
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
+			case Common::EVENT_MBUTTONDOWN:
+				handleMouseButtonDownEvent(event, getController(), _updateScreen);
+				break;
 
-		case Common::EVENT_LBUTTONDOWN:
-		case Common::EVENT_RBUTTONDOWN:
-		case Common::EVENT_MBUTTONDOWN:
-			handleMouseButtonDownEvent(event, getController(), _updateScreen);
-			break;
+			case Common::EVENT_LBUTTONUP:
+			case Common::EVENT_RBUTTONUP:
+			case Common::EVENT_MBUTTONUP:
+				handleMouseButtonUpEvent(event, getController(), _updateScreen);
+				break;
 
-		case Common::EVENT_LBUTTONUP:
-		case Common::EVENT_RBUTTONUP:
-		case Common::EVENT_MBUTTONUP:
-			handleMouseButtonUpEvent(event, getController(), _updateScreen);
-			break;
+			case Common::EVENT_MOUSEMOVE:
+				handleMouseMotionEvent(event);
+				continue;
 
-		case Common::EVENT_MOUSEMOVE:
-			handleMouseMotionEvent(event);
-			continue;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				getController()->keybinder((KeybindingAction)event.customType);
+				break;
 
-		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			getController()->keybinder((KeybindingAction)event.customType);
-			break;
+			case Common::EVENT_QUIT:
+				_ended = true;
+				return;
 
-		case Common::EVENT_QUIT:
-			_ended = true;
-			return;
-
-		default:
-			break;
+			default:
+				break;
+			}
 		}
 
 		// Brief delay

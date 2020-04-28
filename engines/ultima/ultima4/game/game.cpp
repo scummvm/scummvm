@@ -151,8 +151,6 @@ void gameSpellEffect(int spell, int player, Sound sound) {
 	}
 
 	switch (effect) {
-	case Spell::SFX_NONE:
-		break;
 	case Spell::SFX_TREMOR:
 	case Spell::SFX_INVERT:
 		gameUpdateScreen();
@@ -165,9 +163,10 @@ void gameSpellEffect(int spell, int player, Sound sound) {
 			gameUpdateScreen();
 			soundPlay(SOUND_RUMBLE, false);
 			g_screen->screenShake(8);
-
 		}
 
+		break;
+	default:
 		break;
 	}
 }
@@ -180,7 +179,7 @@ Common::String gameGetInput(int maxlen) {
 	helper.beginConversation(U4IOS::UIKeyboardTypeDefault);
 #endif
 
-	return ReadStringController::get(maxlen, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
+	return ReadStringController::get(maxlen, TEXT_AREA_X + g_context->_col, TEXT_AREA_Y + g_context->_line);
 }
 
 int gameGetPlayer(bool canBeDisabled, bool canBeActivePlayer) {
@@ -202,9 +201,9 @@ int gameGetPlayer(bool canBeDisabled, bool canBeActivePlayer) {
 		}
 	}
 
-	g_context->col--;// display the selected character name, in place of the number
+	g_context->_col--;// display the selected character name, in place of the number
 	if ((player >= 0) && (player < 8)) {
-		g_screen->screenMessage("%s\n", g_ultima->_saveGame->_players[player].name); //Write player's name after prompt
+		g_screen->screenMessage("%s\n", g_ultima->_saveGame->_players[player]._name); //Write player's name after prompt
 	}
 
 	if (!canBeDisabled && g_context->_party->member(player)->isDisabled()) {
@@ -251,6 +250,7 @@ bool fireAt(const Coords &coords, bool originAvatar) {
 
 	obj = g_context->_location->_map->objectAt(coords);
 	Creature *m = dynamic_cast<Creature *>(obj);
+	assert(m);
 
 	if (obj && obj->getType() == Object::CREATURE && m->isAttackable())
 		validObject = true;
@@ -474,6 +474,7 @@ bool creatureRangeAttack(const Coords &coords, Creature *m) {
 	// See if the attack hits the avatar
 	Object *obj = g_context->_location->_map->objectAt(coords);
 	m = dynamic_cast<Creature *>(obj);
+	assert(m);
 
 	// Does the attack hit the avatar?
 	if (coords == g_context->_location->_coords) {
@@ -855,7 +856,7 @@ void mixReagentsSuper() {
 			g_screen->screenMessage("You can make %d.\n", (mixQty > ingQty) ? ingQty : mixQty);
 			g_screen->screenMessage("How many? ");
 
-			int howmany = ReadIntController::get(2, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
+			int howmany = ReadIntController::get(2, TEXT_AREA_X + g_context->_col, TEXT_AREA_Y + g_context->_line);
 
 			if (howmany == 0) {
 				g_screen->screenMessage("\nNone mixed!\n");

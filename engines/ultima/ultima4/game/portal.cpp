@@ -67,6 +67,8 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 		/* if it's a dungeon, then ladders are predictable.  Create one! */
 		if (location->_context == CTX_DUNGEON) {
 			Dungeon *dungeon = dynamic_cast<Dungeon *>(location->_map);
+			assert(dungeon);
+
 			if ((action & ACTION_KLIMB) && dungeon->ladderUpAt(coords))
 				createDngLadder(location, action, &dngLadder);
 			else if ((action & ACTION_DESCEND) && dungeon->ladderDownAt(coords))
@@ -102,6 +104,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 			switch (destination->_type) {
 			case Map::CITY: {
 				City *city = dynamic_cast<City *>(destination);
+				assert(city);
 				g_screen->screenMessage("Enter %s!\n\n%s\n\n", city->_type.c_str(), city->getName().c_str());
 			}
 			break;
@@ -158,6 +161,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 
 	if (destination->_type == Map::SHRINE) {
 		Shrine *shrine = dynamic_cast<Shrine *>(destination);
+		assert(shrine);
 		shrine->enter();
 	}
 

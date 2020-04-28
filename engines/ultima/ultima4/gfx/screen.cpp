@@ -243,7 +243,7 @@ void Screen::screenTextAt(int x, int y, const char *fmt, ...) {
 }
 
 void Screen::screenPrompt() {
-	if (_needPrompt && _cursorEnabled && g_context->col == 0) {
+	if (_needPrompt && _cursorEnabled && g_context->_col == 0) {
 		screenMessage("%c", CHARSET_PROMPT);
 		_needPrompt = 0;
 	}
@@ -285,9 +285,9 @@ void Screen::screenMessage(const char *fmt, ...) {
 
 		/* backspace */
 		if (buffer[i] == '\b') {
-			g_context->col--;
-			if (g_context->col < 0) {
-				g_context->col += 16;
+			g_context->_col--;
+			if (g_context->_col < 0) {
+				g_context->_col += 16;
 				g_context->_line--;
 			}
 			continue;
@@ -307,11 +307,11 @@ void Screen::screenMessage(const char *fmt, ...) {
 		}
 
 		/* check for word wrap */
-		if ((g_context->col + wordlen > 16) || buffer[i] == '\n' || g_context->col == 16) {
+		if ((g_context->_col + wordlen > 16) || buffer[i] == '\n' || g_context->_col == 16) {
 			if (buffer[i] == '\n' || buffer[i] == ' ')
 				i++;
 			g_context->_line++;
-			g_context->col = 0;
+			g_context->_col = 0;
 #ifdef IOS_ULTIMA4
 			recursed = true;
 #endif
@@ -321,17 +321,17 @@ void Screen::screenMessage(const char *fmt, ...) {
 
 		/* code for move cursor right */
 		if (buffer[i] == 0x12) {
-			g_context->col++;
+			g_context->_col++;
 			continue;
 		}
 		/* don't show a space in column 1.  Helps with Hawkwind. */
-		if (buffer[i] == ' ' && g_context->col == 0)
+		if (buffer[i] == ' ' && g_context->_col == 0)
 			continue;
-		screenShowChar(buffer[i], TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
-		g_context->col++;
+		screenShowChar(buffer[i], TEXT_AREA_X + g_context->_col, TEXT_AREA_Y + g_context->_line);
+		g_context->_col++;
 	}
 
-	screenSetCursorPos(TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
+	screenSetCursorPos(TEXT_AREA_X + g_context->_col, TEXT_AREA_Y + g_context->_line);
 	screenShowCursor();
 
 	_needPrompt = 1;

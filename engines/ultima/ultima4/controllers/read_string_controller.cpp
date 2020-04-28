@@ -80,7 +80,7 @@ bool ReadStringController::keyPressed(int key) {
 				g_screen->screenHideCursor();
 				g_screen->screenTextAt(_screenX + len, _screenY, "%c", key);
 				g_screen->screenSetCursorPos(_screenX + len + 1, _screenY);
-				g_context->col = len + 1;
+				g_context->_col = len + 1;
 				g_screen->screenShowCursor();
 			}
 		}

@@ -186,7 +186,7 @@ protected:
 	PartyMemberVector _party;
 	byte _focus;
 
-	const Creature *creatureTable[AREA_CREATURES];
+	const Creature *_creatureTable[AREA_CREATURES];
 	Creature *_creature;
 
 	bool _camping;

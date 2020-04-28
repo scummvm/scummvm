@@ -718,7 +718,9 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 	SaveGame &saveGame = *g_ultima->_saveGame;
 	SaveGamePlayerRecord avatar;
 	avatar.init();
-	strcpy(avatar.name, nameBuffer.c_str());
+	strncpy(avatar._name, nameBuffer.c_str(), 15);
+	avatar._name[15] = '\0';
+
 	avatar._sex = sex;
 	saveGame.init(&avatar);
 	g_screen->screenHideCursor();
@@ -1318,7 +1320,7 @@ void IntroController::initPlayers(SaveGame *saveGame) {
 	ASSERT((int)saveGame->_players[0]._class < 8, "bad class: %d", saveGame->_players[0]._class);
 
 	saveGame->_players[0]._weapon = initValuesForClass[saveGame->_players[0]._class].weapon;
-	saveGame->_players[0].armor = initValuesForClass[saveGame->_players[0]._class].armor;
+	saveGame->_players[0]._armor = initValuesForClass[saveGame->_players[0]._class].armor;
 	saveGame->_players[0]._xp = initValuesForClass[saveGame->_players[0]._class].xp;
 	saveGame->_x = initValuesForClass[saveGame->_players[0]._class].x;
 	saveGame->_y = initValuesForClass[saveGame->_players[0]._class].y;
@@ -1381,8 +1383,9 @@ void IntroController::initPlayers(SaveGame *saveGame) {
 			saveGame->_players[p]._dex = initValuesForNpcClass[i].dex;
 			saveGame->_players[p]._intel = initValuesForNpcClass[i].intel;
 			saveGame->_players[p]._weapon = initValuesForClass[i].weapon;
-			saveGame->_players[p].armor = initValuesForClass[i].armor;
-			strcpy(saveGame->_players[p].name, initValuesForNpcClass[i].name);
+			saveGame->_players[p]._armor = initValuesForClass[i].armor;
+			strncpy(saveGame->_players[p]._name, initValuesForNpcClass[i].name, 15);
+			saveGame->_players[p]._name[15] = '\0';
 			saveGame->_players[p]._sex = initValuesForNpcClass[i].sex;
 			saveGame->_players[p]._hp = saveGame->_players[p]._hpMax = initValuesForClass[i].level * 100;
 			saveGame->_players[p]._mp = player.getMaxMp();

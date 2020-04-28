@@ -48,8 +48,11 @@ bool isCreature(Object *punknown) {
 		return false;
 }
 
-Creature::Creature(MapTile tile) :
-	Object(Object::CREATURE) {
+Creature::Creature(MapTile tile) : Object(Object::CREATURE),
+		_id(0), _leader(0), _baseHp(0), _hp(0), _xp(0), _ranged(0),
+		_leavesTile(false), _mAttr(MATTR_STEALFOOD),
+		_movementAttr(MATTR_STATIONARY), _slowedType(SLOWED_BY_NOTHING),
+		_encounterSize(0), _resists(0), _spawn(0) {
 	const Creature *m = creatureMgr->getByTile(tile);
 	if (m)
 		*this = *m;

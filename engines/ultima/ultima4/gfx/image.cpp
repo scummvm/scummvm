@@ -34,7 +34,8 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Image::Image() : _surface(nullptr), _disposeAfterUse(DisposeAfterUse::NO) {
+Image::Image() : _surface(nullptr), _disposeAfterUse(DisposeAfterUse::NO),
+		_paletted(false) {
 }
 
 Image *Image::create(int w, int h, bool paletted, Image::Type type) {

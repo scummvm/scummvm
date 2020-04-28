@@ -91,6 +91,7 @@ bool DebuggerActions::destroyAt(const Coords &coords) {
 	if (obj) {
 		if (isCreature(obj)) {
 			Creature *c = dynamic_cast<Creature *>(obj);
+			assert(c);
 			g_screen->screenMessage("%s Destroyed!\n", c->getName().c_str());
 		} else {
 			Tile *t = g_context->_location->_map->_tileSet->get(obj->getTile()._id);
@@ -270,7 +271,7 @@ bool DebuggerActions::mixReagentsForSpellU5(int spell) {
 
 	printN("How many? ");
 
-	int howmany = ReadIntController::get(2, TEXT_AREA_X + g_context->col, TEXT_AREA_Y + g_context->_line);
+	int howmany = ReadIntController::get(2, TEXT_AREA_X + g_context->_col, TEXT_AREA_Y + g_context->_line);
 	gameSpellMixHowMany(spell, howmany, &ingredients);
 
 	return true;
@@ -358,6 +359,7 @@ bool DebuggerActions::talkAt(const Coords &coords) {
 	}
 
 	city = dynamic_cast<City *>(g_context->_location->_map);
+	assert(city);
 	Person *talker = city ? city->personAt(coords) : nullptr;
 
 	// Make sure we have someone we can talk with
