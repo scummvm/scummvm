@@ -35,8 +35,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using namespace Std;
-
 bool EventHandler::_controllerDone = false;
 bool EventHandler::_ended = false;
 

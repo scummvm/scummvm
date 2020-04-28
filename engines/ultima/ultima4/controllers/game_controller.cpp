@@ -238,7 +238,7 @@ void GameController::finishTurn() {
 			break;
 
 		if (g_context->_party->isDead()) {
-			deathStart(0);
+			g_death->start(0);
 			return;
 		} else {
 			g_screen->screenMessage("Zzzzzz\n");
@@ -262,7 +262,7 @@ void GameController::finishTurn() {
 			// extra turn after party death and do some things
 			// that could cause a crash, like Hole up and Camp.
 			if (g_context->_party->isDead()) {
-				deathStart(0);
+				g_death->start(0);
 				return;
 			}
 		}

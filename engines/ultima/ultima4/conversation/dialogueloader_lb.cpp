@@ -30,9 +30,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
-using Std::vector;
-
 Response *lordBritishGetHelp(const DynamicResponse *resp);
 Response *lordBritishGetIntro(const DynamicResponse *resp);
 

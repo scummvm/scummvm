@@ -387,7 +387,7 @@ void gameCheckHullIntegrity() {
 		}
 
 		g_screen->update();
-		deathStart(5);
+		g_death->start(5);
 	}
 }
 

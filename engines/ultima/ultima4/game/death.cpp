@@ -42,22 +42,17 @@
 namespace Ultima {
 namespace Ultima4 {
 
+Death *g_death;
+
 #define REVIVE_WORLD_X 86
 #define REVIVE_WORLD_Y 107
 #define REVIVE_CASTLE_X 19
 #define REVIVE_CASTLE_Y 8
 
-int timerCount;
-uint timerMsg;
-int deathSequenceRunning = 0;
-
-void deathTimer(void *data);
-void deathRevive();
-
 const struct {
-	int timeout;                /* pause in seconds */
-	const char *text;           /* text of message */
-} deathMsgs[] = {
+	int _timeout;			///< pause in seconds
+	const char *_text;		///< text of message
+} DEATH_MSGS[] = {
 	{ 5, "\n\n\nAll is Dark...\n" },
 	{ 5, "\nBut wait...\n" },
 	{ 5, "Where am I?...\n" },
@@ -68,9 +63,17 @@ const struct {
 	{ 5, "\nLord British says: I have pulled thy spirit and some possessions from the void.  Be more careful in the future!\n\n\020" }
 };
 
-#define N_MSGS (sizeof(deathMsgs) / sizeof(deathMsgs[0]))
+#define N_MSGS (sizeof(DEATH_MSGS) / sizeof(DEATH_MSGS[0]))
 
-void deathStart(int delay) {
+Death::Death() : timerCount(0), timerMsg(0), deathSequenceRunning(false) {
+	g_death = this;
+}
+
+Death::~Death() {
+	g_death = nullptr;
+}
+
+void Death::start(int delay) {
 	if (deathSequenceRunning)
 		return;
 
@@ -93,39 +96,37 @@ void deathStart(int delay) {
 	eventHandler->getTimer()->add(&deathTimer, settings._gameCyclesPerSecond);
 }
 
-void deathTimer(void *data) {
+void Death::deathTimer(void *data) {
+	g_death->timerCount++;
+	if ((g_death->timerMsg < N_MSGS) && (g_death->timerCount > DEATH_MSGS[g_death->timerMsg]._timeout)) {
 
-	timerCount++;
-	if ((timerMsg < N_MSGS) && (timerCount > deathMsgs[timerMsg].timeout)) {
-
-		g_screen->screenMessage(deathMsgs[timerMsg].text, g_context->_party->member(0)->getName().c_str());
+		g_screen->screenMessage(DEATH_MSGS[g_death->timerMsg]._text, g_context->_party->member(0)->getName().c_str());
 		g_screen->screenHideCursor();
 
-		timerCount = 0;
-		timerMsg++;
+		g_death->timerCount = 0;
+		g_death->timerMsg++;
 
-		if (timerMsg >= N_MSGS) {
+		if (g_death->timerMsg >= N_MSGS) {
 			eventHandler->getTimer()->remove(&deathTimer);
-			deathRevive();
+			g_death->revive();
 		}
 	}
 }
 
-void deathRevive() {
+void Death::revive() {
 	while (!g_context->_location->_map->isWorldMap() && g_context->_location->_prev != nullptr) {
 		g_game->exitToParentMap();
 	}
 
 	eventHandler->setController(g_game);
 
-	deathSequenceRunning = 0;
+	deathSequenceRunning = false;
 	gameSetViewMode(VIEW_NORMAL);
 
-	/* Move our world map location to Lord British's Castle */
+	// Move our world map location to Lord British's Castle
 	g_context->_location->_coords = g_context->_location->_map->_portals[0]->_coords;
 
-	/* Now, move the avatar into the castle and put him
-	   in front of Lord British */
+	// Now, move the avatar into the castle and put him in front of Lord British
 	g_game->setMap(mapMgr->get(100), 1, nullptr);
 	g_context->_location->_coords.x = REVIVE_CASTLE_X;
 	g_context->_location->_coords.y = REVIVE_CASTLE_Y;

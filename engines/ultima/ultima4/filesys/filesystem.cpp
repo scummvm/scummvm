@@ -31,10 +31,6 @@ namespace Ultima4 {
 
 const char Path::delim = '/';
 
-#if !defined(S_IFDIR)
-#define S_IFDIR _S_IFDIR
-#endif
-
 Path::Path(const Common::String &p) : path(p) {
 	uint pos;
 	bool _exists = false, isDir = false;

@@ -33,6 +33,7 @@ class Armors;
 class Codex;
 class Config;
 class Context;
+class Death;
 class DialogueLoaders;
 class ImageLoaders;
 class GameController;
@@ -68,6 +69,7 @@ public:
 	Codex *_codex;
 	Config *_config;
 	Context *_context;
+	Death *_death;
 	DialogueLoaders *_dialogueLoaders;
 	ImageLoaders *_imageLoaders;
 	GameController *_game;

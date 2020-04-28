@@ -23,10 +23,38 @@
 #ifndef ULTIMA4_GAME_DEATH_H
 #define ULTIMA4_GAME_DEATH_H
 
+#include "common/scummsys.h"
+
 namespace Ultima {
 namespace Ultima4 {
 
-void deathStart(int delay);
+class Death {
+private:
+	int timerCount;
+	uint timerMsg;
+	bool deathSequenceRunning;
+private:
+	/**
+	 * Timer
+	 */
+	static void deathTimer(void *data);
+
+	void revive();
+public:
+	/**
+	 * Constructor
+	 */
+	Death();
+
+	/**
+	 * Destructor
+	 */
+	~Death();
+
+	void start(int delay);
+};
+
+extern Death *g_death;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

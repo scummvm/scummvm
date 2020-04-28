@@ -28,8 +28,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
-
 /**
  * A dialogue loader for standard u4dos .tlk files.
  */

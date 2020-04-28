@@ -318,7 +318,7 @@ void CombatController::end(bool adjustKarma) {
 		if (_creature)
 			g_context->_location->_map->removeObject(_creature);
 
-		deathStart(5);
+		g_death->start(5);
 	}
 
 	else {
