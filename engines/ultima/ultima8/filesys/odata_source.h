@@ -51,10 +51,6 @@ public:
 		else writeUint32LE(val);
 	}
 
-	virtual Common::WriteStream *GetRawStream() {
-		return nullptr;
-	}
-
 	virtual void skip(int32 delta) {
 		seek(delta, SEEK_CUR);
 	};

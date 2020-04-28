@@ -72,10 +72,6 @@ public:
 			str += character;
 		}
 	}
-
-	virtual Common::SeekableReadStream *GetRawStream() {
-		return nullptr;
-	}
 };
 
 
@@ -109,10 +105,6 @@ public:
 
 	bool eos() const override {
 		return _in->eos();
-	}
-
-	Common::SeekableReadStream *GetRawStream() override {
-		return _in;
 	}
 };
 
