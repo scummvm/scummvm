@@ -79,8 +79,8 @@ Dialogue *U4HWDialogueLoader::load(void *source) {
 	}
 
 	Response *bye = new Response(hawkwindText[HW_BYE]);
-	bye->add(ResponsePart::STOPMUSIC);
-	bye->add(ResponsePart::END);
+	bye->add(g_responseParts->STOPMUSIC);
+	bye->add(g_responseParts->END);
 	dlg->addKeyword("bye", bye);
 	dlg->addKeyword("", bye);
 
@@ -132,10 +132,10 @@ Response *hawkwindGetIntro(const DynamicResponse *dynResp) {
 		intro->add(hawkwindText[HW_SPEAKONLYWITH] + g_context->_party->member(0)->getName() +
 		    hawkwindText[HW_RETURNWHEN] + g_context->_party->member(0)->getName() +
 		    hawkwindText[HW_ISREVIVED]);
-		intro->add(ResponsePart::END);
+		intro->add(g_responseParts->END);
 	} else {
-		intro->add(ResponsePart::STARTMUSIC_HW);
-		intro->add(ResponsePart::HAWKWIND);
+		intro->add(g_responseParts->STARTMUSIC_HW);
+		intro->add(g_responseParts->HAWKWIND);
 
 		intro->add(hawkwindText[HW_WELCOME] + g_context->_party->member(0)->getName() +
 			hawkwindText[HW_GREETING1] + hawkwindText[HW_GREETING2]);

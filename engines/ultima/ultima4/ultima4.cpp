@@ -22,6 +22,7 @@
 
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/controllers/intro_controller.h"
+#include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/debugger.h"
@@ -57,8 +58,9 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _armors(nullptr),
 		_codex(nullptr), _config(nullptr), _context(nullptr), _dialogueLoaders(nullptr),
 		_game(nullptr), _music(nullptr), _imageLoaders(nullptr), _mapLoaders(nullptr),
-		_moongates(nullptr), _saveGame(nullptr), _screen(nullptr), _shrines(nullptr),
-		_tileMaps(nullptr), _tileRules(nullptr), _tileSets(nullptr), _weapons(nullptr) {
+		_moongates(nullptr), _responseParts(nullptr), _saveGame(nullptr), _screen(nullptr),
+		_shrines(nullptr), _tileMaps(nullptr), _tileRules(nullptr), _tileSets(nullptr),
+		_weapons(nullptr) {
 	g_ultima = this;
 	g_armors = nullptr;
 	g_codex = nullptr;
@@ -66,6 +68,7 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 	g_game = nullptr;
 	g_mapLoaders = nullptr;
 	g_moongates = nullptr;
+	g_responseParts = nullptr;
 	g_screen = nullptr;
 	g_shrines = nullptr;
 	g_tileMaps = nullptr;
@@ -85,6 +88,7 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _mapLoaders;
 	delete _moongates;
 	delete _music;
+	delete _responseParts;
 	delete _saveGame;
 	delete _screen;
 	delete _shrines;
@@ -111,6 +115,7 @@ bool Ultima4Engine::initialize() {
 	_dialogueLoaders = new DialogueLoaders();
 	_mapLoaders = new MapLoaders();
 	_moongates = new Moongates();
+	_responseParts = new ResponseParts();
 	_screen = new Screen();
 	_screen->init();
 	_shrines = new Shrines();

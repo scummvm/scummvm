@@ -370,28 +370,28 @@ Common::String Person::processResponse(Conversation *cnv, Response *response) {
 }
 
 void Person::runCommand(Conversation *cnv, const ResponsePart &command) {
-	if (command == ResponsePart::ASK) {
+	if (command == g_responseParts->ASK) {
 		cnv->_question = _dialogue->getQuestion();
 		cnv->_state = Conversation::ASK;
-	} else if (command == ResponsePart::END) {
+	} else if (command == g_responseParts->END) {
 		cnv->_state = Conversation::DONE;
-	} else if (command == ResponsePart::ATTACK) {
+	} else if (command == g_responseParts->ATTACK) {
 		cnv->_state = Conversation::ATTACK;
-	} else if (command == ResponsePart::BRAGGED) {
+	} else if (command == g_responseParts->BRAGGED) {
 		g_context->_party->adjustKarma(KA_BRAGGED);
-	} else if (command == ResponsePart::HUMBLE) {
+	} else if (command == g_responseParts->HUMBLE) {
 		g_context->_party->adjustKarma(KA_HUMBLE);
-	} else if (command == ResponsePart::ADVANCELEVELS) {
+	} else if (command == g_responseParts->ADVANCELEVELS) {
 		cnv->_state = Conversation::ADVANCELEVELS;
-	} else if (command == ResponsePart::HEALCONFIRM) {
+	} else if (command == g_responseParts->HEALCONFIRM) {
 		cnv->_state = Conversation::CONFIRMATION;
-	} else if (command == ResponsePart::STARTMUSIC_LB) {
+	} else if (command == g_responseParts->STARTMUSIC_LB) {
 		g_music->lordBritish();
-	} else if (command == ResponsePart::STARTMUSIC_HW) {
+	} else if (command == g_responseParts->STARTMUSIC_HW) {
 		g_music->hawkwind();
-	} else if (command == ResponsePart::STOPMUSIC) {
+	} else if (command == g_responseParts->STOPMUSIC) {
 		g_music->play();
-	} else if (command == ResponsePart::HAWKWIND) {
+	} else if (command == g_responseParts->HAWKWIND) {
 		g_context->_party->adjustKarma(KA_HAWKWIND);
 	} else {
 		error("unknown command trigger in dialogue response: %s\n", Common::String(command).c_str());
@@ -406,10 +406,10 @@ Common::String Person::getResponse(Conversation *cnv, const char *inquiry) {
 	reply = "\n";
 
 	/* Does the person take action during the conversation? */
-	if (action == ResponsePart::END) {
+	if (action == g_responseParts->END) {
 		runCommand(cnv, action);
 		return _dialogue->getPronoun() + " turns away!\n";
-	} else if (action == ResponsePart::ATTACK) {
+	} else if (action == g_responseParts->ATTACK) {
 		runCommand(cnv, action);
 		return Common::String("\n") + getName() + " says: On guard! Fool!";
 	}

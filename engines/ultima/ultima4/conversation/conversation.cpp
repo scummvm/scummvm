@@ -27,20 +27,30 @@
 namespace Ultima {
 namespace Ultima4 {
 
-/* Static variable initialization */
-const ResponsePart ResponsePart::NONE("<NONE>", "", true);
-const ResponsePart ResponsePart::ASK("<ASK>", "", true);
-const ResponsePart ResponsePart::END("<END>", "", true);
-const ResponsePart ResponsePart::ATTACK("<ATTACK>", "", true);
-const ResponsePart ResponsePart::BRAGGED("<BRAGGED>", "", true);
-const ResponsePart ResponsePart::HUMBLE("<HUMBLE>", "", true);
-const ResponsePart ResponsePart::ADVANCELEVELS("<ADVANCELEVELS>", "", true);
-const ResponsePart ResponsePart::HEALCONFIRM("<HEALCONFIRM>", "", true);
-const ResponsePart ResponsePart::STARTMUSIC_LB("<STARTMUSIC_LB>", "", true);
-const ResponsePart ResponsePart::STARTMUSIC_HW("<STARTMUSIC_HW>", "", true);
-const ResponsePart ResponsePart::STOPMUSIC("<STOPMUSIC>", "", true);
-const ResponsePart ResponsePart::HAWKWIND("<HAWKWIND>", "", true);
 const uint Conversation::BUFFERLEN = 16;
+ResponseParts *g_responseParts;
+
+ResponseParts::ResponseParts() :
+		NONE("<NONE>", "", true),
+		ASK("<ASK>", "", true),
+		END("<END>", "", true),
+		ATTACK("<ATTACK>", "", true),
+		BRAGGED("<BRAGGED>", "", true),
+		HUMBLE("<HUMBLE>", "", true),
+		ADVANCELEVELS("<ADVANCELEVELS>", "", true),
+		HEALCONFIRM("<HEALCONFIRM>", "", true),
+		STARTMUSIC_LB("<STARTMUSIC_LB>", "", true),
+		STARTMUSIC_HW("<STARTMUSIC_HW>", "", true),
+		STOPMUSIC("<STOPMUSIC>", "", true),
+		HAWKWIND("<HAWKWIND>", "", true) {
+	g_responseParts = this;
+}
+
+ResponseParts::~ResponseParts() {
+	g_responseParts = nullptr;
+}
+
+/*-------------------------------------------------------------------*/
 
 Response::Response(const Common::String &response) : _references(0) {
 	add(response);
@@ -202,12 +212,12 @@ const ResponsePart &Dialogue::getAction() const {
 
 	/* Does the person turn away from/attack you? */
 	if (prob >= _turnAwayProb)
-		return ResponsePart::NONE;
+		return g_responseParts->NONE;
 	else {
 		if (_attackProb - prob < 0x40)
-			return ResponsePart::END;
+			return g_responseParts->END;
 		else
-			return ResponsePart::ATTACK;
+			return g_responseParts->ATTACK;
 	}
 }
 

@@ -39,6 +39,7 @@ class GameController;
 class MapLoaders;
 class Moongates;
 class Music;
+class ResponseParts;
 struct SaveGame;
 class Screen;
 class Shrines;
@@ -73,6 +74,7 @@ public:
 	MapLoaders *_mapLoaders;
 	Moongates *_moongates;
 	Music *_music;
+	ResponseParts *_responseParts;
 	SaveGame *_saveGame;
 	Screen *_screen;
 	Shrines *_shrines;

@@ -39,20 +39,6 @@ class Script;
  */
 class ResponsePart {
 public:
-	// the valid command response parts
-	static const ResponsePart NONE;
-	static const ResponsePart ASK;
-	static const ResponsePart END;
-	static const ResponsePart ATTACK;
-	static const ResponsePart BRAGGED;
-	static const ResponsePart HUMBLE;
-	static const ResponsePart ADVANCELEVELS;
-	static const ResponsePart HEALCONFIRM;
-	static const ResponsePart STARTMUSIC_LB;
-	static const ResponsePart STARTMUSIC_HW;
-	static const ResponsePart STOPMUSIC;
-	static const ResponsePart HAWKWIND;
-
 	ResponsePart(const Common::String &value, const Common::String &arg = "", bool command = false);
 
 	operator Common::String() const;
@@ -63,6 +49,30 @@ private:
 	Common::String _value, _arg;
 	bool _command;
 };
+
+/**
+ * A list of valid command response parts
+ */
+class ResponseParts {
+public:
+	const ResponsePart NONE;
+	const ResponsePart ASK;
+	const ResponsePart END;
+	const ResponsePart ATTACK;
+	const ResponsePart BRAGGED;
+	const ResponsePart HUMBLE;
+	const ResponsePart ADVANCELEVELS;
+	const ResponsePart HEALCONFIRM;
+	const ResponsePart STARTMUSIC_LB;
+	const ResponsePart STARTMUSIC_HW;
+	const ResponsePart STOPMUSIC;
+	const ResponsePart HAWKWIND;
+
+	ResponseParts();
+	~ResponseParts();
+};
+
+extern ResponseParts *g_responseParts;
 
 /**
  * A static response.  Each response can be made up of any number of

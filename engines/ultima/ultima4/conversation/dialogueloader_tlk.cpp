@@ -103,8 +103,8 @@ Dialogue *U4TlkDialogueLoader::load(void *source) {
 	Response *yes = new Response(strings[8]);
 	Response *no = new Response(strings[9]);
 	if (humilityTestQuestion) {
-		yes->add(ResponsePart::BRAGGED);
-		no->add(ResponsePart::HUMBLE);
+		yes->add(g_responseParts->BRAGGED);
+		no->add(g_responseParts->HUMBLE);
 	}
 	dlg->setQuestion(new Dialogue::Question(strings[7], yes, no));
 
@@ -116,16 +116,16 @@ Dialogue *U4TlkDialogueLoader::load(void *source) {
 
 	switch (qtrigger) {
 	case JOB:
-		job->add(ResponsePart::ASK);
+		job->add(g_responseParts->ASK);
 		break;
 	case HEALTH:
-		health->add(ResponsePart::ASK);
+		health->add(g_responseParts->ASK);
 		break;
 	case KEYWORD1:
-		kw1->add(ResponsePart::ASK);
+		kw1->add(g_responseParts->ASK);
 		break;
 	case KEYWORD2:
-		kw2->add(ResponsePart::ASK);
+		kw2->add(g_responseParts->ASK);
 		break;
 	case NONE:
 	default:
@@ -149,7 +149,7 @@ Dialogue *U4TlkDialogueLoader::load(void *source) {
 	dlg->addKeyword("join", new Response(Common::String("\n") + dlg->getPronoun() + " says: I cannot join thee."));
 
 	Response *bye = new Response("\nBye.");
-	bye->add(ResponsePart::END);
+	bye->add(g_responseParts->END);
 	dlg->addKeyword("bye", bye);
 	dlg->addKeyword("", bye);
 

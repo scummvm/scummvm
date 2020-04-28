@@ -79,7 +79,7 @@ Dialogue *U4LBDialogueLoader::load(void *source) {
 	                             "of highest Virtue may enter this Chamber, one such as an Avatar!!!\n"));
 
 	Response *heal = new Response("\n\n\n\n\n\nHe says: I am\nwell, thank ye.");
-	heal->add(ResponsePart::HEALCONFIRM);
+	heal->add(g_responseParts->HEALCONFIRM);
 	dlg->addKeyword("heal", heal);
 
 	Response *bye;
@@ -87,8 +87,8 @@ Dialogue *U4LBDialogueLoader::load(void *source) {
 		bye = new Response("Lord British says: Fare thee well my friends!");
 	else
 		bye = new Response("Lord British says: Fare thee well my friend!");
-	bye->add(ResponsePart::STOPMUSIC);
-	bye->add(ResponsePart::END);
+	bye->add(g_responseParts->STOPMUSIC);
+	bye->add(g_responseParts->END);
 	dlg->addKeyword("bye", bye);
 	dlg->addKeyword("", bye);
 
@@ -176,7 +176,7 @@ Response *lordBritishGetHelp(const DynamicResponse *resp) {
 
 Response *lordBritishGetIntro(const DynamicResponse *resp) {
 	Response *intro = new Response("");
-	intro->add(ResponsePart::STARTMUSIC_LB);
+	intro->add(g_responseParts->STARTMUSIC_LB);
 
 	if (g_ultima->_saveGame->_lbIntro) {
 		if (g_ultima->_saveGame->_members == 1) {
@@ -197,7 +197,7 @@ Response *lordBritishGetIntro(const DynamicResponse *resp) {
 		// Lord British automatically adds "What would thou ask of me?"
 
 		// Check levels here, just like the original!
-		intro->add(ResponsePart::ADVANCELEVELS);
+		intro->add(g_responseParts->ADVANCELEVELS);
 	}
 
 	else {
