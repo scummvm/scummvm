@@ -611,7 +611,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 	return new MacFONTFont(data);
 }
 
-#define howmany(x, y)	(((x)+((y)-1))/(y))
+#define wholedivide(x, y)	(((x)+((y)-1))/(y))
 
 static void countupScore(int *dstGray, int x, int y, int bbw, int bbh, float scale) {
 	int newbbw = bbw * scale;
@@ -623,8 +623,8 @@ static void countupScore(int *dstGray, int x, int y, int bbw, int bbh, float sca
 
 	int newxbegin = x_ / bbw;
 	int newybegin = y_ / bbh;
-	int newxend = howmany(x1, bbw);
-	int newyend = howmany(y1, bbh);
+	int newxend = wholedivide(x1, bbw);
+	int newyend = wholedivide(y1, bbh);
 
 	for (int newy = newybegin; newy < newyend; newy++) {
 		for (int newx = newxbegin; newx < newxend; newx++) {
