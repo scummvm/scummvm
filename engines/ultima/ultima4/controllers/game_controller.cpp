@@ -43,8 +43,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using namespace std;
-
 GameController *g_game = nullptr;
 
 static const MouseArea MOUSE_AREAS[] = {

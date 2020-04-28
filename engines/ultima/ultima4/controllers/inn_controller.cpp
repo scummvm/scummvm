@@ -29,8 +29,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-void innTimer(void *data);
-
 InnController::InnController() {
 	_map = nullptr;
 	/*

@@ -27,8 +27,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using namespace std;
-
 Config *Config::_instance;
 
 Config::Config() {

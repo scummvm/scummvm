@@ -46,11 +46,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using namespace std;
-
-Common::String profileName;
-bool useProfile;
-
 IntroController *g_intro;
 
 #define INTRO_MAP_HEIGHT 5
@@ -197,7 +192,8 @@ IntroController::IntroController() : Controller(1),
 		_title(_titles.begin()),     // element iterator
 		_transparentIndex(13),       // palette index for transparency
 		_transparentColor(),         // palette color for transparency
-		_bSkipTitles(false) {
+		_bSkipTitles(false),
+		_useProfile(false) {
 	Common::fill(&_questionTree[0], &_questionTree[15], -1);
 
 	// initialize menus
@@ -599,8 +595,8 @@ void IntroController::updateScreen() {
 		drawMap();
 		drawBeasties();
 		// display the profile name if a local profile is being used
-		if (useProfile)
-			g_screen->screenTextAt(40 - profileName.size(), 24, "%s", profileName.c_str());
+		if (_useProfile)
+			g_screen->screenTextAt(40 - _profileName.size(), 24, "%s", _profileName.c_str());
 		break;
 
 	case INTRO_MENU:

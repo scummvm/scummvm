@@ -359,6 +359,8 @@ private:
 	IntroObjectState *_objectStateTable;
 
 	bool _justInitiatedNewGame;
+	Common::String _profileName;
+	bool _useProfile;
 
 	//
 	// Title defs, structs, methods, and data members

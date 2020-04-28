@@ -50,7 +50,6 @@ int xu4_random(int upperRange) {
 }
 
 Common::String &trim(Common::String &val, const Common::String &chars_to_trim) {
-	using namespace std;
 	Common::String::iterator i;
 	if (val.size()) {
 		size_t pos;
@@ -63,7 +62,6 @@ Common::String &trim(Common::String &val, const Common::String &chars_to_trim) {
 }
 
 Common::String &lowercase(Common::String &val) {
-	using namespace std;
 	Common::String::iterator i;
 	for (i = val.begin(); i != val.end(); i++)
 		*i = tolower(*i);
@@ -71,7 +69,6 @@ Common::String &lowercase(Common::String &val) {
 }
 
 Common::String &uppercase(Common::String &val) {
-	using namespace std;
 	Common::String::iterator i;
 	for (i = val.begin(); i != val.end(); i++)
 		*i = toupper(*i);

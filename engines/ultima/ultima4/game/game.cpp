@@ -74,8 +74,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using namespace std;
-
 /*-----------------*/
 /* Functions BEGIN */
 
