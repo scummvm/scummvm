@@ -181,7 +181,7 @@ void interpret(CONTEXT, Aaddr adr) {
 		case C_CURVAR:
 			switch (I_OP(i)) {
 			case V_PARAM:
-				if (stpflg) printf("PARAM \t%5u\t\t(%ld)", top(), params[top() - 1].code);
+				if (stpflg) printf("PARAM \t%5lu\t\t(%ld)", top(), params[top() - 1].code);
 				push(params[pop() - 1].code);
 				break;
 			case V_CURLOC:
