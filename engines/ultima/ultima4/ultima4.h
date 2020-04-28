@@ -36,6 +36,7 @@ class Context;
 class Death;
 class DialogueLoaders;
 class ImageLoaders;
+class Items;
 class GameController;
 class MapLoaders;
 class Moongates;
@@ -73,6 +74,7 @@ public:
 	DialogueLoaders *_dialogueLoaders;
 	ImageLoaders *_imageLoaders;
 	GameController *_game;
+	Items *_items;
 	MapLoaders *_mapLoaders;
 	Moongates *_moongates;
 	Music *_music;

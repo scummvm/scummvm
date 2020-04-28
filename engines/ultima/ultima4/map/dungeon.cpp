@@ -122,14 +122,14 @@ void dungeonSearch(void) {
 
 	default: {
 		/* see if there is an item at the current location (stones on altars, etc.) */
-		item = itemAtLocation(dungeon, g_context->_location->_coords);
+		item = g_items->itemAtLocation(dungeon, g_context->_location->_coords);
 		if (item) {
-			if (item->_isItemInInventory && (*item->_isItemInInventory)(item->_data)) {
+			if (item->_isItemInInventory && (g_items->*(item->_isItemInInventory))(item->_data)) {
 				g_screen->screenMessage("Nothing Here!\n");
 			} else {
 				if (item->_name)
 					g_screen->screenMessage("You find...\n%s!\n", item->_name);
-				(*item->_putItemInInventory)(item->_data);
+				(g_items->*(item->_putItemInInventory))(item->_data);
 			}
 		} else
 			g_screen->screenMessage("\nYou find Nothing!\n");

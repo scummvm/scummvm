@@ -44,177 +44,156 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
+Items *g_items;
 
-DestroyAllCreaturesCallback destroyAllCreaturesCallback;
-
-void itemSetDestroyAllCreaturesCallback(DestroyAllCreaturesCallback callback) {
-	destroyAllCreaturesCallback = callback;
-}
-
-int needStoneNames = 0;
-byte stoneMask = 0;
-
-bool isRuneInInventory(int virt);
-void putRuneInInventory(int virt);
-bool isStoneInInventory(int virt);
-void putStoneInInventory(int virt);
-bool isItemInInventory(int item);
-bool isSkullInInventory(int item);
-void putItemInInventory(int item);
-void useBBC(int item);
-void useHorn(int item);
-void useWheel(int item);
-void useSkull(int item);
-void useStone(int item);
-void useKey(int item);
-bool isMysticInInventory(int mystic);
-void putMysticInInventory(int mystic);
-bool isWeaponInInventory(int weapon);
-void putWeaponInInventory(int weapon);
-void useTelescope(int notused);
-bool isReagentInInventory(int reag);
-void putReagentInInventory(int reag);
-bool isAbyssOpened(const Portal *p);
-void itemHandleStones(const Common::String &color);
-
-static const ItemLocation ITEMS[] = {
+const ItemLocation Items::ITEMS[N_ITEMS] = {
 	{
 		"Mandrake Root", nullptr, "mandrake1",
-		&isReagentInInventory, &putReagentInInventory, nullptr, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY
+		&Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY
 	},
 	{
 		"Mandrake Root", nullptr, "mandrake2",
-		&isReagentInInventory, &putReagentInInventory, nullptr, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY
+		&Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY
 	},
 	{
 		"Nightshade", nullptr, "nightshade1",
-		&isReagentInInventory, &putReagentInInventory, nullptr, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY
+		&Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY
 	},
 	{
 		"Nightshade", nullptr, "nightshade2",
-		&isReagentInInventory, &putReagentInInventory, nullptr, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY
+		&Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY
 	},
 	{
 		"the Bell of Courage", "bell", "bell",
-		&isItemInInventory, &putItemInInventory, &useBBC, ITEM_BELL, 0
+		&Items::isItemInInventory, &Items::putItemInInventory, &Items::useBBC, ITEM_BELL, 0
 	},
 	{
 		"the Book of Truth", "book", "book",
-		&isItemInInventory, &putItemInInventory, &useBBC, ITEM_BOOK, 0
+		&Items::isItemInInventory, &Items::putItemInInventory, &Items::useBBC, ITEM_BOOK, 0
 	},
 	{
 		"the Candle of Love", "candle", "candle",
-		&isItemInInventory, &putItemInInventory, &useBBC, ITEM_CANDLE, 0
+		&Items::isItemInInventory, &Items::putItemInInventory, &Items::useBBC, ITEM_CANDLE, 0
 	},
 	{
 		"A Silver Horn", "horn", "horn",
-		&isItemInInventory, &putItemInInventory, &useHorn, ITEM_HORN, 0
+		&Items::isItemInInventory, &Items::putItemInInventory, &Items::useHorn, ITEM_HORN, 0
 	},
 	{
 		"the Wheel from the H.M.S. Cape", "wheel", "wheel",
-		&isItemInInventory, &putItemInInventory, &useWheel, ITEM_WHEEL, 0
+		&Items::isItemInInventory, &Items::putItemInInventory, &Items::useWheel, ITEM_WHEEL, 0
 	},
 	{
 		"the Skull of Modain the Wizard", "skull", "skull",
-		&isSkullInInventory, &putItemInInventory, &useSkull, ITEM_SKULL, SC_NEWMOONS
+		&Items::isSkullInInventory, &Items::putItemInInventory, &Items::useSkull, ITEM_SKULL, SC_NEWMOONS
 	},
 	{
 		"the Red Stone", "red", "redstone",
-		&isStoneInInventory, &putStoneInInventory, &useStone, STONE_RED, 0
+		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_RED, 0
 	},
 	{
 		"the Orange Stone", "orange", "orangestone",
-		&isStoneInInventory, &putStoneInInventory, &useStone, STONE_ORANGE, 0
+		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_ORANGE, 0
 	},
 	{
 		"the Yellow Stone", "yellow", "yellowstone",
-		&isStoneInInventory, &putStoneInInventory, &useStone, STONE_YELLOW, 0
+		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_YELLOW, 0
 	},
 	{
 		"the Green Stone", "green", "greenstone",
-		&isStoneInInventory, &putStoneInInventory, &useStone, STONE_GREEN, 0
+		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_GREEN, 0
 	},
 	{
 		"the Blue Stone", "blue", "bluestone",
-		&isStoneInInventory, &putStoneInInventory, &useStone, STONE_BLUE, 0
+		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_BLUE, 0
 	},
 	{
 		"the Purple Stone", "purple", "purplestone",
-		&isStoneInInventory, &putStoneInInventory, &useStone, STONE_PURPLE, 0
+		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_PURPLE, 0
 	},
 	{
 		"the Black Stone", "black", "blackstone",
-		&isStoneInInventory, &putStoneInInventory, &useStone, STONE_BLACK, SC_NEWMOONS
+		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_BLACK, SC_NEWMOONS
 	},
 	{
 		"the White Stone", "white", "whitestone",
-		&isStoneInInventory, &putStoneInInventory, &useStone, STONE_WHITE, 0
+		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_WHITE, 0
 	},
 
 	/* handlers for using generic objects */
-	{ nullptr, "stone",  nullptr, &isStoneInInventory, nullptr, &useStone, -1, 0 },
-	{ nullptr, "stones", nullptr, &isStoneInInventory, nullptr, &useStone, -1, 0 },
-	{ nullptr, "key",    nullptr, &isItemInInventory, nullptr, &useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0 },
-	{ nullptr, "keys",   nullptr, &isItemInInventory, nullptr, &useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0 },
+	{ nullptr, "stone",  nullptr, &Items::isStoneInInventory, nullptr, &Items::useStone, -1, 0 },
+	{ nullptr, "stones", nullptr, &Items::isStoneInInventory, nullptr, &Items::useStone, -1, 0 },
+	{ nullptr, "key",    nullptr, &Items::isItemInInventory, nullptr, &Items::useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0 },
+	{ nullptr, "keys",   nullptr, &Items::isItemInInventory, nullptr, &Items::useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0 },
 
 	/* Lycaeum telescope */
-	{ nullptr, nullptr, "telescope", nullptr, &useTelescope, nullptr, 0, 0 },
+	{ nullptr, nullptr, "telescope", nullptr, &Items::useTelescope, nullptr, 0, 0 },
 
 	{
 		"Mystic Armor", nullptr, "mysticarmor",
-		&isMysticInInventory, &putMysticInInventory, nullptr, ARMR_MYSTICROBES, SC_FULLAVATAR
+		&Items::isMysticInInventory, &Items::putMysticInInventory, nullptr, ARMR_MYSTICROBES, SC_FULLAVATAR
 	},
 	{
 		"Mystic Swords", nullptr, "mysticswords",
-		&isMysticInInventory, &putMysticInInventory, nullptr, WEAP_MYSTICSWORD, SC_FULLAVATAR
+		&Items::isMysticInInventory, &Items::putMysticInInventory, nullptr, WEAP_MYSTICSWORD, SC_FULLAVATAR
 	},
 	{
 		"the sulfury remains of an ancient Sosarian Laser Gun. It turns to ash in your fingers", nullptr, "lasergun", // lol, where'd that come from?
 		//Looks like someone was experimenting with "maps.xml". It effectively increments sulfur ash by one due to '16' being an invalid weapon index.
-		&isWeaponInInventory, &putWeaponInInventory, nullptr, 16, 0
+		&Items::isWeaponInInventory, &Items::putWeaponInInventory, nullptr, 16, 0
 	},
 	{
 		"the rune of Honesty", nullptr, "honestyrune",
-		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_HONESTY, 0
+		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_HONESTY, 0
 	},
 	{
 		"the rune of Compassion", nullptr, "compassionrune",
-		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_COMPASSION, 0
+		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_COMPASSION, 0
 	},
 	{
 		"the rune of Valor", nullptr, "valorrune",
-		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_VALOR, 0
+		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_VALOR, 0
 	},
 	{
 		"the rune of Justice", nullptr, "justicerune",
-		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_JUSTICE, 0
+		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_JUSTICE, 0
 	},
 	{
 		"the rune of Sacrifice", nullptr, "sacrificerune",
-		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_SACRIFICE, 0
+		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_SACRIFICE, 0
 	},
 	{
 		"the rune of Honor", nullptr, "honorrune",
-		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_HONOR, 0
+		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_HONOR, 0
 	},
 	{
 		"the rune of Spirituality", nullptr, "spiritualityrune",
-		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_SPIRITUALITY, 0
+		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_SPIRITUALITY, 0
 	},
 	{
 		"the rune of Humility", nullptr, "humilityrune",
-		&isRuneInInventory, &putRuneInInventory, nullptr, RUNE_HUMILITY, 0
+		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_HUMILITY, 0
 	}
 };
 
-#define N_ITEMS (sizeof(ITEMS) / sizeof(ITEMS[0]))
+Items::Items() : destroyAllCreaturesCallback(nullptr),
+		needStoneNames(0), stoneMask(0) {
+	g_items = this;
+}
 
-bool isRuneInInventory(int virt) {
+Items::~Items() {
+	g_items = nullptr;
+}
+
+void Items::setDestroyAllCreaturesCallback(DestroyAllCreaturesCallback callback) {
+	destroyAllCreaturesCallback = callback;
+}
+
+bool Items::isRuneInInventory(int virt) {
 	return g_ultima->_saveGame->_runes & virt;
 }
 
-void putRuneInInventory(int virt) {
+void Items::putRuneInInventory(int virt) {
 	g_context->_party->member(0)->awardXp(100);
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
 	g_ultima->_saveGame->_runes |= virt;
@@ -252,7 +231,7 @@ void putRuneInInventory(int virt) {
 	g_ultima->_saveGame->_lastReagent = g_ultima->_saveGame->_moves & 0xF0;
 }
 
-bool isStoneInInventory(int virt) {
+bool Items::isStoneInInventory(int virt) {
 	/* generic test: does the party have any stones yet? */
 	if (virt == -1)
 		return (g_ultima->_saveGame->_stones > 0);
@@ -260,7 +239,7 @@ bool isStoneInInventory(int virt) {
 	else return g_ultima->_saveGame->_stones & virt;
 }
 
-void putStoneInInventory(int virt) {
+void Items::putStoneInInventory(int virt) {
 	g_context->_party->member(0)->awardXp(200);
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
 	g_ultima->_saveGame->_stones |= virt;
@@ -298,15 +277,15 @@ void putStoneInInventory(int virt) {
 	g_ultima->_saveGame->_lastReagent = g_ultima->_saveGame->_moves & 0xF0;
 }
 
-bool isItemInInventory(int item) {
+bool Items::isItemInInventory(int item) {
 	return g_ultima->_saveGame->_items & item;
 }
 
-bool isSkullInInventory(int unused) {
+bool Items::isSkullInInventory(int unused) {
 	return (g_ultima->_saveGame->_items & (ITEM_SKULL | ITEM_SKULL_DESTROYED));
 }
 
-void putItemInInventory(int item) {
+void Items::putItemInInventory(int item) {
 	g_context->_party->member(0)->awardXp(400);
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
 	g_ultima->_saveGame->_items |= item;
@@ -348,10 +327,7 @@ void putItemInInventory(int item) {
 	g_ultima->_saveGame->_lastReagent = g_ultima->_saveGame->_moves & 0xF0;
 }
 
-/**
- * Use bell, book, or candle on the entrance to the Abyss
- */
-void useBBC(int item) {
+void Items::useBBC(int item) {
 	Coords abyssEntrance(0xe9, 0xe9);
 	/* on top of the Abyss entrance */
 	if (g_context->_location->_coords == abyssEntrance) {
@@ -384,28 +360,19 @@ void useBBC(int item) {
 	else g_screen->screenMessage("\nHmm...No effect!\n");
 }
 
-/**
- * Uses the silver horn
- */
-void useHorn(int item) {
+void Items::useHorn(int item) {
 	g_screen->screenMessage("\nThe Horn sounds an eerie tone!\n");
 	g_context->_aura->set(Aura::HORN, 10);
 }
 
-/**
- * Uses the wheel (if on board a ship)
- */
-void useWheel(int item) {
+void Items::useWheel(int item) {
 	if ((g_context->_transportContext == TRANSPORT_SHIP) && (g_ultima->_saveGame->_shipHull == 50)) {
 		g_screen->screenMessage("\nOnce mounted, the Wheel glows with a blue light!\n");
 		g_context->_party->setShipHull(99);
 	} else g_screen->screenMessage("\nHmm...No effect!\n");
 }
 
-/**
- * Uses or destroys the skull of Mondain
- */
-void useSkull(int item) {
+void Items::useSkull(int item) {
 	/* FIXME: check to see if the abyss must be opened first
 	   for the skull to be *able* to be destroyed */
 
@@ -443,10 +410,7 @@ void useSkull(int item) {
 	}
 }
 
-/**
- * Handles using the virtue stones in dungeon altar rooms and on dungeon altars
- */
-void useStone(int item) {
+void Items::useStone(int item) {
 	MapCoords coords;
 	byte stone = static_cast<byte>(item);
 
@@ -613,11 +577,11 @@ void useStone(int item) {
 	// That doesn't match U4DOS; does it match another?
 }
 
-void useKey(int item) {
+void Items::useKey(int item) {
 	g_screen->screenMessage("\nNo place to Use them!\n");
 }
 
-bool isMysticInInventory(int mystic) {
+bool Items::isMysticInInventory(int mystic) {
 	/* FIXME: you could feasibly get more mystic weapons and armor if you
 	   have 8 party members and equip them all with everything,
 	   then search for Mystic Weapons/Armor again
@@ -637,7 +601,7 @@ bool isMysticInInventory(int mystic) {
 	return false;
 }
 
-void putMysticInInventory(int mystic) {
+void Items::putMysticInInventory(int mystic) {
 	g_context->_party->member(0)->awardXp(400);
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
 	if (mystic == WEAP_MYSTICSWORD)
@@ -649,7 +613,7 @@ void putMysticInInventory(int mystic) {
 	g_ultima->_saveGame->_lastReagent = g_ultima->_saveGame->_moves & 0xF0;
 }
 
-bool isWeaponInInventory(int weapon) {
+bool Items::isWeaponInInventory(int weapon) {
 	if (g_ultima->_saveGame->_weapons[weapon])
 		return true;
 	else {
@@ -661,11 +625,11 @@ bool isWeaponInInventory(int weapon) {
 	return false;
 }
 
-void putWeaponInInventory(int weapon) {
+void Items::putWeaponInInventory(int weapon) {
 	g_ultima->_saveGame->_weapons[weapon]++;
 }
 
-void useTelescope(int notused) {
+void Items::useTelescope(int notused) {
 	g_screen->screenMessage("You see a knob\non the telescope\nmarked A-P\nYou Select:");
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSConversationChoiceHelper telescopeHelper;
@@ -679,11 +643,11 @@ void useTelescope(int notused) {
 	gamePeerCity(choice, nullptr);
 }
 
-bool isReagentInInventory(int reag) {
+bool Items::isReagentInInventory(int reag) {
 	return false;
 }
 
-void putReagentInInventory(int reag) {
+void Items::putReagentInInventory(int reag) {
 	g_context->_party->adjustKarma(KA_FOUND_ITEM);
 	g_ultima->_saveGame->_reagents[reag] += xu4_random(8) + 2;
 	g_ultima->_saveGame->_lastReagent = g_ultima->_saveGame->_moves & 0xF0;
@@ -694,10 +658,7 @@ void putReagentInInventory(int reag) {
 	}
 }
 
-/**
- * Returns true if the specified conditions are met to be able to get the item
- */
-bool itemConditionsMet(byte conditions) {
+bool Items::itemConditionsMet(byte conditions) {
 	int i;
 
 	if ((conditions & SC_NEWMOONS) &&
@@ -718,7 +679,7 @@ bool itemConditionsMet(byte conditions) {
 	return true;
 }
 
-const ItemLocation *itemAtLocation(const Map *map, const Coords &coords) {
+const ItemLocation *Items::itemAtLocation(const Map *map, const Coords &coords) {
 	uint i;
 	for (i = 0; i < N_ITEMS; i++) {
 		if (!ITEMS[i]._locationLabel)
@@ -730,24 +691,24 @@ const ItemLocation *itemAtLocation(const Map *map, const Coords &coords) {
 	return nullptr;
 }
 
-void itemUse(const Common::String &shortname) {
+void Items::itemUse(const Common::String &shortName) {
 	uint i;
 	const ItemLocation *item = nullptr;
 
 	for (i = 0; i < N_ITEMS; i++) {
 		if (ITEMS[i]._shortName &&
-		        scumm_stricmp(ITEMS[i]._shortName, shortname.c_str()) == 0) {
+		        scumm_stricmp(ITEMS[i]._shortName, shortName.c_str()) == 0) {
 
 			item = &ITEMS[i];
 
 			/* item name found, see if we have that item in our inventory */
-			if (!ITEMS[i]._isItemInInventory || (*ITEMS[i]._isItemInInventory)(ITEMS[i]._data)) {
+			if (!ITEMS[i]._isItemInInventory || (this->*(ITEMS[i]._isItemInInventory))(ITEMS[i]._data)) {
 
 				/* use the item, if we can! */
 				if (!item || !item->_useItem)
 					g_screen->screenMessage("\nNot a Usable item!\n");
 				else
-					(*item->_useItem)(ITEMS[i]._data);
+					(this->*(item->_useItem))(ITEMS[i]._data);
 			} else
 				g_screen->screenMessage("\nNone owned!\n");
 
@@ -761,23 +722,7 @@ void itemUse(const Common::String &shortname) {
 		g_screen->screenMessage("\nNot a Usable item!\n");
 }
 
-/**
- * Checks to see if the abyss was opened
- */
-bool isAbyssOpened(const Portal *p) {
-	/* make sure the bell, book and candle have all been used */
-	int items = g_ultima->_saveGame->_items;
-	int isopened = (items & ITEM_BELL_USED) && (items & ITEM_BOOK_USED) && (items & ITEM_CANDLE_USED);
-
-	if (!isopened)
-		g_screen->screenMessage("Enter Can't!\n");
-	return isopened;
-}
-
-/**
- * Handles naming of stones when used
- */
-void itemHandleStones(const Common::String &color) {
+void Items::itemHandleStones(const Common::String &color) {
 	bool found = false;
 
 	for (int i = 0; i < 8; i++) {
@@ -792,6 +737,16 @@ void itemHandleStones(const Common::String &color) {
 		g_screen->screenMessage("\nNone owned!\n");
 		stoneMask = 0; /* make sure stone mask is reset */
 	}
+}
+
+bool Items::isAbyssOpened(const Portal *p) {
+	/* make sure the bell, book and candle have all been used */
+	int items = g_ultima->_saveGame->_items;
+	int isopened = (items & ITEM_BELL_USED) && (items & ITEM_BOOK_USED) && (items & ITEM_CANDLE_USED);
+
+	if (!isopened)
+		g_screen->screenMessage("Enter Can't!\n");
+	return isopened;
 }
 
 } // End of namespace Ultima4

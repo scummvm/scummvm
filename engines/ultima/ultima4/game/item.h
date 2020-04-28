@@ -29,8 +29,9 @@
 namespace Ultima {
 namespace Ultima4 {
 
-class Map;
 class Coords;
+class Map;
+struct Portal;
 
 enum SearchCondition {
 	SC_NONE         = 0x00,
@@ -39,31 +40,108 @@ enum SearchCondition {
 	SC_REAGENTDELAY = 0x04
 };
 
+class Items;
+typedef bool (Items::*IsInInventoryProc)(int item);
+typedef void (Items::*InventoryActionProc)(int item);
+
+#include "common/pack-start.h"	// START STRUCT PACKING
 struct ItemLocation {
 	const char *_name;
 	const char *_shortName;
 	const char *_locationLabel;
-	bool (*_isItemInInventory)(int item);
-	void (*_putItemInInventory)(int item);
-	void (*_useItem)(int item);
+	IsInInventoryProc _isItemInInventory;
+	InventoryActionProc _putItemInInventory;
+	InventoryActionProc _useItem;
 	int _data;
 	byte _conditions;
-};
+} PACKED_STRUCT;
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 typedef void (*DestroyAllCreaturesCallback)();
+#define N_ITEMS 34
 
-void itemSetDestroyAllCreaturesCallback(DestroyAllCreaturesCallback callback);
+class Items {
+private:
 
-/**
- * Returns an item location record if a searchable object exists at
- * the given location. nullptr is returned if nothing is there.
- */
-const ItemLocation *itemAtLocation(const Map *map, const Coords &coords);
+	static const ItemLocation ITEMS[N_ITEMS];
+	DestroyAllCreaturesCallback destroyAllCreaturesCallback;
+	int needStoneNames;
+	byte stoneMask;
+private:
+	bool isRuneInInventory(int virt);
+	void putRuneInInventory(int virt);
+	bool isStoneInInventory(int virt);
+	void putStoneInInventory(int virt);
+	bool isItemInInventory(int item);
+	bool isSkullInInventory(int item);
+	void putItemInInventory(int item);
 
-/**
- * Uses the item indicated by 'shortname'
- */
-void itemUse(const Common::String &shortname);
+	/**
+	 * Use bell, book, or candle on the entrance to the Abyss
+	 */
+	void useBBC(int item);
+
+	/**
+	 * Uses the silver horn
+	 */
+	void useHorn(int item);
+
+	/**
+	 * Uses the wheel (if on board a ship)
+	 */
+	void useWheel(int item);
+
+	/**
+	 * Uses or destroys the skull of Mondain
+	 */
+	void useSkull(int item);
+
+	/**
+	 * Handles using the virtue stones in dungeon altar rooms and on dungeon altars
+	 */
+	void useStone(int item);
+	void useKey(int item);
+	bool isMysticInInventory(int mystic);
+	void putMysticInInventory(int mystic);
+	bool isWeaponInInventory(int weapon);
+	void putWeaponInInventory(int weapon);
+	void useTelescope(int notused);
+	bool isReagentInInventory(int reag);
+	void putReagentInInventory(int reag);
+
+	/**
+	 * Handles naming of stones when used
+	 */
+	void itemHandleStones(const Common::String &color);
+
+	/**
+	 * Returns true if the specified conditions are met to be able to get the item
+	 */
+	bool itemConditionsMet(byte conditions);
+public:
+	Items();
+	~Items();
+
+	void setDestroyAllCreaturesCallback(DestroyAllCreaturesCallback callback);
+
+	/**
+	 * Returns an item location record if a searchable object exists at
+	 * the given location. nullptr is returned if nothing is there.
+	 */
+	const ItemLocation *itemAtLocation(const Map *map, const Coords &coords);
+
+	/**
+	 * Uses the item indicated by 'shortname'
+	 */
+	void itemUse(const Common::String &shortName);
+
+	/**
+	 * Checks to see if the abyss was opened
+	 */
+	static bool isAbyssOpened(const Portal *p);
+};
+
+extern Items *g_items;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

@@ -28,6 +28,7 @@
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/maploader.h"
 #include "ultima/ultima4/map/mapmgr.h"
+#include "ultima/ultima4/game/item.h"
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/portal.h"
@@ -46,7 +47,6 @@ using Std::pair;
 
 MapMgr *MapMgr::_instance = nullptr;
 
-extern bool isAbyssOpened(const Portal *p);
 extern bool shrineCanEnter(const Portal *p);
 
 MapMgr *MapMgr::getInstance() {
@@ -286,7 +286,7 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 		if (prop == "shrine")
 			portal->_portalConditionsMet = &shrineCanEnter;
 		else if (prop == "abyss")
-			portal->_portalConditionsMet = &isAbyssOpened;
+			portal->_portalConditionsMet = &Items::isAbyssOpened;
 		else
 			error("unknown portalConditionsMet: %s", prop.c_str());
 	}

@@ -35,6 +35,7 @@
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/death.h"
 #include "ultima/ultima4/game/game.h"
+#include "ultima/ultima4/game/item.h"
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/weapon.h"
@@ -58,16 +59,17 @@ Ultima4Engine *g_ultima;
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _armors(nullptr),
 		_codex(nullptr), _config(nullptr), _context(nullptr), _death(nullptr),
-		_dialogueLoaders(nullptr), _game(nullptr), _music(nullptr), _imageLoaders(nullptr),
-		_mapLoaders(nullptr), _moongates(nullptr), _responseParts(nullptr), _saveGame(nullptr),
-		_screen(nullptr), _shrines(nullptr), _tileMaps(nullptr), _tileRules(nullptr),
-		_tileSets(nullptr), _weapons(nullptr) {
+		_dialogueLoaders(nullptr), _game(nullptr), _items(nullptr), _music(nullptr),
+		_imageLoaders(nullptr), _mapLoaders(nullptr), _moongates(nullptr),
+		_responseParts(nullptr), _saveGame(nullptr), _screen(nullptr), _shrines(nullptr),
+		_tileMaps(nullptr), _tileRules(nullptr), _tileSets(nullptr), _weapons(nullptr) {
 	g_ultima = this;
 	g_armors = nullptr;
 	g_codex = nullptr;
 	g_context = nullptr;
 	g_death = nullptr;
 	g_game = nullptr;
+	g_items = nullptr;
 	g_mapLoaders = nullptr;
 	g_moongates = nullptr;
 	g_responseParts = nullptr;
@@ -88,6 +90,7 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _dialogueLoaders;
 	delete _game;
 	delete _imageLoaders;
+	delete _items;
 	delete _mapLoaders;
 	delete _moongates;
 	delete _music;
@@ -117,6 +120,7 @@ bool Ultima4Engine::initialize() {
 	_context = new Context();
 	_death = new Death();
 	_dialogueLoaders = new DialogueLoaders();
+	_items = new Items();
 	_mapLoaders = new MapLoaders();
 	_moongates = new Moongates();
 	_responseParts = new ResponseParts();

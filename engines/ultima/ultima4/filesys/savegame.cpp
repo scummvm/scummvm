@@ -213,7 +213,7 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 	}
 
 	spellSetEffectCallback(&gameSpellEffect);
-	itemSetDestroyAllCreaturesCallback(&gameDestroyAllCreatures);
+	g_items->setDestroyAllCreaturesCallback(&gameDestroyAllCreatures);
 
 	g_context->_stats->resetReagentsMenu();
 

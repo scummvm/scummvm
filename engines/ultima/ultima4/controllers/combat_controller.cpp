@@ -998,7 +998,7 @@ bool CombatController::keyPressed(int key) {
 #ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString("Use which item?");
 #endif
-		itemUse(gameGetInput().c_str());
+		g_items->itemUse(gameGetInput().c_str());
 		break;
 
 	case 'v':

@@ -985,14 +985,14 @@ bool Debugger::cmdSearch(int argc, const char **argv) {
 	} else {
 		print("Searching...");
 
-		const ItemLocation *item = itemAtLocation(g_context->_location->_map, g_context->_location->_coords);
+		const ItemLocation *item = g_items->itemAtLocation(g_context->_location->_map, g_context->_location->_coords);
 		if (item) {
-			if (item->_isItemInInventory && (*item->_isItemInInventory)(item->_data)) {
+			if (item->_isItemInInventory && (g_items->*(item->_isItemInInventory))(item->_data)) {
 				print("%cNothing Here!%c", FG_GREY, FG_WHITE);
 			} else {
 				if (item->_name)
 					print("You find...\n%s!", item->_name);
-				(*item->_putItemInInventory)(item->_data);
+				(g_items->*(item->_putItemInInventory))(item->_data);
 			}
 		} else {
 			print("%cNothing Here!%c", FG_GREY, FG_WHITE);
@@ -1097,7 +1097,7 @@ bool Debugger::cmdUse(int argc, const char **argv) {
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSConversationHelper::setIntroString("Use which item?");
 #endif
-	itemUse(gameGetInput().c_str());
+	g_items->itemUse(gameGetInput().c_str());
 	return isDebuggerActive();
 }
 
