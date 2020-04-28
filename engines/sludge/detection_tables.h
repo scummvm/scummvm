@@ -274,22 +274,9 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"cubert",
 			"",
-			AD_ENTRY1s("gamedata", "0078eb54f63cc0a22e50f17d904fcfde", 26799),
-			Common::UNK_LANG,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOMIDI)
-		},
-		0
-	},
-
-	{
-		{
-			"cubert",
-			"",
 			AD_ENTRY1s("cubert.dat", "e70050692a0ab96e8753109793157ccd", 19677815),
 			Common::EN_ANY,
-			Common::kPlatformLinux,
+			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
 		},
@@ -302,7 +289,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("cubert.dat", "e70050692a0ab96e8753109793157ccd", 19677815),
 			Common::IT_ITA,
-			Common::kPlatformLinux,
+			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
 		},
@@ -315,7 +302,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("cubert.dat", "e70050692a0ab96e8753109793157ccd", 19677815),
 			Common::SE_SWE,
-			Common::kPlatformLinux,
+			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
 		},
@@ -328,7 +315,7 @@ static const SludgeGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("cubert.dat", "e70050692a0ab96e8753109793157ccd", 19677815),
 			Common::DE_DEU,
-			Common::kPlatformLinux,
+			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
 		},
