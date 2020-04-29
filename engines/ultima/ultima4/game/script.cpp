@@ -44,8 +44,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-extern SpellEffectCallback spellEffectCallback;
-
 /*
  * Script::Variable class
  */
@@ -1211,7 +1209,7 @@ Script::ReturnCode Script::heal(Shared::XMLNode *script, Shared::XMLNode *curren
 }
 
 Script::ReturnCode Script::castSpell(Shared::XMLNode *script, Shared::XMLNode *current) {
-	(*spellEffectCallback)('r', -1, SOUND_MAGIC);
+	g_spells->spellEffect('r', -1, SOUND_MAGIC);
 	if (_debug)
 		debug("<Spell effect>");
 

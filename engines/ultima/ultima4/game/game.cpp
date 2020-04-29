@@ -761,7 +761,7 @@ void showMixturesSuper(int page = 0) {
 	for (int i = 0; i < 13; i++) {
 		char buf[4];
 
-		const Spell *s = getSpell(i + 13 * page);
+		const Spell *s = g_spells->getSpell(i + 13 * page);
 		int line = i + 8;
 		g_screen->screenTextAt(2, line, "%s", s->_name);
 
@@ -835,7 +835,7 @@ void mixReagentsSuper() {
 			done = true;
 		} else {
 			spell -= 'a';
-			const Spell *s = getSpell(spell);
+			const Spell *s = g_spells->getSpell(spell);
 			g_screen->screenMessage("%s\n", s->_name);
 			page = (spell >= 13);
 			showMixturesSuper(page);

@@ -326,18 +326,18 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 	if (spell == -1)
 		return isDebuggerActive();
 
-	print("%s!", spellGetName(spell)); //Prints spell name at prompt
+	print("%s!", g_spells->spellGetName(spell)); //Prints spell name at prompt
 
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
 
 	// if we can't really cast this spell, skip the extra parameters
-	if (spellCheckPrerequisites(spell, player) != CASTERR_NOERROR) {
+	if (g_spells->spellCheckPrerequisites(spell, player) != CASTERR_NOERROR) {
 		gameCastSpell(spell, player, 0);
 		return isDebuggerActive();
 	}
 
 	// Get the final parameters for the spell
-	switch (spellGetParamType(spell)) {
+	switch (g_spells->spellGetParamType(spell)) {
 	case Spell::PARAM_NONE:
 		gameCastSpell(spell, player, 0);
 		break;
@@ -432,7 +432,8 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 			 * original Ultima IV (at least, in the Amiga version.)
 			 */
 			 //c->saveGame->_mixtures[castSpell]--;
-			g_context->_party->member(player)->adjustMp(-spellGetRequiredMP(spell));
+			g_context->_party->member(player)->adjustMp(
+				-g_spells->spellGetRequiredMP(spell));
 		}
 		break;
 	}
@@ -777,7 +778,7 @@ bool Debugger::cmdMixReagents(int argc, const char **argv) {
 				break;
 
 			int spell = choice - 'a';
-			print("%s", spellGetName(spell));
+			print("%s", g_spells->spellGetName(spell));
 
 			// ensure the mixtures for the spell isn't already maxed out
 			if (g_ultima->_saveGame->_mixtures[spell] == 99) {

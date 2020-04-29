@@ -212,7 +212,7 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 		gameFixupObjects(g_context->_location->_prev->_map);
 	}
 
-	spellSetEffectCallback(&gameSpellEffect);
+	g_spells->spellSetEffectCallback(&gameSpellEffect);
 	g_items->setDestroyAllCreaturesCallback(&gameDestroyAllCreatures);
 
 	g_context->_stats->resetReagentsMenu();

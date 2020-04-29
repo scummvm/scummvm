@@ -233,7 +233,7 @@ bool DebuggerActions::mixReagentsForSpellU4(int spell) {
 		if (choice == '\n' || choice == '\r' || choice == ' ') {
 			g_screen->screenMessage("\n\nYou mix the Reagents, and...\n");
 
-			if (spellMix(spell, &ingredients))
+			if (g_spells->spellMix(spell, &ingredients))
 				g_screen->screenMessage("Success!\n\n");
 			else
 				g_screen->screenMessage("It Fizzles!\n\n");
@@ -280,14 +280,14 @@ bool DebuggerActions::mixReagentsForSpellU5(int spell) {
 bool DebuggerActions::gameSpellMixHowMany(int spell, int num, Ingredients *ingredients) {
 	int i;
 
-	/* entered 0 mixtures, don't mix anything! */
+	// Entered 0 mixtures, don't mix anything!
 	if (num == 0) {
 		print("\nNone mixed!");
 		ingredients->revert();
 		return false;
 	}
 
-	/* if they ask for more than will give them 99, only use what they need */
+	// If they ask for more than will give them 99, only use what they need
 	if (num > 99 - g_ultima->_saveGame->_mixtures[spell]) {
 		num = 99 - g_ultima->_saveGame->_mixtures[spell];
 		print("\n%cOnly need %d!%c", FG_GREY, num, FG_WHITE);
@@ -295,7 +295,7 @@ bool DebuggerActions::gameSpellMixHowMany(int spell, int num, Ingredients *ingre
 
 	print("\nMixing %d...", num);
 
-	/* see if there's enough reagents to make number of mixtures requested */
+	// See if there's enough reagents to make number of mixtures requested
 	if (!ingredients->checkMultiple(num)) {
 		print("\n%cYou don't have enough reagents to mix %d spells!%c", FG_GREY, num, FG_WHITE);
 		ingredients->revert();
@@ -303,12 +303,12 @@ bool DebuggerActions::gameSpellMixHowMany(int spell, int num, Ingredients *ingre
 	}
 
 	print("\nYou mix the Reagents, and...");
-	if (spellMix(spell, ingredients)) {
+	if (g_spells->spellMix(spell, ingredients)) {
 		print("Success!\n");
-		/* mix the extra spells */
+		// Mix the extra spells
 		ingredients->multiply(num);
 		for (i = 0; i < num - 1; i++)
-			spellMix(spell, ingredients);
+			g_spells->spellMix(spell, ingredients);
 	} else {
 		print("It Fizzles!\n");
 	}
@@ -341,8 +341,8 @@ void DebuggerActions::gameCastSpell(uint spell, int caster, int param) {
 	SpellCastError spellError;
 	Common::String msg;
 
-	if (!spellCast(spell, caster, param, &spellError, true)) {
-		msg = spellGetErrorMessage(spell, spellError);
+	if (!g_spells->spellCast(spell, caster, param, &spellError, true)) {
+		msg = g_spells->spellGetErrorMessage(spell, spellError);
 		if (!msg.empty())
 			g_screen->screenMessage("%s", msg.c_str());
 	}

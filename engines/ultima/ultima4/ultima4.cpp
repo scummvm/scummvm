@@ -62,7 +62,8 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_dialogueLoaders(nullptr), _game(nullptr), _items(nullptr), _music(nullptr),
 		_imageLoaders(nullptr), _mapLoaders(nullptr), _moongates(nullptr),
 		_responseParts(nullptr), _saveGame(nullptr), _screen(nullptr), _shrines(nullptr),
-		_tileMaps(nullptr), _tileRules(nullptr), _tileSets(nullptr), _weapons(nullptr) {
+		_spells(nullptr), _tileMaps(nullptr), _tileRules(nullptr), _tileSets(nullptr),
+		_weapons(nullptr) {
 	g_ultima = this;
 	g_armors = nullptr;
 	g_codex = nullptr;
@@ -75,6 +76,7 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 	g_responseParts = nullptr;
 	g_screen = nullptr;
 	g_shrines = nullptr;
+	g_spells = nullptr;
 	g_tileMaps = nullptr;
 	g_tileRules = nullptr;
 	g_tileSets = nullptr;
@@ -98,6 +100,7 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _saveGame;
 	delete _screen;
 	delete _shrines;
+	delete _spells;
 	delete _tileMaps;
 	delete _tileRules;
 	delete _tileSets;
@@ -127,6 +130,7 @@ bool Ultima4Engine::initialize() {
 	_screen = new Screen();
 	_screen->init();
 	_shrines = new Shrines();
+	_spells = new Spells();
 	_tileRules = new TileRules();
 	_tileSets = new TileSets();
 	_tileMaps = new TileMaps();

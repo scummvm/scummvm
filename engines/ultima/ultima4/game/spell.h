@@ -44,7 +44,9 @@ enum SpellCastError {
 	CASTERR_WORLDMAPONLY       /* e.g. spell must be cast on the world map */
 };
 
-/* Field types for the Energy field spell */
+/**
+ * Field types for the Energy field spell
+ */
 enum EnergyFieldType {
 	ENERGYFIELD_NONE,
 	ENERGYFIELD_FIRE,
@@ -70,44 +72,124 @@ private:
 	unsigned short _reagents[REAG_MAX];
 };
 
+class Spells;
+typedef int (Spells::*SpellProc)(int);
+
 struct Spell {
 	enum Param {
-		PARAM_NONE,             /* none */
-		PARAM_PLAYER,           /* number of a player required */
-		PARAM_DIR,              /* direction required */
-		PARAM_TYPEDIR,          /* type of field and direction required (energy field) */
-		PARAM_PHASE,            /* phase required (gate) */
-		PARAM_FROMDIR           /* direction from required (winds) */
+		PARAM_NONE,             ///< None
+		PARAM_PLAYER,           ///< number of a player required
+		PARAM_DIR,              ///< direction required
+		PARAM_TYPEDIR,          ///< type of field and direction required (energy field)
+		PARAM_PHASE,            ///< phase required (gate)
+		PARAM_FROMDIR           ///< direction from required (winds)
 	};
 
 	enum SpecialEffects {
-		SFX_NONE,               /* none */
-		SFX_INVERT,             /* invert the screen (moongates, most normal spells) */
-		SFX_TREMOR              /* tremor spell */
+		SFX_NONE,               ///< none
+		SFX_INVERT,             ///< invert the screen (moongates, most normal spells)
+		SFX_TREMOR              ///< tremor spell
 	};
 
 	const char *_name;
 	int _components;
 	LocationContext _context;
 	TransportContext _transportContext;
-	int (*_spellFunc)(int);
+	SpellProc _spellFunc;
 	Param _paramType;
 	int _mp;
 };
 
 typedef void (*SpellEffectCallback)(int spell, int player, Sound sound);
+#define N_SPELLS 26
 
-void spellSetEffectCallback(SpellEffectCallback callback);
-const char *spellGetName(uint spell);
-int spellGetRequiredMP(uint spell);
-LocationContext spellGetContext(uint spell);
-TransportContext spellGetTransportContext(uint spell);
-Common::String spellGetErrorMessage(uint spell, SpellCastError error);
-int spellMix(uint spell, const Ingredients *ingredients);
-Spell::Param spellGetParamType(uint spell);
-SpellCastError spellCheckPrerequisites(uint spell, int character);
-bool spellCast(uint spell, int character, int param, SpellCastError *error, bool spellEffect);
-const Spell *getSpell(int i);
+class Spells {
+private:
+	static const Spell SPELL_LIST[N_SPELLS];
+	SpellEffectCallback spellEffectCallback;
+private:
+	int spellAwaken(int player);
+	int spellBlink(int dir);
+	int spellCure(int player);
+	int spellDispel(int dir);
+	int spellEField(int param);
+	int spellFireball(int dir);
+	int spellGate(int phase);
+	int spellHeal(int player);
+	int spellIceball(int dir);
+	int spellJinx(int unused);
+	int spellKill(int dir);
+	int spellLight(int unused);
+	int spellMMissle(int dir);
+	int spellNegate(int unused);
+	int spellOpen(int unused);
+	int spellProtect(int unused);
+	int spellRez(int player);
+	int spellQuick(int unused);
+	int spellSleep(int unused);
+	int spellTremor(int unused);
+	int spellUndead(int unused);
+	int spellView(int unsued);
+	int spellWinds(int fromdir);
+	int spellXit(int unused);
+	int spellYup(int unused);
+	int spellZdown(int unused);
+private:
+	CombatController *spellCombatController();
+
+	/**
+	 * Makes a special magic ranged attack in the given direction
+	 */
+	void spellMagicAttack(const Common::String &tilename, Direction dir, int minDamage, int maxDamage);
+	bool spellMagicAttackAt(const Coords &coords, MapTile attackTile, int attackDamage);
+
+	LocationContext spellGetContext(uint spell) const;
+	TransportContext spellGetTransportContext(uint spell) const;
+public:
+	/**
+	 * Constructor
+	 */
+	Spells();
+
+	/**
+	 * Destructor
+	 */
+	~Spells();
+
+	void spellSetEffectCallback(SpellEffectCallback callback);
+
+	void spellEffect(int spell, int player, Sound sound) {
+		(spellEffectCallback)(spell, player, sound);
+	}
+
+	/**
+	 * Mix reagents for a spell.  Fails and returns false if the reagents
+	 * selected were not correct.
+	 */
+	int spellMix(uint spell, const Ingredients *ingredients);
+
+	/**
+	 * Casts spell.  Fails and returns false if the spell cannot be cast.
+	 * The error code is updated with the reason for failure.
+	 */
+	bool spellCast(uint spell, int character, int param, SpellCastError *error, bool spellEffect);
+
+	Common::String spellGetErrorMessage(uint spell, SpellCastError error);
+
+	const char *spellGetName(uint spell) const;
+
+	/**
+	 * Checks some basic prerequistes for casting a spell.  Returns an
+	 * error if no mixture is available, the context is invalid, or the
+	 * character doesn't have enough magic points.
+	 */
+	SpellCastError spellCheckPrerequisites(uint spell, int character);
+	Spell::Param spellGetParamType(uint spell) const;
+	int spellGetRequiredMP(uint spell) const;
+	const Spell *getSpell(int i) const;
+};
+
+extern Spells *g_spells;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima
