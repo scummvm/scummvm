@@ -165,7 +165,7 @@ void MacText::chopChunk(const Common::U32String &str) {
 	// This happens when the previous run is finished only with
 	// empty formatting, or when we were adding text for the first time
 	if (chunk->text.empty() && str.empty()) {
-		D(9, "** splitString, replaced formatting");
+		D(9, "** splitString, replaced formatting, line %d", curLine);
 
 		_textLines[curLine].chunks.pop_back();
 
@@ -187,7 +187,7 @@ void MacText::chopChunk(const Common::U32String &str) {
 
 	chunk->text += text[0];
 
-	D(9, "** splitString, subchunk: \"%s\"", toPrintable(text[0].encode()).c_str());
+	D(9, "** splitString, subchunk: \"%s\" (%d lines, maxW: %d)", toPrintable(text[0].encode()).c_str(), text.size(), _maxWidth);
 
 	// We do not overlap, so we're done
 	if (text.size() == 1)
@@ -203,7 +203,7 @@ void MacText::chopChunk(const Common::U32String &str) {
 		_textLines.resize(curLine + 1);
 		_textLines[curLine].chunks.push_back(newchunk);
 
-		D(9, "** splitString, line: \"%s\"", toPrintable(text[i].encode()).c_str());
+		D(9, "** splitString, added line: \"%s\"", toPrintable(text[i].encode()).c_str());
 	}
 }
 
