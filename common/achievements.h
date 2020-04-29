@@ -73,23 +73,23 @@ public:
 	bool unsetActiveDomain();
 	bool isReady() { return _iniFile != nullptr; }
 
-	// Methods to manipulate individual achievements 
+	// Methods to manipulate individual achievements
 	bool setAchievement(const String &id, const String &displayedMessage);
 	bool isAchieved(const String &id);
 	bool clearAchievement(const String &id);
 
-	// Methods to manipulate individual statistics 
+	// Methods to manipulate individual statistics
 	int getStatInt(const String &id);
 	bool setStatInt(const String &id, int value);
 	float getStatFloat(const String &id);
 	bool setStatFloat(const String &id, float value);
 
-	// Methods to reset everything 
+	// Methods to reset everything
 	bool resetAllAchievements();
 	bool resetAllStats();
 
 private:
-	INIFile* _iniFile;
+	INIFile *_iniFile;
 	String _iniFileName;
 };
 
