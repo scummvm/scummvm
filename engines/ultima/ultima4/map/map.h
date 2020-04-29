@@ -122,7 +122,12 @@ public:
 	 */
 	int distance(const MapCoords &c, const class Map *map = nullptr) const;
 
-	static MapCoords nowhere;
+	/**
+	 * Returns true if the co-ordinates point to nowhere
+	 */
+	static MapCoords nowhere() {
+		return MapCoords(-1, -1, -1);
+	}
 };
 
 /**
@@ -250,7 +255,7 @@ public:
 	 * Alerts the guards that the avatar is doing something bad
 	 */
 	void alertGuards();
-	const MapCoords &getLabel(const Common::String &name) const;
+	MapCoords getLabel(const Common::String &name) const;
 
 	// u4dos compatibility
 	bool fillMonsterTable();

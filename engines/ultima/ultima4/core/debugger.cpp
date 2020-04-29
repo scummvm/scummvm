@@ -1346,7 +1346,7 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 
 	if (!found) {
 		MapCoords coords = g_context->_location->_map->getLabel(dest);
-		if (coords != MapCoords::nowhere) {
+		if (coords != MapCoords::nowhere()) {
 			print("%s", dest.c_str());
 			g_context->_location->_coords = coords;
 			found = true;

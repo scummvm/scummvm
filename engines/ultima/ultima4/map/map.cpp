@@ -41,11 +41,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-/**
- * MapCoords Class Implementation
- */
-MapCoords MapCoords::nowhere(-1, -1, -1);
-
 bool MapCoords::operator==(const MapCoords &a) const {
 	return (x == a.x) && (y == a.y) && (z == a.z);
 }
@@ -681,10 +676,11 @@ void Map::alertGuards() {
 	}
 }
 
-const MapCoords &Map::getLabel(const Common::String &name) const {
+MapCoords Map::getLabel(const Common::String &name) const {
 	Std::map<Common::String, MapCoords>::const_iterator i = _labels.find(name);
 	if (i == _labels.end())
-		return MapCoords::nowhere;
+		return MapCoords::nowhere();
+
 	return i->_value;
 }
 
