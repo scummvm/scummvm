@@ -45,8 +45,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using namespace Std;
-
 int chars_needed(const char *s, int columnmax, int linesdesired, int *real_lines);
 
 /**
@@ -355,8 +353,8 @@ Common::String Person::getIntro(Conversation *cnv) {
 
 Common::String Person::processResponse(Conversation *cnv, Response *response) {
 	Common::String text;
-	const vector<ResponsePart> &parts = response->getParts();
-	for (vector<ResponsePart>::const_iterator i = parts.begin(); i != parts.end(); i++) {
+	const Std::vector<ResponsePart> &parts = response->getParts();
+	for (Std::vector<ResponsePart>::const_iterator i = parts.begin(); i != parts.end(); i++) {
 
 		// check for command triggers
 		if (i->isCommand())
@@ -441,7 +439,7 @@ Common::String Person::getResponse(Conversation *cnv, const char *inquiry) {
 	}
 
 	else if (settings._debug && scumm_strnicmp(inquiry, "dump", 4) == 0) {
-		vector<Common::String> words = split(inquiry, " \t");
+		Std::vector<Common::String> words = split(inquiry, " \t");
 		if (words.size() <= 1)
 			reply = _dialogue->dump("");
 		else

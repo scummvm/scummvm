@@ -29,8 +29,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using namespace Std;
-
 bool Object::setDirection(Direction d) {
 	return _tile.setDirection(d);
 }
