@@ -24,6 +24,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
 
+ Wintermute:
+   - Added subsystem for tracking achievements, implemented for 10+ games.
+
  Xeen:
    - Add missing sprite drawer for enemies hit by Energy Blast.
 
