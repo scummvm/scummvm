@@ -14,11 +14,18 @@ For a more comprehensive changelog of the latest experimental code, see:
  Kyra:
    - Added support for the PC-98 version of Eye of the Beholder I.
 
+ Prince:
+   - Fixed inventory item descriptions display.
+   - Added English translation.
+
+ SCUMM:
+   - Switched palette for MM NES to simulate Sony CXA2025AS signal processor.
+
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
 
  Xeen:
-   - Add missing sprite drawer for enemies hit by Energy Blast
+   - Add missing sprite drawer for enemies hit by Energy Blast.
 
  Linux port:
    - Added option to use the system file browser instead of the ScummVM file browser.
