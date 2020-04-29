@@ -1010,6 +1010,9 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 		arraySize = d2.u.farr->size();
 	} else if (d2.type == PARRAY) {
 		arraySize = d2.u.parr->size();
+	} else {
+		warning("LC::compareArrays(): Called with wrong data types: %s and %s", d1.type2str(), d2.type2str());
+		return Datum(0);
 	}
 
 	Datum res;
