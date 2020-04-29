@@ -314,6 +314,8 @@ bool MacEditableText::processEvent(Common::Event &event) {
 		if (!_editable)
 			return false;
 
+		setActive(true);
+
 		if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
 			return false;
 		}
@@ -345,9 +347,6 @@ bool MacEditableText::processEvent(Common::Event &event) {
 		}
 	}
 
-	if (hasAllFocus())
-		return _parent->processEvent(event);	// Pass it to upstream
-
 	if (event.type == Common::EVENT_WHEELUP) {
 		scroll(-2);
 		return true;
@@ -362,6 +361,8 @@ bool MacEditableText::processEvent(Common::Event &event) {
 		return false;
 
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
+		setActive(true);
+
 		startMarking(event.mouse.x, event.mouse.y);
 
 		return true;
