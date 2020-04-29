@@ -27,8 +27,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
-
 Image *scalePoint(Image *src, int scale, int n);
 Image *scale2xBilinear(Image *src, int scale, int n);
 Image *scale2xSaI(Image *src, int scale, int N);

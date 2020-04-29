@@ -34,8 +34,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
-
 #define MAP_IS_OOB(mapptr, c) (((c).x) < 0 || ((c).x) >= (static_cast<int>((mapptr)->_width)) || ((c).y) < 0 || ((c).y) >= (static_cast<int>((mapptr)->_height)) || ((c).z) < 0 || ((c).z) >= (static_cast<int>((mapptr)->_levels)))
 
 class AnnotationMgr;

@@ -32,10 +32,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Std::map;
-using Common::String;
-using Std::vector;
-
 bool ImageInfo::hasBlackBackground() {
 	return this->_filetype == "image/x-u4raw";
 }
@@ -48,7 +44,7 @@ public:
 	Common::String _name;
 	Common::String _location;
 	Common::String _extends;
-	map<Common::String, ImageInfo *> _info;
+	Std::map<Common::String, ImageInfo *> _info;
 };
 
 ImageMgr *ImageMgr::_instance = nullptr;
@@ -104,7 +100,7 @@ void ImageMgr::init() {
 	 * register all the images declared in the config files
 	 */
 	const Config *config = Config::getInstance();
-	vector<ConfigElement> graphicsConf = config->getElement("graphics").getChildren();
+	Std::vector<ConfigElement> graphicsConf = config->getElement("graphics").getChildren();
 	for (Std::vector<ConfigElement>::iterator conf = graphicsConf.begin(); conf != graphicsConf.end(); conf++) {
 		if (conf->getName() == "imageset") {
 			ImageSet *set = loadImageSetFromConf(*conf);
@@ -130,7 +126,7 @@ ImageSet *ImageMgr::loadImageSetFromConf(const ConfigElement &conf) {
 	set->_location = conf.getString("location");
 	set->_extends = conf.getString("extends");
 
-	vector<ConfigElement> children = conf.getChildren();
+	Std::vector<ConfigElement> children = conf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() == "image") {
 			ImageInfo *info = loadImageInfoFromConf(*i);
@@ -163,7 +159,7 @@ ImageInfo *ImageMgr::loadImageInfoFromConf(const ConfigElement &conf) {
 	info->_fixup = static_cast<ImageFixup>(conf.getEnum("fixup", fixupEnumStrings));
 	info->_image = nullptr;
 
-	vector<ConfigElement> children = conf.getChildren();
+	Std::vector<ConfigElement> children = conf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() == "subimage") {
 			SubImage *subimage = loadSubImageFromConf(info, *i);
@@ -672,7 +668,7 @@ void ImageMgr::freeIntroBackgrounds() {
 	}
 }
 
-const vector<Common::String> &ImageMgr::getSetNames() {
+const Std::vector<Common::String> &ImageMgr::getSetNames() {
 	return _imageSetNames;
 }
 

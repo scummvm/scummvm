@@ -31,8 +31,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Std::vector;
-
 RGBA *U4PaletteLoader::_bwPalette = nullptr;
 RGBA *U4PaletteLoader::_egaPalette = nullptr;
 RGBA *U4PaletteLoader::_vgaPalette = nullptr;
@@ -201,7 +199,7 @@ RGBA *U4PaletteLoader::loadEgaPalette() {
 
 		_egaPalette = new RGBA[16];
 
-		vector<ConfigElement> paletteConf = config->getElement("egaPalette").getChildren();
+		Std::vector<ConfigElement> paletteConf = config->getElement("egaPalette").getChildren();
 		for (Std::vector<ConfigElement>::iterator i = paletteConf.begin(); i != paletteConf.end(); i++) {
 
 			if (i->getName() != "color")

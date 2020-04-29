@@ -31,9 +31,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
-using Std::vector;
-
 int soundInit(void) {
 	return SoundManager::getInstance()->init();
 }
@@ -74,9 +71,9 @@ int SoundManager::init() {
 	_soundFilenames.reserve(SOUND_MAX);
 	_soundChunk.resize(SOUND_MAX);
 
-	vector<ConfigElement> soundConfs = config->getElement("sound").getChildren();
-	vector<ConfigElement>::const_iterator i = soundConfs.begin();
-	vector<ConfigElement>::const_iterator theEnd = soundConfs.end();
+	Std::vector<ConfigElement> soundConfs = config->getElement("sound").getChildren();
+	Std::vector<ConfigElement>::const_iterator i = soundConfs.begin();
+	Std::vector<ConfigElement>::const_iterator theEnd = soundConfs.end();
 	for (; i != theEnd; ++i) {
 		if (i->getName() != "track")
 			continue;

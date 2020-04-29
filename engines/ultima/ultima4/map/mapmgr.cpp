@@ -42,9 +42,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Std::vector;
-using Std::pair;
-
 MapMgr *MapMgr::_instance = nullptr;
 
 extern bool shrineCanEnter(const Portal *p);
@@ -66,7 +63,7 @@ MapMgr::MapMgr() {
 	const Config *config = Config::getInstance();
 	Map *map;
 
-	vector<ConfigElement> maps = config->getElement("maps").getChildren();
+	Std::vector<ConfigElement> maps = config->getElement("maps").getChildren();
 	for (Std::vector<ConfigElement>::iterator i = maps.begin(); i != maps.end(); i++) {
 		map = initMapFromConf(*i);
 
@@ -83,7 +80,7 @@ MapMgr::~MapMgr() {
 void MapMgr::unloadMap(MapId id) {
 	delete _mapList[id];
 	const Config *config = Config::getInstance();
-	vector<ConfigElement> maps = config->getElement("maps").getChildren();
+	Std::vector<ConfigElement> maps = config->getElement("maps").getChildren();
 
 	for (Std::vector<ConfigElement>::const_iterator i = maps.begin(); i != maps.end(); ++i) {
 		if (id == static_cast<MapId>((*i).getInt("id"))) {
@@ -189,7 +186,7 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 	map->_tileSet = g_tileSets->get(mapConf.getString("tileset"));
 	map->_tileMap = g_tileMaps->get(mapConf.getString("tilemap"));
 
-	vector<ConfigElement> children = mapConf.getChildren();
+	Std::vector<ConfigElement> children = mapConf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() == "city") {
 			City *city = dynamic_cast<City *>(map);
@@ -221,7 +218,7 @@ void MapMgr::initCityFromConf(const ConfigElement &cityConf, City *city) {
 	city->_type = cityConf.getString("type");
 	city->_tlkFname = cityConf.getString("tlk_fname");
 
-	vector<ConfigElement> children = cityConf.getChildren();
+	Std::vector<ConfigElement> children = cityConf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() == "personrole")
 			city->_personRoles.push_back(initPersonRoleFromConf(*i));
@@ -305,7 +302,7 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 
 	portal->_exitPortal = portalConf.getBool("exits");
 
-	vector<ConfigElement> children = portalConf.getChildren();
+	Std::vector<ConfigElement> children = portalConf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() == "retroActiveDest") {
 			portal->_retroActiveDest = new PortalDestination();

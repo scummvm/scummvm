@@ -31,8 +31,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
-
 City::City() : Map() {
 }
 

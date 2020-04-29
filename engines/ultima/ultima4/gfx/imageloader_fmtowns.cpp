@@ -30,8 +30,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Std::vector;
-
 Image *FMTOWNSImageLoader::load(Common::File *file, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
 		error("dimensions not set for fmtowns image");

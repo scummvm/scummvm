@@ -32,9 +32,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-using Common::String;
-using Std::vector;
-
 TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 	TileAnimTransform *transform;
 	static const char *transformTypeEnumStrings[] = { "invert", "pixel", "scroll", "frame", "pixel_color", nullptr };
@@ -52,7 +49,7 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 		transform = new TileAnimPixelTransform(
 			conf.getInt("x"), conf.getInt("y"));
 
-		vector<ConfigElement> children = conf.getChildren();
+		Std::vector<ConfigElement> children = conf.getChildren();
 		for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 			if (i->getName() == "color") {
 				RGBA *rgba = loadColorFromConf(*i);
@@ -75,7 +72,7 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 			conf.getInt("x"), conf.getInt("y"),
 			conf.getInt("width"), conf.getInt("height"));
 
-		vector<ConfigElement> children = conf.getChildren();
+		Std::vector<ConfigElement> children = conf.getChildren();
 		for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 			if (i->getName() == "color") {
 				RGBA *rgba = loadColorFromConf(*i);
@@ -237,7 +234,7 @@ TileAnimContext *TileAnimContext::create(const ConfigElement &conf) {
 
 	// Add the transforms to the context
 	if (context) {
-		vector<ConfigElement> children = conf.getChildren();
+		Std::vector<ConfigElement> children = conf.getChildren();
 
 		for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 			if (i->getName() == "transform") {
@@ -271,7 +268,7 @@ bool TileAnimPlayerDirContext::isInContext(Tile *t, MapTile &mapTile, Direction 
 TileAnimSet::TileAnimSet(const ConfigElement &conf) {
 	_name = conf.getString("name");
 
-	vector<ConfigElement> children = conf.getChildren();
+	Std::vector<ConfigElement> children = conf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() == "tileanim") {
 			TileAnim *anim = new TileAnim(*i);
@@ -292,7 +289,7 @@ TileAnim::TileAnim(const ConfigElement &conf) : _random(0) {
 	if (conf.exists("random"))
 		_random = conf.getInt("random");
 
-	vector<ConfigElement> children = conf.getChildren();
+	Std::vector<ConfigElement> children = conf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() == "transform") {
 			TileAnimTransform *transform = TileAnimTransform::create(*i);

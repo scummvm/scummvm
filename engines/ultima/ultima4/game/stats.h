@@ -39,8 +39,6 @@ class MenuEvent;
 class Party;
 class PartyEvent;
 
-using Common::String;
-
 #define STATS_AREA_WIDTH 15
 #define STATS_AREA_HEIGHT 8
 #define STATS_AREA_X TEXT_AREA_X

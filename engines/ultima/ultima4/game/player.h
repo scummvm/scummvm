@@ -38,8 +38,6 @@ class Armor;
 class Party;
 class Weapon;
 
-using Common::String;
-
 typedef Std::vector<class PartyMember *> PartyMemberVector;
 
 #define ALL_PLAYERS -1
