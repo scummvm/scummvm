@@ -59,7 +59,7 @@ namespace Director {
 	}
 
 #define ARRBOUNDSCHECK(idx,array) \
-	if ((idx)-1 < 0 || (idx) > (array).u.farr->size()) { \
+	if ((idx)-1 < 0 || (idx) > (int)(array).u.farr->size()) { \
 		warning("%s: index out of bounds (%d of %d)", __FUNCTION__, (idx), (array).u.farr->size()); \
 		return; \
 	}
