@@ -218,6 +218,8 @@ public:
 	 */
 	void setActiveWidget(MacWidget *widget);
 
+	MacWidget *getActiveWidget() { return _activeWidget; }
+
 	void pushArrowCursor();
 	void pushBeamCursor();
 	void pushCrossHairCursor();

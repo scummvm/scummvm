@@ -545,6 +545,16 @@ bool MacWindow::processEvent(Common::Event &event) {
 
 		setHighlight(kBorderNone);
 		break;
+
+	case Common::EVENT_KEYDOWN:
+		if (!_editable)
+			return false;
+
+		if (_wm->getActiveWidget())
+			return _wm->getActiveWidget()->processEvent(event);
+
+		return false;
+
 	default:
 		return false;
 	}
