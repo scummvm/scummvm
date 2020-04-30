@@ -102,12 +102,14 @@ CameraProcess::CameraProcess(uint16 _itemnum) :
 
 	if (_itemNum) {
 		Item *item = getItem(_itemNum);
-
-		// Got it
 		if (item) {
 			item->setExtFlag(Item::EXT_CAMERA);
 			item->getLocation(_ex, _ey, _ez);
 			_ez += 20; //!!constant
+		} else {
+			_ex = 0;
+			_ey = 0;
+			_ez = 0;
 		}
 		return;
 	}

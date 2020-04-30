@@ -42,7 +42,8 @@ PathfinderProcess::PathfinderProcess() : Process(),
 }
 
 PathfinderProcess::PathfinderProcess(Actor *actor, ObjId item_, bool hit) :
-		_currentStep(0), _targetItem(item_), _hitMode(hit) {
+		_currentStep(0), _targetItem(item_), _hitMode(hit),
+		_targetX(0), _targetY(0), _targetZ(0) {
 	assert(actor);
 	_itemNum = actor->getObjId();
 	_type = 0x0204; // CONSTANT !
@@ -78,17 +79,11 @@ PathfinderProcess::PathfinderProcess(Actor *actor, ObjId item_, bool hit) :
 	actor->setActorFlag(Actor::ACT_PATHFINDING);
 }
 
-PathfinderProcess::PathfinderProcess(Actor *actor_,
-                                     int32 x, int32 y, int32 z) {
+PathfinderProcess::PathfinderProcess(Actor *actor_, int32 x, int32 y, int32 z) :
+		_targetX(x), _targetY(y), _targetZ(z), _targetItem(0), _currentStep(0),
+		_hitMode(false) {
 	assert(actor_);
 	_itemNum = actor_->getObjId();
-
-	_targetX = x;
-	_targetY = y;
-	_targetZ = z;
-	_targetItem = 0;
-
-	_currentStep = 0;
 
 	Pathfinder pf;
 	pf.init(actor_);

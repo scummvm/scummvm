@@ -995,7 +995,8 @@ void Actor::clearInCombat() {
 	if ((_actorFlags & ACT_INCOMBAT) == 0) return;
 
 	CombatProcess *cp = getCombatProcess();
-	cp->terminate();
+	if (cp)
+		cp->terminate();
 
 	clearActorFlag(ACT_INCOMBAT);
 }

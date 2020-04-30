@@ -36,7 +36,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(GravityProcess, Process)
 
 GravityProcess::GravityProcess()
-	: Process() {
+	: Process(), _xSpeed(0), _ySpeed(0), _zSpeed(0), _gravity(0) {
 
 }
 

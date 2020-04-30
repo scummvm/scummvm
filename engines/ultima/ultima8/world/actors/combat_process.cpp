@@ -44,18 +44,15 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(CombatProcess, Process)
 
-CombatProcess::CombatProcess() : Process() {
+CombatProcess::CombatProcess() : Process(), _target(0), _fixedTarget(0), _combatMode(CM_WAITING) {
 
 }
 
-CombatProcess::CombatProcess(Actor *actor_) {
+CombatProcess::CombatProcess(Actor *actor_) : _target(0), _fixedTarget(0), _combatMode(CM_WAITING) {
 	assert(actor_);
 	_itemNum = actor_->getObjId();
 
 	_type = 0x00F2; // CONSTANT !
-	_target = 0;
-	_fixedTarget = 0;
-	_combatMode = CM_WAITING;
 }
 
 void CombatProcess::terminate() {
@@ -239,9 +236,9 @@ ObjId CombatProcess::seekTarget() {
 
 int CombatProcess::getTargetDirection() {
 	Actor *a = getActor(_itemNum);
-	if (!a)
-		return 0; // shouldn't happen
 	Actor *t = getActor(_target);
+	if (!a || !t)
+		return 0; // shouldn't happen
 
 	return a->getDirToItemCentre(*t);
 }

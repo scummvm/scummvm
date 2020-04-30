@@ -36,7 +36,7 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(QuitGump, ModalGump)
 
-QuitGump::QuitGump(): ModalGump(0, 0, 5, 5) {
+QuitGump::QuitGump(): ModalGump(0, 0, 5, 5), _yesWidget(0), _noWidget(0) {
 	Mouse *mouse = Mouse::get_instance();
 	mouse->pushMouseCursor();
 	mouse->setMouseCursor(Mouse::MOUSE_HAND);

@@ -2585,6 +2585,7 @@ uint32 Item::I_legalMoveToContainer(const uint8 *args, unsigned int /*argsize*/)
 	ARG_ITEM_FROM_PTR(item);
 	ARG_CONTAINER_FROM_PTR(container);
 	ARG_UINT16(unknown); // always 0
+	if (!item || !container) return 0; // shouldn't happen?
 
 	// try to move item to container checking weight and volume
 	return item->moveToContainer(container, true);
@@ -2840,7 +2841,7 @@ uint32 Item::I_canReach(const uint8 *args, unsigned int /*argsize*/) {
 
 	// TODO: add cheat to make this always return 1
 
-	if (item && item->canReach(other, range))
+	if (item && other && item->canReach(other, range))
 		return 1;
 	else
 		return 0;

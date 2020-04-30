@@ -59,7 +59,8 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(GameMapGump, Gump)
 bool GameMapGump::_highlightItems = false;
 
 GameMapGump::GameMapGump() :
-	Gump(), _displayDragging(false) {
+	Gump(), _displayDragging(false), _displayList(0), _draggingShape(0),
+		_draggingFrame(0), _draggingFlags(0) {
 	_displayList = new ItemSorter();
 }
 

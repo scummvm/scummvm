@@ -457,7 +457,7 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
 	char langletter = _gameInfo->getLanguageFileLetter();
 	if (!langletter) {
 		perr << "GameData::getSpeechFlex: Unknown language." << Std::endl;
-		// FIXME: This leaks s
+		delete s;
 		return nullptr;
 	}
 

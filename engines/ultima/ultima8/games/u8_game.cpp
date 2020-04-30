@@ -125,6 +125,7 @@ bool U8Game::startGame() {
 	Common::SeekableReadStream *npcd = u8save->getDataSource("NPCDATA.DAT");
 	if (!npcd) {
 		perr << "Unable to load savegame/u8save.000/NPCDATA.DAT." << Std::endl;
+		delete icd;
 		return false;
 	}
 

@@ -34,25 +34,19 @@ namespace Ultima8 {
 
 MissileTracker::MissileTracker(Item *item, int32 sx, int32 sy, int32 sz,
                                int32 tx, int32 ty, int32 tz,
-                               int32 speed, int32 gravity_) {
+                               int32 speed, int32 gravity) :
+		_destX(tx), _destY(ty), _destZ(tz), _gravity(gravity) {
 	_objId = item->getObjId();
-	_destX = tx;
-	_destY = ty;
-	_destZ = tz;
-	_gravity = gravity_;
 
 	init(sx, sy, sz, speed);
 }
 
 MissileTracker::MissileTracker(Item *item, int32 tx, int32 ty, int32 tz,
-                               int32 speed, int32 gravity_) {
+                               int32 speed, int32 gravity) :
+		  _destX(tx), _destY(ty), _destZ(tz), _gravity(gravity)  {
 	assert(item->getParent() == 0);
 
 	_objId = item->getObjId();
-	_destX = tx;
-	_destY = ty;
-	_destZ = tz;
-	_gravity = gravity_;
 
 	int32 x, y, z;
 	item->getLocation(x, y, z);
@@ -139,6 +133,11 @@ bool MissileTracker::isPathClear() {
 	World *world = World::get_instance();
 	CurrentMap *map = world->getCurrentMap();
 	Item *item = getItem(_objId);
+
+	if (!item) {
+		// Item disappeared? shouldn't happen, but call the path clear.
+		return true;
+	}
 
 	item->getFootpadWorld(dims[0], dims[1], dims[2]);
 	item->getLocation(start[0], start[1], start[2]);

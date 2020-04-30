@@ -48,7 +48,7 @@ InverterProcess *InverterProcess::_inverter = nullptr;
 DEFINE_RUNTIME_CLASSTYPE_CODE(InverterProcess, Process)
 
 InverterProcess::InverterProcess()
-	: Process() {
+	: Process(), _targetState(0) {
 
 }
 

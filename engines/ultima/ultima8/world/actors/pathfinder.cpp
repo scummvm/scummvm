@@ -113,7 +113,9 @@ bool PathNodeCmp::operator()(const PathNode *n1, const PathNode *n2) const {
 	return (n1->heuristicTotalCost < n2->heuristicTotalCost);
 }
 
-Pathfinder::Pathfinder() {
+Pathfinder::Pathfinder() : _actor(nullptr), _targetItem(nullptr),
+		_hitMode(false), _expandTime(0), _targetX(0), _targetY(0),
+		_targetZ(0), _actorXd(0), _actorYd(0), _actorZd(0) {
 	expandednodes = 0;
 }
 

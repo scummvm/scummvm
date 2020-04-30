@@ -52,17 +52,17 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeViewerGump, ModalGump)
 
 ShapeViewerGump::ShapeViewerGump()
-	: ModalGump(), _curFlex(0), _flex(nullptr), _curShape(0),
-	_curFrame(0), _background(0), _shapeW(0), _shapeH(0), _shapeX(0), _shapeY(0) {
+	: ModalGump(), _curFlex(0), _flex(nullptr), _curShape(0), _curFrame(0),
+	  _background(0), _fontNo(0), _shapeW(0), _shapeH(0), _shapeX(0), _shapeY(0) {
 
 }
 
 ShapeViewerGump::ShapeViewerGump(int x, int y, int width, int height,
                                  Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
                                  uint32 flags, int32 layer)
-		: ModalGump(x, y, width, height, 0, flags, layer),
-		_flexes(flexes), _curFlex(0), _curShape(0), _curFrame(0),
-		_background(0), _fontNo(0), _shapeW(0), _shapeH(0), _shapeX(0), _shapeY(0) {
+		: ModalGump(x, y, width, height, 0, flags, layer), _flexes(flexes),
+		_curFlex(0), _curShape(0), _curFrame(0), _background(0), _fontNo(0),
+		_shapeW(0), _shapeH(0), _shapeX(0), _shapeY(0) {
 	if (_flexes.size())
 		_flex = _flexes[0].second;
 	else

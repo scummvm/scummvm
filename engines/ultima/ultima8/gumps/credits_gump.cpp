@@ -38,15 +38,24 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(CreditsGump, ModalGump)
 
 CreditsGump::CreditsGump()
-	: ModalGump() {
-
+	: ModalGump(), _parSkip(0), _timer(0), _title(nullptr),
+	  _nextTitle(nullptr), _state(CS_PLAYING),
+	  _nextTitleSurf(0), _currentSurface(0), _currentY(0) {
+	for (int i = 0; i < 4; i++) {
+	  _scroll[i] = nullptr;
+	  _scrollHeight[i] = 0;
+	}
 }
 
 CreditsGump::CreditsGump(const Std::string &text, int parskip,
                          uint32 flags, int32 layer)
-	: ModalGump(0, 0, 320, 200, 0, flags, layer), _text(text), _parSkip(parskip),
-	_timer(0), _title(nullptr), _nextTitle(nullptr), _state(CS_PLAYING),
-	_nextTitleSurf(0), _currentSurface(0), _currentY(0) {
+		: ModalGump(0, 0, 320, 200, 0, flags, layer), _text(text), _parSkip(parskip),
+		_timer(0), _title(nullptr), _nextTitle(nullptr), _state(CS_PLAYING),
+		_nextTitleSurf(0), _currentSurface(0), _currentY(0) {
+	for (int i = 0; i < 4; i++) {
+		_scroll[i] = nullptr;
+		_scrollHeight[i] = 0;
+	}
 }
 
 CreditsGump::~CreditsGump() {

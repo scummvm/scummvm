@@ -32,17 +32,19 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(CreateItemProcess, Process)
 
 CreateItemProcess::CreateItemProcess()
-	: Process() {
+	: Process(), _shape(0), _frame(0), _quality(0), _flags(0),
+	_npcNum(0), _mapNum(0), _extendedFlags(0),
+	_x(0), _y(0), _z(0) {
 
 }
 
-CreateItemProcess::CreateItemProcess(uint32 shape_, uint32 frame_,
-                                     uint16 quality_, uint16 flags_,
-                                     uint16 npcnum_, uint16 mapnum_,
-                                     uint32 extendedflags_,
+CreateItemProcess::CreateItemProcess(uint32 shape, uint32 frame,
+                                     uint16 quality, uint16 flags,
+                                     uint16 npcnum, uint16 mapnum,
+                                     uint32 extendedflags,
                                      int32 x, int32 y, int32 z)
-	: _shape(shape_), _frame(frame_), _quality(quality_), _flags(flags_),
-	  _npcNum(npcnum_), _mapNum(mapnum_), _extendedFlags(extendedflags_),
+	: _shape(shape), _frame(frame), _quality(quality), _flags(flags),
+	  _npcNum(npcnum), _mapNum(mapnum), _extendedFlags(extendedflags),
 	  _x(x), _y(y), _z(z) {
 
 }

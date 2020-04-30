@@ -31,7 +31,8 @@ namespace Ultima {
 namespace Ultima8 {
 
 
-Texture::Texture() : _format(TEX_FMT_STANDARD), _glTex(0), _next(nullptr) {
+Texture::Texture() : _format(TEX_FMT_STANDARD), _glTex(0),
+	_next(nullptr), _wlog2(-1), _hlog2(-1) {
 }
 
 //

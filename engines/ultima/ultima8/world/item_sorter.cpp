@@ -43,7 +43,14 @@ namespace Ultima8 {
 // This does NOT need to be in the header
 struct SortItem {
 	SortItem(SortItem *n) : _next(n), _prev(nullptr), _itemNum(0),
-			_shape(nullptr), _order(-1), _depends() { }
+			_shape(nullptr), _order(-1), _depends(), _shapeNum(0),
+			_frame(0), _flags(0), _extFlags(0), _sx(0), _sy(0),
+			_sx2(0), _sy2(0), _x(0), _y(0), _z(0), _xLeft(0),
+			_yFar(0), _zTop(0), _sxLeft(0), _sxRight(0), _sxTop(0),
+			_syTop(0), _sxBot(0), _syBot(0),_f32x32(false), _flat(false),
+			_occl(false), _solid(false), _draw(false), _roof(false),
+			_noisy(false), _anim(false), _trans(false), _fixed(false),
+			_land(false), _occluded(false), _clipped(0) { }
 
 	SortItem                *_next;
 	SortItem                *_prev;
@@ -575,7 +582,7 @@ inline bool SortItem::operator<<(const SortItem &si2) const {
 
 ItemSorter::ItemSorter() :
 	_shapes(nullptr), _surf(nullptr), _items(nullptr), _itemsTail(nullptr),
-	_itemsUnused(nullptr), _sortLimit(0) {
+	_itemsUnused(nullptr), _sortLimit(0), _camSx(0), _camSy(0), _orderCounter(0) {
 	int i = 2048;
 	while (i--) _itemsUnused = new SortItem(_itemsUnused);
 }

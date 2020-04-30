@@ -31,8 +31,8 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportToEggProcess, Process)
 
-TeleportToEggProcess::TeleportToEggProcess() : Process() {
-
+TeleportToEggProcess::TeleportToEggProcess() : Process(),
+	_mapNum(0), _teleportId(0) {
 }
 
 

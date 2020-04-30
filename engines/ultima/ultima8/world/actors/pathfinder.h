@@ -34,6 +34,9 @@ class Actor;
 class Item;
 
 struct PathfindingState {
+	PathfindingState() : _x(0), _y(0), _z(0),  _direction(0),
+		_lastAnim(Animation::walk), _flipped(false),
+		_firstStep(true), _combat(false) {};
 	int32 _x, _y, _z;
 	Animation::Sequence _lastAnim;
 	uint32 _direction;

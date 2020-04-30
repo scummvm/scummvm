@@ -896,7 +896,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			break;
 
 
-		case 0x38:
+		case 0x38: {
 			// 38 xx yy
 			// is element (size xx) in list? (or slist if yy is true)
 			// free list/slist afterwards
@@ -904,19 +904,23 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16a = cs.readByte();
 			ui32a = cs.readByte();
 			ui16b = p->_stack.pop2();
-			if (ui32a) { // stringlist
+			UCList *l = getList(ui16b);
+			if (!l) {
+				perr << "Invalid list id " << ui16b << Std::endl;
+				error = true;
+			} else if (ui32a) { // stringlist
 				if (ui16a != 2) {
 					perr << "Unhandled operand " << ui16a << " to in slist"
 					     << Std::endl;
 					error = true;
 				}
-				if (getList(ui16b)->stringInList(p->_stack.pop2()))
+				if (l->stringInList(p->_stack.pop2()))
 					p->_stack.push2(1);
 				else
 					p->_stack.push2(0);
 				freeStringList(ui16b);
 			} else {
-				bool found = getList(ui16b)->inList(p->_stack.access());
+				bool found = l->inList(p->_stack.access());
 				p->_stack.addSP(ui16a);
 				if (found)
 					p->_stack.push2(1);
@@ -927,7 +931,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			}
 			LOGPF(("in list\t\t%s slist==%02X\n", print_bp(ui16a), ui32a));
 			break;
-
+		}
 		case 0x39:
 			// 39
 			// 16 bit bitwise and

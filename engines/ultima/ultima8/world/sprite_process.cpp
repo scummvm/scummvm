@@ -35,15 +35,16 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(SpriteProcess, Process)
 
 SpriteProcess::SpriteProcess()
-	: Process() {
-
+	: Process(), _shape(0), _frame(0), _firstFrame(0), _lastFrame(0),
+	_repeats(0), _delay(0), _x(0), _y(0), _z(0), _delayCounter(0),
+	_initialized(false) {
 }
 
-SpriteProcess::SpriteProcess(int Shape, int Frame, int LastFrame,
-                             int Repeats, int Delay, int x, int y, int z,
+SpriteProcess::SpriteProcess(int shape, int frame, int lastFrame,
+                             int repeats, int delay, int x, int y, int z,
                              bool delayed_init) :
-	_shape(Shape), _frame(Frame), _firstFrame(Frame), _lastFrame(LastFrame),
-	_repeats(Repeats), _delay(Delay * 2), _x(x), _y(y), _z(z), _delayCounter(0),
+	_shape(shape), _frame(frame), _firstFrame(frame), _lastFrame(lastFrame),
+	_repeats(repeats), _delay(delay * 2), _x(x), _y(y), _z(z), _delayCounter(0),
 	_initialized(false) {
 	if (!delayed_init)
 		init();
