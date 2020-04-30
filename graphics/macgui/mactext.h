@@ -79,12 +79,14 @@ struct MacTextLine {
 	int height;
 	int y;
 	int charwidth;
+	bool paragraphEnd;
 
 	Common::Array<MacFontRun> chunks;
 
 	MacTextLine() {
 		width = height = charwidth = -1;
 		y = 0;
+		paragraphEnd = false;
 	}
 };
 

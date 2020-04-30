@@ -165,7 +165,7 @@ void MacText::chopChunk(const Common::U32String &str) {
 	// This happens when the previous run is finished only with
 	// empty formatting, or when we were adding text for the first time
 	if (chunk->text.empty() && str.empty()) {
-		D(9, "** splitString, replaced formatting, line %d", curLine);
+		D(9, "** chopChunk, replaced formatting, line %d", curLine);
 
 		_textLines[curLine].chunks.pop_back();
 
@@ -192,7 +192,7 @@ void MacText::chopChunk(const Common::U32String &str) {
 	getLineWidth(curLine, true);
 	getLineCharWidth(curLine, true);
 
-	D(9, "** splitString, subchunk: \"%s\" (%d lines, maxW: %d)", toPrintable(text[0].encode()).c_str(), text.size(), _maxWidth);
+	D(9, "** chopChunk, subchunk: \"%s\" (%d lines, maxW: %d)", toPrintable(text[0].encode()).c_str(), text.size(), _maxWidth);
 
 	// We do not overlap, so we're done
 	if (text.size() == 1)
@@ -208,7 +208,7 @@ void MacText::chopChunk(const Common::U32String &str) {
 		_textLines.resize(curLine + 1);
 		_textLines[curLine].chunks.push_back(newchunk);
 
-		D(9, "** splitString, added line: \"%s\"", toPrintable(text[i].encode()).c_str());
+		D(9, "** chopChunk, added line: \"%s\"", toPrintable(text[i].encode()).c_str());
 	}
 }
 
@@ -222,7 +222,7 @@ void MacText::splitString(const Common::U32String &str) {
 		return;
 	}
 
-	Common::U32String line, tmp;
+	Common::U32String paragraph, tmp;
 
 	if (_textLines.empty()) {
 		_textLines.resize(1);
@@ -237,9 +237,9 @@ void MacText::splitString(const Common::U32String &str) {
 	MacFontRun chunk = _textLines[curLine].chunks[curChunk];
 
 	while (*l) {
-		line.clear();
+		paragraph.clear();
 
-		// First, get the whole line
+		// First, get the whole paragraph
 		while (*l) {
 			if (*l == '\r') {
 				l++;
@@ -250,13 +250,13 @@ void MacText::splitString(const Common::U32String &str) {
 				break;
 			}
 
-			line += *l++;
+			paragraph += *l++;
 		}
 
-		D(9, "** splitString, line: \"%s\"", Common::toPrintable(line.encode()).c_str());
+		D(9, "** splitString, paragraph: \"%s\"", Common::toPrintable(line.encode()).c_str());
 
-		// Now process whole line
-		const Common::U32String::value_type *s = line.c_str();
+		// Now process whole paragraph
+		const Common::U32String::value_type *s = paragraph.c_str();
 
 		tmp.clear();
 
@@ -337,6 +337,8 @@ void MacText::splitString(const Common::U32String &str) {
 
 		// Add new line
 		D(9, "** splitString: new line");
+
+		_textLines[curLine].paragraphEnd = true;
 
 		curLine++;
 		_textLines.resize(curLine + 1);
