@@ -84,6 +84,9 @@ public:
 	byte _thickness;
 	Common::Point _startPoint;
 	Common::Point _currentPoint;
+	Common::Rect _startBbox;
+	Common::Rect _currentBbox;
+	Common::Rect _dirtyBbox;
 	uint16 _width;
 	uint16 _height;
 	// TODO: default constraint = 0, if turned on, sprite is constrainted to the bounding rect
@@ -95,10 +98,6 @@ public:
 	byte _backColor;
 	byte _foreColor;
 
-	uint16 _left;
-	uint16 _right;
-	uint16 _top;
-	uint16 _bottom;
 	byte _blend;
 	bool _visible;
 	// Using in digital movie sprites
