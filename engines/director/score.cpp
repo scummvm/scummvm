@@ -1519,7 +1519,7 @@ void Score::startLoop() {
 
 	initGraphics(_movieRect.width(), _movieRect.height());
 
-	_window = _vm->_wm->addWindow(false, false, false);
+	_window = _vm->_wm->addWindow(false, false, true);
 	_window->disableBorder();
 	_window->resize(_movieRect.width(), _movieRect.height());
 
