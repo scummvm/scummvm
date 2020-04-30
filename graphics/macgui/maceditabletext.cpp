@@ -80,10 +80,10 @@ void MacEditableText::init() {
 	_cursorState = false;
 	_cursorOff = false;
 
-	_cursorRow = getLineCount();
+	_cursorRow = getLineCount() - 1;
 	_cursorCol = getLineCharWidth(_cursorRow) + 1;
 
-	_cursorDirty = true;
+	updateCursorPos();
 
 	_cursorRect = new Common::Rect(0, 0, 1, kCursorHeight);
 
@@ -161,8 +161,7 @@ bool MacEditableText::draw(bool forceRedraw) {
 	if (!_contentIsDirty && !_cursorDirty && !forceRedraw)
 		return false;
 
-	if (forceRedraw)
-		_composeSurface->clear(_wm->_colorWhite);
+	_composeSurface->clear(_wm->_colorWhite);
 
 	_contentIsDirty = false;
 	_cursorDirty = false;
@@ -321,6 +320,34 @@ bool MacEditableText::processEvent(Common::Event &event) {
 			_contentIsDirty = true;
 			return true;
 
+		case Common::KEYCODE_LEFT:
+			if (_cursorCol == 0) {
+				if (_cursorRow == 0) { // Nowhere to go
+					return true;
+				}
+				_cursorRow--;
+				_cursorCol = getLineCharWidth(_cursorRow) + 1;
+			} else {
+				_cursorCol--;
+			}
+			updateCursorPos();
+
+			return true;
+
+		case Common::KEYCODE_RIGHT:
+			if (_cursorCol == getLineCharWidth(_cursorRow) + 1) {
+				if (_cursorRow == getLineCount()) { // Nowhere to go
+					return true;
+				}
+				_cursorRow++;
+				_cursorCol = 0;
+			} else {
+				_cursorCol++;
+			}
+			updateCursorPos();
+
+			return true;
+
 		default:
 			if (event.kbd.ascii == '~')
 				return false;
@@ -454,7 +481,8 @@ static void cursorTimerHandler(void *refCon) {
 }
 
 void MacEditableText::updateCursorPos() {
-	_cursorY = MacText::getTextHeight() - _scrollPos - kCursorHeight;
+	_cursorY = _textLines[_cursorRow].y;
+	_cursorX = getLineWidth(_cursorRow, false, _cursorCol);
 
 	_cursorDirty = true;
 }
