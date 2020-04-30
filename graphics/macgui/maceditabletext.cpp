@@ -81,7 +81,7 @@ void MacEditableText::init() {
 	_cursorOff = false;
 
 	_cursorRow = getLineCount() - 1;
-	_cursorCol = getLineCharWidth(_cursorRow) + 1;
+	_cursorCol = getLineCharWidth(_cursorRow);
 
 	updateCursorPos();
 
@@ -137,7 +137,7 @@ void MacEditableText::appendText(const Common::U32String &str, const MacFont *ma
 		_scrollPos = MAX(0, MacText::getTextHeight() - getDimensions().height());
 
 		_cursorRow = getLineCount();
-		_cursorCol = getLineCharWidth(_cursorRow) + 1;
+		_cursorCol = getLineCharWidth(_cursorRow);
 
 		updateCursorPos();
 	}
@@ -326,7 +326,7 @@ bool MacEditableText::processEvent(Common::Event &event) {
 					return true;
 				}
 				_cursorRow--;
-				_cursorCol = getLineCharWidth(_cursorRow) + 1;
+				_cursorCol = getLineCharWidth(_cursorRow);
 			} else {
 				_cursorCol--;
 			}
@@ -335,8 +335,8 @@ bool MacEditableText::processEvent(Common::Event &event) {
 			return true;
 
 		case Common::KEYCODE_RIGHT:
-			if (_cursorCol == getLineCharWidth(_cursorRow) + 1) {
-				if (_cursorRow == getLineCount()) { // Nowhere to go
+			if (_cursorCol == getLineCharWidth(_cursorRow)) {
+				if (_cursorRow == getLineCount() - 1) { // Nowhere to go
 					return true;
 				}
 				_cursorRow++;
@@ -344,6 +344,24 @@ bool MacEditableText::processEvent(Common::Event &event) {
 			} else {
 				_cursorCol++;
 			}
+			updateCursorPos();
+
+			return true;
+
+		case Common::KEYCODE_UP:
+			if (_cursorRow == 0)
+				return true;
+
+			_cursorRow--;
+			updateCursorPos();
+
+			return true;
+
+		case Common::KEYCODE_DOWN:
+			if (_cursorRow == getLineCount() - 1)
+				return true;
+
+			_cursorRow++;
 			updateCursorPos();
 
 			return true;
