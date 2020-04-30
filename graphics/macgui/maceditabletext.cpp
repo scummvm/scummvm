@@ -109,6 +109,11 @@ void MacEditableText::setActive(bool active) {
 	} else {
 		g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 	}
+
+	if (!_cursorOff && _cursorState == true) {
+		_cursorState = false;
+		_cursorDirty = true;
+	}
 }
 
 void MacEditableText::resize(int w, int h) {
@@ -361,9 +366,12 @@ bool MacEditableText::processEvent(Common::Event &event) {
 		startMarking(event.mouse.x, event.mouse.y);
 
 		return true;
-	} else if (event.type == Common::EVENT_LBUTTONUP && _menu) {
+	} else if (event.type == Common::EVENT_LBUTTONUP) {
 		if (_inTextSelection) {
 			_inTextSelection = false;
+
+			if (!_menu)
+				return true;
 
 			if (_selectedText.endY == -1 ||
 					(_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
