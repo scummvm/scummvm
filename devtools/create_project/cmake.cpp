@@ -51,6 +51,7 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		{ "theora",    kSDLVersionAny, 0,              0,          0,                       0,                     "theoradec"  },
 		{ "fluidsynth",kSDLVersionAny, 0,              0,          0,                       0,                     "fluidsynth" },
 		{ "faad",      kSDLVersionAny, 0,              0,          0,                       0,                     "faad"       },
+		{ "fribidi",   kSDLVersionAny, 0,              0,          0,                       0,                     "fribidi"    },
 		{ "libcurl",   kSDLVersionAny, "FindCURL",     "CURL",     "CURL_INCLUDE_DIRS",     "CURL_LIBRARIES",      0            },
 		{ "sdlnet",    kSDLVersion1,   "FindSDL_net",  "SDL_net",  "SDL_NET_INCLUDE_DIRS",  "SDL_NET_LIBRARIES",   0            },
 		{ "sdlnet",    kSDLVersion2,   0,              0,          0,                       0,                     "SDL2_net"   }
