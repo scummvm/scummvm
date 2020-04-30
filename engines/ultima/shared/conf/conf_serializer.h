@@ -38,7 +38,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	ConfSerializer(bool isSaving) : _isSaving(isSaving) {}
+	ConfSerializer(bool saving) : _isSaving(saving) {}
 
 	/**
 	 * Destructor
