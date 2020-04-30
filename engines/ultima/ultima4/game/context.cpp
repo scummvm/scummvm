@@ -28,7 +28,7 @@ namespace Ultima4 {
 Context *g_context;
 
 Context::Context() : _party(nullptr), _location(nullptr),
-		_line(0), _col(0), _stats(nullptr), _moonPhase(0),
+		_line(999), _col(0), _stats(nullptr), _moonPhase(0),
 		_windDirection(0), _windCounter(0), _windLock(false),
 		_aura(nullptr), _horseSpeed(0), _opacity(0),
 		_transportContext(TRANSPORT_ANY), _lastCommandTime(0),
