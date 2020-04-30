@@ -108,7 +108,6 @@ Frame::Frame(const Frame &frame) {
 
 Frame::~Frame() {
 	delete _palette;
-	_drawRects.clear();
 
 	for (uint16 i = 0; i < _sprites.size(); i++)
 		delete _sprites[i];
@@ -527,7 +526,6 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 }
 
 void Frame::prepareFrame(Score *score, bool updateStageOnly) {
-	_drawRects.clear();
 	renderSprites(*score->_surface, false);
 	renderSprites(*score->_trailSurface, true);
 
@@ -555,6 +553,62 @@ void Frame::playSoundChannel() {
 	debug(0, "STUB: playSoundChannel(), Sound1 %d Sound2 %d", _sound1, _sound2);
 }
 
+CastType Frame::getCastType(uint16 spriteId) {
+	CastType castType = kCastTypeNull;
+	Sprite *sprite = _sprites[spriteId];
+
+	if (_vm->getVersion() < 4) {
+		debugC(1, kDebugImages, "Frame::getCastType(): Channel: %d type: %d", spriteId, sprite->_spriteType);
+		switch (sprite->_spriteType) {
+		case kBitmapSprite:
+			castType = kCastBitmap;
+			break;
+		case kRectangleSprite:
+		case kRoundedRectangleSprite:
+		case kOvalSprite:
+		case kLineTopBottomSprite:
+		case kLineBottomTopSprite:
+		case kOutlinedRectangleSprite:
+		case kOutlinedRoundedRectangleSprite:
+		case kOutlinedOvalSprite:
+		case kCastMemberSprite:
+			if (sprite->_cast != nullptr) {
+				switch (sprite->_cast->_type) {
+				case kCastButton:
+					castType = kCastButton;
+					break;
+				default:
+					castType = kCastShape;
+					break;
+				}
+			} else {
+				castType = kCastShape;
+			}
+			break;
+		case kTextSprite:
+			castType = kCastText;
+			break;
+		case kButtonSprite:
+		case kCheckboxSprite:
+		case kRadioButtonSprite:
+			castType = kCastButton;
+			break;
+		default:
+			warning("Frame::getCastType(): Unhandled sprite type %d", sprite->_spriteType);
+			break;
+		}
+	} else {
+		Cast *member = _vm->getCastMember(_sprites[spriteId]->_castId);
+		if (!member) {
+			debugC(1, kDebugImages, "Frame::renderSprites(): Cast id %d not found", _sprites[spriteId]->_castId);
+		} else {
+			castType = member->_type;
+		}
+	}
+
+	return castType;
+}
+
 void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 	for (uint16 i = 0; i <= _numChannels; i++) {
 		if (!_sprites[i]->_enabled)
@@ -563,59 +617,15 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 		if ((_sprites[i]->_trails == 0 && renderTrail) || (_sprites[i]->_trails == 1 && !renderTrail))
 			continue;
 
-		CastType castType = kCastTypeNull;
-		if (_vm->getVersion() < 4) {
-			debugC(1, kDebugImages, "Frame::renderSprites(): Channel: %d type: %d", i, _sprites[i]->_spriteType);
-			switch (_sprites[i]->_spriteType) {
-			case kBitmapSprite:
-				castType = kCastBitmap;
-				break;
-			case kRectangleSprite:
-			case kRoundedRectangleSprite:
-			case kOvalSprite:
-			case kLineTopBottomSprite:
-			case kLineBottomTopSprite:
-			case kOutlinedRectangleSprite:
-			case kOutlinedRoundedRectangleSprite:
-			case kOutlinedOvalSprite:
-			case kCastMemberSprite:
-				if (_sprites[i]->_cast != nullptr) {
-					switch (_sprites[i]->_cast->_type) {
-					case kCastButton:
-						castType = kCastButton;
-						break;
-					default:
-						castType = kCastShape;
-						break;
-					}
-				} else {
-					castType = kCastShape;
-				}
-				break;
-			case kTextSprite:
-				castType = kCastText;
-				break;
-			case kButtonSprite:
-			case kCheckboxSprite:
-			case kRadioButtonSprite:
-				castType = kCastButton;
-				break;
-			default:
-				warning("Frame::renderSprites(): Unhandled sprite type %d", _sprites[i]->_spriteType);
-				break;
-			}
-		} else {
-			Cast *member = _vm->getCastMember(_sprites[i]->_castId);
-			if (!member) {
-				debugC(1, kDebugImages, "Frame::renderSprites(): Cast id %d not found", _sprites[i]->_castId);
-			} else {
-				castType = member->_type;
-			}
-		}
+		CastType castType = getCastType(i);
+		if (castType == kCastTypeNull)
+			continue;
 
 		// this needs precedence to be hit first... D3 does something really tricky with cast IDs for shapes.
 		// I don't like this implementation 100% as the 'cast' above might not actually hit a member and be null?
 		debugC(1, kDebugImages, "Frame::renderSprites(): Channel: %d castType: %d", i, castType);
+
+		_sprites[i]->_currentBbox = _sprites[i]->_dirtyBbox;
 
 		if (castType == kCastShape) {
 			renderShape(surface, i);
@@ -636,13 +646,6 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			renderBitmap(surface, i);
 		}
 	}
-}
-
-void Frame::addDrawRect(uint16 spriteId, Common::Rect &rect) {
-	FrameEntity *fi = new FrameEntity();
-	fi->spriteId = spriteId;
-	fi->rect = rect;
-	_drawRects.push_back(fi);
 }
 
 void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
@@ -700,10 +703,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	// for outlined shapes, line thickness of 1 means invisible.
 	lineSize -= 1;
 
-	Common::Rect shapeRect = Common::Rect(sp->_currentPoint.x,
-		sp->_currentPoint.y,
-		sp->_currentPoint.x + sp->_width,
-		sp->_currentPoint.y + sp->_height);
+	Common::Rect shapeRect = sp->_currentBbox;
 
 	Graphics::ManagedSurface tmpSurface, maskSurface;
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
@@ -762,7 +762,6 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		break;
 	}
 
-	addDrawRect(spriteId, shapeRect);
 	inkBasedBlit(surface, &maskSurface, tmpSurface, ink, shapeRect, spriteId);
 }
 
@@ -798,28 +797,16 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		}
 	}
 
-	uint32 rectLeft = button->_initialRect.left;
-	uint32 rectTop = button->_initialRect.top;
-
-	int x = _sprites[spriteId]->_currentPoint.x;
-	int y = _sprites[spriteId]->_currentPoint.y;
-
-	if (_vm->getVersion() > 3) {
-		x += rectLeft;
-		y += rectTop;
-	}
-
-	int height = button->_initialRect.height();
-	int width = button->_initialRect.width() + 3;
-
 	bool invert = spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId;
 
 	// TODO: review all cases to confirm if we should use text height.
 	// height = textRect.height();
 
-	Common::Rect _rect;
+	Common::Rect _rect = _sprites[spriteId]->_currentBbox;
+	int16 x = _rect.left;
+	int16 y = _rect.top;
 
-	Common::Rect textRect(0, 0, width, height);
+	Common::Rect textRect(0, 0, _rect.width(), _rect.height());
 
 	// WORKAROUND, HACK
 	// Because we're not drawing text with transparency
@@ -828,27 +815,20 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	if (!invert)
 		renderText(surface, spriteId, &textRect);
 
-	Graphics::MacPlotData plotStroke(&surface, nullptr, &_vm->getPatterns(), 1, -_rect.left, -_rect.top, 1, 0);
+	Graphics::MacPlotData plotStroke(&surface, nullptr, &_vm->getPatterns(), 1, 0, 0, 1, 0);
 
 	switch (buttonType) {
 	case kCheckboxSprite:
-		// Magic numbers: checkbox square need to move left about 5px from text and 12px side size (D4)
-		_rect = Common::Rect(x, y + 2, x + 12, y + 14);
 		surface.frameRect(_rect, 0);
-		addDrawRect(spriteId, _rect);
 		break;
 	case kButtonSprite: {
-			_rect = Common::Rect(x, y, x + width, y + height + 3);
 			Graphics::MacPlotData pd(&surface, nullptr, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 0, 0, 1, invert ? Graphics::kColorBlack : Graphics::kColorWhite);
 
 			Graphics::drawRoundRect(_rect, 4, 0, invert, Graphics::macDrawPixel, &pd);
-			addDrawRect(spriteId, _rect);
 		}
 		break;
 	case kRadioButtonSprite:
-		_rect = Common::Rect(x, y + 2, x + 12, y + 14);
 		Graphics::drawEllipse(x, y + 2, x + 11, y + 13, 0, false, Graphics::macDrawPixel, &plotStroke);
-		addDrawRect(spriteId, _rect);
 		break;
 	default:
 		warning("renderButton: Unknown buttonType");
@@ -869,20 +849,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	Score *score = _vm->getCurrentScore();
 	Sprite *sprite = _sprites[spriteId];
 
-	int x = sprite->_currentPoint.x; // +rectLeft;
-	int y = sprite->_currentPoint.y; // +rectTop;
-	int height = textCast->_initialRect.height(); //_sprites[spriteId]->_height;
-	int width;
-
-	if (_vm->getVersion() >= 4) {
-		if (textRect == NULL) {
-			width = textCast->_initialRect.right;
-		} else {
-			width = textRect->width();
-		}
-	} else {
-		width = textCast->_initialRect.width(); //_sprites[spriteId]->_width;
-	}
+	Common::Rect bbox = sprite->_currentBbox;
+	int width = bbox.width();
+	int height = bbox.height();
+	int x = bbox.left;
+	int y = bbox.top;
 
 	if (_vm->getCurrentScore()->_fontMap.contains(textCast->_fontId)) {
 		// We need to make sure that the Shared Cast fonts have been loaded in?
@@ -1055,18 +1026,8 @@ void Frame::renderBitmap(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		ink = sprite->_ink;
 
 	BitmapCast *bc = (BitmapCast *)sprite->_cast;
+	Common::Rect drawRect = sprite->_currentBbox;
 
-	int32 regX = bc->_regX;
-	int32 regY = bc->_regY;
-	int32 rectLeft = bc->_initialRect.left;
-	int32 rectTop = bc->_initialRect.top;
-
-	int x = sprite->_currentPoint.x - regX + rectLeft;
-	int y = sprite->_currentPoint.y - regY + rectTop;
-	int height = sprite->_height;
-	int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : sprite->_width;
-	Common::Rect drawRect(x, y, x + width, y + height);
-	addDrawRect(spriteId, drawRect);
 	inkBasedBlit(surface, nullptr, *(bc->_surface), ink, drawRect, spriteId);
 }
 
@@ -1260,29 +1221,22 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 }
 
 uint16 Frame::getSpriteIDFromPos(Common::Point pos) {
-	// Find first from front to back
-	for (int dr = _drawRects.size() - 1; dr >= 0; dr--)
-		if (_drawRects[dr]->rect.contains(pos))
-			return _drawRects[dr]->spriteId;
+	for (int i = _sprites.size() - 1; i >= 0; i--)
+		if (_sprites[i]->_currentBbox.contains(pos))
+			return i;
 
 	return 0;
 }
 
 bool Frame::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
-	// Find first from front to back
-	for (int dr = _drawRects.size() - 1; dr >= 0; dr--)
-		if (_drawRects[dr]->spriteId == spriteId && _drawRects[dr]->rect.contains(pos))
-			return true;
+	if (_sprites[spriteId]->_currentBbox.contains(pos))
+		return true;
 
 	return false;
 }
 
 Common::Rect *Frame::getSpriteRect(uint16 spriteId) {
-	for (int dr = _drawRects.size() - 1; dr >= 0; dr--)
-		if (_drawRects[dr]->spriteId == spriteId)
-			return &_drawRects[dr]->rect;
-
-	return nullptr;
+	return &_sprites[spriteId]->_currentBbox;
 }
 
 } // End of namespace Director

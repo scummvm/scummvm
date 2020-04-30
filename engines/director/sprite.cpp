@@ -53,10 +53,6 @@ Sprite::Sprite() {
 	_backColor = 255;
 	_foreColor = 0;
 
-	_left = 0;
-	_right = 0;
-	_top = 0;
-	_bottom = 0;
 	_blend = 0;
 	_visible = false;
 	_movieRate = 0;

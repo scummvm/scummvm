@@ -89,6 +89,7 @@ public:
 	Common::String getMacName() const { return _macName; }
 	Sprite *getSpriteById(uint16 id);
 	void setSpriteCasts();
+	void setSpriteBboxes();
 	void loadSpriteImages(bool isSharedCast);
 	void loadSpriteSounds(bool isSharedCast);
 	void copyCastStxts();

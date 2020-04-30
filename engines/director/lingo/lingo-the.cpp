@@ -573,7 +573,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_blend;
 		break;
 	case kTheBottom:
-		d.u.i = sprite->_bottom;
+		d.u.i = sprite->_currentBbox.bottom;
 		break;
 	case kTheCastNum:
 		d.u.i = sprite->_castId;
@@ -594,7 +594,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_ink;
 		break;
 	case kTheLeft:
-		d.u.i = sprite->_left;
+		d.u.i = sprite->_currentBbox.left;
 		break;
 	case kTheLineSize:
 		d.u.i = sprite->_thickness & 0x3;
@@ -621,7 +621,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_puppet;
 		break;
 	case kTheRight:
-		d.u.i = sprite->_right;
+		d.u.i = sprite->_currentBbox.right;
 		break;
 	case kTheStartTime:
 		d.u.i = sprite->_startTime;
@@ -633,7 +633,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_stretch;
 		break;
 	case kTheTop:
-		d.u.i = sprite->_top;
+		d.u.i = sprite->_currentBbox.top;
 		break;
 	case kTheTrails:
 		d.u.i = sprite->_trails;
@@ -687,9 +687,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheBlend:
 		sprite->_blend = d.asInt();
 		break;
-	case kTheBottom:
-		sprite->_bottom = d.asInt();
-		break;
 	case kTheCastNum:
 		if (_vm->getCastMember(d.asInt())) {
 			sprite->_cast = _vm->getCastMember(d.asInt());
@@ -711,9 +708,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheInk:
 		sprite->_ink = static_cast<InkType>(d.asInt());
 		break;
-	case kTheLeft:
-		sprite->_left = d.asInt();
-		break;
 	case kTheLineSize:
 		sprite->_thickness = d.asInt();
 		break;
@@ -725,8 +719,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheMoveableSprite:
 		sprite->_moveable = d.asInt();
-		if (!d.u.i)
+		if (!d.u.i) {
 			sprite->_currentPoint = sprite->_startPoint;
+			sprite->_dirtyBbox = sprite->_startBbox;
+		}
 		break;
 	case kTheMovieRate:
 		sprite->_movieRate = d.asInt();
@@ -740,9 +736,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kThePuppet:
 		sprite->_puppet = d.asInt();
 		break;
-	case kTheRight:
-		sprite->_right = d.asInt();
-		break;
 	case kTheStartTime:
 		sprite->_startTime = d.asInt();
 		break;
@@ -751,9 +744,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheStretch:
 		sprite->_stretch = d.asInt();
-		break;
-	case kTheTop:
-		sprite->_top = d.asInt();
 		break;
 	case kTheTrails:
 		sprite->_trails = d.asInt();
