@@ -973,6 +973,8 @@ AI::AI() {
 	}
 	_tileFroglickMiddleLR = nullptr;
 	_gfxDragonAsleep = nullptr;
+	_goodjobGfx = nullptr;
+
 	for (int i = 0; i < 2; ++i)
 		_gfxDragonFlap[i] = nullptr;
 	for (int i = 0; i < 4; ++i) {
@@ -987,6 +989,8 @@ AI::AI() {
 		_getGfx[i] = nullptr;
 	for (int i = 0; i < ARRAYSIZE(_stunnedGfx); i++)
 		_stunnedGfx[i] = nullptr;
+	for (int i = 0; i < ARRAYSIZE(_stunLightningGfx); i++)
+		_stunLightningGfx[i] = nullptr;
 
 	_player = nullptr;
 	_cineAbortable = false;
@@ -1080,6 +1084,8 @@ AI::AI() {
 	_pushdownFrames = _pushupFrames = _pushleftFrames = _pushrightFrames = 0;
 	_stunDownFrames = _stunUpFrames = _stunLeftFrames = _stunRightFrames = 0;
 	_slugDownFrames = _slugUpFrames = _slugLeftFrames = _slugRightFrames = 0;
+
+	_gatePuddles = 0;
 }
 
 AI::~AI() {
