@@ -223,6 +223,16 @@ bool U32String::contains(value_type x) const {
 	return false;
 }
 
+void U32String::insertChar(value_type c, uint32 p) {
+	assert(p <= _size);
+
+	ensureCapacity(_size + 1, true);
+	_size++;
+	for (uint32 i = _size; i > p; --i)
+		_str[i] = _str[i - 1];
+	_str[p] = c;
+}
+
 void U32String::deleteChar(uint32 p) {
 	assert(p < _size);
 

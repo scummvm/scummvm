@@ -161,6 +161,9 @@ public:
 		_str[p] = c;
 	}
 
+	/** Insert character c before position p. */
+	void insertChar(value_type c, uint32 p);
+
 	/**
 	 * Removes the value at position p from the string.
 	 * Using this on decomposed characters will not remove the whole
