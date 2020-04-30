@@ -33,11 +33,6 @@
 namespace Graphics {
 
 enum {
-	kConWOverlap = 20,
-	kConHOverlap = 20,
-	kConWPadding = 3,
-	kConHPadding = 4,
-	kConOverscan = 3,
 	kConScrollStep = 12,
 
 	kCursorHeight = 12
@@ -243,7 +238,7 @@ void MacEditableText::drawSelection() {
 			numLines--;
 		}
 
-		byte *ptr = (byte *)_composeSurface->getBasePtr(x1 + kConWOverlap - 2, y + kConWOverlap - 2);
+		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, y);
 
 		for (int x = x1; x < x2; x++, ptr++)
 			if (*ptr == _wm->_colorBlack)
