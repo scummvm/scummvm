@@ -620,7 +620,7 @@ private:
 			else {
 				PP_READ_BITS(offbits, offset);
 			}
-			if (&out[offset] >= dest_end) return 0; /* match_overflow */
+			if (&out[offset] > dest_end) return 0; /* match_overflow */
 			while (todo--) { x = out[offset]; PP_BYTE_OUT(x); }
 		}
 
