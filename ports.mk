@@ -331,6 +331,10 @@ ifdef USE_FREETYPE2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfreetype.a $(STATICLIBPATH)/lib/libbz2.a
 endif
 
+ifdef USE_FRIBIDI
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfribidi.a
+endif
+
 ifdef USE_ICONV
 OSX_STATIC_LIBS += -liconv
 endif
