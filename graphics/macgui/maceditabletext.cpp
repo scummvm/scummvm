@@ -96,7 +96,7 @@ void MacEditableText::init() {
 }
 
 MacEditableText::~MacEditableText() {
-	setActive(false);
+	_wm->setActiveWidget(nullptr);
 
 	delete _cursorRect;
 	delete _cursorSurface;
@@ -361,7 +361,7 @@ bool MacEditableText::processEvent(Common::Event &event) {
 		return false;
 
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
-		setActive(true);
+		_wm->setActiveWidget(this);
 
 		startMarking(event.mouse.x, event.mouse.y);
 

@@ -73,6 +73,7 @@ class ManagedSurface;
 
 class MacMenu;
 class MacTextWindow;
+class MacWidget;
 
 class MacFont;
 
@@ -160,11 +161,13 @@ public:
 	 * Set delay in milliseconds when menu appears (works only with autohide menu)
 	 */
 	void setMenuDelay(int delay) { _menuDelay = delay; }
+
 	/**
 	 * Set the desired window state to active.
 	 * @param id ID of the window that has to be set to active.
 	 */
 	void setActiveWindow(int id);
+
 	/**
 	 * Mark a window for removal.
 	 * Note that the window data will be destroyed.
@@ -207,6 +210,13 @@ public:
 	 * @return A MacPatterns object reference with the patterns.
 	 */
 	MacPatterns &getPatterns() { return _patterns; }
+
+	/**
+	 * Sets an active widget, typically the one which steals the input
+	 * It also sends deactivation message to the previous one
+	 * @param widget Pointer to the widget to activate, nullptr for no widget
+	 */
+	void setActiveWidget(MacWidget *widget);
 
 	void pushArrowCursor();
 	void pushBeamCursor();
@@ -273,6 +283,8 @@ private:
 	void (*_redrawEngineCallback)(void *engine);
 
 	bool _cursorIsArrow;
+
+	MacWidget *_activeWidget;
 };
 
 } // End of namespace Graphics

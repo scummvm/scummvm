@@ -158,6 +158,8 @@ MacWindowManager::MacWindowManager(uint32 mode) {
 	_activeWindow = -1;
 	_needsRemoval = false;
 
+	_activeWidget = nullptr;
+
 	_mode = mode;
 
 	_menu = 0;
@@ -210,6 +212,15 @@ void MacWindowManager::setMode(uint32 mode) {
 		_fontMan->forceBuiltinFonts();
 }
 
+void MacWindowManager::setActiveWidget(MacWidget *widget) {
+	if (_activeWidget)
+		_activeWidget->setActive(false);
+
+	_activeWidget = widget;
+
+	if (_activeWidget)
+		_activeWidget->setActive(true);
+}
 
 MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
 	MacWindow *w = new MacWindow(_lastId, scrollable, resizable, editable, this);
