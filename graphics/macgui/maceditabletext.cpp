@@ -310,13 +310,13 @@ bool MacEditableText::processEvent(Common::Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:
 			if (_cursorRow > 0 || _cursorCol > 0) {
-				deletePreviousChar();
+				deletePreviousChar(&_cursorRow, &_cursorCol);
 				_contentIsDirty = true;
 			}
 			return true;
 
 		case Common::KEYCODE_RETURN:
-			addNewLine();
+			addNewLine(&_cursorRow, &_cursorCol);
 			_contentIsDirty = true;
 			return true;
 
@@ -371,7 +371,8 @@ bool MacEditableText::processEvent(Common::Event &event) {
 				return false;
 
 			if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
-				insertChar((byte)event.kbd.ascii);
+				insertChar((byte)event.kbd.ascii, &_cursorRow, &_cursorCol);
+				updateCursorPos();
 				_contentIsDirty = true;
 
 				return true;
@@ -474,17 +475,6 @@ void MacEditableText::updateTextSelection(int x, int y) {
 			_selectedText.endY, _selectedText.endRow, _selectedText.endCol);
 
 	_contentIsDirty = true;
-}
-
-//////////////////
-// Text editing
-void MacEditableText::deletePreviousChar() {
-}
-
-void MacEditableText::addNewLine() {
-}
-
-void MacEditableText::insertChar(byte c) {
 }
 
 //////////////////

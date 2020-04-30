@@ -96,10 +96,6 @@ private:
 	void startMarking(int x, int y);
 	void updateTextSelection(int x, int y);
 
-	void deletePreviousChar();
-	void addNewLine();
-	void insertChar(byte c);
-
 public:
 	int _cursorX, _cursorY;
 	bool _cursorState;

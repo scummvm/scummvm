@@ -809,4 +809,50 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 	return res;
 }
 
+//////////////////
+// Text editing
+void MacText::deletePreviousChar(int *row, int *col) {
+}
+
+void MacText::addNewLine(int *row, int *col) {
+}
+
+void MacText::insertChar(byte c, int *row, int *col) {
+	MacTextLine *line = &_textLines[*row];
+	int pos = *col;
+	uint i;
+
+	for (i = 0; i < line->chunks.size(); i++) {
+		if (pos >= line->chunks[i].text.size()) {
+			pos -= line->chunks[i].text.size();
+		} else {
+			break;
+		}
+	}
+
+	if (i == line->chunks.size()) {
+		i--;	// touch the last chunk
+		pos = line->chunks[i].text.size();
+	}
+
+	// We're in the needed chunk
+	Common::U32String newchunk(line->chunks[i].text);
+	newchunk.insertChar(c, pos);
+	int chunkw = line->chunks[i].getFont()->getStringWidth(newchunk);
+	int oldw = line->chunks[i].getFont()->getStringWidth(line->chunks[i].text);
+
+	if (getLineWidth(*row) - oldw + chunkw > _maxWidth) { // Needs reshuffle
+		warning("insertChar(): Need reshuffle");
+	} else {
+		line->chunks[i].text = newchunk;
+		line->width = -1;	// Force recalc
+
+		recalcDims();
+		render(*row, *row);
+
+		(*col)++;
+	}
+}
+
+
 } // End of namespace Graphics

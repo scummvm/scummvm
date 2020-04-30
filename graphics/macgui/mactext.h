@@ -125,6 +125,10 @@ public:
 	int getTextHeight() { return _textMaxHeight; }
 	int getLineHeight(int line);
 
+	void deletePreviousChar(int *row, int *col);
+	void addNewLine(int *row, int *col);
+	void insertChar(byte c, int *row, int *col);
+
 	void render();
 	Graphics::ManagedSurface *getSurface() { return _surface; }
 
