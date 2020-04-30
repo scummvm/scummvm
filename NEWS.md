@@ -7,6 +7,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Autosaves are now supported for all the engines.
    - Errors are more likely to open the debugger, and be displayed, than just crash ScummVM.
    - Games are sorted in GUI ignoring the articles.
+   - Now Hebrew is displayed correctly in GUI (requires FriBiDi library).
 
  Dreamweb:
    - Added support for Russian fan-translation.
