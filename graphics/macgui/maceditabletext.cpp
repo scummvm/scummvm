@@ -48,6 +48,8 @@ MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, 
 	init();
 
 	setDefaultFormatting(macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
+
+	MacText::render();
 }
 
 MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
@@ -58,17 +60,18 @@ MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, 
 	init();
 
 	setDefaultFormatting(macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
+
+	MacText::render();
 }
 
 void MacEditableText::init() {
-	_inputTextHeight = 0;
-
-	_inputIsDirty = true;
 	_inTextSelection = false;
 
 	_scrollPos = 0;
 	_editable = true;
 	_selectable = true;
+
+	_editableRow = 0;
 
 	_menu = nullptr;
 
@@ -81,8 +84,6 @@ void MacEditableText::init() {
 	_cursorCol = getLineCharWidth(_cursorRow) + 1;
 
 	_cursorDirty = true;
-
-	_scrollbarIsDirty = false;
 
 	_cursorRect = new Common::Rect(0, 0, 1, kCursorHeight);
 
@@ -123,8 +124,6 @@ void MacEditableText::resize(int w, int h) {
 	if (_surface->w == w && _surface->h == h)
 		return;
 
-	undrawInput();
-
 	_maxWidth = w;
 	MacText::setMaxWidth(_maxWidth);
 }
@@ -136,6 +135,9 @@ void MacEditableText::appendText(const Common::U32String &str, const MacFont *ma
 
 	if (_editable) {
 		_scrollPos = MAX(0, MacText::getTextHeight() - getDimensions().height());
+
+		_cursorRow = getLineCount();
+		_cursorCol = getLineCharWidth(_cursorRow) + 1;
 
 		updateCursorPos();
 	}
@@ -149,25 +151,18 @@ void MacEditableText::clearText() {
 	MacText::clearText();
 
 	_contentIsDirty = true;
-	_scrollbarIsDirty = true;
+
+	_cursorRow = _cursorCol = 0;
 
 	updateCursorPos();
 }
 
 bool MacEditableText::draw(bool forceRedraw) {
-	if (!_scrollbarIsDirty && !_contentIsDirty && !_cursorDirty && !_inputIsDirty && !forceRedraw)
+	if (!_contentIsDirty && !_cursorDirty && !forceRedraw)
 		return false;
 
-	if (_scrollbarIsDirty || forceRedraw) {
-		drawScrollbar();
-
+	if (forceRedraw)
 		_composeSurface->clear(_wm->_colorWhite);
-	}
-
-	if (_inputIsDirty || forceRedraw) {
-		drawInput();
-		_inputIsDirty = false;
-	}
 
 	_contentIsDirty = false;
 	_cursorDirty = false;
@@ -275,8 +270,8 @@ void MacEditableText::clearSelection() {
 }
 
 bool MacEditableText::isCutAllowed() {
-	if (_selectedText.startRow >= (int)(MacText::getLineCount() - _inputTextHeight) &&
-			_selectedText.endRow  >= (int)(MacText::getLineCount() - _inputTextHeight))
+	if (_selectedText.startRow >= _editableRow &&
+			_selectedText.endRow  >= _editableRow)
 		return true;
 
 	return false;
@@ -295,19 +290,9 @@ Common::U32String MacEditableText::cutSelection() {
 
 	Common::U32String selection = MacText::getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, false, false);
 
-	uint32 selPos = _inputText.find(selection);
-
-	if (selPos == Common::U32String::npos) {
-		//warning("Cannot find substring '%s' in '%s'", selection.c_str(), _inputText.c_str()); // Needed encode method
-
-		return Common::U32String("");
-	}
-
-	Common::U32String newInput = Common::U32String(_inputText.c_str(), selPos) + Common::U32String(_inputText.c_str() + selPos + selection.size());
+	// TODO: Remove the actual text
 
 	clearSelection();
-	clearInput();
-	appendInput(newInput);
 
 	return selection;
 }
@@ -325,25 +310,24 @@ bool MacEditableText::processEvent(Common::Event &event) {
 
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:
-			if (!_inputText.empty()) {
-				_inputText.deleteLastChar();
-				_inputIsDirty = true;
+			if (_cursorRow > 0 || _cursorCol > 0) {
+				deletePreviousChar();
+				_contentIsDirty = true;
 			}
 			return true;
 
 		case Common::KEYCODE_RETURN:
-			undrawInput();
-			return false; // Pass it to the higher level for processing
-
-		case Common::KEYCODE_LEFT:
+			addNewLine();
+			_contentIsDirty = true;
+			return true;
 
 		default:
 			if (event.kbd.ascii == '~')
 				return false;
 
 			if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
-				_inputText += (char)event.kbd.ascii;
-				_inputIsDirty = true;
+				insertChar((byte)event.kbd.ascii);
+				_contentIsDirty = true;
 
 				return true;
 			}
@@ -417,7 +401,6 @@ void MacEditableText::scroll(int delta) {
 	undrawCursor();
 	_cursorY -= (_scrollPos - oldScrollPos);
 	_contentIsDirty = true;
-	_scrollbarIsDirty = true;
 }
 
 void MacEditableText::startMarking(int x, int y) {
@@ -448,53 +431,15 @@ void MacEditableText::updateTextSelection(int x, int y) {
 	_contentIsDirty = true;
 }
 
-void MacEditableText::undrawInput() {
-	for (uint i = 0; i < _inputTextHeight; i++)
-		MacText::removeLastLine();
-
-	_inputTextHeight = 0;
+//////////////////
+// Text editing
+void MacEditableText::deletePreviousChar() {
 }
 
-void MacEditableText::drawInput() {
-	undrawInput();
-
-	Common::Array<Common::U32String> text;
-
-	const Font *fontRef = getDefaultFormatting().font;
-
-	if (fontRef == nullptr) {
-		error("MacEditableText::drawInput(): default font is not set");
-	}
-
-	// Now recalc new text height
-	fontRef->wordWrapText(_inputText, _maxWidth, text);
-	_inputTextHeight = MAX((uint)1, text.size()); // We always have line to clean
-
-	// And add new input line to the text
-	appendTextDefault(_inputText, true);
-
-	_cursorX = _inputText.empty() ? 0 : fontRef->getStringWidth(text[_inputTextHeight - 1]);
-
-	updateCursorPos();
-
-	_contentIsDirty = true;
+void MacEditableText::addNewLine() {
 }
 
-void MacEditableText::clearInput() {
-	undrawCursor();
-
-	_cursorX = 0;
-	_inputText.clear();
-}
-
-void MacEditableText::appendInput(const Common::U32String &str) {
-	_inputText += str;
-
-	drawInput();
-}
-
-void MacEditableText::appendInput(const Common::String &str) {
-	appendInput(Common::U32String(str));
+void MacEditableText::insertChar(byte c) {
 }
 
 //////////////////
@@ -517,12 +462,6 @@ void MacEditableText::updateCursorPos() {
 void MacEditableText::undrawCursor() {
 	_cursorState = false;
 	_cursorDirty = true;
-}
-
-void MacEditableText::setScroll(float scrollPos, float scrollSize) {
-}
-
-void MacEditableText::drawScrollbar() {
 }
 
 } // End of namespace Graphics

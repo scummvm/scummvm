@@ -79,11 +79,6 @@ public:
 
 	void undrawCursor();
 
-	const Common::U32String &getInput() { return _inputText; }
-	void clearInput();
-	void appendInput(const Common::U32String &str);
-	void appendInput(const Common::String &str);
-
 	Common::U32String getSelection(bool formatted = false, bool newlines = true);
 	void clearSelection();
 	Common::U32String cutSelection();
@@ -95,16 +90,15 @@ private:
 
 	void scroll(int delta);
 
-	void undrawInput();
-	void drawInput();
 	void drawSelection();
 	void updateCursorPos();
 
 	void startMarking(int x, int y);
 	void updateTextSelection(int x, int y);
 
-	void drawScrollbar();
-	void setScroll(float scrollPos, float scrollSize);
+	void deletePreviousChar();
+	void addNewLine();
+	void insertChar(byte c);
 
 public:
 	int _cursorX, _cursorY;
@@ -122,15 +116,12 @@ public:
 private:
 	ManagedSurface *_cursorSurface;
 
+	int _editableRow;
+
 	bool _inTextSelection;
 	SelectedText _selectedText;
 
 	int _maxWidth;
-	Common::U32String _inputText;
-	uint _inputTextHeight;
-	bool _inputIsDirty;
-
-	bool _scrollbarIsDirty;
 
 	MacMenu *_menu;
 };

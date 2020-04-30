@@ -136,7 +136,17 @@ private:
 	void render(int from, int to);
 	void recalcDims();
 	void reallocSurface();
-	int getLineWidth(int line, bool enforce = false);
+	/**
+	 * Returns line width in pixels. This takes into account chunks.
+	 * The result is cached for faster subsequent calls.
+	 *
+	 * @param line Line number
+	 * @param enforce Flag for indicating skipping the cache and computing the width,
+	 *                must be called when text gets changed
+	 * @param col Compute line width up to specified column, including this column
+	 * @return line width in pixels, or 0 for non-existent lines
+	 */
+	int getLineWidth(int line, bool enforce = false, int col = -1);
 
 protected:
 	MacWindowManager *_wm;

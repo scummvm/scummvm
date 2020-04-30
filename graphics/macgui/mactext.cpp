@@ -444,11 +444,11 @@ void MacText::render(int from, int to) {
 	}
 }
 
-int MacText::getLineWidth(int line, bool enforce) {
+int MacText::getLineWidth(int line, bool enforce, int col) {
 	if ((uint)line >= _textLines.size())
 		return 0;
 
-	if (_textLines[line].width != -1 && !enforce)
+	if (_textLines[line].width != -1 && !enforce && col == -1)
 		return _textLines[line].width;
 
 	int width = 0;
@@ -459,6 +459,18 @@ int MacText::getLineWidth(int line, bool enforce) {
 	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
 		if (enforce)
 			_textLines[line].chunks[i].font = nullptr;
+
+		if (col >= 0) {
+			if (col >= _textLines[line].chunks[i].text.size()) {
+				col -= _textLines[line].chunks[i].text.size();
+			} else {
+				Common::U32String tmp(_textLines[line].chunks[i].text.c_str(), col);
+
+				width += _textLines[line].chunks[i].getFont()->getStringWidth(tmp);
+
+				return width;
+			}
+		}
 
 		if (!_textLines[line].chunks[i].text.empty()) {
 			width += _textLines[line].chunks[i].getFont()->getStringWidth(_textLines[line].chunks[i].text);
