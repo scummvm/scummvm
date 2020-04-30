@@ -475,6 +475,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		DEF_LOCALLIB_STATIC("libmad");
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
+		DEF_LOCALLIB_STATIC("libfribidi");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		DEF_LOCALLIB_STATIC("libpng");
 	}
@@ -569,6 +572,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		frameworks_iOS.push_back("libmad.a");
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
+		frameworks_iOS.push_back("libfribidi.a");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
 		frameworks_iOS.push_back("libfluidsynth.a");
 		frameworks_iOS.push_back("libglib-2.0.a");
@@ -647,6 +653,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		frameworks_osx.push_back("libmad.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
+		frameworks_osx.push_back("libfribidi.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		frameworks_osx.push_back("libpng.a");
