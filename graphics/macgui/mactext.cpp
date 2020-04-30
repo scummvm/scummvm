@@ -181,11 +181,16 @@ void MacText::chopChunk(const Common::U32String &str) {
 	if (text.size() == 0) {
 		warning("chopChunk: too narrow width, >%d", _maxWidth);
 		chunk->text += str;
+		getLineCharWidth(curLine, true);
 
 		return;
 	}
 
 	chunk->text += text[0];
+
+	// Recalc dims
+	getLineWidth(curLine, true);
+	getLineCharWidth(curLine, true);
 
 	D(9, "** splitString, subchunk: \"%s\" (%d lines, maxW: %d)", toPrintable(text[0].encode()).c_str(), text.size(), _maxWidth);
 
@@ -472,6 +477,28 @@ int MacText::getLineWidth(int line, bool enforce) {
 	return width;
 }
 
+int MacText::getLineCharWidth(int line, bool enforce) {
+	if ((uint)line >= _textLines.size())
+		return 0;
+
+	if (_textLines[line].charwidth != -1 && !enforce)
+		return _textLines[line].charwidth;
+
+	int width = 0;
+	bool hastext = false;
+
+	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
+		if (!_textLines[line].chunks[i].text.empty()) {
+			width += _textLines[line].chunks[i].text.size();
+			hastext = true;
+		}
+	}
+
+	_textLines[line].charwidth = width;
+
+	return width;
+}
+
 int MacText::getLineHeight(int line) {
 	if ((uint)line >= _textLines.size())
 		return 0;
@@ -499,6 +526,7 @@ void MacText::recalcDims() {
 		// We must calculate width first, because it enforces
 		// the computation. Calling Height() will return cached value!
 		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i, true));
+		getLineCharWidth(i, true);
 		y += getLineHeight(i) + _interLinear;
 	}
 

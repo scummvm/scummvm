@@ -109,6 +109,7 @@ private:
 public:
 	int _cursorX, _cursorY;
 	bool _cursorState;
+	int _cursorRow, _cursorCol;
 
 	bool _cursorDirty;
 	Common::Rect *_cursorRect;

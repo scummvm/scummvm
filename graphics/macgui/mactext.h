@@ -78,11 +78,12 @@ struct MacTextLine {
 	int width;
 	int height;
 	int y;
+	int charwidth;
 
 	Common::Array<MacFontRun> chunks;
 
 	MacTextLine() {
-		width = height = -1;
+		width = height = charwidth = -1;
 		y = 0;
 	}
 };
@@ -118,6 +119,7 @@ public:
 	void replaceLastLine(const Common::String &str);
 	void removeLastLine();
 	int getLineCount() { return _textLines.size(); }
+	int getLineCharWidth(int line, bool enforce = false);
 	int getTextHeight() { return _textMaxHeight; }
 	int getLineHeight(int line);
 

@@ -77,6 +77,9 @@ void MacEditableText::init() {
 	_cursorState = false;
 	_cursorOff = false;
 
+	_cursorRow = getLineCount();
+	_cursorCol = getLineCharWidth(_cursorRow) + 1;
+
 	_cursorDirty = true;
 
 	_scrollbarIsDirty = false;
@@ -331,6 +334,8 @@ bool MacEditableText::processEvent(Common::Event &event) {
 		case Common::KEYCODE_RETURN:
 			undrawInput();
 			return false; // Pass it to the higher level for processing
+
+		case Common::KEYCODE_LEFT:
 
 		default:
 			if (event.kbd.ascii == '~')
