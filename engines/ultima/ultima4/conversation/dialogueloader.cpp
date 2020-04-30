@@ -25,6 +25,7 @@
 #include "ultima/ultima4/conversation/dialogueloader_hw.h"
 #include "ultima/ultima4/conversation/dialogueloader_lb.h"
 #include "ultima/ultima4/conversation/dialogueloader_tlk.h"
+#include "ultima/ultima4/filesys/u4file.h"
 
 namespace Ultima {
 namespace Ultima4 {

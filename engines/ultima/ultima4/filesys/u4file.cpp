@@ -22,6 +22,7 @@
 
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/shared/core/file.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -78,24 +79,13 @@ long u4flength(Common::File *f) {
 	return f->size();
 }
 
-Std::vector<Common::String> u4read_stringtable(Common::File *f, long offset, int nstrings) {
-	Common::String buffer;
-	int i;
+Std::vector<Common::String> u4read_stringtable(const Common::String &filename) {
+	Shared::File f(Common::String::format("data/text/%s.dat", filename.c_str()));
 	Std::vector<Common::String> strs;
+	Common::String line;
 
-	ASSERT(offset < u4flength(f), "offset begins beyond end of file");
-
-	if (offset != -1)
-		f->seek(offset, SEEK_SET);
-	for (i = 0; i < nstrings; i++) {
-		char c;
-		buffer.clear();
-
-		while ((c = f->readByte()) != '\0')
-			buffer += c;
-
-		strs.push_back(buffer);
-	}
+	while (!f.eof())
+		strs.push_back(f.readString());
 
 	return strs;
 }

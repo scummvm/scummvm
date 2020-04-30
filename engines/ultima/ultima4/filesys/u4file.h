@@ -52,7 +52,7 @@ extern long u4flength(Common::File *f);
  * are read from the given offset, or the current file position if
  * offset is -1.
  */
-extern Std::vector<Common::String> u4read_stringtable(Common::File *f, long offset, int nstrings);
+extern Std::vector<Common::String> u4read_stringtable(const Common::String &filename);
 
 extern Common::String u4find_music(const Common::String &fname);
 extern Common::String u4find_sound(const Common::String &fname);

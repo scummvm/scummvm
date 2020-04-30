@@ -33,9 +33,10 @@ namespace Shared {
  * Simple ScummVM File descendent that throws a wobbly if the file it tries to open isn't present
  */
 class File : public Common::File {
+private:
+	int32 _filesize;
 public:
-	File() : Common::File() {
-	}
+	File() : Common::File(), _filesize(-1) {}
 	File(const Common::String &name);
 
 	/**
@@ -63,6 +64,16 @@ public:
 	 * @param	name		a string describing the 'file' corresponding to stream
 	 */
 	bool open(SeekableReadStream *stream, const Common::String &name) override;
+
+	/**
+	 * Close the currently open file
+	 */
+	void close();
+
+	/**
+	 * Differing eof that returns true when pos == size as well as beyond
+	 */
+	bool eof();
 
 	/**
 	 * Reads in a null terminated string

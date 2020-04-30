@@ -35,19 +35,15 @@ Response *lordBritishGetIntro(const DynamicResponse *resp);
 
 /**
  * A special case dialogue loader for Lord British.  Loads most of the
- * keyword/responses from a hardcoded location in avatar.exe.  The
- * "help" response is a special case that changes based on the
- * current party status.
+ * keyword/responses from a string table originally extracted from the
+ * game executable.  The  "help" response is a special case that changes
+ * based on the current party status.
  */
 Dialogue *U4LBDialogueLoader::load(void *source) {
-	Common::File *avatar = u4fopen("avatar.exe");
-	if (!avatar)
-		return nullptr;
+	Std::vector<Common::String> lbKeywords = u4read_stringtable("lb_keywords");
 
-	Std::vector<Common::String> lbKeywords = u4read_stringtable(avatar, 87581, 24);
-	/* There's a \0 in the 19th Common::String so we get a
-	   spurious 20th entry */
-	Std::vector<Common::String> lbText = u4read_stringtable(avatar, 87754, 25);
+	// There's a \0 in the 19th Common::String so we get a spurious 20th entry
+	Std::vector<Common::String> lbText = u4read_stringtable("lb_text");
 	for (int i = 20; i < 24; i++)
 		lbText[i] = lbText[i + 1];
 	lbText.pop_back();

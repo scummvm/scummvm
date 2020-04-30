@@ -24,19 +24,8 @@
 #include "file.h"
 
 #define FILE_BUFFER_SIZE 1024
-#define MD5_COMPUTE_SIZE 1024
 
 typedef unsigned int uint32;
-
-uint32 computeMD5(File &f) {
-	uint32 total = 0;
-	f.seek(0);
-	for (int idx = 0; idx < MD5_COMPUTE_SIZE; ++idx)
-		total += f.readByte();
-
-	f.seek(0);
-	return total;
-}
 
 #define DATA_SEGMENT_OFFSET 0x40D0
 #define LOGO_HEIGHT 64
@@ -106,7 +95,7 @@ void createFlags(File &in) {
 void extractUltima1Resources() {
 	// Open up ultima1.exe for logo
 	File u1("ultima.exe");
-	if (computeMD5(u1) != 64620)
+	if (u1.computeMD5() != 64620)
 		error("Unknown version of Ultima 1 ultima.exe");
 
 	// Extract the Origin logo and flag animation data

@@ -57,12 +57,7 @@ Shrines::~Shrines() {
 }
 
 void Shrines::loadAdvice() {
-	Common::File *avatar = u4fopen("avatar.exe");
-	if (!avatar)
-		return;
-
-	_advice = u4read_stringtable(avatar, 93682, 24);
-	u4fclose(avatar);
+	_advice = u4read_stringtable("shrines");
 }
 
 /*-------------------------------------------------------------------*/

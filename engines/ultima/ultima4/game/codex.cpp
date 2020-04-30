@@ -48,17 +48,9 @@ Codex::~Codex() {
 }
 
 int Codex::init() {
-	Common::File *avatar;
-
-	avatar = u4fopen("avatar.exe");
-	if (!avatar)
-		return 0;
-
-	_virtueQuestions = u4read_stringtable(avatar, 0x0fc7b, 11);
-	_endgameText1 = u4read_stringtable(avatar, 0x0fee4, 7);
-	_endgameText2 = u4read_stringtable(avatar, 0x10187, 5);
-
-	u4fclose(avatar);
+	_virtueQuestions = u4read_stringtable("virtue");
+	_endgameText1 = u4read_stringtable("endgame1");
+	_endgameText2 = u4read_stringtable("endgame2");
 
 	return 1;
 }

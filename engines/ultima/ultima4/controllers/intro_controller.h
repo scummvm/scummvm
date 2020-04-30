@@ -30,6 +30,7 @@
 #include "ultima/ultima4/game/textview.h"
 #include "ultima/ultima4/gfx/imageview.h"
 #include "ultima/ultima4/map/tileview.h"
+#include "ultima/shared/core/file.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -41,20 +42,12 @@ class Tile;
  * Binary data loaded from the U4DOS title.exe file.
  */
 class IntroBinData {
+private:
+	// disallow assignments, copy contruction
+	IntroBinData(const IntroBinData &);
+	const IntroBinData &operator=(const IntroBinData &);
+	void openFile(Shared::File &f, const Common::String &name);
 public:
-	const static int INTRO_TEXT_OFFSET;
-	const static int INTRO_MAP_OFFSET;
-	const static int INTRO_FIXUPDATA_OFFSET;
-	const static int INTRO_SCRIPT_TABLE_SIZE;
-	const static int INTRO_SCRIPT_TABLE_OFFSET;
-	const static int INTRO_BASETILE_TABLE_SIZE;
-	const static int INTRO_BASETILE_TABLE_OFFSET;
-	const static int BEASTIE1_FRAMES;
-	const static int BEASTIE2_FRAMES;
-	const static int BEASTIE_FRAME_TABLE_OFFSET;
-	const static int BEASTIE1_FRAMES_OFFSET;
-	const static int BEASTIE2_FRAMES_OFFSET;
-
 	IntroBinData();
 	~IntroBinData();
 
@@ -69,11 +62,6 @@ public:
 	Std::vector<Common::String> _introText;
 	Std::vector<Common::String> _introQuestions;
 	Std::vector<Common::String> _introGypsy;
-
-private:
-	// disallow assignments, copy contruction
-	IntroBinData(const IntroBinData &);
-	const IntroBinData &operator=(const IntroBinData &);
 };
 
 

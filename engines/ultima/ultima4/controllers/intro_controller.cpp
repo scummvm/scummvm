@@ -62,25 +62,17 @@ IntroController *g_intro;
 #define GYP_SEGUE1 13
 #define GYP_SEGUE2 14
 
+#define INTRO_SCRIPT_TABLE_SIZE 548
+#define INTRO_BASETILE_TABLE_SIZE 15
+#define BEASTIE1_FRAMES 0x80
+#define BEASTIE2_FRAMES 0x40
+
 class IntroObjectState {
 public:
 	IntroObjectState() : x(0), y(0), tile(0) {}
 	int x, y;
 	MapTile tile; /* base tile + tile frame */
 };
-
-const int IntroBinData::INTRO_TEXT_OFFSET = 17445 - 1;  // (start at zero)
-const int IntroBinData::INTRO_MAP_OFFSET = 30339;
-const int IntroBinData::INTRO_FIXUPDATA_OFFSET = 29806;
-const int IntroBinData::INTRO_SCRIPT_TABLE_SIZE = 548;
-const int IntroBinData::INTRO_SCRIPT_TABLE_OFFSET = 30434;
-const int IntroBinData::INTRO_BASETILE_TABLE_SIZE = 15;
-const int IntroBinData::INTRO_BASETILE_TABLE_OFFSET = 16584;
-const int IntroBinData::BEASTIE1_FRAMES = 0x80;
-const int IntroBinData::BEASTIE2_FRAMES = 0x40;
-const int IntroBinData::BEASTIE_FRAME_TABLE_OFFSET = 0x7380;
-const int IntroBinData::BEASTIE1_FRAMES_OFFSET = 0;
-const int IntroBinData::BEASTIE2_FRAMES_OFFSET = 0x78;
 
 void IntroController::AnimElement::shufflePlotData() {
 	for (int idx = 0; idx < ((int)_plotData.size() - 1); ++idx) {
@@ -116,64 +108,64 @@ IntroBinData::~IntroBinData() {
 	_introGypsy.clear();
 }
 
+void IntroBinData::openFile(Shared::File &f, const Common::String &name) {
+	f.open(Common::String::format("data/intro/%s.dat", name.c_str()));
+}
+
 bool IntroBinData::load() {
 	int i;
 
-	Common::File *title = u4fopen("title.exe");
-	if (!title)
-		return false;
+	_introQuestions = u4read_stringtable("intro_questions");
+	_introText = u4read_stringtable("intro_text");
+	_introGypsy = u4read_stringtable("intro_gypsy");
 
-	_introQuestions = u4read_stringtable(title, INTRO_TEXT_OFFSET, 28);
-	_introText = u4read_stringtable(title, -1, 24);
-	_introGypsy = u4read_stringtable(title, -1, 15);
-
-	/* clean up stray newlines at end of strings */
+	// Clean up stray newlines at end of strings
 	for (i = 0; i < 15; i++)
 		trim(_introGypsy[i]);
 
 	if (_sigData)
 		delete _sigData;
 	_sigData = new byte[533];
-	u4fseek(title, INTRO_FIXUPDATA_OFFSET, SEEK_SET);
-	u4fread(_sigData, 1, 533, title);
 
-	u4fseek(title, INTRO_MAP_OFFSET, SEEK_SET);
+	Shared::File f;
+	openFile(f, "intro_sig");
+	f.read(_sigData, 533);
+
+	openFile(f, "intro_map");
 	_introMap.clear();
 	_introMap.resize(INTRO_MAP_WIDTH * INTRO_MAP_HEIGHT);
 	for (i = 0; i < INTRO_MAP_HEIGHT * INTRO_MAP_WIDTH; i++)
-		_introMap[i] = g_tileMaps->get("base")->translate(u4fgetc(title));
+		_introMap[i] = g_tileMaps->get("base")->translate(f.readByte());
 
-	u4fseek(title, INTRO_SCRIPT_TABLE_OFFSET, SEEK_SET);
+	openFile(f, "intro_script");
 	_scriptTable = new byte[INTRO_SCRIPT_TABLE_SIZE];
 	for (i = 0; i < INTRO_SCRIPT_TABLE_SIZE; i++)
-		_scriptTable[i] = u4fgetc(title);
+		_scriptTable[i] = f.readByte();
 
-	u4fseek(title, INTRO_BASETILE_TABLE_OFFSET, SEEK_SET);
+	openFile(f, "intro_base_tile");
 	_baseTileTable = new Tile*[INTRO_BASETILE_TABLE_SIZE];
 	for (i = 0; i < INTRO_BASETILE_TABLE_SIZE; i++) {
-		MapTile tile = g_tileMaps->get("base")->translate(u4fgetc(title));
+		MapTile tile = g_tileMaps->get("base")->translate(f.readByte());
 		_baseTileTable[i] = g_tileSets->get("base")->get(tile._id);
 	}
 
 	/* --------------------------
 	   load beastie frame table 1
 	   -------------------------- */
+	openFile(f, "intro_beastie1");
 	_beastie1FrameTable = new byte[BEASTIE1_FRAMES];
-	u4fseek(title, BEASTIE_FRAME_TABLE_OFFSET + BEASTIE1_FRAMES_OFFSET, SEEK_SET);
 	for (i = 0; i < BEASTIE1_FRAMES; i++) {
-		_beastie1FrameTable[i] = u4fgetc(title);
+		_beastie1FrameTable[i] = f.readByte();
 	}
 
 	/* --------------------------
 	   load beastie frame table 2
 	   -------------------------- */
+	openFile(f, "intro_beastie2");
 	_beastie2FrameTable = new byte[BEASTIE2_FRAMES];
-	u4fseek(title, BEASTIE_FRAME_TABLE_OFFSET + BEASTIE2_FRAMES_OFFSET, SEEK_SET);
 	for (i = 0; i < BEASTIE2_FRAMES; i++) {
-		_beastie2FrameTable[i] = u4fgetc(title);
+		_beastie2FrameTable[i] = f.readByte();
 	}
-
-	u4fclose(title);
 
 	return true;
 }
@@ -330,7 +322,7 @@ bool IntroController::init() {
 
 	_sleepCycles = 0;
 	_scrPos = 0;
-	_objectStateTable = new IntroObjectState[IntroBinData::INTRO_BASETILE_TABLE_SIZE];
+	_objectStateTable = new IntroObjectState[INTRO_BASETILE_TABLE_SIZE];
 
 	_backgroundArea.reinit();
 	_menuArea.reinit();
@@ -533,7 +525,7 @@ void IntroController::drawMapAnimated() {
 	int i;
 
 	// draw animated objects
-	for (i = 0; i < IntroBinData::INTRO_BASETILE_TABLE_SIZE; i++)
+	for (i = 0; i < INTRO_BASETILE_TABLE_SIZE; i++)
 		if (_objectStateTable[i].tile != 0) {
 			Std::vector<MapTile> tiles;
 			tiles.push_back(_objectStateTable[i].tile);
@@ -949,9 +941,9 @@ void IntroController::timerFired() {
 	if (_beastiesVisible)
 		drawBeasties();
 
-	if (xu4_random(2) && ++_beastie1Cycle >= IntroBinData::BEASTIE1_FRAMES)
+	if (xu4_random(2) && ++_beastie1Cycle >= BEASTIE1_FRAMES)
 		_beastie1Cycle = 0;
-	if (xu4_random(2) && ++_beastie2Cycle >= IntroBinData::BEASTIE2_FRAMES)
+	if (xu4_random(2) && ++_beastie2Cycle >= BEASTIE2_FRAMES)
 		_beastie2Cycle = 0;
 }
 
@@ -1399,7 +1391,7 @@ void IntroController::preloadMap() {
 			_mapArea.loadTile(_binData->_introMap[x + (y * INTRO_MAP_WIDTH)]);
 
 	// draw animated objects
-	for (i = 0; i < IntroBinData::INTRO_BASETILE_TABLE_SIZE; i++) {
+	for (i = 0; i < INTRO_BASETILE_TABLE_SIZE; i++) {
 		if (_objectStateTable[i].tile != 0)
 			_mapArea.loadTile(_objectStateTable[i].tile);
 	}

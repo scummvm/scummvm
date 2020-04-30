@@ -20,9 +20,9 @@
  *
  */
 
-#ifndef CREATE_ULTIMA_H
-#define CREATE_ULTIMA_H
+#ifndef ULTIMA4_RESOURCES_H
+#define ULTIMA4_RESOURCES_H
 
-extern void error(const char *s);
+extern void extractUltima4Resources();
 
 #endif

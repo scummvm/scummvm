@@ -31,6 +31,9 @@
 #include <cassert>
 
 typedef unsigned char byte;
+typedef unsigned int uint32;
+
+extern void error(const char *s);
 
 class File {
 private:
@@ -38,7 +41,11 @@ private:
 public:
 	File(const char *filename) {
 		_file = fopen(filename, "rb");
-		assert(_file);
+		if (!_file) {
+			char buf[255];
+			sprintf(buf, "Could not open file %s", filename);
+			error(buf);
+		}
 	}
 	~File() {
 		fclose(_file);
@@ -64,6 +71,12 @@ public:
 	void read(void *buf, int size) {
 		fread(buf, 1, size, _file);
 	}
+
+	bool eof() const {
+		return feof(_file);
+	}
+
+	uint32 computeMD5();
 };
 
 class WriteFile {
@@ -96,6 +109,14 @@ public:
 	int write(void *buf, int size) {
 		return (int)fwrite(buf, 1, size, _file);
 	}
+
+	void write(File &src, int size) {
+		byte *data = new byte[size];
+		src.read(data, size);
+		write(data, size);
+		delete[] data;
+	}
+
 	void writeRepeating(byte val, size_t count) {
 		while (count-- > 0)
 			writeByte(val);
