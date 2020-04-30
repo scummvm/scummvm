@@ -151,6 +151,7 @@ public:
 	};
 
 	Chr(Common::String name, Common::SeekableReadStream *data);
+	~Chr();
 
 	int _index;
 	int _resourceId;
