@@ -298,7 +298,7 @@ static int can_wear(parse_rec *objrec)
 {
 	static const char *errs[] = {
 		"$The_n$$noun$ $n_is$ far too heavy to wear.",
-		"$You're$ already loaded down with too much weight as it is."
+		"$You're$ already loaded down with too much weight as it is.",
 		"$The_n$$noun$ $n_is$ too big and bulky to wear.",
 		"$You're$ wearing too much to also wear $the_n$$noun$."
 	};
