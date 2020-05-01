@@ -55,6 +55,7 @@ MapLoaders::MapLoaders() {
 	(*this)[Map::SHRINE] = new ConMapLoader();
 	(*this)[Map::DUNGEON] = new DngMapLoader();
 	(*this)[Map::WORLD] = new WorldMapLoader();
+	(*this)[Map::COMBAT] = new WorldMapLoader();
 }
 
 MapLoaders::~MapLoaders() {
