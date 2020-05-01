@@ -118,9 +118,9 @@ public:
 };
 
 /**
- * Create a codec given a bitmap/AVI compression tag.
+ * Create a codec given a bitmap/AVI compression tag and stream handler tag (can be 0)
  */
-Codec *createBitmapCodec(uint32 tag, int width, int height, int bitsPerPixel);
+Codec *createBitmapCodec(uint32 tag, uint32 streamTag, int width, int height, int bitsPerPixel);
 
 /**
  * Create a codec given a QuickTime compression tag.
