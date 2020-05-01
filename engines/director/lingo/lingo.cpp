@@ -532,9 +532,9 @@ Common::String *Datum::makeString(bool printonly) {
 			}
 
 			if (!printonly) {
-				*s = ((TextCast *)score->_loadedCast->getVal(idx))->_ptext;
+				*s = Common::String(((TextCast *)score->_loadedCast->getVal(idx))->getText());
 			} else {
-				*s = Common::String::format("reference: \"%s\"", ((TextCast *)score->_loadedCast->getVal(idx))->_ptext.c_str());
+				*s = Common::String::format("reference: \"%s\"", ((TextCast *)score->_loadedCast->getVal(idx))->getText().c_str());
 			}
 		}
 		break;

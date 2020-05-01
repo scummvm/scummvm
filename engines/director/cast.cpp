@@ -300,6 +300,13 @@ void TextCast::setText(const char *text) {
 	}
 }
 
+Common::String TextCast::getText() {
+	if (_widget)
+		_ptext = ((Graphics::MacEditableText *)_widget)->getEditedString().encode();
+
+	return _ptext;
+}
+
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 	_type = kCastShape;
 

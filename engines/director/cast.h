@@ -129,6 +129,8 @@ public:
 	void importStxt(const Stxt *stxt);
 	void importRTE(byte* text);
 	CachedMacText *_cachedMacText;
+
+	Common::String getText();
 };
 
 class ButtonCast : public TextCast {

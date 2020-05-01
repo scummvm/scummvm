@@ -652,7 +652,7 @@ Datum Lingo::varFetch(Datum &var) {
 			switch (cast->_type) {
 			case kCastText:
 				result.type = STRING;
-				result.u.s = new Common::String(((TextCast *)cast)->_ptext);
+				result.u.s = new Common::String(((TextCast *)cast)->getText());
 				break;
 			default:
 				warning("varFetch: Unhandled cast type %s", tag2str(cast->_type));
