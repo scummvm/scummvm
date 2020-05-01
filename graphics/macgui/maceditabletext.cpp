@@ -91,7 +91,7 @@ void MacEditableText::init() {
 	_cursorSurface->clear(_wm->_colorBlack);
 
 	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
-	_composeSurface->clear(_wm->_colorWhite);
+	_composeSurface->clear(_bgcolor);
 }
 
 MacEditableText::~MacEditableText() {
@@ -161,7 +161,7 @@ bool MacEditableText::draw(bool forceRedraw) {
 	if (!_contentIsDirty && !_cursorDirty && !forceRedraw)
 		return false;
 
-	_composeSurface->clear(_wm->_colorWhite);
+	_composeSurface->clear(_bgcolor);
 
 	_contentIsDirty = false;
 	_cursorDirty = false;
@@ -243,10 +243,10 @@ void MacEditableText::drawSelection() {
 		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, y);
 
 		for (int x = x1; x < x2; x++, ptr++)
-			if (*ptr == _wm->_colorBlack)
-				*ptr = _wm->_colorWhite;
+			if (*ptr == _fgcolor)
+				*ptr = _bgcolor;
 			else
-				*ptr = _wm->_colorBlack;
+				*ptr = _fgcolor;
 	}
 }
 
