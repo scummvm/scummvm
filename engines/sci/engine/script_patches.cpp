@@ -6838,6 +6838,35 @@ static const uint16 laurabow1PatchCopyProtectionRandomFix[] = {
 	PATCH_END
 };
 
+// At the end of the game a dialog asks if you'd like to review your notes.
+//  Pressing the escape key dismisses the dialog and locks up the game with the
+//  menu and input disabled. The script is missing a handler for this result.
+//  We fix this by repeating the dialog when escape is pressed, just like the
+//  other dialogs do in room 786. Sierra fixed this in later versions.
+//
+// Applies to: DOS
+// Responsible method: Notes:changeState(1)
+static const uint16 laurabow1SignatureReviewNotesDialog[] = {
+	0x39, 0x0f,                         // pushi 0f
+	SIG_ADDTOOFFSET(+0x20),
+	SIG_MAGICDWORD,
+	0x7a,                               // push2
+	0x47, 0xff, 0x00, 0x1e,             // calle proc255_0 [ print dialog ]
+	0x36,                               // push
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	SIG_END
+};
+
+static const uint16 laurabow1PatchReviewNotesDialog[] = {
+	PATCH_ADDTOOFFSET(+0x27),
+	0x31, 0xd7,                         // bnt -29 [ repeat dialog if escape pressed ]
+	0x36,                               // push
+	0x78,                               // push1
+	PATCH_END
+};
+
 //          script, description,                                signature                                             patch
 static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,     4, "easter egg view fix",                      1, laurabow1SignatureEasterEggViewFix,                laurabow1PatchEasterEggViewFix },
@@ -6851,6 +6880,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
 	{  true,   414, "copy protection random fix",               1, laurabow1SignatureCopyProtectionRandomFix,         laurabow1PatchCopyProtectionRandomFix },
+	{  true,   786, "review notes dialog fix",                  1, laurabow1SignatureReviewNotesDialog,               laurabow1PatchReviewNotesDialog },
 	{  true,   998, "obstacle collision lockups fix",           1, laurabow1SignatureObstacleCollisionLockupsFix,     laurabow1PatchObstacleCollisionLockupsFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
