@@ -80,21 +80,20 @@ void ImageMgr::init() {
 	 * register the "screen" image representing the entire screen
 	 */
 	Image *screen = Image::createScreenImage();
-	ImageInfo *screenInfo = new ImageInfo();
 
-	screenInfo->_name = "screen";
-	screenInfo->_filename = "";
-	screenInfo->_width = screen->width();
-	screenInfo->_height = screen->height();
-	screenInfo->_depth = 0;
-	screenInfo->_prescale = 0;
-	screenInfo->_filetype = "";
-	screenInfo->_tiles = 0;
-	screenInfo->_introOnly = false;
-	screenInfo->_transparentIndex = -1;
-	screenInfo->_xu4Graphic = false;
-	screenInfo->_fixup = FIXUP_NONE;
-	screenInfo->_image = screen;
+	_screenInfo._name = "screen";
+	_screenInfo._filename = "";
+	_screenInfo._width = screen->width();
+	_screenInfo._height = screen->height();
+	_screenInfo._depth = 0;
+	_screenInfo._prescale = 0;
+	_screenInfo._filetype = "";
+	_screenInfo._tiles = 0;
+	_screenInfo._introOnly = false;
+	_screenInfo._transparentIndex = -1;
+	_screenInfo._xu4Graphic = false;
+	_screenInfo._fixup = FIXUP_NONE;
+	_screenInfo._image = screen;
 
 	/*
 	 * register all the images declared in the config files
@@ -107,7 +106,7 @@ void ImageMgr::init() {
 			_imageSets[set->_name] = set;
 
 			// all image sets include the "screen" image
-			set->_info[screenInfo->_name] = screenInfo;
+			set->_info[_screenInfo._name] = &_screenInfo;
 		}
 	}
 
@@ -332,7 +331,7 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 		im->setPaletteFromImage(borderInfo->_image);
 
 		// update the color of "and" and "present"
-		im->setPaletteIndex(15, im->setColor(226, 226, 255));
+		(void)im->setPaletteIndex(15, im->setColor(226, 226, 255));
 
 		// update the color of "Origin Systems, Inc."
 		(void)im->setPaletteIndex(9, im->setColor(129, 129, 255));

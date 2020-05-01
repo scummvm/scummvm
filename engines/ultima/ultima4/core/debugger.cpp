@@ -1669,7 +1669,7 @@ bool Debugger::cmdTransport(int argc, const char **argv) {
 			break;
 		}
 
-		if (choice && ok) {
+		if (ok) {
 			g_context->_location->_map->addObject(*choice, *choice, coords);
 			print("%s created!", tile->getName().c_str());
 		} else if (!choice) {

@@ -140,7 +140,7 @@ void SaveGame::save(Common::WriteStream *stream) {
 
 void SaveGame::load(Common::SeekableReadStream *stream) {
 	Common::Serializer *ser = nullptr;
-	assert(g_context);
+	assert(g_context && g_context->_location);
 
 	if (stream) {
 		ser = new Common::Serializer(stream, nullptr);

@@ -152,7 +152,7 @@ public:
 
 	class Source {
 	public:
-		Source() {}
+		Source() : _type(WORLD) {}
 		Source(const Common::String &f, Type t) : _fname(f), _type(t) {}
 
 		Common::String _fname;

@@ -689,6 +689,7 @@ bool GameController::checkMoongates() {
 			Shrine *shrine_spirituality;
 
 			shrine_spirituality = dynamic_cast<Shrine *>(mapMgr->get(MAP_SHRINE_SPIRITUALITY));
+			assert(shrine_spirituality);
 
 			if (!g_context->_party->canEnterShrine(VIRT_SPIRITUALITY))
 				return true;
