@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/gumps/remorse_menu_gump.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
@@ -50,10 +49,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MenuGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMenuGump, ModalGump)
 
-MenuGump::MenuGump(bool nameEntryMode_)
-	: ModalGump(0, 0, 5, 5, 0, FLAG_DONT_SAVE) {
+RemorseMenuGump::RemorseMenuGump(bool nameEntryMode_)
+	: ModalGump(0, 0, 640, 480, 0, FLAG_DONT_SAVE) {
 	_nameEntryMode = nameEntryMode_;
 
 	Mouse *mouse = Mouse::get_instance();
@@ -70,28 +69,20 @@ MenuGump::MenuGump(bool nameEntryMode_)
 		// Stop any playing music.
 		musicprocess->playCombatMusic(0);
 	}
-
-	// Save old palette transform
-	PaletteManager *palman = PaletteManager::get_instance();
-	palman->getTransformMatrix(_oldPalTransform, PaletteManager::Pal_Game);
-	palman->untransformPalette(PaletteManager::Pal_Game);
-
 	MetaEngine::setGameMenuActive(true);
 }
 
-MenuGump::~MenuGump() {
+RemorseMenuGump::~RemorseMenuGump() {
 	MetaEngine::setGameMenuActive(false);
 }
 
 
-void MenuGump::Close(bool no_del) {
+void RemorseMenuGump::Close(bool no_del) {
 	// Restore old music state and palette.
 	// Music state can be changed by the Intro and Credits
 	MusicProcess *musicprocess = MusicProcess::get_instance();
 	if (musicprocess)
 		musicprocess->restoreTrackState();
-	PaletteManager *palman = PaletteManager::get_instance();
-	palman->transformPalette(PaletteManager::Pal_Game, _oldPalTransform);
 
 	Mouse *mouse = Mouse::get_instance();
 	mouse->popMouseCursor();
@@ -99,82 +90,93 @@ void MenuGump::Close(bool no_del) {
 	ModalGump::Close(no_del);
 }
 
-static const int gumpShape = 35;
-static const int paganShape = 32;
-static const int menuEntryShape = 37;
+static const int frameTopLeft = 54;
+static const int firstMenuEntry = 58;
 
-void MenuGump::InitGump(Gump *newparent, bool take_focus) {
+static const int numMenuEntries = 6;
+static const int menuEntryX[] = {45, 45, 45, 446, 488, 550};
+static const int menuEntryY[] = {50, 101, 151, 58, 151, 198};
+
+void RemorseMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	_shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
-	UpdateDimsFromShape();
+	GumpShapeArchive *shapeArchive = GameData::get_instance()->getGumps();
 
-	Shape *logoShape;
-	logoShape = GameData::get_instance()->getGumps()->getShape(paganShape);
-	const ShapeFrame *sf = logoShape->getFrame(0);
-	assert(sf);
+	Shape *topLeft = shapeArchive->getShape(frameTopLeft);
+	Shape *topRight = shapeArchive->getShape(frameTopLeft + 1);
+	Shape *botLeft = shapeArchive->getShape(frameTopLeft + 2);
+	Shape *botRight = shapeArchive->getShape(frameTopLeft + 3);
 
-	Gump *logo = new Gump(42, 10, sf->_width, sf->_height);
-	logo->SetShape(logoShape, 0);
-	logo->InitGump(this, false);
+	if (!topLeft || !topRight || !botLeft || !botRight) {
+		error("Couldn't load shapes for menu background");
+		return;
+	}
 
-	if (!_nameEntryMode) {
-		SettingManager *settingman = SettingManager::get_instance();
-		bool endgame = false;
-		bool quotes = false;
-		settingman->get("endgame", endgame);
-		settingman->get("quotes", quotes);
+	PaletteManager *palman = PaletteManager::get_instance();
+	assert(palman);
+	const Palette *pal = palman->getPalette(PaletteManager::Pal_Misc);
+	assert(pal);
+	topLeft->setPalette(pal);
+	topRight->setPalette(pal);
+	botLeft->setPalette(pal);
+	botRight->setPalette(pal);
 
-		int x_ = _dims.w / 2 + 14;
-		int y_ = 18;
-		for (int i = 0; i < 8; ++i) {
-			if ((quotes || i != 6) && (endgame || i != 7)) {
-				FrameID frame_up(GameData::GUMPS, menuEntryShape, i * 2);
-				FrameID frame_down(GameData::GUMPS, menuEntryShape, i * 2 + 1);
-				frame_up = _TL_SHP_(frame_up);
-				frame_down = _TL_SHP_(frame_down);
-				Gump *widget = new ButtonWidget(x_, y_, frame_up, frame_down, true);
-				widget->InitGump(this, false);
-				widget->SetIndex(i + 1);
-			}
+	const ShapeFrame *tlFrame = topLeft->getFrame(0);
+	const ShapeFrame *trFrame = topRight->getFrame(0);
+	const ShapeFrame *blFrame = botLeft->getFrame(0);
+	const ShapeFrame *brFrame = botRight->getFrame(0);
+	if (!tlFrame || !trFrame || !blFrame || !brFrame) {
+		error("Couldn't load shape frames for menu background");
+		return;
+	}
 
-			y_ += 14;
+	_dims.w = tlFrame->_width + trFrame->_width;
+	_dims.h = tlFrame->_height + brFrame->_height;
+	_dims.x = 0;
+	_dims.y = 0;
+
+	Gump *tlGump = new Gump(0, 0, tlFrame->_width, tlFrame->_height);
+	tlGump->SetShape(topLeft, 0);
+	tlGump->InitGump(this, false);
+	Gump *trGump = new Gump(tlFrame->_width, 0, trFrame->_width, trFrame->_height);
+	trGump->SetShape(topRight, 0);
+	trGump->InitGump(this, false);
+	Gump *blGump = new Gump(0, tlFrame->_height, blFrame->_width, blFrame->_height);
+	blGump->SetShape(botLeft, 0);
+	blGump->InitGump(this, false);
+	Gump *brGump = new Gump(blFrame->_width, trFrame->_height, brFrame->_width, brFrame->_height);
+	brGump->SetShape(botRight, 0);
+	brGump->InitGump(this, false);
+
+	for (int i = 0; i < numMenuEntries; i++) {
+		uint32 entryShapeNum = firstMenuEntry + i;
+		Shape *menuEntry = shapeArchive->getShape(entryShapeNum);
+		if (!menuEntry) {
+			error("Couldn't load shape for menu entry %d", i);
+			return;
+		}
+		menuEntry->setPalette(pal);
+
+		const ShapeFrame *menuEntryFrame = menuEntry->getFrame(0);
+		if (!menuEntryFrame || menuEntry->frameCount() != 2) {
+			error("Couldn't load shape frame for menu entry %d", i);
+			return;
 		}
 
-		const MainActor *av = getMainActor();
-		Std::string name;
-		if (av)
-			name = av->getName();
-
-		if (!name.empty()) {
-			Rect rect;
-			Gump *widget = new TextWidget(0, 0, name, true, 6);
-			widget->InitGump(this, false);
-			widget->GetDims(rect);
-			widget->Move(90 - rect.w / 2, _dims.h - 40);
-		}
-	} else {
-		Gump *widget;
-		widget = new TextWidget(0, 0, _TL_("Give thy name:"), true, 6); // CONSTANT!
+		FrameID frame_up(GameData::GUMPS, entryShapeNum, 0);
+		FrameID frame_down(GameData::GUMPS, entryShapeNum, 1);
+		Gump *widget = new ButtonWidget(menuEntryX[i], menuEntryY[i], frame_up, frame_down, true);
 		widget->InitGump(this, false);
-		widget->Move(_dims.w / 2 + 6, 10);
-
-		Rect textdims;
-		widget->GetDims(textdims);
-
-		widget = new EditWidget(0, 0, "", true, 6, 110, 40, 15); // CONSTANTS!
-		widget->InitGump(this, true);
-		widget->Move(_dims.w / 2 + 6, 10 + textdims.h);
-		widget->MakeFocus();
+		widget->SetIndex(i + 1);
 	}
 }
 
 
-void MenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
+void RemorseMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
 }
 
-bool MenuGump::OnKeyDown(int key, int mod) {
+bool RemorseMenuGump::OnKeyDown(int key, int mod) {
 	if (Gump::OnKeyDown(key, mod)) return true;
 
 	if (!_nameEntryMode) {
@@ -193,7 +195,7 @@ bool MenuGump::OnKeyDown(int key, int mod) {
 	return true;
 }
 
-void MenuGump::ChildNotify(Gump *child, uint32 message) {
+void RemorseMenuGump::ChildNotify(Gump *child, uint32 message) {
 	if (child->IsOfType<EditWidget>() && message == EditWidget::EDIT_ENTER) {
 		EditWidget *editwidget = p_dynamic_cast<EditWidget *>(child);
 		assert(editwidget);
@@ -210,7 +212,7 @@ void MenuGump::ChildNotify(Gump *child, uint32 message) {
 	}
 }
 
-void MenuGump::selectEntry(int entry) {
+void RemorseMenuGump::selectEntry(int entry) {
 	SettingManager *settingman = SettingManager::get_instance();
 	bool endgame, quotes;
 	settingman->get("endgame", endgame);
@@ -247,37 +249,10 @@ void MenuGump::selectEntry(int entry) {
 	}
 }
 
-bool MenuGump::OnTextInput(int unicode) {
+bool RemorseMenuGump::OnTextInput(int unicode) {
 	if (Gump::OnTextInput(unicode)) return true;
 
 	return true;
-}
-
-//static
-void MenuGump::showMenu() {
-	Gump *gump = Ultima8Engine::get_instance()->getMenuGump();
-
-	if (gump) {
-		gump->Close();
-	} else {
-		if (GAME_IS_U8)
-			gump = new MenuGump();
-		else
-			gump = new RemorseMenuGump();
-		gump->InitGump(0);
-		gump->setRelativePosition(CENTER);
-	}
-}
-
-//static
-void MenuGump::inputName() {
-	ModalGump *gump;
-	if (GAME_IS_U8)
-		gump = new MenuGump(true);
-	else
-		gump = new RemorseMenuGump(true);
-	gump->InitGump(0);
-	gump->setRelativePosition(CENTER);
 }
 
 } // End of namespace Ultima8

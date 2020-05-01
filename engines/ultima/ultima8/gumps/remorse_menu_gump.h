@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA8_GUMPS_QUITGUMP_H
-#define ULTIMA8_GUMPS_QUITGUMP_H
+#ifndef ULTIMA8_GUMPS_REMORSEMENUGUMP_H
+#define ULTIMA8_GUMPS_REMORSEMENUGUMP_H
 
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
@@ -29,34 +29,30 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class QuitGump : public ModalGump {
+class RenderedText;
+
+class RemorseMenuGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	QuitGump();
-	~QuitGump() override;
+	RemorseMenuGump(bool nameEntryMode = false);
+	~RemorseMenuGump() override;
 
+	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
+	void Close(bool no_del = false) override;
 
+	// Paint the Gump
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
 	bool OnKeyDown(int key, int mod) override;
 	bool OnTextInput(int unicode) override;
 	void ChildNotify(Gump *child, uint32 message) override;
 
-	static void verifyQuit();
-
-	bool loadData(Common::ReadStream *rs);
 protected:
-	void saveData(Common::WriteStream *ws) override;
-	ObjId _yesWidget, _noWidget;
+	bool _nameEntryMode;
 
-	uint32 _gumpShape;
-	uint32 _yesShape;
-	uint32 _noShape;
-	uint32 _askShape;
-	uint32 _buttonXOff;
-	uint32 _buttonYOff;
+	virtual void selectEntry(int entry);
 };
 
 } // End of namespace Ultima8

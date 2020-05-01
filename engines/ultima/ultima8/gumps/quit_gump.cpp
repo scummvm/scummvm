@@ -36,58 +36,83 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(QuitGump, ModalGump)
 
+static const int u8GumpShape = 17;
+static const int u8AskShapeId = 18;
+static const int u8YesShapeId = 47;
+static const int u8NoShapeId = 50;
+
+static const int remGumpShape = 21;
+static const int remAskShapeId = 0;
+static const int remYesShapeId = 19;
+static const int remNoShapeId = 20;
+
+
 QuitGump::QuitGump(): ModalGump(0, 0, 5, 5), _yesWidget(0), _noWidget(0) {
 	Mouse *mouse = Mouse::get_instance();
 	mouse->pushMouseCursor();
 	mouse->setMouseCursor(Mouse::MOUSE_HAND);
+	if (GAME_IS_U8) {
+		_gumpShape = u8GumpShape;
+		_askShape = u8AskShapeId;
+		_yesShape = u8YesShapeId;
+		_noShape = u8NoShapeId;
+		_buttonXOff = 16;
+		_buttonYOff = 38;
+	} else if (GAME_IS_REMORSE) {
+		_gumpShape = remGumpShape;
+		_askShape = remAskShapeId;
+		_yesShape = remYesShapeId;
+		_noShape = remNoShapeId;
+		_buttonXOff = 55;
+		_buttonYOff = 47;
+	} else {
+		error("unsupported game type");
+	}
 }
 
 QuitGump::~QuitGump() {
 	Mouse::get_instance()->popMouseCursor();
 }
 
-static const int gumpShape = 17;
-static const int askShapeId = 18;
-static const int yesShapeId = 47;
-static const int noShapeId = 50;
-
 void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	_shape = GameData::get_instance()->getGumps()->getShape(gumpShape);
+	_shape = GameData::get_instance()->getGumps()->getShape(_gumpShape);
 	UpdateDimsFromShape();
 
-	FrameID askshape(GameData::GUMPS, askShapeId, 0);
-	askshape = _TL_SHP_(askshape);
+	if (_askShape != 0) {
+		FrameID askshape(GameData::GUMPS, _askShape, 0);
+		askshape = _TL_SHP_(askshape);
 
-	Shape *askShape = GameData::get_instance()->getShape(askshape);
-	const ShapeFrame *sf = askShape->getFrame(askshape._frameNum);
-	assert(sf);
+		Shape *askShape = GameData::get_instance()->getShape(askshape);
+		const ShapeFrame *sf = askShape->getFrame(askshape._frameNum);
+		assert(sf);
 
-	Gump *ask = new Gump(0, 0, sf->_width, sf->_height);
-	ask->SetShape(askShape, askshape._frameNum);
-	ask->InitGump(this);
-	ask->setRelativePosition(TOP_CENTER, 0, 5);
+		Gump *ask = new Gump(0, 0, sf->_width, sf->_height);
+		ask->SetShape(askShape, askshape._frameNum);
+		ask->InitGump(this);
+		ask->setRelativePosition(TOP_CENTER, 0, 5);
+	}
 
-	FrameID yesbutton_up(GameData::GUMPS, yesShapeId, 0);
-	FrameID yesbutton_down(GameData::GUMPS, yesShapeId, 1);
+	FrameID yesbutton_up(GameData::GUMPS, _yesShape, 0);
+	FrameID yesbutton_down(GameData::GUMPS, _yesShape, 1);
 	yesbutton_up = _TL_SHP_(yesbutton_up);
 	yesbutton_down = _TL_SHP_(yesbutton_down);
 
 	Gump *widget;
 	widget = new ButtonWidget(0, 0, yesbutton_up, yesbutton_down);
 	widget->InitGump(this);
-	widget->setRelativePosition(TOP_LEFT, 16, 38);
+	widget->setRelativePosition(TOP_LEFT, _buttonXOff, _buttonYOff);
 	_yesWidget = widget->getObjId();
 
-	FrameID nobutton_up(GameData::GUMPS, noShapeId, 0);
-	FrameID nobutton_down(GameData::GUMPS, noShapeId, 1);
+	FrameID nobutton_up(GameData::GUMPS, _noShape, 0);
+	FrameID nobutton_down(GameData::GUMPS, _noShape, 1);
 	nobutton_up = _TL_SHP_(nobutton_up);
 	nobutton_down = _TL_SHP_(nobutton_down);
 
 	widget = new ButtonWidget(0, 0, nobutton_up, nobutton_down);
 	widget->InitGump(this);
-	widget->setRelativePosition(TOP_RIGHT, -16, 38);
+	widget->setRelativePosition(TOP_RIGHT, -_buttonXOff, _buttonYOff);
 	_noWidget = widget->getObjId();
 }
 

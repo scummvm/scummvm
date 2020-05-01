@@ -124,8 +124,8 @@ bool RemorseGame::startGame() {
 }
 
 bool RemorseGame::startInitialUsecode(int saveSlot) {
-	ProcId moviepid = Game::get_instance()->playIntroMovie(false);
-	Process *movieproc = Kernel::get_instance()->getProcess(moviepid);
+	//ProcId moviepid = Game::get_instance()->playIntroMovie(false);
+	//Process *movieproc = Kernel::get_instance()->getProcess(moviepid);
 
 	//if (movieproc) {
 	//	waitFor(movieproc);
