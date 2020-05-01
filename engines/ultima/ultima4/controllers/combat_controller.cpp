@@ -54,6 +54,8 @@
 namespace Ultima {
 namespace Ultima4 {
 
+CombatController *g_combat;
+
 extern void gameDestroyAllCreatures();
 
 /**
@@ -109,9 +111,12 @@ CombatController::CombatController(MapId id) : _map(nullptr) {
 
 CombatController::~CombatController() {
 	g_context->_party->deleteObserver(this);
+	g_combat = nullptr;
 }
 
 void CombatController::init() {
+	g_combat = this;
+
 	_focus = 0;
 	Common::fill(&_creatureTable[0], &_creatureTable[AREA_CREATURES],
 		(const Creature *)nullptr);
@@ -124,6 +129,11 @@ void CombatController::init() {
 	_winOrLose = false;
 	_showMessage = false;
 	_exitDir = DIR_NONE;
+}
+
+void CombatController::setActive() {
+	// The game controller has the keybindings enabled
+	MetaEngine::setKeybindingMode(KBMODE_COMBAT);
 }
 
 // Accessor Methods
@@ -854,7 +864,10 @@ void CombatController::movePartyMember(MoveEvent &event) {
 	}
 }
 
-// Key handlers
+void CombatController::keybinder(KeybindingAction action) {
+	MetaEngine::executeAction(action);
+}
+
 bool CombatController::keyPressed(int key) {
 	bool valid = true;
 	bool endTurn = true;
@@ -865,13 +878,6 @@ bool CombatController::keyPressed(int key) {
 	case Common::KEYCODE_LEFT:
 	case Common::KEYCODE_RIGHT:
 		g_context->_location->move(keyToDirection(key), true);
-		break;
-
-	case Common::KEYCODE_ESCAPE:
-		if (settings._debug)
-			end(false);         /* don't adjust karma */
-		else g_screen->screenMessage("Bad command\n");
-
 		break;
 
 	case ' ':

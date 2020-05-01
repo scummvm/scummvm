@@ -97,6 +97,7 @@ static const KeybindingRecord CHEAT_KEYS[] = {
 	{ KEYBIND_CHEAT_COLLISIONS, "CHEAT-COLLISIONS", "Toggle Collision Handling", "collisions", "A+c", nullptr },
 	{ KEYBIND_CHEAT_DESTROY, "CHEAT-DESTROY", "Destroy Object", "destroy", "A+d", nullptr },
 	{ KEYBIND_CHEAT_EQUIPMENT, "CHEAT-EQUIPMENT", "Full Equipment", "equipment", "A+e", nullptr },
+	{ KEYBIND_CHEAT_FLEE, "CHEAT_FLEE", "Flee Combat", "flee", "A+f", nullptr },
 	{ KEYBIND_CHEAT_GOTO, "CHEAT-GOTO", "Goto location", "goto", "A+g", nullptr },
 	{ KEYBIND_CHEAT_HELP, "CHEAT-HELP", "Help - Teleport to Lord British", "goto", "A+h", nullptr },
 	{ KEYBIND_CHEAT_ITEMS, "CHEAT-ITEMS", "Give Items", "items", "A+i", nullptr },
@@ -129,6 +130,15 @@ static const KeybindingRecord DIRECTION_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
+static const KeybindingRecord COMBAT_KEYS[] = {
+	{ KEYBIND_ESCAPE, "ESCAPE", "Escape", nullptr, "ESCAPE", nullptr },
+	{ KEYBIND_UP, "UP", "Up", nullptr, "UP", nullptr },
+	{ KEYBIND_DOWN, "DOWN", "Down", nullptr, "DOWN", nullptr },
+	{ KEYBIND_LEFT, "LEFT", "Left", nullptr, "LEFT", nullptr },
+	{ KEYBIND_RIGHT, "RIGHT", "Right", nullptr, "RIGHT", nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+};
+
 struct KeysRecord {
 	const char *_id;
 	const char *_desc;
@@ -142,18 +152,25 @@ static const KeysRecord NORMAL_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord INPUT_RECORDS[3] = {
+static const KeysRecord INPUT_RECORDS[] = {
 	{ "ultima4", "Ultima IV", INPUT_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord DIRECTION_RECORDS[3] = {
+static const KeysRecord DIRECTION_RECORDS[] = {
 	{ "ultima4", "Ultima IV", DIRECTION_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord *MODE_RECORDS[3] = {
-	NORMAL_RECORDS, INPUT_RECORDS, DIRECTION_RECORDS
+static const KeysRecord COMBAT_RECORDS[] = {
+	{ "ultima4", "Ultima IV", COMBAT_KEYS },
+	{ "ultima4_party", "Ultima IV - Party", PARTY_KEYS },
+	{ "ultima4_cheats", "Ultima IV - Cheats", CHEAT_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
+
+static const KeysRecord *MODE_RECORDS[5] = {
+	NORMAL_RECORDS, INPUT_RECORDS, DIRECTION_RECORDS, COMBAT_RECORDS
 };
 
 Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {

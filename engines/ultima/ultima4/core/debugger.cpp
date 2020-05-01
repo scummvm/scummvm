@@ -42,6 +42,7 @@
 #include "ultima/ultima4/map/dungeonview.h"
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/ultima4.h"
+#include "common/system.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -91,6 +92,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("dungeon", WRAP_METHOD(Debugger, cmdDungeon));
 	registerCmd("equipment", WRAP_METHOD(Debugger, cmdEquipment));
 	registerCmd("exit", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("flee", WRAP_METHOD(Debugger, cmdFlee));
 	registerCmd("fullstats", WRAP_METHOD(Debugger, cmdFullStats));
 	registerCmd("gate", WRAP_METHOD(Debugger, cmdGate));
 	registerCmd("goto", WRAP_METHOD(Debugger, cmdGoto));
@@ -170,11 +172,17 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 	bool result = Shared::Debugger::handleCommand(argc, argv, keepRunning);
 
 	if (result) {
+		if (g_context)
+			g_context->_lastCommandTime = g_system->getMillis();
+
 		if (!isActive() && !_dontEndTurn) {
 			g_game->finishTurn();
-		} else if (_dontEndTurn && eventHandler->getController() == g_game) {
-			assert(g_context);
-			g_context->_location->_turnCompleter->finishTurn();
+		} else if (_dontEndTurn) {
+			Controller *ctl = eventHandler->getController();
+			if (ctl == g_game || ctl == g_combat) {
+				assert(g_context);
+				g_context->_location->_turnCompleter->finishTurn();
+			}
 		}
 	}
 
@@ -1268,6 +1276,17 @@ bool Debugger::cmdDungeon(int argc, const char **argv) {
 		}
 	} else {
 		print("Not here");
+	}
+
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdFlee(int argc, const char **argv) {
+	if (eventHandler->getController() == g_combat) {
+		// End the combat without losing karma
+		g_combat->end(false);
+	} else {
+		g_screen->screenMessage("Bad command\n");
 	}
 
 	return isDebuggerActive();

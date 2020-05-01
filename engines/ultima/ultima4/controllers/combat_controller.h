@@ -70,6 +70,11 @@ public:
 		return true;
 	}
 
+	/**
+	 * Called when a controller is made active
+	 */
+	void setActive() override;
+
 	bool isCamping() const;
 	bool isWinOrLose() const;
 	Direction getExitDir() const;
@@ -169,6 +174,7 @@ public:
 	static void doScreenAnimationsWhilePausing(int timeFactor);
 
 	// Key handlers
+	void keybinder(KeybindingAction action) override;
 	bool keyPressed(int key) override;
 
 	void finishTurn() override;
@@ -203,6 +209,8 @@ private:
 
 	void init();
 };
+
+extern CombatController *g_combat;
 
 /**
  * CombatMap class

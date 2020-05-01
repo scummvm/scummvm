@@ -266,6 +266,11 @@ private:
 	bool cmdDungeon(int argc, const char **argv);
 
 	/**
+	 * Flee from combat
+	 */
+	bool cmdFlee(int argc, const char **argv);
+
+	/**
 	 * All equipement
 	 */
 	bool cmdEquipment(int argc, const char **argv);
