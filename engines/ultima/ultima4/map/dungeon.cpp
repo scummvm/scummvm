@@ -27,6 +27,7 @@
 #include "ultima/ultima4/game/item.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
+#include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/game/stats.h"
@@ -43,6 +44,96 @@ bool isDungeon(Map *punknown) {
 	else
 		return false;
 }
+
+/*-------------------------------------------------------------------*/
+
+void DngRoom::load(Common::SeekableReadStream &s) {
+	int i;
+
+	s.read(_creatureTiles, 16);
+	for (i = 0; i < 16; ++i)
+		_creatureStart[i].x = s.readByte();
+	for (i = 0; i < 16; ++i)
+		_creatureStart[i].y = s.readByte();
+
+	#define READ_DIR(DIR, XY) \
+		for (i = 0; i < 8; ++i) \
+			_partyStart[i][DIR].XY = s.readByte()
+
+	READ_DIR(DIR_NORTH, x);
+	READ_DIR(DIR_NORTH, y);
+	READ_DIR(DIR_EAST, x);
+	READ_DIR(DIR_EAST, y);
+	READ_DIR(DIR_SOUTH, x);
+	READ_DIR(DIR_SOUTH, y);
+	READ_DIR(DIR_WEST, x);
+	READ_DIR(DIR_WEST, y);
+
+	#undef READ_DIR
+}
+
+void DngRoom::hythlothFix7() {
+	int i;
+
+	// Update party start positions when entering from the east
+	const byte X1[8] = { 0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA, 0xA },
+		Y1[8] = { 0x3, 0x2, 0x3, 0x2, 0x1, 0x3, 0x2, 0x1 };
+
+	for (i = 0; i < 8; ++i)
+		_partyStart[i]._eastStart.x = X1[i];
+	for (i = 0; i < 8; ++i)
+		_partyStart[i]._eastStart.y = Y1[i];
+
+	// Update party start positions when entering from the south
+	const byte X2[8] = { 0x3, 0x2, 0x3, 0x2, 0x1, 0x3, 0x2, 0x1 },
+		Y2[8] = { 0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA, 0xA };
+
+	for (i = 0; i < 8; ++i)
+		_partyStart[i]._southStart.x = X2[i];
+	for (i = 0; i < 8; ++i)
+		_partyStart[i]._southStart.y = Y2[i];
+}
+
+void DngRoom::hythlothFix9() {
+	int i;
+
+	// Update the starting position of monsters 7, 8, and 9
+	const byte X1[3] = { 0x4, 0x6, 0x5 },
+		Y1[3] = { 0x5, 0x5, 0x6 };
+
+	for (i = 0; i < 3; ++i)
+		_creatureStart[i + 7].x = X1[i];
+	for (i = 0; i < 3; ++i)
+		_creatureStart[i + 7].y = Y1[i];
+
+	// Update party start positions when entering from the west
+	const byte X2[8] = { 0x2, 0x2, 0x1, 0x1, 0x1, 0x0, 0x0, 0x0 },
+		Y2[8] = { 0x9, 0x8, 0x9, 0x8, 0x7, 0x9, 0x8, 0x7 };
+
+	for (i = 0; i < 8; ++i)
+		_partyStart[i]._westStart.x = X2[i];
+	for (i = 0; i < 8; ++i)
+		_partyStart[i]._westStart.y = Y2[i];
+
+	// Update the map data, moving the chest to the center of the room,
+	// and removing the walls at the lower-left corner thereby creating
+	// a connection to room 8
+	const Coords tile[6] = {
+		Coords(5, 5, 0x3C),  // Chest
+		Coords(0, 7, 0x16),  // Floor
+		Coords(1, 7, 0x16),
+		Coords(0, 8, 0x16),
+		Coords(1, 8, 0x16),
+		Coords(0, 9, 0x16)
+	};
+
+	for (i = 0; i < 6; ++i) {
+		const int index = (tile[i].y * CON_WIDTH) + tile[i].x;
+		_mapData[index] = g_tileMaps->get("base")->translate(tile[i].z);
+	}
+}
+
+/*-------------------------------------------------------------------*/
 
 Dungeon::Dungeon() : _nRooms(0), _rooms(nullptr),
 		_roomMaps(nullptr), _currentRoom(0) {

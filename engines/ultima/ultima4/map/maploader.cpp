@@ -55,7 +55,7 @@ MapLoaders::MapLoaders() {
 	(*this)[Map::SHRINE] = new ConMapLoader();
 	(*this)[Map::DUNGEON] = new DngMapLoader();
 	(*this)[Map::WORLD] = new WorldMapLoader();
-	(*this)[Map::COMBAT] = new WorldMapLoader();
+	(*this)[Map::COMBAT] = new ConMapLoader();
 }
 
 MapLoaders::~MapLoaders() {
@@ -336,17 +336,7 @@ bool DngMapLoader::load(Map *map) {
 			dungeon->_rooms[i]._triggers[j].changeY2 = tmp & 0x0F;
 		}
 
-		u4fread(dungeon->_rooms[i]._creatureTiles, sizeof(dungeon->_rooms[i]._creatureTiles), 1, dng);
-		u4fread(dungeon->_rooms[i]._creatureStartX, sizeof(dungeon->_rooms[i]._creatureStartX), 1, dng);
-		u4fread(dungeon->_rooms[i]._creatureStartY, sizeof(dungeon->_rooms[i]._creatureStartY), 1, dng);
-		u4fread(dungeon->_rooms[i]._partyNorthStartX, sizeof(dungeon->_rooms[i]._partyNorthStartX), 1, dng);
-		u4fread(dungeon->_rooms[i]._partyNorthStartY, sizeof(dungeon->_rooms[i]._partyNorthStartY), 1, dng);
-		u4fread(dungeon->_rooms[i]._partyEastStartX, sizeof(dungeon->_rooms[i]._partyEastStartX), 1, dng);
-		u4fread(dungeon->_rooms[i]._partyEastStartY, sizeof(dungeon->_rooms[i]._partyEastStartY), 1, dng);
-		u4fread(dungeon->_rooms[i]._partySouthStartX, sizeof(dungeon->_rooms[i]._partySouthStartX), 1, dng);
-		u4fread(dungeon->_rooms[i]._partySouthStartY, sizeof(dungeon->_rooms[i]._partySouthStartY), 1, dng);
-		u4fread(dungeon->_rooms[i]._partyWestStartX, sizeof(dungeon->_rooms[i]._partyWestStartX), 1, dng);
-		u4fread(dungeon->_rooms[i]._partyWestStartY, sizeof(dungeon->_rooms[i]._partyWestStartY), 1, dng);
+		dungeon->_rooms[i].load(*dng);
 		u4fread(room_tiles, sizeof(room_tiles), 1, dng);
 		u4fread(dungeon->_rooms[i]._buffer, sizeof(dungeon->_rooms[i]._buffer), 1, dng);
 
@@ -362,56 +352,10 @@ bool DngMapLoader::load(Map *map) {
 		// dungeon room fixup
 		//
 		if (map->_id == MAP_HYTHLOTH) {
-			// A couple rooms in hythloth have nullptr player start positions,
-			// which causes the entire party to appear in the upper-left
-			// tile when entering the dungeon room.
-			//
-			// Also, one dungeon room is apparently supposed to be connected
-			// to another, although the the connection does not exist in the
-			// DOS U4 dungeon data file.  This was fixed by removing a few
-			// wall tiles, and relocating a chest and the few monsters around
-			// it to the center of the room.
-			//
 			if (i == 0x7) {
-				// update party start positions when entering from the east
-				const byte x1[8] = { 0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA, 0xA },
-				                            y1[8] = { 0x3, 0x2, 0x3, 0x2, 0x1, 0x3, 0x2, 0x1 };
-				memcpy(dungeon->_rooms[i]._partyEastStartX, x1, sizeof(x1));
-				memcpy(dungeon->_rooms[i]._partyEastStartY, y1, sizeof(y1));
-
-				// update party start positions when entering from the south
-				const byte x2[8] = { 0x3, 0x2, 0x3, 0x2, 0x1, 0x3, 0x2, 0x1 },
-				                            y2[8] = { 0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA, 0xA };
-				memcpy(dungeon->_rooms[i]._partySouthStartX, x2, sizeof(x2));
-				memcpy(dungeon->_rooms[i]._partySouthStartY, y2, sizeof(y2));
+				dungeon->_rooms[i].hythlothFix7();
 			} else if (i == 0x9) {
-				// Update the starting position of monsters 7, 8, and 9
-				const byte x1[3] = { 0x4, 0x6, 0x5 },
-				                            y1[3] = { 0x5, 0x5, 0x6 };
-				memcpy(dungeon->_rooms[i]._creatureStartX + 7, x1, sizeof(x1));
-				memcpy(dungeon->_rooms[i]._creatureStartY + 7, y1, sizeof(y1));
-
-				// Update party start positions when entering from the west
-				const byte x2[8] = { 0x2, 0x2, 0x1, 0x1, 0x1, 0x0, 0x0, 0x0 },
-				                            y2[8] = { 0x9, 0x8, 0x9, 0x8, 0x7, 0x9, 0x8, 0x7 };
-				memcpy(dungeon->_rooms[i]._partyWestStartX, x2, sizeof(x2));
-				memcpy(dungeon->_rooms[i]._partyWestStartY, y2, sizeof(y2));
-
-				// update the map data, moving the chest to the center of the room,
-				// and removing the walls at the lower-left corner thereby creating
-				// a connection to room 8
-				const Coords tile[] = { Coords(5, 5, 0x3C),  // chest
-				                        Coords(0, 7, 0x16),  // floor
-				                        Coords(1, 7, 0x16),
-				                        Coords(0, 8, 0x16),
-				                        Coords(1, 8, 0x16),
-				                        Coords(0, 9, 0x16)
-				                      };
-
-				for (j = 0; j < int(sizeof(tile) / sizeof(Coords)); j++) {
-					const int index = (tile[j].y * CON_WIDTH) + tile[j].x;
-					dungeon->_rooms[i]._mapData[index] = g_tileMaps->get("base")->translate(tile[j].z);
-				}
+				dungeon->_rooms[i].hythlothFix9();
 			}
 		}
 	}

@@ -204,7 +204,7 @@ void CombatController::init(class Creature *m) {
 }
 
 void CombatController::initDungeonRoom(int room, Direction from) {
-	int offset, i;
+	int i;
 	init(nullptr);
 
 	ASSERT(g_context->_location->_prev->_context & CTX_DUNGEON, "Error: called initDungeonRoom from non-dungeon context");
@@ -212,8 +212,7 @@ void CombatController::initDungeonRoom(int room, Direction from) {
 		Dungeon *dng = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);
 		assert(dng);
 
-		byte *party_x = &dng->_rooms[room]._partyNorthStartX[0],
-			*party_y = &dng->_rooms[room]._partyNorthStartY[0];
+		DngRoom &dngRoom = dng->_rooms[room];
 
 		/* load the dungeon room properties */
 		_winOrLose = false;
@@ -236,23 +235,16 @@ void CombatController::initDungeonRoom(int room, Direction from) {
 				_placeCreaturesOnMap = true;
 				_creatureTable[i] = creatureMgr->getByTile(dng->_rooms[room]._creatureTiles[i]);
 			}
-			_map->creature_start[i].x = dng->_rooms[room]._creatureStartX[i];
-			_map->creature_start[i].y = dng->_rooms[room]._creatureStartY[i];
+			_map->creature_start[i].x = dng->_rooms[room]._creatureStart[i].x;
+			_map->creature_start[i].y = dng->_rooms[room]._creatureStart[i].y;
 		}
 
-		/* figure out party start coordinates */
+		// Validate direction
 		switch (from) {
 		case DIR_WEST:
-			offset = 3;
-			break;
 		case DIR_NORTH:
-			offset = 0;
-			break;
 		case DIR_EAST:
-			offset = 1;
-			break;
 		case DIR_SOUTH:
-			offset = 2;
 			break;
 		case DIR_ADVANCE:
 		case DIR_RETREAT:
@@ -260,10 +252,9 @@ void CombatController::initDungeonRoom(int room, Direction from) {
 			error("Invalid 'from' direction passed to initDungeonRoom()");
 		}
 
-		// TODO: Check for possible memory overrun below
 		for (i = 0; i < AREA_PLAYERS; i++) {
-			_map->player_start[i].x = *(party_x + (offset * AREA_PLAYERS * 2) + i);
-			_map->player_start[i].y = *(party_y + (offset * AREA_PLAYERS * 2) + i);
+			_map->player_start[i].x = dngRoom._partyStart[i][from].x;
+			_map->player_start[i].y = dngRoom._partyStart[i][from].y;
 		}
 	}
 }

@@ -44,22 +44,56 @@ struct Trigger {
 	byte _changeX1, _changeY1, changeX2, changeY2;
 };
 
+struct PartyEntry {
+private:
+	Common::Point *_array[5];
+public:
+	Common::Point _northStart;
+	Common::Point _eastStart;
+	Common::Point _southStart;
+	Common::Point _westStart;
+
+	PartyEntry() {
+		_array[DIR_NONE] = nullptr;
+		_array[DIR_NORTH] = &_northStart;
+		_array[DIR_EAST] = &_eastStart;
+		_array[DIR_SOUTH] = &_southStart;
+		_array[DIR_WEST] = &_westStart;
+	}
+
+	Common::Point &operator[](int dir) {
+		return *_array[dir];
+	}
+};
+
 struct DngRoom {
 	Trigger _triggers[DNGROOM_NTRIGGERS];
 	byte _creatureTiles[16];
-	byte _creatureStartX[16];
-	byte _creatureStartY[16];
-	byte _partyNorthStartX[8];
-	byte _partyNorthStartY[8];
-	byte _partyEastStartX[8];
-	byte _partyEastStartY[8];
-	byte _partySouthStartX[8];
-	byte _partySouthStartY[8];
-	byte _partyWestStartX[8];
-	byte _partyWestStartY[8];
+	Common::Point _creatureStart[16];
+	PartyEntry _partyStart[8];
+
 	MapData  _mapData;  // This is OK to change to MapData since sizeof(DngRoom) or
 	// anything like it is not being used.
 	byte _buffer[7];
+
+	/**
+	 * Load room data
+	 */
+	void load(Common::SeekableReadStream &s);
+
+	/**
+	 * A couple rooms in hythloth have nullptr player start positions,
+	 * which causes the entire party to appear in the upper-left
+	 * tile when entering the dungeon room.
+	 *
+	 * Also, one dungeon room is apparently supposed to be connected
+	 * to another, although the the connection does not exist in the
+	 * DOS U4 dungeon data file.  This was fixed by removing a few
+	 * wall tiles, and relocating a chest and the few monsters around
+	 * it to the center of the room.
+	 */
+	void hythlothFix7();
+	void hythlothFix9();
 };
 
 /**
