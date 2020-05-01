@@ -89,7 +89,7 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	Common::SeekableSubReadStream subStream(&stream, 40, stream.size());
 
-	_codec = Image::createBitmapCodec(compression, width, height, bitsPerPixel);
+	_codec = Image::createBitmapCodec(compression, 0, width, height, bitsPerPixel);
 
 	if (!_codec)
 		return false;
