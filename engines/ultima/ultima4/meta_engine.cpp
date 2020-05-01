@@ -66,15 +66,22 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_QUIT_SAVE, "QUIT-SAVE", "Quit and Save", "quitAndSave", "q", nullptr },
 	{ KEYBIND_READY_WEAPON, "READY-WEAPON", "Ready Weapon", "ready", "r", nullptr },
 	{ KEYBIND_SEARCH, "SEARCH", "Search", "search", "s", nullptr },
-	{ KEYBIND_SPEED_UP, "SPEED-UP", "Speed Up", "speed up", "PLUS", nullptr },
-	{ KEYBIND_SPEED_DOWN, "SPEED-DOWN", "Speed Down", "speed down", "MINUS", nullptr },
-	{ KEYBIND_SPEED_NORMAL, "SPEED-NORMAL", "Speed Normal", "speed normal", "KP_ENTER", nullptr },
 	{ KEYBIND_STATS, "STATS", "Stats", "stats", "z", nullptr },
 	{ KEYBIND_TALK, "TALK", "Talk", "talk", "t", nullptr },
-	{ KEYBIND_TOGGLE_MUSIC, "TOGGLE-MUSIC", "Toggle Music", "musicToggle", "v", nullptr },
 	{ KEYBIND_USE, "USE", "Use", "use", "u", nullptr },
 	{ KEYBIND_WEAR, "WEAR", "Wear Armor", "wear", "w", nullptr },
 	{ KEYBIND_YELL, "YELL", "Yell", "yell", "y", nullptr },
+
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+};
+
+static const KeybindingRecord CONFIG_KEYS[] = {
+	{ KEYBIND_SPEED_UP, "SPEED-UP", "Speed Up", "speed up", "KP_PLUS", nullptr },
+	{ KEYBIND_SPEED_DOWN, "SPEED-DOWN", "Speed Down", "speed down", "KP_MINUS", nullptr },
+	{ KEYBIND_SPEED_NORMAL, "SPEED-NORMAL", "Speed Normal", "speed normal", "KP_ENTER", nullptr },
+	{ KEYBIND_COMBATSPEED_UP, "COMBATSPEED-UP", "Combat Speed Up", "combat_speed up", "A+KP_PLUS", nullptr },
+	{ KEYBIND_COMBATSPEED_DOWN, "COMBATSPEED-DOWN", "Combat Speed Down", "combat_speed down", "A+KP_MINUS", nullptr },
+	{ KEYBIND_COMBATSPEED_NORMAL, "COMBATSPEED-NORMAL", "Combat Speed Normal", "combat_speed normal", "A+KP_ENTER", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
@@ -147,6 +154,7 @@ struct KeysRecord {
 
 static const KeysRecord NORMAL_RECORDS[] = {
 	{ "ultima4", "Ultima IV", NORMAL_KEYS },
+	{ "ultima4_config", "Ultima IV - Configuration", CONFIG_KEYS },
 	{ "ultima4_party", "Ultima IV - Party", PARTY_KEYS },
 	{ "ultima4_cheats", "Ultima IV - Cheats", CHEAT_KEYS },
 	{ nullptr, nullptr, nullptr }
@@ -164,6 +172,7 @@ static const KeysRecord DIRECTION_RECORDS[] = {
 
 static const KeysRecord COMBAT_RECORDS[] = {
 	{ "ultima4", "Ultima IV", COMBAT_KEYS },
+	{ "ultima4_config", "Ultima IV - Configuration", CONFIG_KEYS },
 	{ "ultima4_party", "Ultima IV - Party", PARTY_KEYS },
 	{ "ultima4_cheats", "Ultima IV - Cheats", CHEAT_KEYS },
 	{ nullptr, nullptr, nullptr }

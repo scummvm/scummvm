@@ -69,7 +69,6 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("jimmy", WRAP_METHOD(Debugger, cmdJimmy));
 	registerCmd("locate", WRAP_METHOD(Debugger, cmdLocate));
 	registerCmd("mix", WRAP_METHOD(Debugger, cmdMixReagents));
-	registerCmd("musicToggle", WRAP_METHOD(Debugger, cmdMusicToggle));
 	registerCmd("open", WRAP_METHOD(Debugger, cmdOpenDoor));
 	registerCmd("order", WRAP_METHOD(Debugger, cmdNewOrder));
 	registerCmd("party", WRAP_METHOD(Debugger, cmdParty));
@@ -83,6 +82,10 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("use", WRAP_METHOD(Debugger, cmdUse));
 	registerCmd("wear", WRAP_METHOD(Debugger, cmdWearArmor));
 	registerCmd("yell", WRAP_METHOD(Debugger, cmdYell));
+
+	registerCmd("speed", WRAP_METHOD(Debugger, cmdSpeed));
+	registerCmd("combat_speed", WRAP_METHOD(Debugger, cmdCombatSpeed));
+	registerCmd("musicToggle", WRAP_METHOD(Debugger, cmdMusicToggle));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("abyss", WRAP_METHOD(Debugger, cmdAbyss));
@@ -1020,7 +1023,7 @@ bool Debugger::cmdSearch(int argc, const char **argv) {
 
 bool Debugger::cmdSpeed(int argc, const char **argv) {
 	Common::String action = argv[1];
-	int old_cycles = settings._gameCyclesPerSecond;
+	int oldCycles = settings._gameCyclesPerSecond;
 
 	if (action == "up") {
 		if (++settings._gameCyclesPerSecond > MAX_CYCLES_PER_SECOND)
@@ -1032,7 +1035,7 @@ bool Debugger::cmdSpeed(int argc, const char **argv) {
 		settings._gameCyclesPerSecond = DEFAULT_CYCLES_PER_SECOND;
 	}
 
-	if (old_cycles != settings._gameCyclesPerSecond) {
+	if (oldCycles != settings._gameCyclesPerSecond) {
 		settings._eventTimerGranularity = (1000 / settings._gameCyclesPerSecond);
 		eventHandler->getTimer()->reset(settings._eventTimerGranularity);
 
@@ -1044,6 +1047,33 @@ bool Debugger::cmdSpeed(int argc, const char **argv) {
 			print("Speed Down (%d)", settings._gameCyclesPerSecond);
 	} else if (settings._gameCyclesPerSecond == DEFAULT_CYCLES_PER_SECOND) {
 		print("Speed: Normal");
+	}
+
+	dontEndTurn();
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdCombatSpeed(int argc, const char **argv) {
+	Common::String action = argv[1];
+	int oldSpeed = settings._battleSpeed;
+
+	if (action == "up" && ++settings._battleSpeed > MAX_BATTLE_SPEED)
+		settings._battleSpeed = MAX_BATTLE_SPEED;
+	else if (action == "down" && --settings._battleSpeed == 0)
+		settings._battleSpeed = 1;
+	else if (action == "normal")
+		settings._battleSpeed = DEFAULT_BATTLE_SPEED;
+
+	if (oldSpeed != settings._battleSpeed) {
+		if (settings._battleSpeed == DEFAULT_BATTLE_SPEED) {
+			print("Battle Speed:\nNormal");
+		} else if (action == "up") {
+			print("Battle Speed:\nUp (%d)", settings._battleSpeed);
+		} else {
+			print("Battle Speed:\nDown (%d)", settings._battleSpeed);
+		}
+	} else if (settings._battleSpeed == DEFAULT_BATTLE_SPEED) {
+		print("Battle Speed:\nNormal");
 	}
 
 	dontEndTurn();

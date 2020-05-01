@@ -211,6 +211,12 @@ private:
 	bool cmdSpeed(int argc, const char **argv);
 
 	/**
+	 * Combat speed up, down, or normal
+	 */
+	bool cmdCombatSpeed(int argc, const char **argv);
+
+
+	/**
 	 * Show character stats
 	 */
 	bool cmdStats(int argc, const char **argv);

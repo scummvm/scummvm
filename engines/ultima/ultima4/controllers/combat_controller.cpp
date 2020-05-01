@@ -880,57 +880,6 @@ bool CombatController::keyPressed(int key) {
 		break;
 	}
 
-	// Change the speed of battle
-	case '+':
-	case '-':
-	case Common::KEYCODE_KP_ENTER: {
-		int old_speed = settings._battleSpeed;
-		if (key == '+' && ++settings._battleSpeed > MAX_BATTLE_SPEED)
-			settings._battleSpeed = MAX_BATTLE_SPEED;
-		else if (key == '-' && --settings._battleSpeed == 0)
-			settings._battleSpeed = 1;
-		else if (key == Common::KEYCODE_KP_ENTER)
-			settings._battleSpeed = DEFAULT_BATTLE_SPEED;
-
-		if (old_speed != settings._battleSpeed) {
-			if (settings._battleSpeed == DEFAULT_BATTLE_SPEED)
-				g_screen->screenMessage("Battle Speed:\nNormal\n");
-			else if (key == '+')
-				g_screen->screenMessage("Battle Speed:\nUp (%d)\n", settings._battleSpeed);
-			else g_screen->screenMessage("Battle Speed:\nDown (%d)\n", settings._battleSpeed);
-		} else if (settings._battleSpeed == DEFAULT_BATTLE_SPEED)
-			g_screen->screenMessage("Battle Speed:\nNormal\n");
-	}
-
-	valid = false;
-	break;
-
-	/* handle music volume adjustments */
-	case ',':
-		// decrease the volume if possible
-		g_screen->screenMessage("Music: %d%s\n", g_music->decreaseMusicVolume(), "%");
-		endTurn = false;
-		break;
-	case '.':
-		// increase the volume if possible
-		g_screen->screenMessage("Music: %d%s\n", g_music->increaseMusicVolume(), "%");
-		endTurn = false;
-		break;
-
-	/* handle sound volume adjustments */
-	case '<':
-		// decrease the volume if possible
-		g_screen->screenMessage("Sound: %d%s\n", g_music->decreaseSoundVolume(), "%");
-		soundPlay(SOUND_FLEE);
-		endTurn = false;
-		break;
-	case '>':
-		// increase the volume if possible
-		g_screen->screenMessage("Sound: %d%s\n", g_music->increaseSoundVolume(), "%");
-		soundPlay(SOUND_FLEE);
-		endTurn = false;
-		break;
-
 	case 'a':
 		attack();
 		break;
