@@ -1452,8 +1452,7 @@ bool Debugger::cmdPlayMovie(int argc, const char **argv) {
 		return true;
 	}
 
-	RawArchive *flex = new RawArchive(skf);
-	MovieGump::U8MovieViewer(flex, false);
+	MovieGump::U8MovieViewer(skf, false);
 	return false;
 }
 

@@ -134,6 +134,9 @@ public:
 
 	// Loads the data from the passed surfcae
 	void loadSurface(const Graphics::Surface *surf);
+
+	// Load data from a passed 8bit surface
+	void loadSurface8Bit(const Graphics::Surface *surf, const byte *pal);
 protected:
 
 	// Read from a File. No filetype supported by this class

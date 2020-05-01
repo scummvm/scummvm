@@ -44,7 +44,7 @@ uint32 Usecode::get_class_event(uint32 classid, uint32 eventid) {
 		offset += data[12 + (eventid * 4) + 1] << 8;
 		offset += data[12 + (eventid * 4) + 2] << 16;
 		offset += data[12 + (eventid * 4) + 3] << 24;
-	} else if (GAME_IS_REMORSE) {
+	} else if (GAME_IS_CRUSADER) {
 		offset = data[20 + (eventid * 6) + 2];
 		offset += data[20 + (eventid * 6) + 3] << 8;
 		offset += data[20 + (eventid * 6) + 4] << 16;

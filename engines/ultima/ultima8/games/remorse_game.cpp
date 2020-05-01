@@ -26,7 +26,10 @@
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/gumps/movie_gump.h"
 #include "ultima/ultima8/kernel/object_manager.h"
+#include "ultima/ultima8/kernel/process.h"
+#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/graphics/xform_blend.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -121,19 +124,40 @@ bool RemorseGame::startGame() {
 }
 
 bool RemorseGame::startInitialUsecode(int saveSlot) {
-//	Process* proc = new StartU8Process();
+	ProcId moviepid = Game::get_instance()->playIntroMovie(false);
+	Process *movieproc = Kernel::get_instance()->getProcess(moviepid);
+
+	//if (movieproc) {
+	//	waitFor(movieproc);
+	//	return;
+	//}
+
+//	Process* proc = new StartCrusaderProcess();
 //	Kernel::get_instance()->addProcess(proc);
 
 	return true;
 }
 
 
+static ProcId playMovie(const char *movieID, bool fade) {
+	const Std::string filename = Std::string::format("@game/flics/%s.avi", movieID);
+	FileSystem *filesys = FileSystem::get_instance();
+	Common::SeekableReadStream *rs = filesys->ReadFile(filename);
+	if (!rs) {
+		pout << "RemorseGame::playIntro: movie not found." << Std::endl;
+		return 0;
+	}
+	// TODO: Add support for subtitles (.txt file).  The format is very simple.
+	return MovieGump::U8MovieViewer(rs, fade);
+}
+
 ProcId RemorseGame::playIntroMovie(bool fade) {
-	return 0;
+	return playMovie("T01", fade);
+	// TODO: also play T02
 }
 
 ProcId RemorseGame::playEndgameMovie(bool fade) {
-	return 0;
+	return playMovie("O01", fade);
 }
 
 void RemorseGame::playCredits() {

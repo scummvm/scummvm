@@ -20,45 +20,47 @@
  *
  */
 
-#ifndef ULTIMA8_GUMPS_MOVIEGUMP_H
-#define ULTIMA8_GUMPS_MOVIEGUMP_H
+#ifndef ULTIMA8_GRAPHICS_AVIPLAYER_H
+#define ULTIMA8_GRAPHICS_AVIPLAYER_H
 
-#include "ultima/ultima8/gumps/modal_gump.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/graphics/movie_player.h"
+#include "ultima/ultima8/graphics/texture.h"
+
+namespace Video {
+class AVIDecoder;
+}
 
 namespace Ultima {
 namespace Ultima8 {
 
-class RawArchive;
-class MoviePlayer;
-
-class MovieGump : public ModalGump {
+class AVIPlayer : public MoviePlayer {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
-	MovieGump();
-	MovieGump(int width, int height, Common::SeekableReadStream *rs, bool introMusicHack = false,
-	          uint32 flags = 0, int32 layer = LAYER_MODAL);
-	~MovieGump() override;
-
-	void InitGump(Gump *newparent, bool take_focus = true) override;
-
-	void Close(bool no_del = false) override;
+	AVIPlayer(Common::SeekableReadStream *rs, int width, int height);
+	~AVIPlayer();
 
 	void run() override;
+	void paint(RenderSurface *surf, int lerp) override;
 
-	// Paint the Gump
-	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void start() override;
+	void stop() override;
+	bool isPlaying() const override{
+		return _playing;
+	}
 
-	bool OnKeyDown(int key, int mod) override;
+private:
 
-	static ProcId U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool introMusicHack = false);
+	bool _playing;
+	Video::AVIDecoder *_decoder;
+	Texture _currentFrame;
+	// Width and height of the area we've been given to play back in
+	uint32 _width;
+	uint32 _height;
+	// Xoff and Yoff into that playback area
+	uint32 _xoff;
+	uint32 _yoff;
+	bool _doubleSize;
 
-	bool loadData(Common::ReadStream *rs);
-protected:
-	void saveData(Common::WriteStream *ws) override;
-
-	MoviePlayer *_player;
 };
 
 } // End of namespace Ultima8

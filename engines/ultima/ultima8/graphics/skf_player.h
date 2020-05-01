@@ -24,6 +24,7 @@
 #define ULTIMA8_GRAPHICS_SKFPLAYER_H
 
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/graphics/movie_player.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,9 +35,9 @@ class RenderSurface;
 class RenderedText;
 struct Palette;
 
-class SKFPlayer {
+class SKFPlayer : public MoviePlayer  {
 public:
-	SKFPlayer(RawArchive *movie, int width, int height, bool introMusicHack = false);
+	SKFPlayer(Common::SeekableReadStream *rs, int width, int height, bool introMusicHack = false);
 	~SKFPlayer();
 
 	void run();

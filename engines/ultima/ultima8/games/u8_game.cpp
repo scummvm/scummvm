@@ -175,8 +175,7 @@ ProcId U8Game::playIntroMovie(bool fade) {
 		return 0;
 	}
 
-	RawArchive *flex = new RawArchive(skf);
-	return MovieGump::U8MovieViewer(flex, fade, true);
+	return MovieGump::U8MovieViewer(skf, fade, true);
 }
 
 ProcId U8Game::playEndgameMovie(bool fade) {
@@ -188,8 +187,7 @@ ProcId U8Game::playEndgameMovie(bool fade) {
 		return 0;
 	}
 
-	RawArchive *flex = new RawArchive(skf);
-	return MovieGump::U8MovieViewer(flex, fade);
+	return MovieGump::U8MovieViewer(skf, fade);
 }
 
 void U8Game::playCredits() {

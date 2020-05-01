@@ -20,45 +20,26 @@
  *
  */
 
-#ifndef ULTIMA8_GUMPS_MOVIEGUMP_H
-#define ULTIMA8_GUMPS_MOVIEGUMP_H
-
-#include "ultima/ultima8/gumps/modal_gump.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#ifndef ULTIMA8_GRAPHICS_MOVIEPLAYER_H
+#define ULTIMA8_GRAPHICS_MOVIEPLAYER_H
 
 namespace Ultima {
 namespace Ultima8 {
 
-class RawArchive;
-class MoviePlayer;
+class RenderSurface;
 
-class MovieGump : public ModalGump {
+class MoviePlayer {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
+	MoviePlayer() {};
+	virtual ~MoviePlayer() {};
 
-	MovieGump();
-	MovieGump(int width, int height, Common::SeekableReadStream *rs, bool introMusicHack = false,
-	          uint32 flags = 0, int32 layer = LAYER_MODAL);
-	~MovieGump() override;
+	virtual void run() = 0;
+	virtual void paint(RenderSurface *surf, int lerp) = 0;
 
-	void InitGump(Gump *newparent, bool take_focus = true) override;
+	virtual void start() = 0;
+	virtual void stop() = 0;
+	virtual bool isPlaying() const = 0;
 
-	void Close(bool no_del = false) override;
-
-	void run() override;
-
-	// Paint the Gump
-	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
-
-	bool OnKeyDown(int key, int mod) override;
-
-	static ProcId U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool introMusicHack = false);
-
-	bool loadData(Common::ReadStream *rs);
-protected:
-	void saveData(Common::WriteStream *ws) override;
-
-	MoviePlayer *_player;
 };
 
 } // End of namespace Ultima8
