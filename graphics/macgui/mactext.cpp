@@ -49,6 +49,34 @@ const Common::String MacFontRun::toString() {
 	return Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 }
 
+bool MacFontRun::equals(MacFontRun &to) {
+	return (fontId == to.fontId && textSlant == to.textSlant
+		&& fontSize == to.fontSize && palinfo1 == to.palinfo1
+		&& palinfo2 == to.palinfo2 && palinfo3 == to.palinfo3);
+}
+
+uint MacTextLine::getChunkNum(int *col) {
+	int pos = *col;
+	uint i;
+
+	for (i = 0; i < chunks.size(); i++) {
+		if (pos >= chunks[i].text.size()) {
+			pos -= chunks[i].text.size();
+		} else {
+			break;
+		}
+	}
+
+	if (i == chunks.size()) {
+		i--;	// touch the last chunk
+		pos = chunks[i].text.size();
+	}
+
+	*col = pos;
+
+	return i;
+}
+
 MacText::~MacText() {
 	delete _surface;
 }
@@ -190,7 +218,6 @@ void MacText::chopChunk(const Common::U32String &str) {
 
 	// Recalc dims
 	getLineWidth(curLine, true);
-	getLineCharWidth(curLine, true);
 
 	D(9, "** chopChunk, subchunk: \"%s\" (%d lines, maxW: %d)", toPrintable(text[0].encode()).c_str(), text.size(), _maxWidth);
 
@@ -455,6 +482,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 
 	int width = 0;
 	int height = 0;
+	int charwidth = 0;
 
 	bool hastext = false;
 
@@ -476,6 +504,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 
 		if (!_textLines[line].chunks[i].text.empty()) {
 			width += _textLines[line].chunks[i].getFont()->getStringWidth(_textLines[line].chunks[i].text);
+			charwidth += _textLines[line].chunks[i].text.size();
 			hastext = true;
 		}
 
@@ -487,6 +516,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 
 	_textLines[line].width = width;
 	_textLines[line].height = height;
+	_textLines[line].charwidth = charwidth;
 
 	return width;
 }
@@ -499,13 +529,10 @@ int MacText::getLineCharWidth(int line, bool enforce) {
 		return _textLines[line].charwidth;
 
 	int width = 0;
-	bool hastext = false;
 
 	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
-		if (!_textLines[line].chunks[i].text.empty()) {
+		if (!_textLines[line].chunks[i].text.empty())
 			width += _textLines[line].chunks[i].text.size();
-			hastext = true;
-		}
 	}
 
 	_textLines[line].charwidth = width;
@@ -540,7 +567,6 @@ void MacText::recalcDims() {
 		// We must calculate width first, because it enforces
 		// the computation. Calling Height() will return cached value!
 		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i, true));
-		getLineCharWidth(i, true);
 		y += getLineHeight(i) + _interLinear;
 	}
 
@@ -811,16 +837,10 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 
 //////////////////
 // Text editing
-void MacText::deletePreviousChar(int *row, int *col) {
-}
-
-void MacText::addNewLine(int *row, int *col) {
-}
-
 void MacText::insertChar(byte c, int *row, int *col) {
 	MacTextLine *line = &_textLines[*row];
 	int pos = *col;
-	uint i;
+	uint i = line->getChunkNum(&pos);
 
 	for (i = 0; i < line->chunks.size(); i++) {
 		if (pos >= line->chunks[i].text.size()) {
@@ -841,18 +861,60 @@ void MacText::insertChar(byte c, int *row, int *col) {
 	int chunkw = line->chunks[i].getFont()->getStringWidth(newchunk);
 	int oldw = line->chunks[i].getFont()->getStringWidth(line->chunks[i].text);
 
-	if (getLineWidth(*row) - oldw + chunkw > _maxWidth) { // Needs reshuffle
-		warning("insertChar(): Need reshuffle");
-	} else {
-		line->chunks[i].text = newchunk;
-		line->width = -1;	// Force recalc
+	line->chunks[i].text = newchunk;
+	line->width = -1;	// Force recalc
 
+	(*col)++;
+
+	if (getLineWidth(*row) - oldw + chunkw > _maxWidth) { // Needs reshuffle
+		reshuffleParagraph(row, col);
+		_fullRefresh = true;
+		recalcDims();
+		render();
+	} else {
 		recalcDims();
 		render(*row, *row);
-
-		(*col)++;
 	}
 }
 
+void MacText::deletePreviousChar(int *row, int *col) {
+	if (*col == 0 && *row == 0) // nothing to do
+		return;
+
+	if (*col == 0) { // Need to glue the lines
+		*col = getLineCharWidth(*row - 1);
+		(*row)--;
+
+		 // formatting matches, glue texts as normal
+		if (_textLines[*row].lastChunk().equals(_textLines[*row + 1].firstChunk())) {
+			_textLines[*row].lastChunk().text += _textLines[*row + 1].firstChunk().text;
+			_textLines[*row + 1].firstChunk().text.clear();
+		} else {
+			// formatting doesn't match, move whole chunk
+			_textLines[*row].chunks.push_back(MacFontRun(_textLines[*row + 1].firstChunk()));
+			_textLines[*row].firstChunk().text.clear();
+		}
+		reshuffleParagraph(row, col);
+	} else {
+		int pos = *col - 1;
+		uint i = _textLines[*row].getChunkNum(&pos);
+
+		_textLines[*row].chunks[i].text.deleteChar(pos);
+
+		(*col)--;
+
+		reshuffleParagraph(row, col);
+	}
+
+	_fullRefresh = true;
+	recalcDims();
+	render();
+}
+
+void MacText::addNewLine(int *row, int *col) {
+}
+
+void MacText::reshuffleParagraph(int *row, int *col) {
+}
 
 } // End of namespace Graphics

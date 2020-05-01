@@ -72,6 +72,7 @@ struct MacFontRun {
 	const Font *getFont();
 
 	const Common::String toString();
+	bool equals(MacFontRun &to);
 };
 
 struct MacTextLine {
@@ -88,6 +89,19 @@ struct MacTextLine {
 		y = 0;
 		paragraphEnd = false;
 	}
+
+	MacFontRun &firstChunk() { return chunks[0]; }
+	MacFontRun &lastChunk() { return chunks[chunks.size() - 1]; }
+
+	/**
+	 * Search for a chunk at given char column.
+	 *
+	 * @param col Requested column, gets modified with in-chunk column
+	 * @returns Chunk number
+	 *
+	 * @note If requested column is too big, returns last character in the line
+	 */
+	uint getChunkNum(int *col);
 };
 
 class MacText {
@@ -153,6 +167,13 @@ private:
 	 * @return line width in pixels, or 0 for non-existent lines
 	 */
 	int getLineWidth(int line, bool enforce = false, int col = -1);
+
+	/**
+	 * Rewraps paragraph containing given text row.
+	 * When text is modified, we redo whole thing again without touching
+	 * other paragraphs. Also, cursor position is returned in the arguments
+	 */
+	void reshuffleParagraph(int *row, int *col);
 
 protected:
 	MacWindowManager *_wm;
