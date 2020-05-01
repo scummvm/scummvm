@@ -269,11 +269,8 @@ bool PinkEngine::loadCursors() {
 }
 
 void PinkEngine::setCursor(uint cursorIndex) {
-	Graphics::Cursor *cursor = _cursors[cursorIndex]->cursors[0].cursor;
-	_system->setCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
-	_system->setMouseCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
-							cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
-	_system->showMouse(true);
+	CursorMan.replaceCursor(_cursors[cursorIndex]->cursors[0].cursor);
+	CursorMan.showMouse(true);
 }
 
 bool PinkEngine::canLoadGameStateCurrently() {
