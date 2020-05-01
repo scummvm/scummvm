@@ -84,6 +84,8 @@ public:
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
 
+	Common::U32String getEditedString();
+
 private:
 	void init();
 	bool isCutAllowed();

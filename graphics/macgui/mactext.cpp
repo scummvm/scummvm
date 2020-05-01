@@ -755,6 +755,12 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
 	Common::U32String res;
 
+	if (endRow == -1)
+		endRow = _textLines.size() - 1;
+
+	if (endCol == -1)
+		endCol = getLineCharWidth(endRow);
+
 	startRow = CLIP(startRow, 0, (int)_textLines.size() - 1);
 	endRow = CLIP(endRow, 0, (int)_textLines.size() - 1);
 

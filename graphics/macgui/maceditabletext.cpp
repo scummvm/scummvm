@@ -276,6 +276,10 @@ bool MacEditableText::isCutAllowed() {
 	return false;
 }
 
+Common::U32String MacEditableText::getEditedString() {
+	return getTextChunk(_editableRow, 0, -1, -1);
+}
+
 Common::U32String MacEditableText::cutSelection() {
 	if (!isCutAllowed())
 		return Common::U32String("");
