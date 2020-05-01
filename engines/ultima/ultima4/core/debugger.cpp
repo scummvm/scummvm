@@ -172,13 +172,20 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 	bool result = Shared::Debugger::handleCommand(argc, argv, keepRunning);
 
 	if (result) {
+		Controller *ctl = eventHandler->getController();
+
 		if (g_context)
 			g_context->_lastCommandTime = g_system->getMillis();
 
 		if (!isActive() && !_dontEndTurn) {
-			g_game->finishTurn();
+			GameController *gc = dynamic_cast<GameController *>(ctl);
+			CombatController *cc = dynamic_cast<CombatController *>(ctl);
+
+			if (gc)
+				gc->finishTurn();
+			else if (cc)
+				cc->finishTurn();
 		} else if (_dontEndTurn) {
-			Controller *ctl = eventHandler->getController();
 			if (ctl == g_game || ctl == g_combat) {
 				assert(g_context);
 				g_context->_location->_turnCompleter->finishTurn();

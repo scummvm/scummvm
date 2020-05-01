@@ -131,7 +131,7 @@ static const KeybindingRecord DIRECTION_KEYS[] = {
 };
 
 static const KeybindingRecord COMBAT_KEYS[] = {
-	{ KEYBIND_ESCAPE, "ESCAPE", "Escape", nullptr, "ESCAPE", nullptr },
+	{ KEYBIND_PASS, "PASS", "Pass", "pass", "SPACE", nullptr },
 	{ KEYBIND_UP, "UP", "Up", nullptr, "UP", nullptr },
 	{ KEYBIND_DOWN, "DOWN", "Down", nullptr, "DOWN", nullptr },
 	{ KEYBIND_LEFT, "LEFT", "Left", nullptr, "LEFT", nullptr },

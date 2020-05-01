@@ -873,17 +873,6 @@ bool CombatController::keyPressed(int key) {
 	bool endTurn = true;
 
 	switch (key) {
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_RIGHT:
-		g_context->_location->move(keyToDirection(key), true);
-		break;
-
-	case ' ':
-		g_screen->screenMessage("Pass\n");
-		break;
-
 	case Common::KEYCODE_F1: {
 		if (settings._debug)
 			gameDestroyAllCreatures();
