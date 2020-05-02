@@ -1210,14 +1210,17 @@ CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) 
 	if (idx >= 0) {
 		U6Lzw lzw;
 
-		U6Lib_n libN;
 		uint32 decomp_size;
 		unsigned char *buf = lzw.decompress_file(path.c_str(), decomp_size);
 		NuvieIOBuffer io;
 		io.open(buf, decomp_size, false);
-		if (libN.open(&io, 4, NUVIE_GAME_MD)) {
-			if (shp->load(&libN, (uint32)idx)) {
-				image = new CSImage(shp);
+		{
+			// Note: libN needs to be destroyed before the io object.
+			U6Lib_n libN;
+			if (libN.open(&io, 4, NUVIE_GAME_MD)) {
+				if (shp->load(&libN, (uint32)idx)) {
+					image = new CSImage(shp);
+				}
 			}
 		}
 		free(buf);
