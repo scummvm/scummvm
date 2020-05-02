@@ -2683,6 +2683,71 @@ static const WMEGameDescription gameDescriptions[] = {
 					"xlanguage_ru.dcp", "756531c818db19d91f7747d0567e37c3", 15049077,
 					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::RU_RUS, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
 
+	// Reversion: The Escape (Steam, April 2020) (Spanish)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (German)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_de.dcp", "d2471dceea100734afeb4ea77a0153ec", 14036212), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (English)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_en.dcp", "bf22fff27640014127929fe5347e1460", 11336876), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (French)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_fr.dcp", "5beabe999a110f31bddbc868f743c640", 11961697), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Italian)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_it.dcp", "a98fa205490f7205d8cc301ab05ed115", 11564269), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Latvian)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_lv.dcp", "6983daaf6bba6a496a73e272dbe274c4", 11436318), Common::LV_LAT, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Chinese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_nz.dcp", "51b9d4cb6c4a571503e1d75fc4b4024c", 13739377), Common::ZH_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Polish)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_pl.dcp", "bf880fbe62c7743063b37447e228d3a8", 11551855), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Portuguese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_pt.dcp", "44a1ec3499e968373140dfef041099af", 10642716), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Russian)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_ru.dcp", "ecbcf6b59c5df992d8a971cfd01dbbc3", 15026085), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Serbian)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_sr.dcp", "2455cc3770766787b6d7ca7301079230", 10702894), Common::SR_SER, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Simplified Chinese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_zh_s.dcp", "9df07bd28ee2378f684892f079e4166b", 12625743), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Traditional Chinese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_zh_t.dcp", "3ddeeddbc625077fe8ea0e53108fcdba", 12551685), Common::ZH_TWN, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Reversion: The Meeting (Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("xlanguage_nz.dcp", "8c3709474a87a7876109025dff41ff3f", 8746015,
@@ -3295,40 +3360,75 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
 					"xlanguage_zh_s.dcp", "3c0beb597313226a78e15a38194772c6", 10146103), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_2),
 
-	// Reversion: The Return (Steam, April 2020) (Spanish)
+	// Reversion: The Return (Steam, April 16th 2020) (Spanish)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_2),
 
-	// Reversion: The Return (Steam, April 2020) (German)
+	// Reversion: The Return (Steam, April 16th 2020) (German)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"xlanguage_de.dcp", "fd1465e8b305fd49854eb15d0caaa3bb", 10318916), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_2),
 	
-	// Reversion: The Return (Steam, April 2020) (English)
+	// Reversion: The Return (Steam, April 16th 2020) (English)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"xlanguage_en.dcp", "690dbc088ccb0e198df17b9b9def3f67", 10104038), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
 	
-	// Reversion: The Return (Steam, April 2020) (Italian)
+	// Reversion: The Return (Steam, April 16th 2020) (Italian)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"xlanguage_it.dcp", "8b48db31e4a5d5ef54d17c4d672d5ad7", 10309029), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_2),
 	
-	// Reversion: The Return (Steam, April 2020) (Portuguese)
+	// Reversion: The Return (Steam, April 16th 2020) (Portuguese)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"xlanguage_pt.dcp", "566e29be1c74e34263562f609f34e49b", 10204094), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_2),
 	
-	// Reversion: The Return (Steam, April 2020) (Russian)
+	// Reversion: The Return (Steam, April 16th 2020) (Russian)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"xlanguage_ru.dcp", "921555991ce2feee9e83f1d483a001c1", 19607612), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
 	
-	// Reversion: The Return (Steam, April 2020) (Simplified Chinese)
+	// Reversion: The Return (Steam, April 16th 2020) (Simplified Chinese)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"xlanguage_zh_s.dcp", "f104564a8d8b19f6ad83ea32c0e7ac01", 10146103), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (Spanish)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (German)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_de.dcp", "f676548444517968d4239c9ccfcb3869", 10318916), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (English)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_en.dcp", "7221156703592abc9f98bbaafbb429fc", 10104038), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (Italian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_it.dcp", "9aec04ab7fdcc4f3d8c616b31f6ab1bf", 10307721), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (Portuguese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_pt.dcp", "45656ce4b79641d018cc178c3ca8468b", 10204094), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (Russian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_ru.dcp", "f24c2021a9ad80aa7e03ef95dd930dd9", 19607612), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (Simplified Chinese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_zh_s.dcp", "d059c8c11e39e063a60c602a0127d244", 10146103), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_2),
 
 	// Rhiannon: Curse of the four Branches
 	WME_WINENTRY("rhiannon", "",
