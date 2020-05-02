@@ -859,20 +859,6 @@ void MacText::insertChar(byte c, int *row, int *col) {
 	int pos = *col;
 	uint ch = line->getChunkNum(&pos);
 
-	for (ch = 0; ch < line->chunks.size(); ch++) {
-		if (pos >= line->chunks[ch].text.size()) {
-			pos -= line->chunks[ch].text.size();
-		} else {
-			break;
-		}
-	}
-
-	if (ch == line->chunks.size()) {
-		ch--;	// touch the last chunk
-		pos = line->chunks[ch].text.size();
-	}
-
-	// We're in the needed chunk
 	Common::U32String newchunk(line->chunks[ch].text);
 	newchunk.insertChar(c, pos);
 	int chunkw = line->chunks[ch].getFont()->getStringWidth(newchunk);
