@@ -392,11 +392,6 @@ public:
 	 * user. Otherwise, a non-negative player number is expected
 	 */
 	void getChest(int player = -2);
-
-	/**
-	 * Ready a weapon
-	 */
-	void readyWeapon(int player);
 };
 
 extern Debugger *g_debugger;

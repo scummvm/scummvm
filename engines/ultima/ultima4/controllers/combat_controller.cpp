@@ -862,10 +862,6 @@ bool CombatController::keyPressed(int key) {
 	bool endTurn = true;
 
 	switch (key) {
-	case 'r':
-		g_debugger->readyWeapon(getFocus());
-		break;
-
 	case 't':
 		if (settings._debug && _map->isDungeonRoom()) {
 			Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);

@@ -208,14 +208,6 @@ void Debugger::getChest(int player) {
 	cmdGetChest(2, argv);
 }
 
-void Debugger::readyWeapon(int player) {
-	Common::String param = Common::String::format("%d", player);
-	const char *argv[2] = { "ready", param.c_str() };
-
-	cmdReadyWeapon(2, argv);
-}
-
-
 bool Debugger::cmdMove(int argc, const char **argv) {
 	Direction dir;
 
@@ -927,6 +919,8 @@ bool Debugger::cmdReadyWeapon(int argc, const char **argv) {
 	int player = -1;
 	if (argc == 2)
 		player = strToInt(argv[1]);
+	else if (isCombat())
+		player = getCombatFocus();
 
 	// get the player if not provided
 	if (player == -1) {
