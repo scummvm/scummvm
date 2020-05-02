@@ -66,6 +66,11 @@ protected:
 	void printN(const char *fmt, ...) override;
 
 	/**
+	 * Prompts for input, but only if debugger isn't running
+	 */
+	void prompt() override;
+
+	/**
 	 * Gets the direction for an action
 	 */
 	Direction getDirection(int argc, const char **argv);
@@ -380,6 +385,11 @@ private:
 	 * Set wind direction or locks the direction
 	 */
 	bool cmdWind(int argc, const char **argv);
+
+	/**
+	 * Lists the triggers in a dungeon room
+	 */
+	bool cmdListTriggers(int argc, const char **argv);
 public:
 	bool _collisionOverride;
 public:

@@ -66,6 +66,11 @@ protected:
 	virtual void printN(const char *fmt, ...) = 0;
 
 	/**
+	 * Prompts for input, but only if debugger isn't running
+	 */
+	virtual void prompt() = 0;
+
+	/**
 	 * Returns true if combat is currently active
 	 */
 	bool isCombat() const;

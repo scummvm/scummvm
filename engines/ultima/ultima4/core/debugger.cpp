@@ -112,6 +112,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("summon", WRAP_METHOD(Debugger, cmdSummon));
 	registerCmd("torch", WRAP_METHOD(Debugger, cmdTorch));
 	registerCmd("transport", WRAP_METHOD(Debugger, cmdTransport));
+	registerCmd("triggers", WRAP_METHOD(Debugger, cmdListTriggers));
 	registerCmd("up", WRAP_METHOD(Debugger, cmdUp));
 	registerCmd("down", WRAP_METHOD(Debugger, cmdDown));
 	registerCmd("virtue", WRAP_METHOD(Debugger, cmdVirtue));
@@ -152,6 +153,11 @@ void Debugger::printN(const char *fmt, ...) {
 	} else {
 		g_screen->screenMessage("%s", str.c_str());
 	}
+}
+
+void Debugger::prompt() {
+	if (isDebuggerActive())
+		g_screen->screenPrompt();
 }
 
 bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
@@ -1754,6 +1760,38 @@ bool Debugger::cmdWind(int argc, const char **argv) {
 	}
 
 	return false;
+}
+
+bool Debugger::cmdListTriggers(int argc, const char **argv) {
+	CombatMap *map = nullptr;
+
+	if (isCombat() && (map = static_cast<CombatController *>(
+			eventHandler->getController())->getMap()) != nullptr
+			&& map->isDungeonRoom()) {
+		Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);
+		assert(dungeon);
+		Trigger *triggers = dungeon->_rooms[dungeon->_currentRoom]._triggers;
+		assert(triggers);
+		int i;
+
+		print("Triggers!");
+
+		for (i = 0; i < 4; i++) {
+			print("%.1d)xy tile xy xy", i + 1);
+			print("  %.1X%.1X  %.3d %.1X%.1X %.1X%.1X",
+				triggers[i].x, triggers[i].y,
+				triggers[i]._tile,
+				triggers[i]._changeX1, triggers[i]._changeY1,
+				triggers[i].changeX2, triggers[i].changeY2);
+		}
+		prompt();
+		dontEndTurn();
+
+	} else {
+		print("Not here!");
+	}
+
+	return isDebuggerActive();
 }
 
 } // End of namespace Ultima4

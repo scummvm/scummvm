@@ -862,31 +862,6 @@ bool CombatController::keyPressed(int key) {
 	bool endTurn = true;
 
 	switch (key) {
-	case 't':
-		if (settings._debug && _map->isDungeonRoom()) {
-			Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);
-			assert(dungeon);
-			Trigger *triggers = dungeon->_rooms[dungeon->_currentRoom]._triggers;
-			assert(triggers);
-			int i;
-
-			g_screen->screenMessage("Triggers!\n");
-
-			for (i = 0; i < 4; i++) {
-				g_screen->screenMessage("%.1d)xy tile xy xy\n", i + 1);
-				g_screen->screenMessage("  %.1X%.1X  %.3d %.1X%.1X %.1X%.1X\n",
-				              triggers[i].x, triggers[i].y,
-				              triggers[i]._tile,
-				              triggers[i]._changeX1, triggers[i]._changeY1,
-				              triggers[i].changeX2, triggers[i].changeY2);
-			}
-			g_screen->screenPrompt();
-			valid = false;
-
-		} else
-			g_screen->screenMessage("Not here!\n");
-		break;
-
 	case 'u':
 		g_screen->screenMessage("Use which item:\n");
 		g_context->_stats->setView(STATS_ITEMS);
