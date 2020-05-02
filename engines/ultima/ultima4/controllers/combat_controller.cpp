@@ -864,16 +864,6 @@ bool CombatController::keyPressed(int key) {
 	bool endTurn = true;
 
 	switch (key) {
-	case Common::KEYCODE_F1: {
-		if (settings._debug)
-			gameDestroyAllCreatures();
-		else valid = false;
-		break;
-	}
-
-#ifdef IOS_ULTIMA4
-	case Common::KEYCODE_RETURN: // Fall through and get the chest.
-#endif
 	case 'g':
 		g_screen->screenMessage("Get Chest!\n");
 		g_debugger->getChest(_focus);

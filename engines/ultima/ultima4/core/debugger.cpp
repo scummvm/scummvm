@@ -92,6 +92,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("collisions", WRAP_METHOD(Debugger, cmdCollisions));
 	registerCmd("companions", WRAP_METHOD(Debugger, cmdCompanions));
 	registerCmd("destroy", WRAP_METHOD(Debugger, cmdDestroy));
+	registerCmd("destroy_creatures", WRAP_METHOD(Debugger, cmdDestroyCreatures));
 	registerCmd("dungeon", WRAP_METHOD(Debugger, cmdDungeon));
 	registerCmd("equipment", WRAP_METHOD(Debugger, cmdEquipment));
 	registerCmd("exit", WRAP_METHOD(Debugger, cmdExit));
@@ -1255,6 +1256,13 @@ bool Debugger::cmdDestroy(int argc, const char **argv) {
 	}
 
 	print("%cNothing there!%c\n", FG_GREY, FG_WHITE);
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdDestroyCreatures(int argc, const char **argv) {
+	gameDestroyAllCreatures();
+	dontEndTurn();
+
 	return isDebuggerActive();
 }
 

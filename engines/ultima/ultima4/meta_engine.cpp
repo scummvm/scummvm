@@ -101,6 +101,7 @@ static const KeybindingRecord PARTY_KEYS[] = {
 };
 
 static const KeybindingRecord CHEAT_KEYS[] = {
+	{ KEYBIND_CHEAT_DESTROY_CREATURES, "CHEAT-DESTROY_CREATURES", "Destroy All Creatures", "destroy_creatures", "A+a", nullptr },
 	{ KEYBIND_CHEAT_COLLISIONS, "CHEAT-COLLISIONS", "Toggle Collision Handling", "collisions", "A+c", nullptr },
 	{ KEYBIND_CHEAT_DESTROY, "CHEAT-DESTROY", "Destroy Object", "destroy", "A+d", nullptr },
 	{ KEYBIND_CHEAT_EQUIPMENT, "CHEAT-EQUIPMENT", "Full Equipment", "equipment", "A+e", nullptr },
@@ -241,7 +242,7 @@ void MetaEngine::executeAction(KeybindingAction keyAction) {
 }
 
 Common::String MetaEngine::getMethod(KeybindingAction keyAction) {
-	for (int kCtr = 0; kCtr < 3; ++kCtr) {
+	for (int kCtr = 0; kCtr < 4; ++kCtr) {
 		for (const KeybindingRecord *r = NORMAL_RECORDS[kCtr]._keys; r->_id; ++r) {
 			if (r->_action == keyAction)
 				return r->_method;

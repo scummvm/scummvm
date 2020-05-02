@@ -708,16 +708,13 @@ bool gameSpawnCreature(const Creature *m) {
 	return true;
 }
 
-/**
- * Destroys all creatures on the current map.
- */
 void gameDestroyAllCreatures(void) {
 	int i;
 
 	gameSpellEffect('t', -1, SOUND_MAGIC); /* same effect as tremor */
 
 	if (g_context->_location->_context & CTX_COMBAT) {
-		/* destroy all creatures in combat */
+		// Destroy all creatures in combat
 		for (i = 0; i < AREA_CREATURES; i++) {
 			CombatMap *cm = getCombatMap();
 			CreatureVector creatures = cm->getCreatures();
@@ -729,7 +726,7 @@ void gameDestroyAllCreatures(void) {
 			}
 		}
 	} else {
-		/* destroy all creatures on the map */
+		// Destroy all creatures on the map
 		ObjectDeque::iterator current;
 		Map *map = g_context->_location->_map;
 
@@ -737,7 +734,7 @@ void gameDestroyAllCreatures(void) {
 			Creature *m = dynamic_cast<Creature *>(*current);
 
 			if (m) {
-				/* the skull does not destroy Lord British */
+				// The skull does not destroy Lord British
 				if (m->getId() != LORDBRITISH_ID)
 					current = map->removeObject(current);
 				else current++;
@@ -745,7 +742,7 @@ void gameDestroyAllCreatures(void) {
 		}
 	}
 
-	/* alert the guards! Really, the only one left should be LB himself :) */
+	// Alert the guards! Really, the only one left should be LB himself :)
 	g_context->_location->_map->alertGuards();
 }
 

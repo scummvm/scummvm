@@ -267,6 +267,11 @@ private:
 	bool cmdDestroy(int argc, const char **argv);
 
 	/**
+	 * Destroy all creatures
+	 */
+	bool cmdDestroyCreatures(int argc, const char **argv);
+
+	/**
 	 * Jumps to a given dungeon
 	 */
 	bool cmdDungeon(int argc, const char **argv);

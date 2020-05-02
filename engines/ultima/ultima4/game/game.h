@@ -75,6 +75,10 @@ bool creatureRangeAttack(const Coords &coords, Creature *m);
 void gameCreatureCleanup();
 bool gameSpawnCreature(const class Creature *m);
 void gameFixupObjects(Map *map);
+
+/**
+ * Destroys all creatures on the current map.
+ */
 void gameDestroyAllCreatures();
 void gameCreatureAttack(Creature *obj);
 
