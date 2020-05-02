@@ -20,7 +20,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added English translation.
 
  SCUMM:
-   - Switched palette for MM NES to simulate Sony CXA2025AS signal processor.
+   - Fixed text color and black color in MM NES intro.
+   - Added GUI option to switch between classic and Mesen's NTSC palette in MM NES.
 
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
