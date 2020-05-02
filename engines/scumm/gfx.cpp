@@ -423,7 +423,10 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 
 	_res->createResource(rtBuffer, slot + 1, size);
 	vs->setPixels(getResourceAddress(rtBuffer, slot + 1));
-	memset(vs->getBasePtr(0, 0), 0, size);	// reset background
+	if (_game.platform == Common::kPlatformNES)
+		memset(vs->getBasePtr(0, 0), 0x1d, size);	// reset background (MM NES)
+	else
+		memset(vs->getBasePtr(0, 0), 0, size);		// reset background
 
 	if (twobufs) {
 		vs->backBuf = _res->createResource(rtBuffer, slot + 5, size);
@@ -1036,6 +1039,11 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 			backColor = _roomPalette[backColor];
 	}
 
+	// MM NES background color is 0x1d
+	if (_game.platform == Common::kPlatformNES) {
+		backColor = 0x1d;
+	}
+
 	// Convert 'rect' to local (virtual screen) coordinates
 	rect.top -= vs->topline;
 	rect.bottom -= vs->topline;
@@ -1116,7 +1124,10 @@ void ScummEngine::restoreCharsetBg() {
 			}
 		} else {
 			// Clear area
-			memset(screenBuf, 0, vs->h * vs->pitch);
+			if (_game.platform == Common::kPlatformNES)
+				memset(screenBuf, 0x1d, vs->h * vs->pitch);
+			else
+				memset(screenBuf, 0, vs->h * vs->pitch);
 		}
 
 		if (vs->hasTwoBuffers) {
@@ -2562,10 +2573,6 @@ void ScummEngine::NES_loadCostumeSet(int n) {
 	byte *palette = getResourceAddress(rtCostume, v1MMNEScostTables[n][5]) + 2;
 	for (i = 0; i < 16; i++) {
 		byte c = *palette++;
-		if (c == 0x1D)	// HACK - switch around colors 0x00 and 0x1D
-			c = 0;		// so we don't need a zillion extra checks
-		else if (c == 0)// for determining the proper background color
-			c = 0x1D;
 		_NESPalette[1][i] = c;
 	}
 
@@ -2588,14 +2595,6 @@ void GdiNES::decodeNESGfx(const byte *room) {
 	decodeNESTileData(_vm->getResourceAddress(rtCostume, 37 + tileset), _vm->_NESPatTable[1] + _vm->_NESBaseTiles * 16);
 	for (i = 0; i < 16; i++) {
 		byte c = *gdata++;
-		if (c == 0x0D)
-			c = 0x1D;
-
-		if (c == 0x1D)	 // HACK - switch around colors 0x00 and 0x1D
-			c = 0;		 // so we don't need a zillion extra checks
-		else if (c == 0) // for determining the proper background color
-			c = 0x1D;
-
 		_vm->_NESPalette[0][i] = c;
 	}
 	for (i = 0; i < 16; i++) {
@@ -3817,7 +3816,10 @@ void ScummEngine::fadeOut(int effect) {
 	// when bypassed of FT and TheDig.
 	if ((_game.version == 7 || _screenEffectFlag) && effect != 0) {
 		// Fill screen 0 with black
-		memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
+		if (_game.platform == Common::kPlatformNES)
+			memset(vs->getPixels(0, 0), 0x1d, vs->pitch * vs->h);
+		else
+			memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
 
 		// Fade to black with the specified effect, if any.
 		switch (effect) {
