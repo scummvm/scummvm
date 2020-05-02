@@ -184,8 +184,8 @@ static const Common::U32String::value_type *readHex(uint16 *res, const Common::U
 // Adds the given string to the end of the last line/chunk
 // while observing the _maxWidth and keeping this chunk's
 // formatting
-void MacText::chopChunk(const Common::U32String &str) {
-	int curLine = _textLines.size() - 1;
+void MacText::chopChunk(const Common::U32String &str, int *curLinePtr) {
+	int curLine = *curLinePtr;
 	int curChunk = _textLines[curLine].chunks.size() - 1;
 	MacFontRun *chunk = &_textLines[curLine].chunks[curChunk];
 
@@ -232,14 +232,16 @@ void MacText::chopChunk(const Common::U32String &str) {
 		newchunk.text = text[i];
 
 		curLine++;
-		_textLines.resize(curLine + 1);
+		_textLines.insert_at(curLine, MacTextLine());
 		_textLines[curLine].chunks.push_back(newchunk);
 
 		D(9, "** chopChunk, added line: \"%s\"", toPrintable(text[i].encode()).c_str());
 	}
+
+	*curLinePtr = curLine;
 }
 
-void MacText::splitString(const Common::U32String &str) {
+void MacText::splitString(const Common::U32String &str, int curLine) {
 	const Common::U32String::value_type *l = str.c_str();
 
 	D(9, "** splitString(\"%s\")", toPrintable(str.encode()).c_str());
@@ -259,7 +261,9 @@ void MacText::splitString(const Common::U32String &str) {
 		D(9, "** splitString, continuing, %d lines", _textLines.size());
 	}
 
-	int curLine = _textLines.size() - 1;
+	if (curLine == -1)
+		curLine = _textLines.size() - 1;
+
 	int curChunk = _textLines[curLine].chunks.size() - 1;
 	MacFontRun chunk = _textLines[curLine].chunks[curChunk];
 
@@ -309,7 +313,7 @@ void MacText::splitString(const Common::U32String &str) {
 
 			// Okay, now we are either at the end of the line, or in the next
 			// chunk definition. That means, that we have to store the previous chunk
-			chopChunk(tmp);
+			chopChunk(tmp, &curLine);
 
 			tmp.clear();
 
@@ -368,7 +372,7 @@ void MacText::splitString(const Common::U32String &str) {
 		_textLines[curLine].paragraphEnd = true;
 
 		curLine++;
-		_textLines.resize(curLine + 1);
+		_textLines.insert_at(curLine, MacTextLine());
 		_textLines[curLine].chunks.push_back(chunk);
 	}
 
@@ -950,6 +954,25 @@ void MacText::addNewLine(int *row, int *col) {
 }
 
 void MacText::reshuffleParagraph(int *row, int *col) {
+	// First, we looking for the paragraph start and end
+	int start = *row, end = *row;
+
+	while (start && !_textLines[start - 1].paragraphEnd)
+		start--;
+
+	while (end < _textLines.size() - 1 && !_textLines[end].paragraphEnd) // stop at last line
+		end++;
+
+	// Get whole paragraph
+	Common::U32String paragraph = getTextChunk(start, 0, end, -1, true, false);
+
+	// Remove it from the text
+	for (int i = start; i <= end; i++) {
+		_textLines.remove_at(start);
+	}
+
+	// And now readd it
+	splitString(paragraph, start);
 }
 
 } // End of namespace Graphics

@@ -151,8 +151,8 @@ public:
 	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
 private:
-	void chopChunk(const Common::U32String &str);
-	void splitString(const Common::U32String &s);
+	void chopChunk(const Common::U32String &str, int *curLine);
+	void splitString(const Common::U32String &s, int curLine = -1);
 	void render(int from, int to);
 	void recalcDims();
 	void reallocSurface();
