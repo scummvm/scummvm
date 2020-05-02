@@ -20,13 +20,15 @@
  *
  */
 
-#ifndef ULTIMA8_AUDIO_MUSICPROCESS_H
-#define ULTIMA8_AUDIO_MUSICPROCESS_H
+#ifndef ULTIMA8_AUDIO_REMORSEMUSICPROCESS_H
+#define ULTIMA8_AUDIO_REMORSEMUSICPROCESS_H
 
+#include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
-#include "audio/mididrv.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,46 +36,56 @@ namespace Ultima8 {
 class Debugger;
 class MidiPlayer;
 
-class MusicProcess : public Process {
+class RemorseMusicProcess : public MusicProcess {
 	friend class Debugger;
 
 protected:
+	void saveData(Common::WriteStream *ws) override;
+
 	//! Play a music track
 	//! \param track The track number to play. Pass 0 to stop music
-	virtual void playMusic_internal(int track) = 0;
+	void playMusic_internal(int track);
 
-	static MusicProcess *_theMusicProcess;
+private:
+	int _currentTrack;      //! Currently playing track (don't save)
+
+	//! Is the current music "combat" music
+	bool _combatMusicActive;
+
+	int _savedTrack;
+
+	Audio::SoundHandle _soundHandle;
+	Audio::AudioStream *_playingStream;
 
 public:
-	MusicProcess();
+	RemorseMusicProcess();
+	~RemorseMusicProcess() override;
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	//! Get the current instance of the Music Processes
-	static MusicProcess *get_instance() {
-		return _theMusicProcess;
-	}
-
 	//! Play some background music. Does not change the current track if combat music is active.  If another track is currently queued, just queues this track for play.
-	virtual void playMusic(int track) = 0;
+	void playMusic(int track);
 	//! Play some combat music - the last played track will be remembered
-	virtual void playCombatMusic(int track) = 0;
+	void playCombatMusic(int track);
 	//! Queue a track to start once the current one finishes
-	virtual void queueMusic(int track) = 0;
+	void queueMusic(int track);
 	//! Clear any queued track (does not affect currently playing track)
-	virtual void unqueueMusic() = 0;
+	void unqueueMusic();
 	//! Restore the last requested non-combat track (eg, at the end of combat)
-	virtual void restoreMusic() = 0;
+	void restoreMusic();
 
 	//! Save the current track state - used when the menu is opened
-	virtual void saveTrackState() = 0;
+	void saveTrackState();
 	//! Bring back the track state from before it was put on hold
-	virtual void restoreTrackState() = 0;
+	void restoreTrackState();
 
 	INTRINSIC(I_playMusic);
 	INTRINSIC(I_musicStop);
 
+	void run() override;
+
+	bool loadData(Common::ReadStream *rs, uint32 version);
 };
 
 } // End of namespace Ultima8

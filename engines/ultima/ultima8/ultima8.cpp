@@ -104,7 +104,8 @@
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
 #include "ultima/ultima8/graphics/xform_blend.h"
-#include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/audio/u8_music_process.h"
+#include "ultima/ultima8/audio/remorse_music_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/audio/midi_player.h"
@@ -233,8 +234,10 @@ void Ultima8Engine::startup() {
 		ProcessLoader<SpriteProcess>::load);
 	_kernel->addProcessLoader("CameraProcess",
 		ProcessLoader<CameraProcess>::load);
-	_kernel->addProcessLoader("MusicProcess",
-		ProcessLoader<MusicProcess>::load);
+	_kernel->addProcessLoader("MusicProcess", // parent class name for save game backwards-compatibility.
+		ProcessLoader<U8MusicProcess>::load);
+	_kernel->addProcessLoader("RemorseMusicProcess",
+		ProcessLoader<RemorseMusicProcess>::load);
 	_kernel->addProcessLoader("AudioProcess",
 		ProcessLoader<AudioProcess>::load);
 	_kernel->addProcessLoader("EggHatcherProcess",

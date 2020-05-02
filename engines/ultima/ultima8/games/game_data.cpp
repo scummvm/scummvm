@@ -24,12 +24,12 @@
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/filesys/file_system.h"
+#include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/usecode/usecode_flex.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/world/map_glob.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -598,20 +598,8 @@ void GameData::loadRemorseData() {
 	delete gumpageds;
 #endif
 
-	Common::SeekableReadStream *dummyrs = filesystem->ReadFile("@data/empty.flx");
-	_music = nullptr; //new MusicFlex(dummyds);
-	delete dummyrs;
-#if 0
-	Common::SeekableReadStream *mf = filesystem->ReadFile("@game/sound/music.flx");
-	if (!mf)
-		error("Unable to load sound/music.flx");
-
-	_music = new MusicFlex(mf);
-#endif
-
-	dummyrs = filesystem->ReadFile("@data/empty.flx");
-	_soundFlex = new SoundFlex(dummyrs);
-	delete dummyrs;
+	// Note: No MusicFlex for Remorse, as the music is all in different AMF files.
+	// The remorse_music_process will load them.
 
 	Common::SeekableReadStream *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
 	if (!sndflx)

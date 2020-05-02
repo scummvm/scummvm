@@ -66,8 +66,8 @@ RemorseMenuGump::RemorseMenuGump(bool nameEntryMode_)
 	MusicProcess *musicprocess = MusicProcess::get_instance();
 	if (musicprocess) {
 		musicprocess->saveTrackState();
-		// Stop any playing music.
-		musicprocess->playCombatMusic(0);
+		// Play the menu music
+		musicprocess->playMusic(20);
 	}
 	MetaEngine::setGameMenuActive(true);
 }

@@ -390,9 +390,11 @@ MODULE_OBJS := \
 	ultima8/audio/music_flex.o \
 	ultima8/audio/music_process.o \
 	ultima8/audio/raw_audio_sample.o \
+	ultima8/audio/remorse_music_process.o \
 	ultima8/audio/sonarc_audio_sample.o \
 	ultima8/audio/sound_flex.o \
 	ultima8/audio/speech_flex.o \
+	ultima8/audio/u8_music_process.o \
 	ultima8/conf/config_file_manager.o \
 	ultima8/conf/ini_file.o \
 	ultima8/conf/setting_manager.o \

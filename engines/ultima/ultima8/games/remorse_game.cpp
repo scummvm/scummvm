@@ -152,7 +152,7 @@ static ProcId playMovie(const char *movieID, bool fade) {
 }
 
 ProcId RemorseGame::playIntroMovie(bool fade) {
-	return playMovie("T01", fade);
+	return playMovie("T02", fade);
 	// TODO: also play T02
 }
 

@@ -65,6 +65,8 @@ public:
 	void playSample(AudioSample *sample, int loop, int priority, bool paused,
 		uint32 pitchShift, int lvol, int rvol);
 
+	void playMusicStream(Audio::AudioStream *stream);
+
 	bool isPlaying();
 
 	void setPitchShift(int pitchShift) {

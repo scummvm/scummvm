@@ -92,6 +92,10 @@ void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool 
 		_mixer->pauseHandle(_soundHandle, true);
 }
 
+void AudioChannel::playMusicStream(Audio::AudioStream *stream) {
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, stream);
+}
+
 bool AudioChannel::isPlaying() {
 	if (!_mixer->isSoundHandleActive(_soundHandle))
 		_sample = nullptr;
