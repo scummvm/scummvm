@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/fs.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/singleton.h"
 #include "common/str-array.h"
 #include "common/language.h"
@@ -180,7 +181,9 @@ public:
 	 * For LTR (Left To Right) languages, returns the original input
 	 * For RTL (Right To Left) languages, returns visual representation of a logical single-line input
 	 */
+	U32String convertBiDiU32String(const U32String &input);
 	String convertBiDiString(const String &input);
+	String convertBiDiString(const String &input, const Common::CodePage page);
 	String convertBiDiString(const String &input, const Common::Language lang);
 
 private:
