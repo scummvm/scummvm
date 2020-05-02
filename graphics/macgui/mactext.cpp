@@ -897,7 +897,11 @@ void MacText::deletePreviousChar(int *row, int *col) {
 			_textLines[*row].chunks.push_back(MacFontRun(_textLines[*row + 1].firstChunk()));
 			_textLines[*row].firstChunk().text.clear();
 		}
-		reshuffleParagraph(row, col);
+
+		for (int i = 1; i < _textLines[*row + 1].chunks.size(); i++)
+			_textLines[*row].chunks.push_back(MacFontRun(_textLines[*row + 1].chunks[i]));
+
+		_textLines.remove_at(*row + 1);
 	} else {
 		int pos = *col - 1;
 		uint ch = _textLines[*row].getChunkNum(&pos);
@@ -905,9 +909,11 @@ void MacText::deletePreviousChar(int *row, int *col) {
 		_textLines[*row].chunks[ch].text.deleteChar(pos);
 
 		(*col)--;
-
-		reshuffleParagraph(row, col);
 	}
+
+	_textLines[*row].width = -1; // flush the cache
+
+	reshuffleParagraph(row, col);
 
 	_fullRefresh = true;
 	recalcDims();
@@ -930,6 +936,8 @@ void MacText::addNewLine(int *row, int *col) {
 		line->chunks[i].text.clear();
 	}
 	line->width = -1; // Drop cache
+
+	_textLines[*row].width = -1; // flush the cache
 
 	_textLines.insert_at(*row + 1, newline);
 

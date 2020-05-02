@@ -334,7 +334,7 @@ bool MacEditableText::processEvent(Common::Event &event) {
 					return true;
 				}
 				_cursorRow--;
-				_cursorCol = getLineCharWidth(_cursorRow);
+				_cursorCol = getLineCharWidth(_cursorRow) - 1;
 			} else {
 				_cursorCol--;
 			}
@@ -343,7 +343,7 @@ bool MacEditableText::processEvent(Common::Event &event) {
 			return true;
 
 		case Common::KEYCODE_RIGHT:
-			if (_cursorCol == getLineCharWidth(_cursorRow)) {
+			if (_cursorCol >= getLineCharWidth(_cursorRow)) {
 				if (_cursorRow == getLineCount() - 1) { // Nowhere to go
 					return true;
 				}
@@ -361,8 +361,11 @@ bool MacEditableText::processEvent(Common::Event &event) {
 				return true;
 
 			_cursorRow--;
-			getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, nullptr, &ncol);
-			_cursorCol = ncol + 1;
+
+			if (_cursorCol > 0) {
+				getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, nullptr, &ncol);
+				_cursorCol = ncol + 1;
+			}
 
 			updateCursorPos();
 
@@ -373,8 +376,10 @@ bool MacEditableText::processEvent(Common::Event &event) {
 				return true;
 
 			_cursorRow++;
-			getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, nullptr, &ncol);
-			_cursorCol = ncol + 1;
+			if (_cursorCol > 0) {
+				getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, nullptr, &ncol);
+				_cursorCol = ncol + 1;
+			}
 
 			updateCursorPos();
 
