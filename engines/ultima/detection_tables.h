@@ -185,6 +185,20 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+	{
+		{
+			"ultima8",
+			"",
+			AD_ENTRY1s("jusecode.flx", "1793bb252b805bf8d59300690987c605", 1208003),
+			Common::JA_JPN,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_ULTIMA8,
+		0
+	},
+
 	/*
 	// Crusader games use basically the same engine as ultima8, but still
 	// need a lot of work.
