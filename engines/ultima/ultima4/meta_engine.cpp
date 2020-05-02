@@ -170,16 +170,8 @@ static const KeysRecord DIRECTION_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord COMBAT_RECORDS[] = {
-	{ "ultima4", "Ultima IV", COMBAT_KEYS },
-	{ "ultima4_config", "Ultima IV - Configuration", CONFIG_KEYS },
-	{ "ultima4_party", "Ultima IV - Party", PARTY_KEYS },
-	{ "ultima4_cheats", "Ultima IV - Cheats", CHEAT_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
-
 static const KeysRecord *MODE_RECORDS[5] = {
-	NORMAL_RECORDS, INPUT_RECORDS, DIRECTION_RECORDS, COMBAT_RECORDS
+	NORMAL_RECORDS, INPUT_RECORDS, DIRECTION_RECORDS, NORMAL_RECORDS
 };
 
 Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
