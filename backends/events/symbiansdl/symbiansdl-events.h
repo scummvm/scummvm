@@ -25,6 +25,8 @@
 
 #include "backends/events/sdl/legacy-sdl-events.h"
 
+#ifdef GUI_ENABLE_KEYSDIALOG
+
 #define TOTAL_ZONES 3
 
 /**
@@ -53,5 +55,7 @@ protected:
 
 	virtual bool handleAxisToMouseMotion(int16 xAxis, int16 yAxis);
 };
+
+#endif
 
 #endif

@@ -24,6 +24,9 @@
 #define SYMBIANACTIONS_H
 
 #include "common/scummsys.h"
+
+#ifdef GUI_ENABLE_KEYSDIALOG
+
 #include "common/system.h"
 #include "gui/Key.h"
 #include "gui/Actions.h"
@@ -76,5 +79,7 @@ private:
 };
 
 } // namespace GUI
+
+#endif
 
 #endif

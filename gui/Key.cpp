@@ -22,6 +22,10 @@
 
 #include "gui/Key.h"
 
+#ifdef GUI_ENABLE_KEYSDIALOG
+
+#warning The actions system is deprecated. Please use the keymapper instead.
+
 namespace GUI {
 
 Key::Key() :
@@ -65,3 +69,5 @@ int Key::flags() {
 }
 
 } // namespace GUI
+
+#endif

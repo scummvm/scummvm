@@ -21,6 +21,11 @@
  */
 
 #include "gui/KeysDialog.h"
+
+#ifdef GUI_ENABLE_KEYSDIALOG
+
+#warning The actions system is deprecated. Please use the keymapper instead.
+
 #include "gui/Actions.h"
 #include "common/translation.h"
 #include <SDL_keyboard.h>
@@ -146,3 +151,5 @@ void KeysDialog::handleKeyUp(Common::KeyState state) {
 }
 
 } // namespace GUI
+
+#endif

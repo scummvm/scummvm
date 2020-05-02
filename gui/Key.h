@@ -24,6 +24,9 @@
 #define GUI_KEY_H
 
 #include "common/scummsys.h"
+
+#ifdef GUI_ENABLE_KEYSDIALOG
+
 #include "common/system.h"
 
 namespace GUI {
@@ -54,5 +57,7 @@ private:
 };
 
 } // namespace GUI
+
+#endif
 
 #endif
