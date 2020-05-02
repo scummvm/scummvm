@@ -170,9 +170,7 @@ public:
 	static void attackFlash(const Coords &coords, const Common::String &tilename, int timeFactor);
 	static void doScreenAnimationsWhilePausing(int timeFactor);
 
-	// Key handlers
 	void keybinder(KeybindingAction action) override;
-	bool keyPressed(int key) override;
 
 	void finishTurn() override;
 

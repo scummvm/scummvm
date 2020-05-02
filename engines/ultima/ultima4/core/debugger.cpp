@@ -165,16 +165,26 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 		"attack", "board", "enter", "fire", "jimmy", "locate",
 		"open", "talk", "exit", "yell", nullptr
 	};
+	static const char *COMBAT_DISALLOWED[] = {
+		"board", "climb", "descend", "enter", "exit", "fire", "hole",
+		"ignite", "jimmy", "mix", "order", "open", "peer", "quitAndSave",
+		"search", "use", "wear", "yell", nullptr
+	};
 
-	if (g_context && (g_context->_location->_context & CTX_DUNGEON)) {
-		Common::String method = argv[0];
+	if (g_context && g_context->_location) {
+		int ctx = g_context->_location->_context;
+		if (ctx & (CTX_DUNGEON | CTX_COMBAT)) {
+			Common::String method = argv[0];
+			const char *const *mth = (ctx & CTX_COMBAT) ?
+				COMBAT_DISALLOWED : DUNGEON_DISALLOWED;
 
-		for (const char *const *mth = DUNGEON_DISALLOWED; *mth; ++mth) {
-			if (method.equalsIgnoreCase(*mth)) {
-				print("%cNot here!%c", FG_GREY, FG_WHITE);
-				g_game->finishTurn();
-				keepRunning = false;
-				return true;
+			for (; *mth; ++mth) {
+				if (method.equalsIgnoreCase(*mth)) {
+					print("%cNot here!%c", FG_GREY, FG_WHITE);
+					g_game->finishTurn();
+					keepRunning = false;
+					return true;
+				}
 			}
 		}
 	}
@@ -1073,6 +1083,8 @@ bool Debugger::cmdStats(int argc, const char **argv) {
 	int player = -1;
 	if (argc == 2)
 		player = strToInt(argv[1]);
+	else if (isCombat())
+		player = getCombatFocus();
 
 	// get the player if not provided
 	if (player == -1) {
@@ -1080,6 +1092,8 @@ bool Debugger::cmdStats(int argc, const char **argv) {
 		player = gameGetPlayer(true, false);
 		if (player == -1)
 			return isDebuggerActive();
+	} else {
+		print("Ztats");
 	}
 
 	// Reset the reagent spell mix menu by removing
