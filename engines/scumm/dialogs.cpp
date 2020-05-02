@@ -48,10 +48,6 @@
 #include "scumm/help.h"
 #endif
 
-#ifdef GUI_ENABLE_KEYSDIALOG
-#include "gui/KeysDialog.h"
-#endif
-
 using Graphics::kTextAlignCenter;
 using Graphics::kTextAlignLeft;
 using GUI::WIDGET_ENABLED;

@@ -23,6 +23,10 @@
 #ifndef KEYSDIALOG_H
 #define KEYSDIALOG_H
 
+#include "common/scummsys.h"
+
+#ifdef GUI_ENABLE_KEYSDIALOG
+
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
 #include "gui/widgets/list.h"
@@ -48,5 +52,7 @@ protected:
 };
 
 } // namespace GUI
+
+#endif
 
 #endif

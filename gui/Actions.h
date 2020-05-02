@@ -24,6 +24,9 @@
 #define GUI_ACTIONS_H
 
 #include "common/scummsys.h"
+
+#ifdef GUI_ENABLE_KEYSDIALOG
+
 #include "common/system.h"
 #include "gui/Key.h"
 
@@ -82,4 +85,7 @@ protected:
 
 } // namespace GUI
 typedef GUI::Actions GUI_Actions;
+
+#endif
+
 #endif
