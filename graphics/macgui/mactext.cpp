@@ -679,20 +679,6 @@ void MacText::clearText() {
 	recalcDims();
 }
 
-void MacText::replaceLastLine(const Common::U32String &str) {
-	int oldLen = MAX<int>(0, _textLines.size() - 1);
-
-	// TODO: Recalc length, adapt to _textLines
-
-	if (_textLines.size())
-		_textLines.pop_back();
-
-	splitString(str);
-	recalcDims();
-
-	render(oldLen, _textLines.size());
-}
-
 void MacText::removeLastLine() {
 	if (!_textLines.size())
 		return;
@@ -767,6 +753,8 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 		*row = nrow;
 }
 
+// If adjacent chunks have same format, then skip the format definition
+// This happens when a long paragraph is split into several lines
 #define ADDFORMATTING() \
 	if (formatted) { \
 		formatting = _textLines[i].chunks[chunk].toString(); \
@@ -791,9 +779,10 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 	Common::U32String formatting, prevformatting;
 
 	for (int i = startRow; i <= endRow; i++) {
+		// We requested only part of one line
 		if (i == startRow && i == endRow) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (_textLines[i].chunks[chunk].text.empty())
+				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
 					continue;
 
 				if (startCol <= 0) {
@@ -814,9 +803,10 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				if (endCol <= 0)
 					break;
 			}
+		// We are at the top line and it is not completely requested
 		} else if (i == startRow && startCol != 0) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (_textLines[i].chunks[chunk].text.empty())
+				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
 					continue;
 
 				if (startCol <= 0) {
@@ -833,9 +823,10 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				res += '\n';
 			else
 				res += ' ';
+		// We are at the end row, and it could be not completely requested
 		} else if (i == endRow) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (_textLines[i].chunks[chunk].text.empty())
+				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
 					continue;
 
 				ADDFORMATTING();
@@ -850,9 +841,10 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				if (endCol <= 0)
 					break;
 			}
+		// We are in the middle of requested range, pass whole line
 		} else {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (_textLines[i].chunks[chunk].text.empty())
+				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
 					continue;
 
 				ADDFORMATTING();

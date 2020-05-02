@@ -131,8 +131,6 @@ public:
 	void appendTextDefault(const Common::U32String &str, bool skipAdd = false);
 	void appendTextDefault(const Common::String &str, bool skipAdd = false);
 	void clearText();
-	void replaceLastLine(const Common::U32String &str);
-	void replaceLastLine(const Common::String &str);
 	void removeLastLine();
 	int getLineCount() { return _textLines.size(); }
 	int getLineCharWidth(int line, bool enforce = false);
