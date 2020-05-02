@@ -69,7 +69,7 @@ uint MacTextLine::getChunkNum(int *col) {
 
 	if (i == chunks.size()) {
 		i--;	// touch the last chunk
-		pos = chunks[i].text.size();
+		pos = chunks[i].text.size() - 1;
 	}
 
 	*col = pos;
