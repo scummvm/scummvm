@@ -101,11 +101,13 @@ class DreamWebSound;
 class DreamWebEngine : public Engine {
 private:
 	DreamWebSound *_sound;
+	uint32 _vSyncPrevTick;
 
 protected:
 	// Engine APIs
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
+	void pauseEngineIntern(bool pause) override;
 
 public:
 	DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc);
