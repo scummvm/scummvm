@@ -64,6 +64,16 @@ protected:
 	 * game screen if not
 	 */
 	virtual void printN(const char *fmt, ...) = 0;
+
+	/**
+	 * Returns true if combat is currently active
+	 */
+	bool isCombat() const;
+
+	/**
+	 * Returns currently focused character in combat mode
+	 */
+	int getCombatFocus() const;
 public:
 	virtual ~DebuggerActions() {}
 

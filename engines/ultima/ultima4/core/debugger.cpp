@@ -62,7 +62,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("enter", WRAP_METHOD(Debugger, cmdEnter));
 	registerCmd("exit", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("fire", WRAP_METHOD(Debugger, cmdFire));
-	registerCmd("get", WRAP_METHOD(Debugger, cmdGet));
+	registerCmd("get", WRAP_METHOD(Debugger, cmdGetChest));
 	registerCmd("hole", WRAP_METHOD(Debugger, cmdHoleUp));
 	registerCmd("ignite", WRAP_METHOD(Debugger, cmdIgnite));
 	registerCmd("interact", WRAP_METHOD(Debugger, cmdInteract));
@@ -205,7 +205,7 @@ void Debugger::getChest(int player) {
 	Common::String param = Common::String::format("%d", player);
 	const char *argv[2] = { "get", param.c_str() };
 
-	cmdGet(2, argv);
+	cmdGetChest(2, argv);
 }
 
 void Debugger::readyWeapon(int player) {
@@ -303,7 +303,9 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 		player = strToInt(argv[1]);
 
 	print("Cast Spell!");
-	if (player == -1) {
+	if (isCombat()) {
+		player = getCombatFocus();
+	} else if (player == -1) {
 		printN("Player: ");
 		player = gameGetPlayer(false, true);
 	}
@@ -546,10 +548,12 @@ bool Debugger::cmdFire(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
-bool Debugger::cmdGet(int argc, const char **argv) {
+bool Debugger::cmdGetChest(int argc, const char **argv) {
 	int player = -1;
 	if (argc == 2)
 		player = strToInt(argv[1]);
+	else if (isCombat())
+		player = getCombatFocus();
 
 	print("Get Chest!");
 
@@ -700,7 +704,7 @@ bool Debugger::cmdInteract(int argc, const char **argv) {
 		MapTile *tile = g_context->_location->_map->tileAt(g_context->_location->_coords, WITH_GROUND_OBJECTS);
 
 		if (tile->getTileType()->isChest())
-			return cmdGet(argc, argv);
+			return cmdGetChest(argc, argv);
 	}
 
 	// Otherwise default to search

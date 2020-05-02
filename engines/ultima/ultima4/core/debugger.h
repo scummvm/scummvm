@@ -126,7 +126,7 @@ private:
 	/**
 	 * Get chest
 	 */
-	bool cmdGet(int argc, const char **argv);
+	bool cmdGetChest(int argc, const char **argv);
 
 	/**
 	 * Hole Up
@@ -380,7 +380,6 @@ private:
 	 * Set wind direction or locks the direction
 	 */
 	bool cmdWind(int argc, const char **argv);
-
 public:
 	bool _collisionOverride;
 public:

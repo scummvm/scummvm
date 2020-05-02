@@ -483,5 +483,15 @@ void DebuggerActions::gameLordBritishCheckLevels() {
 	g_screen->screenMessage("\nWhat would thou\nask of me?\n");
 }
 
+bool DebuggerActions::isCombat() const {
+	return dynamic_cast<CombatController *>(eventHandler->getController()) != nullptr;
+}
+
+int DebuggerActions::getCombatFocus() const {
+	CombatController *cc = dynamic_cast<CombatController *>(eventHandler->getController());
+	assert(cc);
+	return cc->getFocus();
+}
+
 } // End of namespace Ultima4
 } // End of namespace Ultima

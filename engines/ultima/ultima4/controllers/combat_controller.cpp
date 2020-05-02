@@ -56,8 +56,6 @@ namespace Ultima4 {
 
 CombatController *g_combat;
 
-extern void gameDestroyAllCreatures();
-
 /**
  * Returns true if 'map' points to a Combat Map
  */
@@ -864,11 +862,6 @@ bool CombatController::keyPressed(int key) {
 	bool endTurn = true;
 
 	switch (key) {
-	case 'g':
-		g_screen->screenMessage("Get Chest!\n");
-		g_debugger->getChest(_focus);
-		break;
-
 	case 'l':
 		if (settings._debug) {
 			Coords coords = getCurrentPlayer()->getCoords();
