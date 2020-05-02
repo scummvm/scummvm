@@ -862,16 +862,6 @@ bool CombatController::keyPressed(int key) {
 	bool endTurn = true;
 
 	switch (key) {
-	case 'l':
-		if (settings._debug) {
-			Coords coords = getCurrentPlayer()->getCoords();
-			g_screen->screenMessage("\nLocation:\nx:%d\ny:%d\nz:%d\n", coords.x, coords.y, coords.z);
-			g_screen->screenPrompt();
-			valid = false;
-		} else
-			g_screen->screenMessage("Not here!\n");
-		break;
-
 	case 'r':
 		g_debugger->readyWeapon(getFocus());
 		break;

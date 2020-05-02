@@ -730,8 +730,16 @@ bool Debugger::cmdJimmy(int argc, const char **argv) {
 }
 
 bool Debugger::cmdLocate(int argc, const char **argv) {
-	// can't use sextant in dungeon or in combat
-	if (g_context->_location->_context & ~(CTX_DUNGEON | CTX_COMBAT)) {
+	// Normally Locate isn't allowed in combat, but allow for a special
+	// debug display if this command is explicitly run in the debugger
+	if (isCombat() && isDebuggerActive()) {
+		CombatController *cc = static_cast<CombatController *>(eventHandler->getController());
+		Coords coords = cc->getCurrentPlayer()->getCoords();
+		print("Location: x:%d, y:%d, z:%d", coords.x, coords.y, coords.z);
+		dontEndTurn();
+	}
+	// Otherwise can't use sextant in dungeon or in combat
+	else if (g_context->_location->_context & ~(CTX_DUNGEON | CTX_COMBAT)) {
 		if (g_ultima->_saveGame->_sextants >= 1)
 			print("Locate position\nwith sextant\n Latitude: %c'%c\"\nLongitude: %c'%c\"",
 				g_context->_location->_coords.y / 16 + 'A', g_context->_location->_coords.y % 16 + 'A',
