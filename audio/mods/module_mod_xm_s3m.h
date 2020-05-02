@@ -162,6 +162,7 @@ private:
 	bool loadMod(Common::SeekableReadStream &stream);
 	bool loadXm(Common::SeekableReadStream &stream);
 	bool loadS3m(Common::SeekableReadStream &stream);
+	bool loadAmf(Common::SeekableReadStream &st);
 
 	void readSampleSint8(Common::SeekableReadStream &stream, int length, int16 *dest);
 	void readSampleSint16LE(Common::SeekableReadStream &stream, int length, int16 *dest);
