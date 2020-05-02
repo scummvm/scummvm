@@ -871,11 +871,6 @@ bool CombatController::keyPressed(int key) {
 		break;
 	}
 
-	case 'c':
-		g_screen->screenMessage("Cast Spell!\n");
-		g_debugger->castSpell(_focus);
-		break;
-
 #ifdef IOS_ULTIMA4
 	case Common::KEYCODE_RETURN: // Fall through and get the chest.
 #endif

@@ -390,11 +390,6 @@ public:
 	void getChest(int player = -2);
 
 	/**
-	 * Cast a spell
-	 */
-	void castSpell(int player);
-
-	/**
 	 * Ready a weapon
 	 */
 	void readyWeapon(int player);

@@ -207,13 +207,6 @@ void Debugger::getChest(int player) {
 	cmdGet(2, argv);
 }
 
-void Debugger::castSpell(int player) {
-	Common::String param = Common::String::format("%d", player);
-	const char *argv[2] = { "cast", param.c_str() };
-
-	cmdCastSpell(2, argv);
-}
-
 void Debugger::readyWeapon(int player) {
 	Common::String param = Common::String::format("%d", player);
 	const char *argv[2] = { "ready", param.c_str() };
@@ -308,8 +301,9 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 	if (argc == 2)
 		player = strToInt(argv[1]);
 
+	print("Cast Spell!");
 	if (player == -1) {
-		printN("Cast Spell!\nPlayer: ");
+		printN("Player: ");
 		player = gameGetPlayer(false, true);
 	}
 	if (player == -1)
@@ -318,19 +312,19 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 	// get the spell to cast
 	g_context->_stats->setView(STATS_MIXTURES);
 	printN("Spell: ");
-	// ### Put the iPad thing too.
 #ifdef IOS_ULTIMA4
+	// ### Put the iPad thing too.
 	U4IOS::IOSCastSpellHelper castSpellController;
 #endif
 	int spell = AlphaActionController::get('z', "Spell: ");
 	if (spell == -1)
 		return isDebuggerActive();
 
-	print("%s!", g_spells->spellGetName(spell)); //Prints spell name at prompt
+	print("%s!", g_spells->spellGetName(spell)); // Prints spell name at prompt
 
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
 
-	// if we can't really cast this spell, skip the extra parameters
+	// If we can't really cast this spell, skip the extra parameters
 	if (g_spells->spellCheckPrerequisites(spell, player) != CASTERR_NOERROR) {
 		gameCastSpell(spell, player, 0);
 		return isDebuggerActive();
