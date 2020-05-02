@@ -776,5 +776,68 @@ bool GameController::createBalloon(Map *map) {
 	return true;
 }
 
+void GameController::attack(Direction dir) {
+	g_screen->screenMessage("Attack: ");
+	if (g_context->_party->isFlying()) {
+		g_screen->screenMessage("\n%cDrift only!%c\n", FG_GREY, FG_WHITE);
+		return;
+	}
+
+	if (dir == DIR_NONE)
+		dir = gameGetDirection();
+
+	if (dir == DIR_NONE) {
+		g_screen->screenMessage("\n");
+		return;
+	}
+
+	Std::vector<Coords> path = gameGetDirectionalActionPath(
+		MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+		1, 1, nullptr, true);
+	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
+		if (attackAt(*i))
+			return;
+	}
+
+	g_screen->screenMessage("%cNothing to Attack!%c\n", FG_GREY, FG_WHITE);
+}
+
+bool GameController::attackAt(const Coords &coords) {
+	Object *under;
+	const Tile *ground;
+	Creature *m;
+
+	m = dynamic_cast<Creature *>(g_context->_location->_map->objectAt(coords));
+	// Nothing attackable: move on to next tile
+	if (m == nullptr || !m->isAttackable())
+		return false;
+
+	// Attack successful
+	/// TODO: CHEST: Make a user option to not make chests change battlefield
+	/// map (1 of 2)
+	ground = g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_GROUND_OBJECTS);
+	if (!ground->isChest()) {
+		ground = g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITHOUT_OBJECTS);
+		if ((under = g_context->_location->_map->objectAt(g_context->_location->_coords)) &&
+			under->getTile().getTileType()->isShip())
+			ground = under->getTile().getTileType();
+	}
+
+	// You're attacking a townsperson!  Alert the guards!
+	if ((m->getType() == Object::PERSON) && (m->getMovementBehavior() != MOVEMENT_ATTACK_AVATAR))
+		g_context->_location->_map->alertGuards();
+
+	// Not good karma to be killing the innocent.  Bad avatar!
+	if (m->isGood() || /* attacking a good creature */
+			/* attacking a docile (although possibly evil) person in town */
+		((m->getType() == Object::PERSON) && (m->getMovementBehavior() != MOVEMENT_ATTACK_AVATAR)))
+		g_context->_party->adjustKarma(KA_ATTACKED_GOOD);
+
+	CombatController *cc = new CombatController(CombatMap::mapForTile(ground, g_context->_party->getTransport().getTileType(), m));
+	cc->init(m);
+	cc->begin();
+	return false;
+}
+
 } // End of namespace Ultima4
 } // End of namespace Ultima

@@ -85,12 +85,6 @@ public:
 	Direction directionFromName(const Common::String &dirStr);
 
 	/**
-	 * Attempts to attack a creature at map coordinates x,y.  If no
-	 * creature is present at that point, zero is returned.
-	 */
-	bool attackAt(const Coords &coords);
-
-	/**
 	 * Called by getChest() to handle possible traps on chests
 	 **/
 	bool getChestTrapHandler(int player);

@@ -871,10 +871,6 @@ bool CombatController::keyPressed(int key) {
 		break;
 	}
 
-	case 'a':
-		attack();
-		break;
-
 	case 'c':
 		g_screen->screenMessage("Cast Spell!\n");
 		g_debugger->castSpell(_focus);
@@ -1008,17 +1004,19 @@ bool CombatController::keyPressed(int key) {
 	return valid;
 }
 
-void CombatController::attack() {
+void CombatController::attack(Direction dir, int distance) {
 	g_screen->screenMessage("Dir: ");
 
 	ReadDirController dirController;
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSDirectionHelper directionPopup;
 #endif
-	eventHandler->pushController(&dirController);
-	Direction dir = dirController.waitFor();
-	if (dir == DIR_NONE)
-		return;
+	if (dir == DIR_NONE) {
+		eventHandler->pushController(&dirController);
+		dir = dirController.waitFor();
+		if (dir == DIR_NONE)
+			return;
+	}
 	g_screen->screenMessage("%s\n", getDirectionName(dir));
 
 	PartyMember *attacker = getCurrentPlayer();
@@ -1027,9 +1025,14 @@ void CombatController::attack() {
 	int range = weapon->getRange();
 	if (weapon->canChooseDistance()) {
 		g_screen->screenMessage("Range: ");
-		int choice = ReadChoiceController::get("123456789");
-		if ((choice - '0') >= 1 && (choice - '0') <= weapon->getRange()) {
-			range = choice - '0';
+
+		if (distance == -1) {
+			int choice = ReadChoiceController::get("123456789");
+			distance = choice - '0';
+		}
+
+		if (distance >= 1 && distance <= weapon->getRange()) {
+			range = distance;
 			g_screen->screenMessage("%d\n", range);
 		} else {
 			return;
@@ -1052,7 +1055,7 @@ void CombatController::attack() {
 	if (path.size() > 0)
 		targetCoords = path.back();
 
-	int distance = 1;
+	distance = 1;
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (attackAt(*i, attacker, MASK_DIR(dir), range, distance)) {
 			foundTarget = true;

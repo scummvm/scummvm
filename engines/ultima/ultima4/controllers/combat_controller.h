@@ -157,10 +157,7 @@ public:
 	virtual void awardLoot();
 
 	// attack functions
-	/**
-	 * Key handler for choosing an attack direction
-	 */
-	void attack();
+	void attack(Direction dir = DIR_NONE, int distance = 0);
 	bool attackAt(const Coords &coords, PartyMember *attacker, int dir, int range, int distance);
 	bool rangedAttack(const Coords &coords, Creature *attacker);
 	void rangedMiss(const Coords &coords, Creature *attacker);

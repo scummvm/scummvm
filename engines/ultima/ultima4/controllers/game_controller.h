@@ -44,6 +44,68 @@ namespace Ultima4 {
  */
 class GameController : public Controller, public Observer<Party *, PartyEvent &>, public Observer<Location *, MoveEvent &>,
 	public TurnCompleter {
+private:
+	/**
+	 * Handles feedback after avatar moved during normal 3rd-person view.
+	 */
+	void avatarMoved(MoveEvent &event);
+
+	/**
+	 * Handles feedback after moving the avatar in the 3-d dungeon view.
+	 */
+	void avatarMovedInDungeon(MoveEvent &event);
+
+	/**
+	 * Removes creatures from the current map if they are too far away from the avatar
+	 */
+	void creatureCleanup();
+
+	/**
+	 * Handles trolls under bridges
+	 */
+	void checkBridgeTrolls();
+
+	/**
+	 * Checks creature conditions and spawns new creatures if necessary
+	 */
+	void checkRandomCreatures();
+
+	/**
+	 * Checks for valid conditions and handles
+	 * special creatures guarding the entrance to the
+	 * abyss and to the shrine of spirituality
+	 */
+	void checkSpecialCreatures(Direction dir);
+
+	/**
+	 * Checks for and handles when the avatar steps on a moongate
+	 */
+	bool checkMoongates();
+
+	/**
+	 * Creates the balloon near Hythloth, but only if the balloon doesn't already exists somewhere
+	 */
+	bool createBalloon(Map *map);
+
+	/**
+	 * Attempts to attack a creature at map coordinates x,y.  If no
+	 * creature is present at that point, zero is returned.
+	 */
+	bool attackAt(const Coords &coords);
+public:
+	/**
+	 * Show an attack flash at x, y on the current map.
+	 * This is used for 'being hit' or 'being missed'
+	 * by weapons, cannon fire, spells, etc.
+	 */
+	static void flashTile(const Coords &coords, MapTile tile, int timeFactor);
+
+	static void flashTile(const Coords &coords, const Common::String &tilename, int timeFactor);
+	static void doScreenAnimationsWhilePausing(int timeFactor);
+public:
+	TileView _mapArea;
+	bool _paused;
+	int _pausedTimer;
 public:
 	GameController();
 
@@ -113,62 +175,7 @@ public:
 	 */
 	void updateMoons(bool showmoongates);
 
-	/**
-	 * Show an attack flash at x, y on the current map.
-	 * This is used for 'being hit' or 'being missed'
-	 * by weapons, cannon fire, spells, etc.
-	 */
-	static void flashTile(const Coords &coords, MapTile tile, int timeFactor);
-
-	static void flashTile(const Coords &coords, const Common::String &tilename, int timeFactor);
-	static void doScreenAnimationsWhilePausing(int timeFactor);
-
-	TileView _mapArea;
-	bool _paused;
-	int _pausedTimer;
-
-private:
-	/**
-	 * Handles feedback after avatar moved during normal 3rd-person view.
-	 */
-	void avatarMoved(MoveEvent &event);
-
-	/**
-	 * Handles feedback after moving the avatar in the 3-d dungeon view.
-	 */
-	void avatarMovedInDungeon(MoveEvent &event);
-
-	/**
-	 * Removes creatures from the current map if they are too far away from the avatar
-	 */
-	void creatureCleanup();
-
-	/**
-	 * Handles trolls under bridges
-	 */
-	void checkBridgeTrolls();
-
-	/**
-	 * Checks creature conditions and spawns new creatures if necessary
-	 */
-	void checkRandomCreatures();
-
-	/**
-	 * Checks for valid conditions and handles
-	 * special creatures guarding the entrance to the
-	 * abyss and to the shrine of spirituality
-	 */
-	void checkSpecialCreatures(Direction dir);
-
-	/**
-	 * Checks for and handles when the avatar steps on a moongate
-	 */
-	bool checkMoongates();
-
-	/**
-	 * Creates the balloon near Hythloth, but only if the balloon doesn't already exists somewhere
-	 */
-	bool createBalloon(Map *map);
+	void attack(Direction dir = DIR_NONE);
 };
 
 extern GameController *g_game;

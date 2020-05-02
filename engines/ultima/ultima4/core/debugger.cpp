@@ -253,40 +253,22 @@ bool Debugger::cmdMove(int argc, const char **argv) {
 }
 
 bool Debugger::cmdAttack(int argc, const char **argv) {
-	Direction dir;
-
-	if (argc != 2 && isDebuggerActive()) {
-		print("attack <direction>");
+	if (argc < 2 && isDebuggerActive()) {
+		print("attack <direction> [distance]");
 		return true;
 	}
 
-	printN("Attack: ");
-	if (g_context->_party->isFlying()) {
-		print("\n%cDrift only!%c", FG_GREY, FG_WHITE);
-		return isDebuggerActive();
-	}
+	Direction dir = (argc >= 2) ? directionFromName(argv[1]) : DIR_NONE;
+	int range = (argc >= 3) ? strToInt(argv[2]) : -1;
 
-	if (argc == 2) {
-		dir = directionFromName(argv[1]);
-	} else {
-		dir = gameGetDirection();
-	}
+	CombatController *cc = dynamic_cast<CombatController *>(eventHandler->getController());
+	GameController *gc = dynamic_cast<GameController *>(eventHandler->getController());
 
-	if (dir == DIR_NONE) {
-		if (isDebuggerActive())
-			print("");
-		return isDebuggerActive();
-	}
+	if (cc)
+		cc->attack(dir, range);
+	else if (gc)
+		gc->attack(dir);
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(
-		MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
-		1, 1, nullptr, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (attackAt(*i))
-			return isDebuggerActive();
-	}
-
-	print("%cNothing to Attack!%c", FG_GREY, FG_WHITE);
 	return isDebuggerActive();
 }
 
