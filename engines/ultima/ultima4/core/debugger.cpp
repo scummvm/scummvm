@@ -546,7 +546,7 @@ bool Debugger::cmdFire(int argc, const char **argv) {
 }
 
 bool Debugger::cmdGet(int argc, const char **argv) {
-	int player = 1;
+	int player = -1;
 	if (argc == 2)
 		player = strToInt(argv[1]);
 
