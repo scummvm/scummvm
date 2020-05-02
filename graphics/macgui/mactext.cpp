@@ -929,6 +929,30 @@ void MacText::deletePreviousChar(int *row, int *col) {
 }
 
 void MacText::addNewLine(int *row, int *col) {
+	MacTextLine *line = &_textLines[*row];
+	int pos = *col;
+	uint ch = line->getChunkNum(&pos);
+	MacFontRun newchunk = line->chunks[ch];
+	MacTextLine newline;
+
+	newchunk.text = &line->chunks[ch].text.c_str()[pos];
+	line->chunks[ch].text = Common::U32String(line->chunks[ch].text.c_str(), pos);
+	newline.chunks.push_back(newchunk);
+
+	for (uint i = ch + 1; i < line->chunks.size(); i++) {
+		newline.chunks.push_back(MacFontRun(line->chunks[i]));
+		line->chunks[i].text.clear();
+	}
+	line->width = -1; // Drop cache
+
+	_textLines.insert_at(*row + 1, newline);
+
+	(*row)++;
+	*col = 0;
+
+	_fullRefresh = true;
+	recalcDims();
+	render();
 }
 
 void MacText::reshuffleParagraph(int *row, int *col) {

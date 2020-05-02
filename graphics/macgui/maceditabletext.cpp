@@ -324,6 +324,7 @@ bool MacEditableText::processEvent(Common::Event &event) {
 
 		case Common::KEYCODE_RETURN:
 			addNewLine(&_cursorRow, &_cursorCol);
+			updateCursorPos();
 			_contentIsDirty = true;
 			return true;
 
