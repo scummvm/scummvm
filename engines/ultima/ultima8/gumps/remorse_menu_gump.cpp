@@ -29,6 +29,7 @@
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
+#include "ultima/ultima8/gumps/difficulty_gump.h"
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
@@ -193,9 +194,12 @@ void RemorseMenuGump::ChildNotify(Gump *child, uint32 message) {
 
 void RemorseMenuGump::selectEntry(int entry) {
 	switch (entry) {
-	case 1: // New Game
-		Game::get_instance()->playIntroMovie(true);
+	case 1: { // New Game
+		DifficultyGump *gump = new DifficultyGump();
+		gump->InitGump(0);
+		gump->setRelativePosition(CENTER);
 		break;
+	}
 	case 2:
 		Ultima8Engine::get_instance()->loadGameDialog();
 		break;

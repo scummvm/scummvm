@@ -142,7 +142,7 @@ bool RemorseGame::startGame() {
 }
 
 bool RemorseGame::startInitialUsecode(int saveSlot) {
-	Process* proc = new StartCrusaderProcess();
+	Process* proc = new StartCrusaderProcess(saveSlot);
 	Kernel::get_instance()->addProcess(proc);
 	return true;
 }
