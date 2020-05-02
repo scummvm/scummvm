@@ -160,7 +160,7 @@ public:
 			this->operator[](idx) = elem;
 	}
 
-	T at(size_t index) {
+	T at(size_t index) const {
 		return (*this)[index];
 	}
 };

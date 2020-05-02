@@ -480,18 +480,18 @@ bool CombatController::isLost() const {
 
 void CombatController::moveCreatures() {
 	Creature *m;
+	CreatureVector creatures = _map->getCreatures();
 
-	// XXX: this iterator is rather complex; but the vector::iterator can
-	// break and crash if we delete elements while iterating it, which we do
-	// if a jinxed monster kills another
-	for (uint i = 0; i < _map->getCreatures().size(); i++) {
-		m = _map->getCreatures().at(i);
-		//GameController::doScreenAnimationsWhilePausing(1);
+	// IMPORTANT: We need to keep regenerating the creatures list,
+	// because monsters may be removed if a jinxed monster kills another
+	for (int i = 0; i < (int)creatures.size(); ++i) {
+		m = creatures[i];
 		m->act(this);
 
-		if (i < _map->getCreatures().size() && _map->getCreatures().at(i) != m) {
-			// don't skip a later creature when an earlier one flees
-			i--;
+		creatures = _map->getCreatures();
+		if (i < (int)creatures.size() && creatures[i] != m) {
+			// Don't skip a later creature when an earlier one flees
+			--i;
 		}
 	}
 }

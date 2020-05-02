@@ -140,7 +140,7 @@ void SaveGame::save(Common::WriteStream *stream) {
 
 void SaveGame::load(Common::SeekableReadStream *stream) {
 	Common::Serializer *ser = nullptr;
-	assert(g_context && g_context->_location);
+	assert(g_context);
 
 	if (stream) {
 		ser = new Common::Serializer(stream, nullptr);
@@ -168,6 +168,7 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 
 	// set the map to the world map
 	g_game->setMap(mapMgr->get(MAP_WORLD), 0, nullptr);
+	assert(g_context->_location && g_context->_location->_map);
 	g_context->_location->_map->clearObjects();
 
 	// initialize our start location
