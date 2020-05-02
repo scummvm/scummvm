@@ -702,6 +702,8 @@ void MacText::removeLastLine() {
 }
 
 void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
+	int nsx, nsy, nrow, ncol;
+
 	if (y > _textMaxHeight) {
 		x = _surface->w;
 	}
@@ -709,47 +711,56 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	y = CLIP(y, 0, _textMaxHeight);
 
 	// FIXME: We should use bsearch() here
-	*row = _textLines.size() - 1;
+	nrow = _textLines.size() - 1;
 
-	while (*row && _textLines[*row].y > y)
-		(*row)--;
+	while (nrow && _textLines[nrow].y > y)
+		(nrow)--;
 
-	*sy = _textLines[*row].y;
+	nsy = _textLines[nrow].y;
 
-	*col = 0;
+	ncol = 0;
 
 	int width = 0, pwidth = 0;
 	int mcol = 0, pmcol = 0;
 	uint chunk;
-	for (chunk = 0; chunk < _textLines[*row].chunks.size(); chunk++) {
+	for (chunk = 0; chunk < _textLines[nrow].chunks.size(); chunk++) {
 		pwidth = width;
 		pmcol = mcol;
-		if (!_textLines[*row].chunks[chunk].text.empty()) {
-			width += _textLines[*row].chunks[chunk].getFont()->getStringWidth(_textLines[*row].chunks[chunk].text);
-			mcol += _textLines[*row].chunks[chunk].text.size();
+		if (!_textLines[nrow].chunks[chunk].text.empty()) {
+			width += _textLines[nrow].chunks[chunk].getFont()->getStringWidth(_textLines[nrow].chunks[chunk].text);
+			mcol += _textLines[nrow].chunks[chunk].text.size();
 		}
 
 		if (width > x)
 			break;
 	}
 
-	if (chunk == _textLines[*row].chunks.size())
+	if (chunk == _textLines[nrow].chunks.size())
 		chunk--;
 
-	Common::U32String str = _textLines[*row].chunks[chunk].text;
+	Common::U32String str = _textLines[nrow].chunks[chunk].text;
 
-	*col = mcol;
+	ncol = mcol;
 
 	for (int i = str.size(); i >= 0; i--) {
-		int strw = _textLines[*row].chunks[chunk].getFont()->getStringWidth(str);
+		int strw = _textLines[nrow].chunks[chunk].getFont()->getStringWidth(str);
 		if (strw + pwidth < x) {
-			*col = pmcol + i;
-			*sx = strw + pwidth;
+			ncol = pmcol + i;
+			nsx = strw + pwidth;
 			break;
 		}
 
 		str.deleteLastChar();
 	}
+
+	if (sx)
+		*sx = nsx;
+	if (sy)
+		*sy = nsy;
+	if (col)
+		*col = ncol;
+	if (row)
+		*row = nrow;
 }
 
 Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {

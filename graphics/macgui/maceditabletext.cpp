@@ -311,6 +311,8 @@ bool MacEditableText::processEvent(Common::Event &event) {
 			return false;
 		}
 
+		int ncol;
+
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:
 			if (_cursorRow > 0 || _cursorCol > 0) {
@@ -358,6 +360,9 @@ bool MacEditableText::processEvent(Common::Event &event) {
 				return true;
 
 			_cursorRow--;
+			getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, nullptr, &ncol);
+			_cursorCol = ncol + 1;
+
 			updateCursorPos();
 
 			return true;
@@ -367,6 +372,9 @@ bool MacEditableText::processEvent(Common::Event &event) {
 				return true;
 
 			_cursorRow++;
+			getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, nullptr, &ncol);
+			_cursorCol = ncol + 1;
+
 			updateCursorPos();
 
 			return true;
