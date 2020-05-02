@@ -91,9 +91,6 @@ void wearArmor(int player = -1);
 /* Functions END */
 /*---------------*/
 
-/**
- * Sets the view mode.
- */
 void gameSetViewMode(ViewMode newMode) {
 	g_context->_location->_viewMode = newMode;
 }
@@ -125,7 +122,6 @@ void gameUpdateScreen() {
 }
 
 void gameSpellEffect(int spell, int player, Sound sound) {
-
 	int time;
 	Spell::SpecialEffects effect = Spell::SFX_INVERT;
 
@@ -294,9 +290,6 @@ bool fireAt(const Coords &coords, bool originAvatar) {
 	return objectHit;
 }
 
-/**
- * Peers at a city from A-P (Lycaeum telescope) and functions like a gem
- */
 bool gamePeerCity(int city, void *data) {
 	Map *peerMap;
 
@@ -325,9 +318,6 @@ bool gamePeerCity(int city, void *data) {
 	return false;
 }
 
-/**
- * Peers at a gem
- */
 void peer(bool useGem) {
 
 	if (useGem) {
@@ -357,10 +347,6 @@ void peer(bool useGem) {
 	g_game->_paused = false;
 }
 
-/**
- * Checks the hull integrity of the ship and handles
- * the ship sinking, if necessary
- */
 void gameCheckHullIntegrity() {
 	int i;
 
@@ -391,10 +377,6 @@ void gameCheckHullIntegrity() {
 	}
 }
 
-/**
- * Fixes objects initially loaded by saveGameMonstersRead,
- * and alters movement behavior accordingly to match the creature
- */
 void gameFixupObjects(Map *map) {
 	int i;
 	Object *obj;
@@ -432,9 +414,6 @@ uint32 gameTimeSinceLastCommand() {
 	return (g_system->getMillis() - g_context->_lastCommandTime) / 1000;
 }
 
-/**
- * Handles what happens when a creature attacks you
- */
 void gameCreatureAttack(Creature *m) {
 	Object *under;
 	const Tile *ground;
@@ -456,9 +435,6 @@ void gameCreatureAttack(Creature *m) {
 	cc->begin();
 }
 
-/**
- * Performs a ranged attack for the creature at x,y on the world map
- */
 bool creatureRangeAttack(const Coords &coords, Creature *m) {
 //    int attackdelay = MAX_BATTLE_SPEED - settings.battleSpeed;
 
@@ -500,13 +476,6 @@ bool creatureRangeAttack(const Coords &coords, Creature *m) {
 	return false;
 }
 
-/**
- * Gets the path of coordinates for an action.  Each tile in the
- * direction specified by dirmask, between the minimum and maximum
- * distances given, is included in the path, until blockedPredicate
- * fails.  If a tile is blocked, that tile is included in the path
- * only if includeBlocked is true.
- */
 Std::vector<Coords> gameGetDirectionalActionPath(int dirmask, int validDirections, const Coords &origin, int minDistance, int maxDistance, bool (*blockedPredicate)(const Tile *tile), bool includeBlocked) {
 	Std::vector<Coords> path;
 	Direction dirx = DIR_NONE,
@@ -558,12 +527,6 @@ Std::vector<Coords> gameGetDirectionalActionPath(int dirmask, int validDirection
 	return path;
 }
 
-/**
- * Deals an amount of damage between 'minDamage' and 'maxDamage'
- * to each party member, with a 50% chance for each member to
- * avoid the damage.  If (minDamage == -1) or (minDamage >= maxDamage),
- * deals 'maxDamage' damage to each member.
- */
 void gameDamageParty(int minDamage, int maxDamage) {
 	int i;
 	int damage;
@@ -587,11 +550,6 @@ void gameDamageParty(int minDamage, int maxDamage) {
 	if (lastdmged != -1) g_context->_stats->highlightPlayer(lastdmged);
 }
 
-/**
- * Deals an amount of damage between 'minDamage' and 'maxDamage'
- * to the ship.  If (minDamage == -1) or (minDamage >= maxDamage),
- * deals 'maxDamage' damage to the ship.
- */
 void gameDamageShip(int minDamage, int maxDamage) {
 	int damage;
 
@@ -607,9 +565,6 @@ void gameDamageShip(int minDamage, int maxDamage) {
 	}
 }
 
-/**
- * Sets (or unsets) the active player
- */
 void gameSetActivePlayer(int player) {
 	if (player == -1) {
 		g_context->_party->setActivePlayer(-1);
@@ -623,10 +578,6 @@ void gameSetActivePlayer(int player) {
 	}
 }
 
-/**
- * Spawns a creature (m) just offscreen of the avatar.
- * If (m==nullptr) then it finds its own creature to spawn and spawns it.
- */
 bool gameSpawnCreature(const Creature *m) {
 	int t, i;
 	const Creature *creature;
