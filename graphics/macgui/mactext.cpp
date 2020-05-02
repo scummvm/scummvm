@@ -767,6 +767,15 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 		*row = nrow;
 }
 
+#define ADDFORMATTING() \
+	if (formatted) { \
+		formatting = _textLines[i].chunks[chunk].toString(); \
+		if (formatting != prevformatting) { \
+			res += formatting; \
+			prevformatting = formatting; \
+		} \
+	}
+
 Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
 	Common::U32String res;
 
@@ -779,21 +788,23 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 	startRow = CLIP(startRow, 0, (int)_textLines.size() - 1);
 	endRow = CLIP(endRow, 0, (int)_textLines.size() - 1);
 
+	Common::U32String formatting, prevformatting;
+
 	for (int i = startRow; i <= endRow; i++) {
 		if (i == startRow && i == endRow) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
+				if (_textLines[i].chunks[chunk].text.empty())
+					continue;
+
 				if (startCol <= 0) {
-					if (formatted)
-						res += _textLines[i].chunks[chunk].toString();
+					ADDFORMATTING();
 
 					if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
 						res += _textLines[i].chunks[chunk].text;
 					else
 						res += Common::U32String(_textLines[i].chunks[chunk].text.c_str(), endCol);
 				} else if ((int)_textLines[i].chunks[chunk].text.size() > startCol) {
-					if (formatted)
-						res += _textLines[i].chunks[chunk].toString();
-
+					ADDFORMATTING();
 					res += Common::U32String(_textLines[i].chunks[chunk].text.c_str() + startCol, endCol - startCol);
 				}
 
@@ -805,15 +816,14 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 			}
 		} else if (i == startRow && startCol != 0) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (startCol <= 0) {
-					if (formatted)
-						res += _textLines[i].chunks[chunk].toString();
+				if (_textLines[i].chunks[chunk].text.empty())
+					continue;
 
+				if (startCol <= 0) {
+					ADDFORMATTING();
 					res += _textLines[i].chunks[chunk].text;
 				} else if ((int)_textLines[i].chunks[chunk].text.size() > startCol) {
-					if (formatted)
-						res += _textLines[i].chunks[chunk].toString();
-
+					ADDFORMATTING();
 					res += Common::U32String(_textLines[i].chunks[chunk].text.c_str() + startCol);
 				}
 
@@ -825,8 +835,10 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				res += ' ';
 		} else if (i == endRow) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (formatted)
-					res += _textLines[i].chunks[chunk].toString();
+				if (_textLines[i].chunks[chunk].text.empty())
+					continue;
+
+				ADDFORMATTING();
 
 				if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
 					res += _textLines[i].chunks[chunk].text;
@@ -840,9 +852,10 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 			}
 		} else {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (formatted)
-					res += _textLines[i].chunks[chunk].toString();
+				if (_textLines[i].chunks[chunk].text.empty())
+					continue;
 
+				ADDFORMATTING();
 				res += _textLines[i].chunks[chunk].text;
 			}
 
