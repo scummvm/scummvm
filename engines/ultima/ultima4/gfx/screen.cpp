@@ -1119,42 +1119,21 @@ void Screen::screenEraseTextArea(int x, int y, int width, int height) {
 }
 
 void Screen::screenShake(int iterations) {
-	int shakeOffset;
-	unsigned short i;
-	Image *screen = imageMgr->get("screen")->_image;
-	Image *bottom;
-
-	// the MSVC8 binary was generating a Access Violation when using
-	// drawSubRectOn() or drawOn() to draw the screen surface on top
-	// of itself.  Occured on settings.scale 2 and 4 only.
-	// Therefore, a temporary Image buffer is used to store the area
-	// that gets clipped at the bottom.
-
 	if (settings._screenShakes) {
-		// specify the size of the offset, and create a buffer
-		// to store the offset row plus 1
-		shakeOffset = 1;
-		bottom = Image::create(SCALED(320), SCALED(shakeOffset + 1), false, Image::HARDWARE);
+		// specify the size of the shake
+		const int SHAKE_OFFSET = 1 * settings._scale;
 
-		for (i = 0; i < iterations; i++) {
-			// store the bottom row
-			screen->drawOn(bottom, 0, SCALED((shakeOffset + 1) - 200));
-
-			// shift the screen down and make the top row black
-			screen->drawSubRectOn(screen, 0, SCALED(shakeOffset), 0, 0, SCALED(320), SCALED(200 - (shakeOffset + 1)));
-			bottom->drawOn(screen, 0, SCALED(200 - (shakeOffset)));
-			screen->fillRect(0, 0, SCALED(320), SCALED(shakeOffset), 0, 0, 0);
-			update();
+		for (int i = 0; i < iterations; ++i) {
+			// Shift the screen down
+			g_system->setShakePos(0, SHAKE_OFFSET);
+			g_system->updateScreen();
 			EventHandler::sleep(settings._shakeInterval);
 
-			// shift the screen back up, and replace the bottom row
-			screen->drawOn(screen, 0, 0 - SCALED(shakeOffset));
-			bottom->drawOn(screen, 0, SCALED(200 - (shakeOffset + 1)));
-			update();
+			// shift the screen back up
+			g_system->setShakePos(0, 0);
+			g_system->updateScreen();
 			EventHandler::sleep(settings._shakeInterval);
 		}
-		// free the bottom row image
-		delete bottom;
 	}
 }
 
