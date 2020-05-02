@@ -432,7 +432,7 @@ bool MacEditableText::processEvent(Common::Event &event) {
 				if (_menu)
 					_menu->enableCommand("Edit", "Copy", false);
 
-				int x = event.mouse.x - getDimensions().left - 2;
+				int x = event.mouse.x - getDimensions().left;
 				int y = event.mouse.y - getDimensions().top + _scrollPos;
 
 				MacText::getRowCol(x, y, nullptr, nullptr, &_cursorRow, &_cursorCol);
