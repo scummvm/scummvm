@@ -424,21 +424,28 @@ bool MacEditableText::processEvent(Common::Event &event) {
 		if (_inTextSelection) {
 			_inTextSelection = false;
 
-			if (!_menu)
-				return true;
-
 			if (_selectedText.endY == -1 ||
 					(_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
 				_selectedText.startY = _selectedText.endY = -1;
 				_contentIsDirty = true;
-				_menu->enableCommand("Edit", "Copy", false);
+
+				if (_menu)
+					_menu->enableCommand("Edit", "Copy", false);
+
+				int x = event.mouse.x - getDimensions().left - 2;
+				int y = event.mouse.y - getDimensions().top + _scrollPos;
+
+				MacText::getRowCol(x, y, nullptr, nullptr, &_cursorRow, &_cursorCol);
+				updateCursorPos();
 			} else {
-				_menu->enableCommand("Edit", "Copy", true);
+				if (_menu) {
+					_menu->enableCommand("Edit", "Copy", true);
 
-				bool cutAllowed = isCutAllowed();
+					bool cutAllowed = isCutAllowed();
 
-				_menu->enableCommand("Edit", "Cut", cutAllowed);
-				_menu->enableCommand("Edit", "Clear", cutAllowed);
+					_menu->enableCommand("Edit", "Cut", cutAllowed);
+					_menu->enableCommand("Edit", "Clear", cutAllowed);
+				}
 			}
 		}
 
