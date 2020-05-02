@@ -828,7 +828,7 @@ void ModXmS3mStream::updateChannelRow(Channel &channel, Note note) {
 			tremolo(channel);
 			break;
 		case 0x08: /* Set Panning.*/
-			channel.panning = (channel.note.param < 128) ? (channel.note.param << 1) : 255;
+			channel.panning = channel.note.param & 0xFF;
 			break;
 		case 0x0A:
 		case 0x84: /* Vol Slide. */

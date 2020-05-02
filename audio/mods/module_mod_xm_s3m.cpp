@@ -350,14 +350,20 @@ bool ModuleModXmS3m::loadMod(Common::SeekableReadStream &st) {
 			// effect, param
 			byte effect = third & 0x0F;
 			byte param = fourth & 0xff;
-			if(param == 0 && (effect < 3 || effect == 0xA)) {
+			if (param == 0 && (effect < 3 || effect == 0xA)) {
 				effect = 0;
 			}
-			if(param == 0 && (effect == 5 || effect == 6)) {
+			if (param == 0 && (effect == 5 || effect == 6)) {
 				effect -= 2;
 			}
-			if(effect == 8 && numChannels == 4) {
-				effect = param = 0;
+			if (effect == 8) {
+				if (numChannels == 4) {
+					effect = param = 0;
+				} else if (param > 128) {
+					param = 128;
+				} else {
+					param = (param * 255) >> 7;
+				}
 			}
 			patterns[i].notes[idx].effect = effect;
 			patterns[i].notes[idx].param = param;
