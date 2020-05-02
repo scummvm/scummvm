@@ -119,6 +119,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
+	// PC98 Ultima 6
+	{
+		{
+			"ultima6",
+			0,
+			AD_ENTRY1s("converse.a", "99975e79e7cae3ee24a8e33982f60fe4", 190920),
+			Common::JA_JPN,
+			Common::kPlatformPC98,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GAME_ULTIMA6,
+		0
+	},
+
 	// Ultima VIII - Ultima Collection 1998
 	{
 		{
