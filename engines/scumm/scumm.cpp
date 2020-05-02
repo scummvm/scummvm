@@ -1311,7 +1311,10 @@ Common::Error ScummEngine::init() {
 			return Common::Error(Common::kUnsupportedColorMode, "This game requires dual graphics layer support which is disabled in this build");
 #endif
 			initGraphics(screenWidth, screenHeight);
-		}
+
+			if (_game.platform == Common::kPlatformNES)
+				_system->fillScreen(0x1d);
+			}
 	}
 
 	_outputPixelFormat = _system->getScreenFormat();
