@@ -857,28 +857,28 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 void MacText::insertChar(byte c, int *row, int *col) {
 	MacTextLine *line = &_textLines[*row];
 	int pos = *col;
-	uint i = line->getChunkNum(&pos);
+	uint ch = line->getChunkNum(&pos);
 
-	for (i = 0; i < line->chunks.size(); i++) {
-		if (pos >= line->chunks[i].text.size()) {
-			pos -= line->chunks[i].text.size();
+	for (ch = 0; ch < line->chunks.size(); ch++) {
+		if (pos >= line->chunks[ch].text.size()) {
+			pos -= line->chunks[ch].text.size();
 		} else {
 			break;
 		}
 	}
 
-	if (i == line->chunks.size()) {
-		i--;	// touch the last chunk
-		pos = line->chunks[i].text.size();
+	if (ch == line->chunks.size()) {
+		ch--;	// touch the last chunk
+		pos = line->chunks[ch].text.size();
 	}
 
 	// We're in the needed chunk
-	Common::U32String newchunk(line->chunks[i].text);
+	Common::U32String newchunk(line->chunks[ch].text);
 	newchunk.insertChar(c, pos);
-	int chunkw = line->chunks[i].getFont()->getStringWidth(newchunk);
-	int oldw = line->chunks[i].getFont()->getStringWidth(line->chunks[i].text);
+	int chunkw = line->chunks[ch].getFont()->getStringWidth(newchunk);
+	int oldw = line->chunks[ch].getFont()->getStringWidth(line->chunks[ch].text);
 
-	line->chunks[i].text = newchunk;
+	line->chunks[ch].text = newchunk;
 	line->width = -1;	// Force recalc
 
 	(*col)++;
@@ -914,9 +914,9 @@ void MacText::deletePreviousChar(int *row, int *col) {
 		reshuffleParagraph(row, col);
 	} else {
 		int pos = *col - 1;
-		uint i = _textLines[*row].getChunkNum(&pos);
+		uint ch = _textLines[*row].getChunkNum(&pos);
 
-		_textLines[*row].chunks[i].text.deleteChar(pos);
+		_textLines[*row].chunks[ch].text.deleteChar(pos);
 
 		(*col)--;
 
