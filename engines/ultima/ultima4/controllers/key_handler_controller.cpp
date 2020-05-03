@@ -48,6 +48,12 @@ int KeyHandler::setKeyRepeat(int delay, int interval) {
 }
 
 bool KeyHandler::globalHandler(int key) {
+	if (key == Common::KEYCODE_F5) {
+		(void)g_ultima->saveGameDialog();
+	} else if (key == Common::KEYCODE_F7) {
+		(void)g_ultima->loadGameDialog();
+	}
+
 	return false;
 }
 
