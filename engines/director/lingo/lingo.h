@@ -202,7 +202,7 @@ private:
 	void processGenericEvent(LEvent event);
 	void runMovieScript(LEvent event);
 	void processSpriteEvent(LEvent event);
-	void processEvent(LEvent event, ScriptType st, int entityId);
+	void processEvent(LEvent event, ScriptType st, int entityId, int channelId = -1);
 
 public:
 	ScriptContext *getScriptContext(ScriptType type, uint16 id);
@@ -311,6 +311,7 @@ public:
 public:
 	ScriptType _currentScriptType;
 	uint16 _currentEntityId;
+	int _currentChannelId;
 	ScriptContext *_currentScriptContext;
 	uint16 _currentScriptFunction;
 	ScriptData *_currentScript;

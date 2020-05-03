@@ -74,6 +74,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_currentScriptFunction = 0;
 
 	_currentEntityId = 0;
+	_currentChannelId = -1;
 	_pc = 0;
 	_returning = false;
 	_nextRepeat = false;
@@ -694,9 +695,9 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 			// From D5 only explicit event handlers are processed
 			// Before that you could specify commands which will be executed on mouse up
 			if (_vm->getVersion() < 5)
-				g_lingo->processEvent(kEventNone, kFrameScript, frame->_sprites[i]->_scriptId);
+				g_lingo->processEvent(kEventNone, kFrameScript, frame->_sprites[i]->_scriptId, i);
 			else
-				g_lingo->processEvent(kEventMouseUp, kFrameScript, frame->_sprites[i]->_scriptId);
+				g_lingo->processEvent(kEventMouseUp, kFrameScript, frame->_sprites[i]->_scriptId, i);
 		}
 	}
 }

@@ -303,7 +303,7 @@ void Lingo::processEvent(LEvent event) {
 	_dontPassEvent = false;
 }
 
-void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
+void Lingo::processEvent(LEvent event, ScriptType st, int entityId, int channelId) {
 	if (entityId < 0)
 		return;
 
@@ -313,6 +313,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
 
 	_currentEntityId = entityId;
+	_currentChannelId = channelId;
 
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
