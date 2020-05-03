@@ -4746,15 +4746,12 @@ if test "$_libcurl" != "no"; then
 		LIBCURL_CFLAGS=`$_libcurlconfig --cflags`
 
 		case $_host_os in
-			amigaos*)
+			amigaos* | morphos*)
 				append_var LIBCURL_LIBS "-lpthread"
 			;;
 			# macOS does not allow static libs, overriding
 			darwin*)
 				LIBCURL_LIBS=`$_libcurlconfig --libs`
-			;;
-			morphos*)
-				append_var LIBCURL_LIBS "-lpthread"
 			;;
 			psp2*)
 				append_var LIBCURL_LIBS "-lssl -lcrypto"
