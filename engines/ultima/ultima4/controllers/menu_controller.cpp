@@ -34,6 +34,50 @@ MenuController::MenuController(Menu *menu, TextView *view) :
 	this->_view = view;
 }
 
+void MenuController::setActive() {
+	// The game controller has the keybindings enabled
+	MetaEngine::setKeybindingMode(KBMODE_MENU);
+}
+
+void MenuController::keybinder(KeybindingAction action) {
+	bool cursorOn = _view->getCursorEnabled();
+
+	if (cursorOn)
+		_view->disableCursor();
+
+	switch (action) {
+	case KEYBIND_UP:
+		_menu->prev();
+		break;
+	case KEYBIND_DOWN:
+		_menu->next();
+		break;
+	case KEYBIND_LEFT:
+	case KEYBIND_RIGHT:
+	case KEYBIND_INTERACT: {
+		MenuEvent::Type menuAction = MenuEvent::ACTIVATE;
+
+		if (action == KEYBIND_LEFT)
+			menuAction = MenuEvent::DECREMENT;
+		else if (action == KEYBIND_RIGHT)
+			menuAction = MenuEvent::INCREMENT;
+		_menu->activateItem(-1, menuAction);
+		break;
+	}
+	default:
+		break;
+	}
+
+	_menu->show(_view);
+
+	if (cursorOn)
+		_view->enableCursor();
+	_view->update();
+
+	if (_menu->getClosed())
+		doneWaiting();
+}
+
 bool MenuController::keyPressed(int key) {
 	bool handled = true;
 	bool cursorOn = _view->getCursorEnabled();
@@ -41,28 +85,7 @@ bool MenuController::keyPressed(int key) {
 	if (cursorOn)
 		_view->disableCursor();
 
-	switch (key) {
-	case Common::KEYCODE_UP:
-		_menu->prev();
-		break;
-	case Common::KEYCODE_DOWN:
-		_menu->next();
-		break;
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_RETURN: {
-		MenuEvent::Type action = MenuEvent::ACTIVATE;
-
-		if (key == Common::KEYCODE_LEFT)
-			action = MenuEvent::DECREMENT;
-		else if (key == Common::KEYCODE_RIGHT)
-			action = MenuEvent::INCREMENT;
-		_menu->activateItem(-1, action);
-	}
-	break;
-	default:
-		handled = _menu->activateItemByShortcut(key, MenuEvent::ACTIVATE);
-	}
+	handled = _menu->activateItemByShortcut(key, MenuEvent::ACTIVATE);
 
 	_menu->show(_view);
 

@@ -39,6 +39,17 @@ class MenuController : public WaitableController<void *> {
 public:
 	MenuController(Menu *menu, TextView *view);
 	bool keyPressed(int key) override;
+
+	/**
+	 * Called when a controller is made active
+	 */
+	void setActive() override;
+
+	/**
+	 * Handles keybinder actions
+	 */
+	void keybinder(KeybindingAction action) override;
+
 protected:
 	Menu *_menu;
 	TextView *_view;

@@ -62,6 +62,7 @@ enum KeybindingMode {
 	KBMODE_NORMAL,		///< Keys available when normal in-game
 	KBMODE_MINIMAL,		///< Minimal list available when reading input
 	KBMODE_DIRECTION,	///< Mode for selecting direction
+	KBMODE_MENU,		///< Intro config menus
 	KBMODE_COMBAT		///< Keys when in combat mode
 };
 

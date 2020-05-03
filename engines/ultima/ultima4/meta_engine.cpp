@@ -138,6 +138,16 @@ static const KeybindingRecord DIRECTION_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
+static const KeybindingRecord MENU_KEYS[] = {
+	{ KEYBIND_INTERACT, "INTERACT", "Interact", "interact", "RETURN", nullptr },
+	{ KEYBIND_ESCAPE, "ESCAPE", "Escape", nullptr, "ESCAPE", nullptr },
+	{ KEYBIND_UP, "UP", "Up", nullptr, "UP", nullptr },
+	{ KEYBIND_DOWN, "DOWN", "Down", nullptr, "DOWN", nullptr },
+	{ KEYBIND_LEFT, "LEFT", "Left", nullptr, "LEFT", nullptr },
+	{ KEYBIND_RIGHT, "RIGHT", "Right", nullptr, "RIGHT", nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+};
+
 static const KeybindingRecord COMBAT_KEYS[] = {
 	{ KEYBIND_PASS, "PASS", "Pass", "pass", "SPACE", nullptr },
 	{ KEYBIND_UP, "UP", "Up", nullptr, "UP", nullptr },
@@ -171,8 +181,14 @@ static const KeysRecord DIRECTION_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
+static const KeysRecord MENU_RECORDS[] = {
+	{ "ultima4", "Ultima IV", MENU_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
+
 static const KeysRecord *MODE_RECORDS[5] = {
-	NORMAL_RECORDS, INPUT_RECORDS, DIRECTION_RECORDS, NORMAL_RECORDS
+	NORMAL_RECORDS, INPUT_RECORDS, DIRECTION_RECORDS, MENU_RECORDS,
+	NORMAL_RECORDS
 };
 
 Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
