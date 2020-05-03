@@ -854,7 +854,7 @@ bool ModuleModXmS3m::loadAmf(Common::SeekableReadStream &st) {
 		st.read((byte *)sample.name, 22);
 		sample.name[22] = '\0';
 
-		sample.finetune = static_cast<int8>(st.readByte() << 4);
+		sample.finetune = st.readSByte();
 		sample.volume = st.readByte();
 		sample.relNote = st.readSByte(); // aka "transpose"
 		sample.length = st.readUint32LE();
@@ -862,7 +862,7 @@ bool ModuleModXmS3m::loadAmf(Common::SeekableReadStream &st) {
 		sample.loopLength = st.readUint32LE();
 
 		if (sample.loopStart + sample.loopLength > sample.length) {
-			 sample.loopLength = sample.length - sample.loopStart;
+			sample.loopLength = sample.length - sample.loopStart;
 		}
 		if (sample.loopLength < 4) {
 			sample.loopStart = sample.length;
@@ -890,14 +890,14 @@ bool ModuleModXmS3m::loadAmf(Common::SeekableReadStream &st) {
 				Note &n = patterns[i].notes[row * 8 + channel];
 				uint8 note = st.readByte();
 				if (note != 0) {
-					note = note + 13;
+					note = note + 1;
 				}
 				n.key = note;
 				n.instrument = st.readByte();
 				n.effect = st.readByte();
 				n.param = st.readByte();
 				// TODO: copied from libmodplug .. is this needed?
-				if (n.effect < 1 || n.effect >= 0x0f) {
+				if (n.effect < 1 || n.effect > 0x0f) {
 					n.effect = n.param = 0;
 				}
 				// TODO: copied from mod loader.. is this needed?
