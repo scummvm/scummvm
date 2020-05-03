@@ -479,7 +479,7 @@ struct Projection {
     kRectangular = 0,
     kEquirectangular = 1,
     kCubeMap = 2,
-    kMesh = 3,
+    kMesh = 3
   };
   static const float kValueNotPresent;
   Projection()
