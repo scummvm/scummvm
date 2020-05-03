@@ -14,9 +14,7 @@ MODULE_OBJS := \
 	qt_decoder.o \
 	smk_decoder.o \
 	subtitles.o \
-	video_decoder.o \
-	mkv/mkvparser.o \
-	mkv/mkvreader.o
+	video_decoder.o
 
 ifdef USE_BINK
 MODULE_OBJS += \
@@ -26,6 +24,13 @@ endif
 ifdef USE_THEORADEC
 MODULE_OBJS += \
 	theora_decoder.o
+endif
+
+ifdef USE_VPX
+MODULE_OBJS += \
+	mkv_decoder.o \
+	mkv/mkvparser.o \
+	mkv/mkvreader.o
 endif
 
 # Include common rules
