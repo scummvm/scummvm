@@ -864,6 +864,13 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 //////////////////
 // Text editing
 void MacText::insertChar(byte c, int *row, int *col) {
+	if (_textLines.empty()) {
+		appendTextDefault(Common::String(c));
+		(*col)++;
+
+		return;
+	}
+
 	MacTextLine *line = &_textLines[*row];
 	int pos = *col;
 	uint ch = line->getChunkNum(&pos);

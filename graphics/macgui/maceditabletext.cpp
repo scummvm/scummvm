@@ -515,8 +515,12 @@ static void cursorTimerHandler(void *refCon) {
 }
 
 void MacEditableText::updateCursorPos() {
-	_cursorY = _textLines[_cursorRow].y;
-	_cursorX = getLineWidth(_cursorRow, false, _cursorCol);
+	if (_textLines.empty()) {
+		_cursorX = _cursorY = 0;
+	} else {
+		_cursorY = _textLines[_cursorRow].y;
+		_cursorX = getLineWidth(_cursorRow, false, _cursorCol);
+	}
 
 	_cursorDirty = true;
 }
