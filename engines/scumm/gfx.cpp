@@ -639,6 +639,13 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	int pitch = vs->pitch;
 	vsPitch = vs->pitch - width * vs->format.bytesPerPixel;
 
+	// In MM NES If we're repainting the entire screen, just make everything black
+	if ((_game.platform == Common::kPlatformNES) && width == 256 && height == 240) {
+		byte blackbuf[256 * 240];
+		memset(blackbuf, 0x1d, 256 * 240);
+		_system->copyRectToScreen(blackbuf, pitch, x, y, width, height);
+		return;
+	}
 
 	if (_game.version < 7) {
 		// For The Dig, FT and COMI, we just blit everything to the screen at once.
@@ -1238,11 +1245,15 @@ static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth) {
 #if defined(SCUMM_NEED_ALIGNMENT)
 		memset(dst, 0, 8 * bitDepth);
 #else
-		((uint32 *)dst)[0] = 0;
-		((uint32 *)dst)[1] = 0;
-		if (bitDepth == 2) {
-			((uint32 *)dst)[2] = 0;
-			((uint32 *)dst)[3] = 0;
+		if (g_scumm->_game.platform == Common::kPlatformNES) {
+			memset(dst, 0x1d, 8);
+		} else {
+			((uint32*)dst)[0] = 0;
+			((uint32*)dst)[1] = 0;
+			if (bitDepth == 2) {
+				((uint32*)dst)[2] = 0;
+				((uint32*)dst)[3] = 0;
+			}
 		}
 #endif
 		dst += dstPitch;
@@ -1415,6 +1426,11 @@ void ScummEngine_v5::clearFlashlight() {
 void ScummEngine_v5::drawFlashlight() {
 	int i, j, x, y;
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+	byte backgroundColor = 0;
+
+	// NES uses 0x1d for black
+	if (g_scumm->_game.platform == Common::kPlatformNES)
+		backgroundColor = 0x1d;
 
 	// Remove the flash light first if it was previously drawn
 	if (_flashlight.isDrawn) {
@@ -1422,7 +1438,7 @@ void ScummEngine_v5::drawFlashlight() {
 										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
 
 		if (_flashlight.buffer) {
-			fill(_flashlight.buffer, vs->pitch, 0, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
+			fill(_flashlight.buffer, vs->pitch, backgroundColor, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
 		}
 		_flashlight.isDrawn = false;
 	}
@@ -1492,10 +1508,10 @@ void ScummEngine_v5::drawFlashlight() {
 					WRITE_UINT16(&_flashlight.buffer[maxrow + maxcol - 2 * j], 0);
 				}
 				else {
-					_flashlight.buffer[minrow + j] = 0;
-					_flashlight.buffer[minrow + maxcol - j] = 0;
-					_flashlight.buffer[maxrow + j] = 0;
-					_flashlight.buffer[maxrow + maxcol - j] = 0;
+					_flashlight.buffer[minrow + j] = backgroundColor;
+					_flashlight.buffer[minrow + maxcol - j] = backgroundColor;
+					_flashlight.buffer[maxrow + j] = backgroundColor;
+					_flashlight.buffer[maxrow + maxcol - j] = backgroundColor;
 				}
 			}
 		}
