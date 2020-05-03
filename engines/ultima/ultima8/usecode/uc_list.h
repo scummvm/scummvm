@@ -155,7 +155,7 @@ public:
 
 	uint16 getStringIndex(uint32 index) const;
 
-	void save(Common::WriteStream *ws);
+	void save(Common::WriteStream *ws) const;
 	bool load(Common::ReadStream *rs, uint32 version);
 
 private:

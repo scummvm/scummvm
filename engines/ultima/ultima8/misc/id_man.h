@@ -93,7 +93,7 @@ public:
 		_maxEnd = maxEnd;
 	}
 
-	void save(Common::WriteStream *ws);
+	void save(Common::WriteStream *ws) const;
 	bool load(Common::ReadStream *rs, uint32 version);
 
 private:

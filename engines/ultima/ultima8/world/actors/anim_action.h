@@ -68,7 +68,7 @@ struct AnimAction {
 	//! \param dir The direction
 	//! \param startframe The first frame to play
 	//! \param endframe The frame after the last frame to play
-	void getAnimRange(Actor *actor, int dir,
+	void getAnimRange(const Actor *actor, int dir,
 	                  unsigned int &startframe, unsigned int &endframe) const;
 
 	//! return the range of the animation to play

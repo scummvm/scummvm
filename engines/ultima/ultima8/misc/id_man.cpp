@@ -180,7 +180,7 @@ void idMan::clearID(uint16 id) {
 	assert(!_first || _last);
 }
 
-void idMan::save(Common::WriteStream *ws) {
+void idMan::save(Common::WriteStream *ws) const {
 	ws->writeUint16LE(_begin);
 	ws->writeUint16LE(_end);
 	ws->writeUint16LE(_maxEnd);

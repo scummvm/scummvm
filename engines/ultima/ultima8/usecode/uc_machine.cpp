@@ -2247,11 +2247,11 @@ void UCMachine::usecodeStats() const {
 #endif
 }
 
-void UCMachine::saveGlobals(Common::WriteStream *ws) {
+void UCMachine::saveGlobals(Common::WriteStream *ws) const {
 	_globals->save(ws);
 }
 
-void UCMachine::saveStrings(Common::WriteStream *ws) {
+void UCMachine::saveStrings(Common::WriteStream *ws) const {
 	_stringIDs->save(ws);
 	ws->writeUint32LE(static_cast<uint32>(_stringHeap.size()));
 
@@ -2263,7 +2263,7 @@ void UCMachine::saveStrings(Common::WriteStream *ws) {
 	}
 }
 
-void UCMachine::saveLists(Common::WriteStream *ws) {
+void UCMachine::saveLists(Common::WriteStream *ws) const {
 	_listIDs->save(ws);
 	ws->writeUint32LE(_listHeap.size());
 

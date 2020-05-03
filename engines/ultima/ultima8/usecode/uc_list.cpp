@@ -114,7 +114,7 @@ void UCList::removeString(uint16 s, bool nodel) {
 	}
 }
 
-void UCList::save(Common::WriteStream *ws) {
+void UCList::save(Common::WriteStream *ws) const {
 	ws->writeUint32LE(_elementSize);
 	ws->writeUint32LE(_size);
 	ws->write(&(_elements[0]), _size * _elementSize);

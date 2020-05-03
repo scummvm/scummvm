@@ -89,7 +89,7 @@ bool PathfindingState::checkItem(const Item *item, int xyRange, int zRange) cons
 	return (range <= xyRange);
 }
 
-bool PathfindingState::checkHit(Actor *_actor, const Actor *target) {
+bool PathfindingState::checkHit(const Actor *_actor, const Actor *target) const {
 	assert(target);
 #if 0
 	pout << "Trying hit in _direction " << _actor->getDirToItemCentre(*target) << Std::endl;
@@ -187,7 +187,7 @@ bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) const {
 	return false;
 }
 
-bool Pathfinder::checkTarget(PathNode *node) {
+bool Pathfinder::checkTarget(PathNode *node) const {
 	// TODO: these ranges are probably a bit too high,
 	// but otherwise it won't work properly yet -wjp
 	if (_targetItem) {

@@ -56,8 +56,8 @@ AnimationTracker::AnimationTracker() : _firstFrame(true), _done(false),
 AnimationTracker::~AnimationTracker() {
 }
 
-bool AnimationTracker::init(Actor *actor_, Animation::Sequence action_,
-                            uint32 dir_, PathfindingState *state_) {
+bool AnimationTracker::init(const Actor *actor_, Animation::Sequence action_,
+                            uint32 dir_, const PathfindingState *state_) {
 	assert(actor_);
 	_actor = actor_->getObjId();
 	uint32 shape = actor_->getShape();

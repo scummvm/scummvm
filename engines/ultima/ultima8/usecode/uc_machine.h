@@ -74,9 +74,9 @@ public:
 	bool assignPointer(uint32 ptr, const uint8 *data, uint32 size);
 	bool dereferencePointer(uint32 ptr, uint8 *data, uint32 size);
 
-	void saveGlobals(Common::WriteStream *ws);
-	void saveStrings(Common::WriteStream *ws);
-	void saveLists(Common::WriteStream *ws);
+	void saveGlobals(Common::WriteStream *ws) const;
+	void saveStrings(Common::WriteStream *ws) const;
+	void saveLists(Common::WriteStream *ws) const;
 
 	bool loadGlobals(Common::ReadStream *rs, uint32 version);
 	bool loadStrings(Common::ReadStream *rs, uint32 version);

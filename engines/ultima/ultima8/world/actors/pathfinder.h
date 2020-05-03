@@ -47,7 +47,7 @@ struct PathfindingState {
 	void load(const Actor *actor);
 	bool checkPoint(int32 x_, int32 y_, int32 z_, int range) const;
 	bool checkItem(const Item *item, int xyRange, int zRange) const;
-	bool checkHit(Actor *actor, const Actor *target);
+	bool checkHit(const Actor *actor, const Actor *target) const;
 };
 
 struct PathfindingAction {
@@ -103,7 +103,7 @@ protected:
 				 unsigned int steps);
 	void expandNode(PathNode *node);
 	unsigned int costHeuristic(PathNode *node);
-	bool checkTarget(PathNode *node);
+	bool checkTarget(PathNode *node) const;
 };
 
 } // End of namespace Ultima8
