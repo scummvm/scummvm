@@ -25,6 +25,7 @@
 #include "common/keyboard.h"
 #include "common/macresman.h"
 #include "common/winexe_pe.h"
+#include "common/str-bidi.h"
 
 #include "graphics/primitives.h"
 #include "graphics/font.h"
@@ -787,7 +788,8 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		int y = it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1);
 
 		if (it->unicode) {
-			_font->drawString(&_screen, it->unicodeText, x, y, it->bbox.width(), color);
+			Common::U32String line = convertBiDiU32String(it->unicodeText);
+			_font->drawString(&_screen, line, x, y, it->bbox.width(), color);
 			underlineAccelerator(&_screen, _font, it->unicodeText, x, y, it->shortcutPos, color);
 		} else {
 			const Font *font = getMenuFont(it->style);
@@ -831,7 +833,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		Common::String text(menu->items[i]->text);
 		Common::String acceleratorText(getAcceleratorString(menu->items[i], ""));
 
-		Common::U32String unicodeText(menu->items[i]->unicodeText);
+		Common::U32String unicodeText = convertBiDiU32String(menu->items[i]->unicodeText);
 		int shortcutPos = menu->items[i]->shortcutPos;
 
 		int accelX = r->right - 25;
