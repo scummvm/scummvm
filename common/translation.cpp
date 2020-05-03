@@ -33,12 +33,9 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/str-bidi.h"
 
 #ifdef USE_TRANSLATION
-
-#ifdef USE_FRIBIDI
-#include <fribidi/fribidi.h>
-#endif
 
 namespace Common {
 
@@ -470,48 +467,8 @@ String TranslationManager::convertBiDiString(const String &input, const Common::
 	if (lang != HE_ISR)		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
 		return input;
 
-	return convertBiDiString(input, kWindows1255);
+	return Common::convertBiDiString(input, kWindows1255);
 }
-
-String TranslationManager::convertBiDiString(const String &input, const Common::CodePage page) {
-	return convertBiDiU32String(input.decode(page)).encode(page);
-}
-
-U32String TranslationManager::convertBiDiU32String(const U32String &input) {
-
-#ifdef USE_FRIBIDI
-	int buff_length = (input.size() + 2) * 2;		// it's more than enough, but it's better to be on the safe side
-	FriBidiChar *visual_str = (FriBidiChar *)malloc(buff_length * sizeof(FriBidiChar));
-
-	FriBidiCharType pbase_dir = FRIBIDI_TYPE_ON;
-
-	if (!fribidi_log2vis(
-		/* input */
-		(const FriBidiChar *)input.c_str(),
-		input.size(),
-		&pbase_dir,
-		/* output */
-		visual_str,
-		NULL,			// position_L_to_V_list,
-		NULL,			// position_V_to_L_list,
-		NULL			// embedding_level_list
-	)) {
-		warning("convertBiDiU32String: calling fribidi_log2vis failed");
-		free(visual_str);
-		return input;
-	}
-
-	U32String result = U32String(visual_str, input.size());
-	free(visual_str);
-
-	return result;
-#else
-	warning("convertBiDiU32String: Fribidi not available, using input string as fallback");
-	return input;
-#endif
-
-}
-
 
 } // End of namespace Common
 
