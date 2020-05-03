@@ -221,7 +221,19 @@ MenuItem *Menu::getItemById(int id) {
 	_current = getById(id);
 	if (_current != _items.end())
 		return *_current;
+
 	return nullptr;
+}
+
+void Menu::activateItemAtPos(TextView *view, const Common::Point &pt) {
+	for (Menu::MenuItemList::iterator it = begin(); it != end(); ++it) {
+		Common::Rect r = view->getTextBounds((*it)->getX(), (*it)->getY(),
+			(*it)->getText().size());
+
+		if (r.contains(pt)) {
+			activateItem((*it)->getId(), MenuEvent::ACTIVATE);
+		}
+	}
 }
 
 void Menu::activateItem(int id, MenuEvent::Type action) {
@@ -240,7 +252,7 @@ void Menu::activateItem(int id, MenuEvent::Type action) {
 	if (mi->getClosesMenu())
 		setClosed(true);
 
-	MenuEvent event(this, (MenuEvent::Type) action, mi);
+	MenuEvent event(this, (MenuEvent::Type)action, mi);
 	mi->activate(event);
 	setChanged();
 	notifyObservers(event);

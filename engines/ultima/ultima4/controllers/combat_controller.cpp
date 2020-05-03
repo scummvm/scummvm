@@ -130,7 +130,6 @@ void CombatController::init() {
 }
 
 void CombatController::setActive() {
-	// The game controller has the keybindings enabled
 	MetaEngine::setKeybindingMode(KBMODE_COMBAT);
 }
 

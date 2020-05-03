@@ -300,5 +300,14 @@ void TextView::clearOptions() {
 	_options.clear();
 }
 
+Common::Rect TextView::getTextBounds(int x, int y, int textWidth) const {
+	return Common::Rect(
+		SCALED(_x + (x * CHAR_WIDTH)),
+		SCALED(_y + (y * CHAR_HEIGHT)),
+		SCALED(_x + (x + textWidth * CHAR_WIDTH)),
+		SCALED(_y + (y + 1) * CHAR_HEIGHT)
+	);
+}
+
 } // End of namespace Ultima4
 } // End of namespace Ultima

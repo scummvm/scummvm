@@ -35,7 +35,6 @@ MenuController::MenuController(Menu *menu, TextView *view) :
 }
 
 void MenuController::setActive() {
-	// The game controller has the keybindings enabled
 	MetaEngine::setKeybindingMode(KBMODE_MENU);
 }
 
@@ -97,6 +96,26 @@ bool MenuController::keyPressed(int key) {
 		doneWaiting();
 
 	return handled;
+}
+
+bool MenuController::mousePressed(const Common::Point &mousePos) {
+	bool cursorOn = _view->getCursorEnabled();
+
+	if (cursorOn)
+		_view->disableCursor();
+
+	_menu->activateItemAtPos(_view, mousePos);
+
+	_menu->show(_view);
+
+	if (cursorOn)
+		_view->enableCursor();
+	_view->update();
+
+	if (_menu->getClosed())
+		doneWaiting();
+
+	return true;
 }
 
 } // End of namespace Ultima4

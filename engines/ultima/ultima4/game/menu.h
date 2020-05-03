@@ -157,6 +157,11 @@ public:
 	MenuItem *getItemById(int id);
 
 	/**
+	 * Activates any menu item at a given position
+	 */
+	void activateItemAtPos(TextView *view, const Common::Point &pt);
+
+	/**
 	 * Activates the menu item given by 'id', using 'action' to
 	 * activate it.  If the menu item cannot be activated using
 	 * 'action', then it is not activated.  This also un-highlights

@@ -136,6 +136,12 @@ public:
 	 * Clear the options list
 	 */
 	void clearOptions();
+
+	/**
+	 * Returns the physical screen dimensions of text at a given
+	 * text location
+	 */
+	Common::Rect getTextBounds(int x, int y, int textWidth) const;
 };
 
 } // End of namespace Ultima4
