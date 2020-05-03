@@ -37,7 +37,7 @@ MapGlob::~MapGlob() {
 
 void MapGlob::read(Common::SeekableReadStream *rs) {
 	unsigned int itemcount = rs->readUint16LE();
-	assert(rs->size() >= 2 + itemcount * 6);
+	assert(rs->size() >= static_cast<int32>(2 + itemcount * 6));
 	_contents.clear();
 	_contents.resize(itemcount);
 
