@@ -157,6 +157,7 @@ _jpeg=auto
 _png=auto
 _gif=auto
 _theoradec=auto
+_vpx=auto
 _faad=auto
 _fluidsynth=auto
 _fluidlite=auto
@@ -280,6 +281,7 @@ add_feature png "PNG" "_png"
 add_feature gif "GIF" "_gif"
 add_feature theoradec "libtheoradec" "_theoradec"
 add_feature tinygl "TinyGL" "_tinygl"
+add_feature vpx "libvpx" "_vpx"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
@@ -982,6 +984,9 @@ Optional Libraries:
   --with-theoradec-prefix=DIR  prefix where libtheoradec is installed (optional)
   --disable-theoradec      disable Theora decoder [autodetect]
 
+  --with-vpx-prefix=DIR    prefix where libtvpx is installed (optional)
+  --disable-vpx            disable VP8/VP9 decoder [autodetect]
+
   --with-faad-prefix=DIR   prefix where libfaad is installed (optional)
   --disable-faad           disable AAC decoder [autodetect]
 
@@ -1155,6 +1160,8 @@ for ac_option in $@; do
 	--enable-gif)                 _gif=yes               ;;
 	--disable-theoradec)          _theoradec=no          ;;
 	--enable-theoradec)           _theoradec=yes         ;;
+	--disable-vpx)                _vpx=no                ;;
+	--enable-vpx)                 _vpx=yes               ;;
 	--disable-faad)               _faad=no               ;;
 	--enable-faad)                _faad=yes              ;;
 	--disable-fluidsynth)         _fluidsynth=no         ;;
@@ -1311,6 +1318,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		THEORADEC_CFLAGS="-I$arg/include"
 		THEORADEC_LIBS="-L$arg/lib"
+		;;
+	--with-vpx-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		VPX_CFLAGS="-I$arg/include"
+		VPX_LIBS="-L$arg/lib"
 		;;
 	--with-faad-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5011,6 +5023,49 @@ fi
 define_in_config_if_yes "$_theoradec" 'USE_THEORADEC'
 if test ! "$_theoradec" = notsupported ; then
 	echo "$_theoradec"
+fi
+
+#
+# Check for VP8/VP9 Decoder
+#
+echocheck "libvpx >= 1.6"
+if test "$_vorbis" = no && test "$_tremor" = no ; then
+	echo "skipping. no vorbis"
+	_vpx=notsupported
+fi
+if test "$_vpx" = auto ; then
+	_vpx=no
+
+	if test "$_pkg_config" = "yes" && $_pkgconfig --exists vpx; then
+		append_var VPX_LIBS "`$_pkgconfig --libs vpx`"
+		append_var VPX_CFLAGS "`$_pkgconfig --cflags vpx`"
+	else
+		append_var VPX_LIBS "-lvpx"
+	fi
+
+	cat > $TMPC << EOF
+#include "vpx/vpx_decoder.h"
+#include "vpx/vp8dx.h"
+int main(void) {
+	vpx_codec_ctx_t codec;
+	vpx_codec_dec_init(&codec, &vpx_codec_vp8_dx_algo, NULL, 0);
+
+#if VPX_DECODER_ABI_VERSION >= 10 // Check for 1.6
+#else
+  syntax error
+#endif
+	return 0;
+}
+EOF
+	cc_check $VPX_CFLAGS $VPX_LIBS && _vpx=yes
+fi
+if test "$_vpx" = yes ; then
+	append_var LIBS "$VPX_LIBS -lvpx"
+	append_var INCLUDES "$VPX_CFLAGS"
+fi
+define_in_config_if_yes "$_vpx" 'USE_VPX'
+if test ! "$_vpx" = notsupported ; then
+	echo "$_vpx"
 fi
 
 #
