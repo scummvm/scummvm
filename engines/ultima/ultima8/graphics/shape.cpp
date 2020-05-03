@@ -195,6 +195,11 @@ Common::Array<RawShapeFrame *> Shape::loadGenericFormat(const uint8 *data, uint3
 		if (format->_bytes_frame_length) framesize = ds.readX(format->_bytes_frame_length) + format->_bytes_frame_length_kludge;
 		else framesize = size - frameoffset;
 
+		if (framesize > size) {
+			warning("shape frame %d goes off the end of the buffer, stopping early", i);
+			break;
+		}
+
 		ConvertShapeFrame *prev = nullptr, p;
 
 		if (format->_bytes_special && i > 0) {
