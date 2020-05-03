@@ -908,7 +908,7 @@ void MacText::deletePreviousChar(int *row, int *col) {
 		*col = getLineCharWidth(*row - 1);
 		(*row)--;
 
-		 // formatting matches, glue texts as normal
+		// formatting matches, glue texts as normal
 		if (_textLines[*row].lastChunk().equals(_textLines[*row + 1].firstChunk())) {
 			_textLines[*row].lastChunk().text += _textLines[*row + 1].firstChunk().text;
 			_textLines[*row + 1].firstChunk().text.clear();
@@ -941,6 +941,13 @@ void MacText::deletePreviousChar(int *row, int *col) {
 }
 
 void MacText::addNewLine(int *row, int *col) {
+	if (_textLines.empty()) {
+		appendTextDefault(Common::String("\n"));
+		(*row)++;
+
+		return;
+	}
+
 	MacTextLine *line = &_textLines[*row];
 	int pos = *col;
 	uint ch = line->getChunkNum(&pos);
