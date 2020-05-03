@@ -180,7 +180,7 @@ void Lingo::processInputEvent(LEvent event) {
 			processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset);
 			processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset);
 		} else {
-			processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
+			processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId, spriteId);
 		}
 	} else if (event == kEventMouseDown) {
 		processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset);

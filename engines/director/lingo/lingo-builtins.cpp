@@ -1705,7 +1705,8 @@ void LB::b_moveableSprite(int nargs) {
 	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
 	if (g_lingo->_currentChannelId == -1) {
-		warning("b_editableText: channel Id is missing");
+		warning("b_moveableSprite: channel Id is missing");
+		assert(0);
 		return;
 	}
 
