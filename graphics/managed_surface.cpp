@@ -362,16 +362,61 @@ void ManagedSurface::transBlitFrom(const ManagedSurface &src, const Common::Rect
 }
 
 template<typename TSRC, typename TDEST>
+void transBlitPixel(TSRC srcVal, TDEST &destVal, const Graphics::PixelFormat &srcFormat, const Graphics::PixelFormat &destFormat,
+		uint overrideColor, uint srcAlpha, const uint32 *palette) {
+	if (srcFormat == destFormat && srcAlpha == 0xff) {
+		// Matching formats, so we can do a straight copy
+		destVal = overrideColor ? overrideColor : srcVal;
+		return;
+	}
+
+	// Otherwise we have to manually decode and re-encode each pixel
+	byte aSrc, rSrc, gSrc, bSrc;
+	if (srcFormat.bytesPerPixel == 1) {
+		assert(palette != nullptr);	// Catch the cases when palette is missing
+
+		// Get the palette color
+		const uint32 col = palette[srcVal];
+		rSrc = col & 0xff;
+		gSrc = (col >> 8) & 0xff;
+		bSrc = (col >> 16) & 0xff;
+		aSrc = (col >> 24) & 0xff;
+	} else {
+		srcFormat.colorToARGB(srcVal, aSrc, rSrc, gSrc, bSrc);
+	}
+
+	byte rDest, gDest, bDest;
+	destFormat.colorToRGB(destVal, rDest, gDest, bDest);
+
+	if (srcAlpha != 0xff) {
+		aSrc = aSrc * srcAlpha / 255;
+	}
+
+	if (aSrc == 0) {
+		// Completely transparent, so skip
+		return;
+	} else if (aSrc == 0xff) {
+		// Completely opaque, so copy RGB values over
+		rDest = rSrc;
+		gDest = gSrc;
+		bDest = bSrc;
+	} else {
+		// Partially transparent, so calculate new pixel colors
+		double alpha = (double)aSrc / 255.0;
+		rDest = static_cast<byte>((rSrc * alpha) + (rDest * (1.0 - alpha)));
+		gDest = static_cast<byte>((gSrc * alpha) + (gDest * (1.0 - alpha)));
+		bDest = static_cast<byte>((bSrc * alpha) + (bDest * (1.0 - alpha)));
+	}
+
+	destVal = destFormat.ARGBToColor(0xff, rDest, gDest, bDest);
+}
+
+template<typename TSRC, typename TDEST>
 void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, const Common::Rect &destRect,
 		TSRC transColor, bool flipped, uint overrideColor, uint srcAlpha, const uint32 *palette,
 		const Surface *mask, bool maskOnly) {
 	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
-	const Graphics::PixelFormat &srcFormat = src.format;
-	const Graphics::PixelFormat &destFormat = dest.format;
-	byte aSrc, rSrc, gSrc, bSrc;
-	byte rDest, gDest, bDest;
-	double alpha;
 
 	// Loop through drawing output lines
 	for (int destY = destRect.top, scaleYCtr = 0; destY < destRect.bottom; ++destY, scaleYCtr += scaleY) {
@@ -398,50 +443,10 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 				TSRC mskVal = mskLine[flipped ? src.w - scaleXCtr / SCALE_THRESHOLD - 1 : scaleXCtr / SCALE_THRESHOLD];
 				if (!mskVal)
 					continue;
-			}
 
-			if (srcFormat == destFormat && srcAlpha == 0xff) {
-				// Matching formats, so we can do a straight copy
-				destLine[xCtr] = overrideColor ? overrideColor : srcVal;
+				transBlitPixel<TSRC, TDEST>(srcVal, destLine[xCtr], src.format, dest.format, overrideColor, mskVal, palette);
 			} else {
-				// Otherwise we have to manually decode and re-encode each pixel
-				if (srcFormat.bytesPerPixel == 1) {
-					assert(palette != nullptr);	// Catch the cases when palette is missing
-
-					// Get the palette color
-					const uint32 col = palette[srcVal];
-					rSrc = col & 0xff;
-					gSrc = (col >> 8) & 0xff;
-					bSrc = (col >> 16) & 0xff;
-					aSrc = (col >> 24) & 0xff;
-				} else {
-					srcFormat.colorToARGB(srcVal, aSrc, rSrc, gSrc, bSrc);
-				}
-				destFormat.colorToRGB(destLine[xCtr], rDest, gDest, bDest);
-
-				if (srcAlpha != 0xff) {
-					aSrc = aSrc * srcAlpha / 255;
-				}
-
-				if (aSrc == 0) {
-					// Completely transparent, so skip
-					continue;
-				}
-				else if (aSrc == 0xff) {
-					// Completely opaque, so copy RGB values over
-					rDest = rSrc;
-					gDest = gSrc;
-					bDest = bSrc;
-				}
-				else {
-					// Partially transparent, so calculate new pixel colors
-					alpha = (double)aSrc / 255.0;
-					rDest = static_cast<byte>((rSrc * alpha) + (rDest * (1.0 - alpha)));
-					gDest = static_cast<byte>((gSrc * alpha) + (gDest * (1.0 - alpha)));
-					bDest = static_cast<byte>((bSrc * alpha) + (bDest * (1.0 - alpha)));
-				}
-
-				destLine[xCtr] = destFormat.ARGBToColor(0xff, rDest, gDest, bDest);
+				transBlitPixel<TSRC, TDEST>(srcVal, destLine[xCtr], src.format, dest.format, overrideColor, srcAlpha, palette);
 			}
 		}
 	}
