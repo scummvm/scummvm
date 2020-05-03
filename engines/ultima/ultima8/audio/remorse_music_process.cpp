@@ -66,6 +66,9 @@ RemorseMusicProcess::RemorseMusicProcess() : MusicProcess(), _currentTrack(0), _
 
 RemorseMusicProcess::~RemorseMusicProcess() {
 	if (_playingStream) {
+		Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
+		assert(mixer);
+		mixer->stopHandle(_soundHandle);
 		delete _playingStream;
 	}
 }
@@ -97,6 +100,7 @@ void RemorseMusicProcess::saveTrackState() {
 
 void RemorseMusicProcess::restoreTrackState() {
 	_currentTrack = _savedTrack;
+	_savedTrack = 0;
 	playMusic_internal(_currentTrack);
 }
 
@@ -106,15 +110,17 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 		return;
 	}
 
-	if (track == _currentTrack)
+	if (track == _currentTrack && _playingStream &&
+			!_playingStream->endOfStream())
+		// Already playing what we want.
 		return;
 
 	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
 	assert(mixer);
-
 	mixer->stopHandle(_soundHandle);
 	_soundHandle = Audio::SoundHandle();
-	delete _playingStream;
+	if (_playingStream)
+		delete _playingStream;
 
 	if (track > 0) {
 		// TODO: It's a bit ugly having this here.  Should be in GameData.
@@ -142,7 +148,7 @@ void RemorseMusicProcess::run() {
 		return;
 	}
 	// hit end of stream, play it again.
-	// TODO: Probably this doesn't perfectly loop, should do something a bit nicer..
+	// TODO: This doesn't loop to the correct spot, should do something a bit nicer..
 	playMusic_internal(_currentTrack);
 }
 

@@ -65,20 +65,20 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! Play some background music. Does not change the current track if combat music is active.  If another track is currently queued, just queues this track for play.
-	void playMusic(int track);
+	void playMusic(int track) override;
 	//! Play some combat music - the last played track will be remembered
-	void playCombatMusic(int track);
+	void playCombatMusic(int track) override;
 	//! Queue a track to start once the current one finishes
-	void queueMusic(int track);
+	void queueMusic(int track) override;
 	//! Clear any queued track (does not affect currently playing track)
-	void unqueueMusic();
+	void unqueueMusic() override;
 	//! Restore the last requested non-combat track (eg, at the end of combat)
-	void restoreMusic();
+	void restoreMusic() override;
 
 	//! Save the current track state - used when the menu is opened
-	void saveTrackState();
+	void saveTrackState() override;
 	//! Bring back the track state from before it was put on hold
-	void restoreTrackState();
+	void restoreTrackState() override;
 
 	INTRINSIC(I_playMusic);
 	INTRINSIC(I_musicStop);
