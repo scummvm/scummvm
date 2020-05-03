@@ -139,6 +139,16 @@ public:
 		Controller_startWait();
 		return getValue();
 	}
+
+	/**
+	 * Mouse button was pressed
+	 */
+	virtual bool mousePressed(const Common::Point &mousePos) {
+		// Treat mouse clicks as an abort
+		doneWaiting();
+		return true;
+	}
+
 };
 
 class TurnCompleter {

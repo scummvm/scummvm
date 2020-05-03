@@ -360,7 +360,6 @@ bool IntroController::keyPressed(int key) {
 	bool valid = true;
 
 	switch (_mode) {
-
 	case INTRO_TITLES:
 		// the user pressed a key to abort the sequence
 		skipTitles();
@@ -426,6 +425,25 @@ bool IntroController::keyPressed(int key) {
 	}
 
 	return valid || KeyHandler::defaultHandler(key, nullptr);
+}
+
+bool IntroController::mousePressed(const Common::Point &mousePos) {
+	switch (_mode) {
+	case INTRO_TITLES:
+		// Finish the title sequence
+		skipTitles();
+		break;
+
+	case INTRO_MAP:
+		_mode = INTRO_MENU;
+		updateScreen();
+		break;
+
+	default:
+		break;
+	}
+
+	return true;
 }
 
 void IntroController::drawMap() {

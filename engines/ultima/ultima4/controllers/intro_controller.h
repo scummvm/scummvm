@@ -99,6 +99,12 @@ public:
 	 * Handles keystrokes during the introduction.
 	 */
 	bool keyPressed(int key);
+
+	/**
+	 * Mouse button was pressed
+	 */
+	bool mousePressed(const Common::Point &mousePos) override;
+
 	byte *getSigData();
 
 	/**
