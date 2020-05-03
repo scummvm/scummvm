@@ -1510,7 +1510,13 @@ void LB::b_duplicate(int nargs) {
 }
 
 void LB::b_editableText(int nargs) {
-	warning("STUB: b_editableText");
+	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
+
+	if (g_lingo->_currentChannelId == -1) {
+		warning("b_editableText: channel Id is missing");
+		return;
+	}
+	frame->_sprites[g_lingo->_currentChannelId]->_editable = true;
 }
 
 void LB::b_erase(int nargs) {
@@ -1698,7 +1704,12 @@ void LB::b_move(int nargs) {
 void LB::b_moveableSprite(int nargs) {
 	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
-	frame->_sprites[g_lingo->_currentEntityId]->_moveable = true;
+	if (g_lingo->_currentChannelId == -1) {
+		warning("b_editableText: channel Id is missing");
+		return;
+	}
+
+	frame->_sprites[g_lingo->_currentChannelId]->_moveable = true;
 }
 
 void LB::b_pasteClipBoardInto(int nargs) {
