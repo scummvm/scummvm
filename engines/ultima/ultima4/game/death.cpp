@@ -25,7 +25,7 @@
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/game/stats.h"
+#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/controllers/wait_controller.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/events/event_handler.h"

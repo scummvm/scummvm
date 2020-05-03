@@ -23,7 +23,7 @@
 #include "ultima/ultima4/controllers/ztats_controller.h"
 #include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/game/stats.h"
+#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {

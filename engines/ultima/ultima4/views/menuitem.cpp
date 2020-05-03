@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima4/game/menu.h"
-#include "ultima/ultima4/game/menuitem.h"
+#include "ultima/ultima4/views/menu.h"
+#include "ultima/ultima4/views/menuitem.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
 

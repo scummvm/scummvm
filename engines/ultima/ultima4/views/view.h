@@ -20,26 +20,60 @@
  *
  */
 
-#ifndef ULTIMA4_GFX_IMAGEVIEW_H
-#define ULTIMA4_GFX_IMAGEVIEW_H
-
-#include "ultima/ultima4/game/view.h"
+#ifndef ULTIMA4_VIEWS_VIEW_H
+#define ULTIMA4_VIEWS_VIEW_H
 
 namespace Ultima {
 namespace Ultima4 {
 
+#define SCALED(n) ((n) * settings._scale)
+
+class Image;
+
 /**
- * A view for displaying bitmap images.
+ * Generic base class for reflecting the state of a game object onto
+ * the screen.
  */
-class ImageView : public View {
+class View {
 public:
-	ImageView(int x = 0, int y = 0, int width = 320, int height = 200);
-	virtual ~ImageView();
+	View(int x, int y, int width, int height);
+	virtual ~View() {}
 
 	/**
-	 * Draw the image at the optionally specified offset.
+	 * Hook for reinitializing when graphics reloaded.
 	 */
-	void draw(const Common::String &imageName, int x = 0, int y = 0);
+	virtual void reinit();
+
+	/**
+	 * Clear the view to black.
+	 */
+	virtual void clear();
+
+	/**
+	 * Update the view to the screen.
+	 */
+	virtual void update();
+
+	/**
+	 * Update a piece of the view to the screen.
+	 */
+	virtual void update(int x, int y, int width, int height);
+
+	/**
+	 * Highlight a piece of the screen by drawing it in inverted colors.
+	 */
+	virtual void highlight(int x, int y, int width, int height);
+	virtual void unhighlight();
+
+protected:
+	const int _x, _y, _width, _height;
+	bool _highlighted;
+	int _highlightX, _highlightY, _highlightW, _highlightH;
+	void drawHighlighted();
+#ifdef IOS_ULTIMA4
+	friend void U4IOS::updateScreenView();
+#endif
+	static Image *_screen;
 };
 
 } // End of namespace Ultima4

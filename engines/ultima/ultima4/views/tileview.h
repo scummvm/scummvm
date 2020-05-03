@@ -20,60 +20,48 @@
  *
  */
 
-#ifndef ULTIMA4_GAME_VIEW_H
-#define ULTIMA4_GAME_VIEW_H
+#ifndef ULTIMA4_VIEWS_TILEVIEW_H
+#define ULTIMA4_VIEWS_TILEVIEW_H
+
+#include "ultima/ultima4/views/view.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-#define SCALED(n) ((n) * settings._scale)
-
-class Image;
+class Tile;
+class Tileset;
+class MapTile;
 
 /**
- * Generic base class for reflecting the state of a game object onto
- * the screen.
+ * A view of a grid of tiles.  Used to draw Maps.
+ * @todo
+ * <ul>
+ *      <li>use for gem view</li>
+ *      <li>intialize from a Layout?</li>
+ * </ul>
  */
-class View {
+class TileView : public View {
 public:
-	View(int x, int y, int width, int height);
-	virtual ~View() {}
+	TileView(int x, int y, int columns, int rows);
+	TileView(int x, int y, int columns, int rows, const Common::String &tileset);
+	virtual ~TileView();
+
+	void reinit();
+	void drawTile(MapTile &mapTile, bool focus, int x, int y);
+	void drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y);
 
 	/**
-	 * Hook for reinitializing when graphics reloaded.
+	 * Draw a focus rectangle around the tile
 	 */
-	virtual void reinit();
-
-	/**
-	 * Clear the view to black.
-	 */
-	virtual void clear();
-
-	/**
-	 * Update the view to the screen.
-	 */
-	virtual void update();
-
-	/**
-	 * Update a piece of the view to the screen.
-	 */
-	virtual void update(int x, int y, int width, int height);
-
-	/**
-	 * Highlight a piece of the screen by drawing it in inverted colors.
-	 */
-	virtual void highlight(int x, int y, int width, int height);
-	virtual void unhighlight();
+	void drawFocus(int x, int y);
+	void loadTile(MapTile &mapTile);
+	void setTileset(Tileset *tileset);
 
 protected:
-	const int _x, _y, _width, _height;
-	bool _highlighted;
-	int _highlightX, _highlightY, _highlightW, _highlightH;
-	void drawHighlighted();
-#ifdef IOS_ULTIMA4
-	friend void U4IOS::updateScreenView();
-#endif
-	static Image *_screen;
+	int _columns, _rows;
+	int _tileWidth, _tileHeight;
+	Tileset *_tileSet;
+	Image *_animated;            /**< a scratchpad image for drawing animations */
 };
 
 } // End of namespace Ultima4

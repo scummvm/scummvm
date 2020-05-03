@@ -20,11 +20,11 @@
  *
  */
 
-#ifndef ULTIMA4_GAME_MENU_H
-#define ULTIMA4_GAME_MENU_H
+#ifndef ULTIMA4_VIEWS_MENU_H
+#define ULTIMA4_VIEWS_MENU_H
 
 #include "ultima/ultima4/events/event_handler.h"
-#include "ultima/ultima4/game/menuitem.h"
+#include "ultima/ultima4/views/menuitem.h"
 #include "ultima/ultima4/core/observable.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/shared/std/containers.h"

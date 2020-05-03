@@ -26,7 +26,7 @@
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/game/textview.h"
+#include "ultima/ultima4/views/textview.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/location.h"
 #include "common/events.h"

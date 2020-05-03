@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef ULTIMA4_GAME_STATS_H
-#define ULTIMA4_GAME_STATS_H
+#ifndef ULTIMA4_VIEWS_STATS_H
+#define ULTIMA4_VIEWS_STATS_H
 
 #include "ultima/ultima4/core/observable.h"
 #include "ultima/ultima4/core/observer.h"
-#include "ultima/ultima4/game/menu.h"
-#include "ultima/ultima4/game/textview.h"
+#include "ultima/ultima4/views/menu.h"
+#include "ultima/ultima4/views/textview.h"
 
 namespace Ultima {
 namespace Ultima4 {

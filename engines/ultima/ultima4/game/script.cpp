@@ -35,7 +35,7 @@
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/game/spell.h"
-#include "ultima/ultima4/game/stats.h"
+#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/sound/music.h"

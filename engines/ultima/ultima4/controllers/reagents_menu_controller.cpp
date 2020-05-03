@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima4/controllers/reagents_menu_controller.h"
-#include "ultima/ultima4/game/menu.h"
+#include "ultima/ultima4/views/menu.h"
 #include "ultima/ultima4/game/spell.h"
 
 namespace Ultima {

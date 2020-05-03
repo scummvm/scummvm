@@ -29,7 +29,7 @@
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/death.h"
 #include "ultima/ultima4/game/moongate.h"
-#include "ultima/ultima4/game/stats.h"
+#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/annotation.h"

@@ -20,48 +20,26 @@
  *
  */
 
-#ifndef ULTIMA4_MAP_TILEVIEW_H
-#define ULTIMA4_MAP_TILEVIEW_H
+#ifndef ULTIMA4_VIEWS_IMAGEVIEW_H
+#define ULTIMA4_VIEWS_IMAGEVIEW_H
 
-#include "ultima/ultima4/game/view.h"
+#include "ultima/ultima4/views/view.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-class Tile;
-class Tileset;
-class MapTile;
-
 /**
- * A view of a grid of tiles.  Used to draw Maps.
- * @todo
- * <ul>
- *      <li>use for gem view</li>
- *      <li>intialize from a Layout?</li>
- * </ul>
+ * A view for displaying bitmap images.
  */
-class TileView : public View {
+class ImageView : public View {
 public:
-	TileView(int x, int y, int columns, int rows);
-	TileView(int x, int y, int columns, int rows, const Common::String &tileset);
-	virtual ~TileView();
-
-	void reinit();
-	void drawTile(MapTile &mapTile, bool focus, int x, int y);
-	void drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y);
+	ImageView(int x = 0, int y = 0, int width = 320, int height = 200);
+	virtual ~ImageView();
 
 	/**
-	 * Draw a focus rectangle around the tile
+	 * Draw the image at the optionally specified offset.
 	 */
-	void drawFocus(int x, int y);
-	void loadTile(MapTile &mapTile);
-	void setTileset(Tileset *tileset);
-
-protected:
-	int _columns, _rows;
-	int _tileWidth, _tileHeight;
-	Tileset *_tileSet;
-	Image *_animated;            /**< a scratchpad image for drawing animations */
+	void draw(const Common::String &imageName, int x = 0, int y = 0);
 };
 
 } // End of namespace Ultima4

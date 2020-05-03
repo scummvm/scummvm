@@ -28,7 +28,7 @@
 #include "ultima/ultima4/core/observer.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/map/tileview.h"
+#include "ultima/ultima4/views/tileview.h"
 #include "ultima/ultima4/sound/sound.h"
 
 namespace Ultima {

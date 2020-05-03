@@ -25,7 +25,7 @@
 #include "ultima/ultima4/controllers/read_string_controller.h"
 #include "ultima/ultima4/controllers/read_choice_controller.h"
 #include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/game/menu.h"
+#include "ultima/ultima4/views/menu.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/core/settings.h"

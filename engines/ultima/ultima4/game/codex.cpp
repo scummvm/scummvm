@@ -29,7 +29,7 @@
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/game/stats.h"
+#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/utils.h"

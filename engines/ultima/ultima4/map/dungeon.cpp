@@ -30,7 +30,7 @@
 #include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/game/stats.h"
+#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/core/utils.h"
 

@@ -23,7 +23,7 @@
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/game/stats.h"
+#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/script.h"
 #include "ultima/ultima4/controllers/read_choice_controller.h"

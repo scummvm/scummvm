@@ -37,7 +37,7 @@
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/tileanim.h"
 #include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/map/tileview.h"
+#include "ultima/ultima4/views/tileview.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/ultima4.h"
 #include "common/system.h"

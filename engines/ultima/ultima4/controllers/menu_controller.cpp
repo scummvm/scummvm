@@ -22,8 +22,8 @@
 
 #include "ultima/ultima4/controllers/menu_controller.h"
 #include "ultima/ultima4/events/event_handler.h"
-#include "ultima/ultima4/game/menu.h"
-#include "ultima/ultima4/game/textview.h"
+#include "ultima/ultima4/views/menu.h"
+#include "ultima/ultima4/views/textview.h"
 
 namespace Ultima {
 namespace Ultima4 {

@@ -178,8 +178,6 @@ MODULE_OBJS := \
 	ultima4/game/death.o \
 	ultima4/game/game.o \
 	ultima4/game/item.o \
-	ultima4/game/menu.o \
-	ultima4/game/menuitem.o \
 	ultima4/game/moongate.o \
 	ultima4/game/names.o \
 	ultima4/game/object.o \
@@ -188,9 +186,6 @@ MODULE_OBJS := \
 	ultima4/game/portal.o \
 	ultima4/game/script.o \
 	ultima4/game/spell.o \
-	ultima4/game/stats.o \
-	ultima4/game/textview.o \
-	ultima4/game/view.o \
 	ultima4/game/weapon.o \
 	ultima4/gfx/image.o \
 	ultima4/gfx/imageloader.o \
@@ -198,7 +193,6 @@ MODULE_OBJS := \
 	ultima4/gfx/imageloader_png.o \
 	ultima4/gfx/imageloader_u4.o \
 	ultima4/gfx/imagemgr.o \
-	ultima4/gfx/imageview.o \
 	ultima4/gfx/scale.o \
 	ultima4/gfx/screen.o \
 	ultima4/map/annotation.o \
@@ -217,10 +211,16 @@ MODULE_OBJS := \
 	ultima4/map/tileanim.o \
 	ultima4/map/tilemap.o \
 	ultima4/map/tileset.o \
-	ultima4/map/tileview.o \
 	ultima4/sound/music.o \
 	ultima4/sound/sound.o \
 	ultima4/sound/sound_scummvm.o \
+	ultima4/views/imageview.o \
+	ultima4/views/menu.o \
+	ultima4/views/menuitem.o \
+	ultima4/views/stats.o \
+	ultima4/views/textview.o \
+	ultima4/views/tileview.o \
+	ultima4/views/view.o \
 	ultima4/meta_engine.o \
 	ultima4/ultima4.o \
 	nuvie/meta_engine.o \

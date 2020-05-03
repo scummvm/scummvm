@@ -29,7 +29,7 @@
 #include "ultima/ultima4/game/portal.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/map/tileview.h"
+#include "ultima/ultima4/views/tileview.h"
 
 namespace Ultima {
 namespace Ultima4 {

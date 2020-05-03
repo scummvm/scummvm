@@ -26,10 +26,10 @@
 #include "ultima/ultima4/controllers/controller.h"
 #include "ultima/ultima4/core/observer.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/game/menu.h"
-#include "ultima/ultima4/game/textview.h"
-#include "ultima/ultima4/gfx/imageview.h"
-#include "ultima/ultima4/map/tileview.h"
+#include "ultima/ultima4/views/menu.h"
+#include "ultima/ultima4/views/textview.h"
+#include "ultima/ultima4/views/imageview.h"
+#include "ultima/ultima4/views/tileview.h"
 #include "ultima/shared/core/file.h"
 
 namespace Ultima {
