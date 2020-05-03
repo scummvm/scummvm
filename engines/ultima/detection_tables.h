@@ -44,6 +44,25 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 
 	{
+		// Ultima I - The First Age of Darkness, PC98 version
+		{
+			"ultima1",
+			0,
+			{
+				{"egctown.bin", 0, "4f7de68f6689cf9617aa1ea03240137e", 4896},
+				{"map.bin", 0, "f99633a0110ccf90837ab161be56cf1c", 13104},
+				AD_LISTEND
+			},
+			Common::JA_JPN,
+			Common::kPlatformPC98,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GAME_ULTIMA1,
+		0
+	},
+
+	{
 		// Ultima I - The First Age of Darkness
 		{
 			"ultima1",
@@ -57,7 +76,6 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA1,
 		0
 	},
-
 
 	{
 		// Ultima IV - Quest of the Avatar
