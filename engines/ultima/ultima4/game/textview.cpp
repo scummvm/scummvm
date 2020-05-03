@@ -166,6 +166,16 @@ void TextView::setFontColorBG(ColorBG bg) {
 
 void TextView::textAt(int x, int y, const char *fmt, ...) {
 	char buffer[1024];
+	va_list args;
+	va_start(args, fmt);
+	vsnprintf(buffer, sizeof(buffer), fmt, args);
+	va_end(args);
+
+	optionAt(x, y, '\0', "%s", buffer);
+}
+
+void TextView::optionAt(int x, int y, char key, const char *fmt, ...) {
+	char buffer[1024];
 	uint i;
 	uint offset = 0;
 
@@ -201,6 +211,17 @@ void TextView::textAt(int x, int y, const char *fmt, ...) {
 		setCursorPos(x + i, y, true);
 	if (reenableCursor)
 		enableCursor();
+
+	if (key) {
+		Common::Rect r(
+			SCALED(_x + (x * CHAR_WIDTH)),
+			SCALED(_y + (y * CHAR_HEIGHT)),
+			SCALED(_x + (x + strlen(buffer) - offset) * CHAR_WIDTH),
+			SCALED(_y + (y + 1) * CHAR_HEIGHT)
+		);
+
+		_options.push_back(Option(r, key));
+	}
 }
 
 void TextView::scroll() {
@@ -264,6 +285,19 @@ void TextView::cursorTimer(void *data) {
 	TextView *thiz = static_cast<TextView *>(data);
 	thiz->_cursorPhase = (thiz->_cursorPhase + 1) % 4;
 	thiz->drawCursor();
+}
+
+char TextView::getOptionAt(const Common::Point &mousePos) {
+	for (uint idx = 0; idx < _options.size(); ++idx) {
+		if (_options[idx].contains(mousePos))
+			return _options[idx]._key;
+	}
+
+	return '\0';
+}
+
+void TextView::clearOptions() {
+	_options.clear();
 }
 
 } // End of namespace Ultima4

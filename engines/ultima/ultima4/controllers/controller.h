@@ -146,9 +146,9 @@ public:
 	virtual bool mousePressed(const Common::Point &mousePos) {
 		// Treat mouse clicks as an abort
 		doneWaiting();
+		_value = _defaultValue;
 		return true;
 	}
-
 };
 
 class TurnCompleter {

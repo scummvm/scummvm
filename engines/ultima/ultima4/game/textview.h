@@ -25,6 +25,8 @@
 
 #include "ultima/ultima4/game/view.h"
 #include "ultima/ultima4/gfx/image.h"
+#include "common/array.h"
+#include "common/rect.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -38,6 +40,19 @@ namespace Ultima4 {
  * A view of a text area.  Keeps track of the cursor position.
  */
 class TextView : public View {
+	struct Option : public Common::Rect {
+		char _key;
+		Option() : Common::Rect(), _key('\0') {}
+		Option(const Common::Rect &r, char key) : Common::Rect(r), _key(key) {}
+	};
+protected:
+	int _columns, _rows;         /**< size of the view in character cells  */
+	bool _cursorEnabled;         /**< whether the cursor is enabled */
+	bool _cursorFollowsText;     /**< whether the cursor is moved past the last character written */
+	int _cursorX, _cursorY;      /**< current position of cursor */
+	int _cursorPhase;            /**< the rotation state of the cursor */
+	static Image *_charset;      /**< image containing font */
+	Common::Array<Option> _options;
 public:
 	TextView(int x, int y, int columns, int rows);
 	virtual ~TextView();
@@ -69,7 +84,17 @@ public:
 	 * which the player is not an avatar.
 	 */
 	void drawCharMasked(int chr, int x, int y, byte mask);
-	void textAt(int x, int y, const char *fmt, ...) PRINTF_LIKE(4, 5);
+
+	/**
+	 * Draw text at the given position
+	 */
+	void textAt(int x, int y, const char *fmt, ...);
+
+	/**
+	 * Draw an option at
+	 */
+	void optionAt(int x, int y, char key, const char *fmt, ...);
+
 	void scroll();
 
 	void setCursorFollowsText(bool follows) {
@@ -102,13 +127,15 @@ public:
 	 */
 	Common::String colorizeString(Common::String input, ColorFG color, uint colorstart, uint colorlength = 0);
 
-protected:
-	int _columns, _rows;         /**< size of the view in character cells  */
-	bool _cursorEnabled;         /**< whether the cursor is enabled */
-	bool _cursorFollowsText;     /**< whether the cursor is moved past the last character written */
-	int _cursorX, _cursorY;      /**< current position of cursor */
-	int _cursorPhase;            /**< the rotation state of the cursor */
-	static Image *_charset;      /**< image containing font */
+	/**
+	 * Checks if a given position has an option
+	 */
+	char getOptionAt(const Common::Point &mousePos);
+
+	/**
+	 * Clear the options list
+	 */
+	void clearOptions();
 };
 
 } // End of namespace Ultima4

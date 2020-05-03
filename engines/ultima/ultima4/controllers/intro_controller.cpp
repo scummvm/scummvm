@@ -366,6 +366,7 @@ bool IntroController::keyPressed(int key) {
 		break;
 
 	case INTRO_MAP:
+	case INTRO_ABOUT:
 		_mode = INTRO_MENU;
 		updateScreen();
 		break;
@@ -435,9 +436,16 @@ bool IntroController::mousePressed(const Common::Point &mousePos) {
 		break;
 
 	case INTRO_MAP:
+	case INTRO_ABOUT:
 		_mode = INTRO_MENU;
 		updateScreen();
 		break;
+
+	case INTRO_MENU: {
+		char key = _menuArea.getOptionAt(mousePos);
+		if (key)
+			keyPressed(key);
+	}
 
 	default:
 		break;
@@ -598,6 +606,7 @@ void IntroController::drawAbacusBeads(int row, int selectedVirtue, int rejectedV
 
 void IntroController::updateScreen() {
 	g_screen->screenHideCursor();
+	_menuArea.clearOptions();
 
 	switch (_mode) {
 	case INTRO_MAP:
@@ -629,11 +638,11 @@ void IntroController::updateScreen() {
 
 		_menuArea.textAt(1,  1, "In another world, in a time to come.");
 		_menuArea.textAt(14, 3, "Options:");
-		_menuArea.textAt(10, 5, "%s", _menuArea.colorizeString("Return to the view", FG_YELLOW, 0, 1).c_str());
-		_menuArea.textAt(10, 6, "%s", _menuArea.colorizeString("Journey Onward",     FG_YELLOW, 0, 1).c_str());
-		_menuArea.textAt(10, 7, "%s", _menuArea.colorizeString("Initiate New Game",  FG_YELLOW, 0, 1).c_str());
-		_menuArea.textAt(10, 8, "%s", _menuArea.colorizeString("Configure",          FG_YELLOW, 0, 1).c_str());
-		_menuArea.textAt(10, 9, "%s", _menuArea.colorizeString("About",              FG_YELLOW, 0, 1).c_str());
+		_menuArea.optionAt(10, 5, 'r', "%s", _menuArea.colorizeString("Return to the view", FG_YELLOW, 0, 1).c_str());
+		_menuArea.optionAt(10, 6, 'j', "%s", _menuArea.colorizeString("Journey Onward",     FG_YELLOW, 0, 1).c_str());
+		_menuArea.optionAt(10, 7, 'i', "%s", _menuArea.colorizeString("Initiate New Game",  FG_YELLOW, 0, 1).c_str());
+		_menuArea.optionAt(10, 8, 'c', "%s", _menuArea.colorizeString("Configure",          FG_YELLOW, 0, 1).c_str());
+		_menuArea.optionAt(10, 9, 'a', "%s", _menuArea.colorizeString("About",              FG_YELLOW, 0, 1).c_str());
 		drawBeasties();
 
 		// draw the cursor last
@@ -652,6 +661,7 @@ void IntroController::updateScreen() {
 void IntroController::initiateNewGame() {
 	// disable the screen cursor because a text cursor will now be used
 	g_screen->screenDisableCursor();
+	_menuArea.clear();
 
 	// draw the extended background for all option screens
 	_backgroundArea.draw(BKGD_INTRO);
@@ -837,11 +847,14 @@ void IntroController::startQuestions() {
 		U4IOS::switchU4IntroControllerToABButtons();
 #endif
 		// wait for an answer
-		eventHandler->pushController(&questionController);
-		int choice = questionController.waitFor();
+		int choice;
+		do {
+			eventHandler->pushController(&questionController);
+			choice = questionController.waitFor();
+		} while (!shouldQuit() && choice == -1);
 
 		// update the question tree
-		if (doQuestion(choice == 'a' ? 0 : 1)) {
+		if (shouldQuit() || doQuestion(choice == 'a' ? 0 : 1)) {
 			return;
 		}
 	}
@@ -898,10 +911,7 @@ void IntroController::about() {
 	_menuArea.textAt(1, 3, "Based on the xu4 project");
 	drawBeasties();
 
-	ReadChoiceController::get("");
-
-	g_screen->screenShowCursor();
-	updateScreen();
+	_mode = INTRO_ABOUT;
 }
 
 void IntroController::showText(const Common::String &text) {

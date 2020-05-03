@@ -269,7 +269,8 @@ private:
 	enum {
 		INTRO_TITLES,                       // displaying the animated intro titles
 		INTRO_MAP,                          // displaying the animated intro map
-		INTRO_MENU                          // displaying the main menu: journey onward, etc.
+		INTRO_MENU,                         // displaying the main menu: journey onward, etc.
+		INTRO_ABOUT
 	} _mode;
 
 	enum MenuConstants {
