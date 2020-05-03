@@ -1088,6 +1088,7 @@ int EoBCoreEngine::clickedSpellbookTab(Button *button) {
 int EoBCoreEngine::clickedSpellbookList(Button *button) {
 	int listIndex = button->arg;
 	bool spellLevelAvailable = false;
+	int bbrk = _flags.platform == Common::kPlatformSegaCD ? 6 : 9;
 
 	if (listIndex == 6) {
 		for (int i = 0; i < 10; i++) {
@@ -1107,8 +1108,8 @@ int EoBCoreEngine::clickedSpellbookList(Button *button) {
 
 		do {
 			_openBookSpellSelectedItem += v;
-			int s = (_openBookSpellSelectedItem >= 0) ? _openBookSpellSelectedItem : 9;
-			_openBookSpellSelectedItem = (s <= 9) ? s : 0;
+			int s = (_openBookSpellSelectedItem >= 0) ? _openBookSpellSelectedItem : bbrk;
+			_openBookSpellSelectedItem = (s <= bbrk) ? s : 0;
 		} while (_openBookAvailableSpells[_openBookSpellLevel * 10 + _openBookSpellSelectedItem] <= 0 && _openBookSpellSelectedItem != 9);
 
 		if (_openBookSpellSelectedItem >= 6) {
@@ -1499,7 +1500,7 @@ void EoBCoreEngine::gui_processInventorySlotClick(int slot) {
 	}
 }
 
-GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
+GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen), _numSlotsVisible(vm->gameFlags().platform == Common::kPlatformSegaCD ? 5 : 6) {
 	_menuStringsPrefsTemp = new char*[4];
 	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char *));
 
@@ -1539,9 +1540,24 @@ GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 		_highLightColorTable = _highlightColorTableEGA;
 	else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98)
 		_highLightColorTable = _highlightColorTablePC98;
+	else if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
+		_highLightColorTable = _highlightColorTableSegaCD;
 	else
 		_highLightColorTable = _highlightColorTableVGA;
 
+	EoBRect16 *highlightFrames = new EoBRect16[20];
+	memcpy(highlightFrames, _highlightFramesDefault, 20 * sizeof(EoBRect16));
+
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+		for (int i = 0; i < 6; ++i) {
+			highlightFrames[i].x1 = _vm->guiSettings()->charBoxCoords.boxX[i & 1];
+			highlightFrames[i].y1 = _vm->guiSettings()->charBoxCoords.boxY[i >> 1];
+			highlightFrames[i].x2 = _vm->guiSettings()->charBoxCoords.boxX[i & 1] + _vm->guiSettings()->charBoxCoords.boxWidth - 1;
+			highlightFrames[i].y2 = _vm->guiSettings()->charBoxCoords.boxY[i >> 1] + _vm->guiSettings()->charBoxCoords.boxHeight - 1;
+		}
+	}
+
+	_highlightFrames = highlightFrames;
 	_updateBoxIndex = -1;
 	_highLightBoxTimer = 0;
 	_updateBoxColorIndex = 0;
@@ -1563,8 +1579,8 @@ GUI_EoB::~GUI_EoB() {
 	}
 
 	delete[] _saveSlotIdTemp;
-
 	delete[] _numAssignedSpellsOfType;
+	delete[] _highlightFrames;
 }
 
 void GUI_EoB::processButton(Button *button) {
@@ -2339,13 +2355,13 @@ void GUI_EoB::runCampMenu() {
 				if (runLoadMenu(0, 0))
 					runLoop = false;
 				else
-					newMenu = 1;
+					newMenu = _vm->gameFlags().platform == Common::kPlatformSegaCD ? 0 : 1;
 				break;
 
 			case 0x8009:
 				if (runSaveMenu(0, 0))
 					displayTextBox(14);
-				newMenu = 1;
+				newMenu = _vm->gameFlags().platform == Common::kPlatformSegaCD ? 0 : 1;
 				break;
 
 			case 0x800A:
@@ -2355,12 +2371,15 @@ void GUI_EoB::runCampMenu() {
 				}
 
 				if (cnt > 4) {
-					_vm->dropCharacter(selectCharacterDialogue(53));
-					_vm->gui_drawPlayField(false);
-					_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, Screen_EoB::kCampMenuBackupPage, Screen::CR_NO_P_CHECK);
-					Screen::FontId cfn = _screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
-					_vm->gui_drawAllCharPortraitsWithStats();
-					_screen->setFont(cfn);
+					i = selectCharacterDialogue(53);
+					if (i > 0) {
+						_vm->dropCharacter(i);
+						_vm->gui_drawPlayField(false);
+						_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, Screen_EoB::kCampMenuBackupPage, Screen::CR_NO_P_CHECK);
+						Screen::FontId cfn = _screen->setFont(_vm->_conFont);
+						_vm->gui_drawAllCharPortraitsWithStats();
+						_screen->setFont(cfn);
+					}
 				} else {
 					displayTextBox(45);
 				}
@@ -2475,10 +2494,10 @@ bool GUI_EoB::runLoadMenu(int x, int y, bool fromMainMenu) {
 		updateSaveSlotsList(_vm->_targetName);
 		
 		_vm->useMainMenuGUISettings(fromMainMenu);
-		int slot = selectSaveSlotDialogue(x, y, 1);
+		int slot = selectSaveSlotDialog(x, y, 1);
 		_vm->useMainMenuGUISettings(false);
 
-		if (slot > 5) {
+		if (slot > _numSlotsVisible - 1) {
 			runLoop = result = false;
 		} else if (slot >= 0) {
 			if (_saveSlotIdTemp[slot] == -1) {
@@ -2998,7 +3017,7 @@ Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &target
 
 	int slot = 0;
 	do {
-		slot = selectSaveSlotDialogue(72, 14, 2);
+		slot = selectSaveSlotDialog(72, 14, 2);
 		if (slot == 6)
 			break;
 	} while (_saveSlotIdTemp[slot] == -1);
@@ -3024,7 +3043,7 @@ bool GUI_EoB::transferFileMenu(Common::String &targetName, Common::String &selec
 
 	int slot = 0;
 	do {
-		slot = selectSaveSlotDialogue(72, 14, 4);
+		slot = selectSaveSlotDialog(72, 14, 4);
 		if (slot == 6)
 			break;
 
@@ -3072,11 +3091,11 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		updateSaveSlotsList(_vm->_targetName);
-		int slot = selectSaveSlotDialogue(x, y, 0);
-		if (slot > 5) {
+		int slot = selectSaveSlotDialog(x, y, 0);
+		if (slot > _numSlotsVisible - 1) {
 			runLoop = result = false;
 		} else if (slot >= 0) {
-			bool useSlot = (_saveSlotIdTemp[slot] == -1);
+			bool useSlot = (_saveSlotIdTemp[slot] == -1 || _vm->gameFlags().platform == Common::kPlatformSegaCD);
 			if (useSlot)
 				_saveSlotStringsTemp[slot][0] = 0;
 			else
@@ -3091,7 +3110,8 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 			_screen->set16bitShadingLevel(4);
 
 			for (int in = -1; in == -1 && !_vm->shouldQuit();) {
-				_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
+				if (_vm->gameFlags().platform != Common::kPlatformSegaCD)
+					_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
 				if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 					TimeDate td;
 					_vm->_system->getTimeAndDate(td);					
@@ -3099,6 +3119,9 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 					in = strlen(_saveSlotStringsTemp[slot]);
 					of = _vm->screen()->setFont(Screen::FID_6_FNT);
 					y++;
+				} else if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+					Common::strlcpy(_saveSlotStringsTemp[slot], Common::String::format("%s\r FLOOR %-2u %u:%02u", _vm->_characters[0].name, _vm->_currentLevel + 1, _vm->_totalPlaySecs / 3600, _vm->_totalPlaySecs / 60).c_str(), 25);
+					in = strlen(_saveSlotStringsTemp[slot]);
 				} else {
 					in = getTextInput(_saveSlotStringsTemp[slot], x + 1, fy, 19, _vm->guiSettings()->colors.guiColorBlue, 0, _vm->guiSettings()->colors.guiColorDarkRed);
 				}
@@ -3117,10 +3140,14 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 				continue;
 			}
 
-			_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
-			_screen->printShadedText(_saveSlotStringsTemp[slot], (x + 1) << 3, fy, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-			_screen->set16bitShadingLevel(0);
-			_screen->setFont(of);
+			if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+				drawSaveSlotButton(slot, 2, true);
+			} else {
+				_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
+				_screen->printShadedText(_saveSlotStringsTemp[slot], (x + 1) << 3, fy, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+				_screen->set16bitShadingLevel(0);
+				_screen->setFont(of);
+			}
 			_screen->updateScreen();
 
 			Graphics::Surface thumb;
@@ -3141,21 +3168,11 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 	return result;
 }
 
-int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
+int GUI_EoB::selectSaveSlotDialog(int x, int y, int id) {
 	_saveSlotX = _saveSlotY = 0;
-	int col1 = (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite;
-	_screen->setCurPage(2);
-
 	_savegameOffset = 0;
-
-	drawMenuButtonBox(0, 0, 176, 144, false, false);
-	const char *title = (id < 2) ? _vm->_saveLoadStrings[2 + id] : _vm->_transferStringsScummVM[id - 1];
-	_screen->printShadedText(title, 52, 5, col1, 0, _vm->guiSettings()->colors.guiColorBlack);
-
-	_screen->copyRegion(0, 0, x, y, 176, 144, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->fillRect(0, 0, 175, 143, 0, 2);
-
-	_screen->setCurPage(0);
+	
+	drawSaveSlotDialog(x, y, id);
 	_screen->updateScreen();
 
 	_saveSlotX = x;
@@ -3168,17 +3185,20 @@ int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		int inputFlag = _vm->checkInput(0, false, 0) & 0x8FF;
 		_vm->removeInputTop();
+		bool clickedButton = false;
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
-			runLoop = false;
+			runLoop = (_vm->gameFlags().platform == Common::kPlatformSegaCD && _saveSlotIdTemp[newHighlight] == -1 && id == 1);
+			clickedButton = true;
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
-			newHighlight = 6;
+			newHighlight = _numSlotsVisible;
 			runLoop = false;
+			clickedButton = true;
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP2]) {
-			if (++newHighlight > 5) {
-				newHighlight = 5;
-				if (++_savegameOffset > 984)
-					_savegameOffset = 984;
+			if (++newHighlight > (_numSlotsVisible - 1)) {
+				newHighlight = _numSlotsVisible - 1;
+				if (++_savegameOffset > (990 - _numSlotsVisible))
+					_savegameOffset = (990 - _numSlotsVisible);
 				else
 					lastOffset = -1;
 			}
@@ -3191,20 +3211,20 @@ int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 					lastOffset = -1;
 			}
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_PAGEDOWN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP1]) {
-			_savegameOffset += 6;
-			if (_savegameOffset > 984)
-				_savegameOffset = 984;
+			_savegameOffset += _numSlotsVisible;
+			if (_savegameOffset > (990 - _numSlotsVisible))
+				_savegameOffset = (990 - _numSlotsVisible);
 			else
 				lastOffset = -1;
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_PAGEUP] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP7]) {
-			_savegameOffset -= 6;
+			_savegameOffset -= _numSlotsVisible;
 			if (_savegameOffset < 0)
 				_savegameOffset = 0;
 			else
 				lastOffset = -1;
 		} else if (inputFlag == 205) {
-			if (++_savegameOffset > 984)
-				_savegameOffset = 984;
+			if (++_savegameOffset > (990 - _numSlotsVisible))
+				_savegameOffset = (990 - _numSlotsVisible);
 			else
 				lastOffset = -1;
 		} else if (inputFlag == 203) {
@@ -3216,29 +3236,35 @@ int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 			slot = getHighlightSlot();
 			if (slot != -1) {
 				newHighlight = slot;
-				if (inputFlag == 199)
-					runLoop = false;
+				if (inputFlag == 199) {
+					runLoop = (_vm->gameFlags().platform == Common::kPlatformSegaCD && _saveSlotIdTemp[newHighlight] == -1 && id == 1);
+					clickedButton = true;
+				}
 			}
 		}
 
 		if (lastOffset != _savegameOffset) {
 			lastHighlight = -1;
 			setupSaveMenuSlots();
-			for (int i = 0; i < 7; i++)
-				drawSaveSlotButton(i, 1, col1);
+			for (int i = 0; i < _numSlotsVisible + 1; i++)
+				drawSaveSlotButton(i, 1, false);
 			lastOffset = _savegameOffset;
 		}
 
 		if (lastHighlight != newHighlight) {
-			drawSaveSlotButton(lastHighlight, 0, col1);
-			drawSaveSlotButton(newHighlight, 0, _vm->guiSettings()->colors.guiColorLightRed);
+			drawSaveSlotButton(lastHighlight, 0, false);
+			drawSaveSlotButton(newHighlight, 0, true);
 
 			// Display highlighted slot index in the bottom left corner to avoid people getting lost with the 990 save slots
+			int sli = (newHighlight == _numSlotsVisible) ? _savegameOffset : (_savegameOffset + newHighlight);
 			if (_vm->_flags.platform == Common::kPlatformSegaCD) {
-
+				_screen->sega_clearTextBuffer(0);
+				_vm->_txt->printShadowedText(Common::String::format("%03d/989", sli).c_str(), 0, 0, 0xFF, 0xCC, -1, -1, 0, false);
+				_screen->sega_loadTextBufferToVRAM(0, 64, 224);
+				_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+				_screen->copyRegion(_saveSlotX + 8, _saveSlotY + 152, _saveSlotX + 8, _saveSlotY + 152, 56, 8, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
 			} else {
 				Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
-				int sli = (newHighlight == 6) ? _savegameOffset : (_savegameOffset + newHighlight);
 				_screen->set16bitShadingLevel(4);
 				_screen->printText(Common::String::format("%03d/989", sli).c_str(), _saveSlotX + 5, _saveSlotY + 135, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 				_screen->set16bitShadingLevel(0);
@@ -3248,15 +3274,27 @@ int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 			_screen->updateScreen();
 			lastHighlight = newHighlight;
 		}
+
+		if (clickedButton) {
+			drawSaveSlotButton(newHighlight, 2, true);
+			_screen->updateScreen();
+			_vm->_system->delayMillis(80);
+			drawSaveSlotButton(newHighlight, 1, true);
+			_screen->updateScreen();
+		}
 	}
 
-	drawSaveSlotButton(newHighlight, 2, _vm->guiSettings()->colors.guiColorLightRed);
-	_screen->updateScreen();
-	_vm->_system->delayMillis(80);
-	drawSaveSlotButton(newHighlight, 1, _vm->guiSettings()->colors.guiColorLightRed);
-	_screen->updateScreen();
-
 	return newHighlight;
+}
+
+void GUI_EoB::drawSaveSlotDialog(int x, int y, int id) {
+	_screen->setCurPage(2);
+	drawMenuButtonBox(0, 0, 176, 144, false, false);
+	const char* title = (id < 2) ? _vm->_saveLoadStrings[2 + id] : _vm->_transferStringsScummVM[id - 1];
+	_screen->printShadedText(title, 52, 5, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->copyRegion(0, 0, x, y, 176, 144, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->fillRect(0, 0, 175, 143, 0, 2);
+	_screen->setCurPage(0);
 }
 
 void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
@@ -3359,14 +3397,19 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 		}
 	}
 
+	initMemorizePrayMenu();
 	Button *buttonList = initMenu(4);
 
 	int lastHighLightText = -1;
 	int lastHighLightButton = -1;
 	int newHighLightButton = 0;
 	int newHighLightText = 0;
+	int buttonStart = (_vm->gameFlags().platform == Common::kPlatformSegaCD) ? 0x801B : 0x8017;
+	int listY = (_vm->gameFlags().platform == Common::kPlatformSegaCD) ? 80 : 50;
+	int listEntryH = (_vm->gameFlags().platform == Common::kPlatformSegaCD) ? 8 : 9;
 	bool updateDesc = true;
 	bool updateList = true;
+	bool highLightClicked = (_vm->gameFlags().platform == Common::kPlatformSegaCD);
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		updateBoxFrameHighLight(charIndex);
@@ -3380,12 +3423,13 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 
 		if (lastHighLightButton != newHighLightButton) {
 			if (lastHighLightButton >= 0)
-				drawMenuButton(_vm->gui_getButton(buttonList, lastHighLightButton + 26), false, false, true);
-			drawMenuButton(_vm->gui_getButton(buttonList, newHighLightButton + 26), false, true, true);
+				drawMenuButton(_vm->gui_getButton(buttonList, lastHighLightButton + ((buttonStart & 0xFF) + 3)), false, false, true);
+			drawMenuButton(_vm->gui_getButton(buttonList, newHighLightButton + ((buttonStart & 0xFF) + 3)), highLightClicked, true, true);
 			newHighLightText = 0;
 			lastHighLightText = -1;
 			lastHighLightButton = newHighLightButton;
 			updateDesc = updateList = true;
+			highLightClicked = false;
 		}
 
 		if (updateList) {
@@ -3395,15 +3439,28 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 				memorizePrayMenuPrintString(menuSpellMap[lastHighLightButton * 11 + ii], ii - 1, spellType, false, false);
 
 			_screen->setCurPage(0);
-			_screen->copyRegion(0, 50, 0, 50, 176, 72, 2, 0, Screen::CR_NO_P_CHECK);
+			if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+				_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+				_screen->copyRegion(0, 80, 0, 80, 176, 72, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+			} else {
+				_screen->copyRegion(0, 50, 0, 50, 176, 72, 2, 0, Screen::CR_NO_P_CHECK);
+			}
 			lastHighLightText = -1;
 		}
-
+		
 		if (updateDesc) {
 			updateDesc = false;
-			_screen->set16bitShadingLevel(4);
-			_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, _vm->guiSettings()->colors.guiColorLightBlue, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
-			_screen->set16bitShadingLevel(0);
+			if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+				_screen->sega_clearTextBuffer(0);
+				_vm->_txt->printShadowedText(Common::String::format(_vm->_menuStringsMgc[1], (char)(np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton] + 79), (char)(np[lastHighLightButton] + 79)).c_str(), 0, 2, 0x55, 0xCC, 160, 16, 0, false);
+				_screen->sega_loadTextBufferToVRAM(0, 0x5560, 1280);
+				_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+				_screen->copyRegion(8, 64, 8, 64, 160, 16, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+			} else {
+				_screen->set16bitShadingLevel(4);
+				_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, _vm->guiSettings()->colors.guiColorLightBlue, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
+				_screen->set16bitShadingLevel(0);
+			}
 		}
 
 		if (newHighLightText < 0)
@@ -3422,15 +3479,15 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 		_vm->removeInputTop();
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP6] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT]) {
-			inputFlag = 0x801A + ((lastHighLightButton + 1) % _numVisPages);
+			inputFlag = buttonStart + 3 + ((lastHighLightButton + 1) % _numVisPages);
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT]) {
-			inputFlag = lastHighLightButton ? 0x8019 + lastHighLightButton : 0x8019 + _numVisPages;
+			inputFlag = lastHighLightButton ? buttonStart + 2 + lastHighLightButton : buttonStart + 2 + _numVisPages;
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
-			inputFlag = 0x8018;
+			inputFlag = buttonStart + 1;
 		} else {
 			Common::Point p = _vm->getMousePos();
-			if (_vm->posWithinRect(p.x, p.y, 8, 50, 168, 122)) {
-				newHighLightText = (p.y - 50) / 9;
+			if (_vm->posWithinRect(p.x, p.y, 8, listY, 168, listY + 72)) {
+				newHighLightText = (p.y - listY) / listEntryH;
 				if (menuSpellMap[lastHighLightButton * 11] - 1 < newHighLightText)
 					newHighLightText = menuSpellMap[lastHighLightButton * 11] - 1;
 			}
@@ -3440,12 +3497,16 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 			b = _vm->gui_getButton(buttonList, inputFlag & 0x7FFF);
 			drawMenuButton(b, true, true, true);
 			_screen->updateScreen();
-			_vm->_system->delayMillis(80);
-			drawMenuButton(b, false, false, true);
-			_screen->updateScreen();
+			if (_vm->gameFlags().platform == Common::kPlatformSegaCD && inputFlag >= buttonStart + 3) {
+				highLightClicked = true;
+			} else {
+				_vm->_system->delayMillis(80);
+				drawMenuButton(b, false, false, true);
+				_screen->updateScreen();
+			}
 		}
 
-		if (inputFlag == 0x8019 || inputFlag == _vm->_keyMap[Common::KEYCODE_KP_PLUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_PLUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
+		if (inputFlag == buttonStart + 2 || inputFlag == _vm->_keyMap[Common::KEYCODE_KP_PLUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_PLUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
 			if (np[lastHighLightButton] > numAssignedSpellsPerBookPage[lastHighLightButton] && lastHighLightText != -1) {
 				_numAssignedSpellsOfType[menuSpellMap[lastHighLightButton * 11 + lastHighLightText + 1] * 2 - 2]++;
 				numAssignedSpellsPerBookPage[lastHighLightButton]++;
@@ -3469,7 +3530,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 			newHighLightText = menuSpellMap[lastHighLightButton * 11] - 1;
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_HOME] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP7]) {
 			newHighLightText = 0;
-		} else if (inputFlag == 0x8017) {
+		} else if (inputFlag == buttonStart) {
 			if (numAssignedSpellsPerBookPage[lastHighLightButton]) {
 				for (int i = 1; i <= menuSpellMap[lastHighLightButton * 11]; i++) {
 					numAssignedSpellsPerBookPage[lastHighLightButton] -= _numAssignedSpellsOfType[menuSpellMap[lastHighLightButton * 11 + i] * 2 - 2];
@@ -3479,21 +3540,21 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 				updateDesc = updateList = true;
 			}
 
-		} else if (inputFlag == 0x8018) {
+		} else if (inputFlag == buttonStart + 1) {
 			_vm->gui_drawAllCharPortraitsWithStats();
 			runLoop = false;
 
 		} else if (inputFlag & 0x8000) {
-			newHighLightButton = inputFlag - 0x801A;
+			newHighLightButton = inputFlag - (buttonStart + 3);
 			if (newHighLightButton == lastHighLightButton)
-				drawMenuButton(_vm->gui_getButton(buttonList, inputFlag & 0x7FFF), false, true, true);
+				drawMenuButton(_vm->gui_getButton(buttonList, inputFlag & 0x7FFF), _vm->gameFlags().platform == Common::kPlatformSegaCD, true, true);
 		}
 	}
 
 	releaseButtons(buttonList);
 	updateBoxFrameHighLight(-1);
 
-	Screen::FontId of = _screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	Screen::FontId of = _screen->setFont(_vm->_conFont);
 	_vm->gui_drawCharPortraitWithStats(charIndex);
 	_screen->setFont(of);
 
@@ -4011,6 +4072,8 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 	uint8 flags = (id == 26) ? (_vm->game() == GI_EOB1 ? 0x04 : 0x14) : 0x02;
 	_vm->removeInputTop();
 
+	int buttonStart = _vm->gameFlags().platform == Common::kPlatformSegaCD ? 0x8014 : 0x8010;
+
 	_charSelectRedraw = false;
 	bool starvedUnconscious = false;
 	int count = 0;
@@ -4044,21 +4107,21 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 		else if (id == 49)
 			eid = 52;
 
-		displayTextBox(eid);
+		displayTextBox(eid, 0x55);
 		return -1;
 	}
-
-	static const uint16 selX[] = { 184, 256, 184, 256, 184, 256 };
-	static const uint8 selY[] = { 2, 2, 54, 54, 106, 106};
 
 	for (int i = 0; i < 6; i++) {
 		if (found[i] != -1 || !_vm->testCharacter(i, 1))
 			continue;
 
-		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX[i], selY[i], 0);
-		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX[i] + 16, selY[i], 0);
-		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX[i] + 32, selY[i], 0);
-		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX[i] + 48, selY[i], 0);
+		int selX = _vm->guiSettings()->charBoxCoords.boxX[i & 1];
+		int selY = _vm->guiSettings()->charBoxCoords.boxY[i >> 1];
+
+		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX, selY, 0);
+		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX + 16, selY, 0);
+		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX + 32, selY, 0);
+		_screen->drawShape(0, _vm->_blackBoxSmallGrid, selX + 48, selY, 0);
 		_charSelectRedraw = true;
 	}
 	_screen->updateScreen();
@@ -4087,7 +4150,7 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 		}
 	}
 
-	Screen::FontId of = _screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	Screen::FontId of = _screen->setFont(_vm->_conFont);
 
 	while (result == -2 && !_vm->shouldQuit()) {
 		int inputFlag = _vm->checkInput(buttonList, false, 0);
@@ -4119,18 +4182,18 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 			if (hlCur >= 0)
 				result = hlCur;
 
-		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE] || inputFlag == 0x8010) {
-			_screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE] || inputFlag == buttonStart) {
+			_screen->setFont(_vm->_invFont3);
 			drawMenuButton(buttonList, true, true, true);
 			_screen->updateScreen();
 			_vm->_system->delayMillis(80);
 			drawMenuButton(buttonList, false, false, true);
 			_screen->updateScreen();
-			_screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+			_screen->setFont(_vm->_conFont);
 			result = -1;
 
-		} else if (inputFlag > 0x8010 && inputFlag < 0x8017) {
-			result = inputFlag - 0x8011;
+		} else if (inputFlag > buttonStart && inputFlag < buttonStart + 7) {
+			result = inputFlag - (buttonStart + 1);
 			if (found[result])
 				result = -2;
 		}
@@ -4140,7 +4203,7 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 	if (hlCur >= 0)
 		_vm->gui_drawCharPortraitWithStats(hlCur);
 
-	_screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	_screen->setFont(_vm->_invFont3);
 
 	if (result != -1 && id != 53) {
 		if (flags & 4) {
@@ -4165,7 +4228,7 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 	return result;
 }
 
-void GUI_EoB::displayTextBox(int id) {
+void GUI_EoB::displayTextBox(int id, int, bool) {
 	int op = _screen->setCurPage(2);
 	int od = _screen->curDimIndex();
 	Screen::FontId of = _screen->setFont(_vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
@@ -4206,7 +4269,10 @@ Button *GUI_EoB::initMenu(int id) {
 	}
 
 	if (m->titleStrId != -1) {
-		_screen->printShadedText(getMenuString(m->titleStrId), 5, 5, m->titleCol, 0, _vm->guiSettings()->colors.guiColorBlack);
+		if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
+			displayTextBox(m->titleStrId, 0x55, false);
+		else
+			_screen->printShadedText(getMenuString(m->titleStrId), 5, 5, m->titleCol, 0, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->setTextMarginRight(Screen::SCREEN_W);
 	}
 
@@ -4316,7 +4382,7 @@ void GUI_EoB::drawTextBox(int dim, int id) {
 	_screen->setFont(of);
 }
 
-void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
+void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, bool highlight) {
 	if (slot < 0)
 		return;
 
@@ -4324,7 +4390,7 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 	int y = _saveSlotY + slot * 17 + 20;
 	int w = 167;
 	char slotString[26];
-	Common::strlcpy(slotString, slot < 6 ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], _vm->gameFlags().platform == Common::kPlatformFMTowns ? 25 : 20);
+	Common::strlcpy(slotString, slot < _numSlotsVisible ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], _vm->gameFlags().platform == Common::kPlatformFMTowns ? 25 : 20);
 	
 	if (slot >= 6) {
 		x = _saveSlotX + 118;
@@ -4341,7 +4407,7 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 		y++;
 	}
 
-	_screen->printShadedText(slotString, x + 4, y + 3, textCol, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->printShadedText(slotString, x + 4, y + 3, highlight ? _vm->guiSettings()->colors.guiColorLightRed : (_vm->_configRenderMode == Common::kRenderCGA ? 1 : _vm->guiSettings()->colors.guiColorWhite), 0, _vm->guiSettings()->colors.guiColorBlack);
 	_vm->screen()->setFont(fnt);
 }
 
@@ -4467,7 +4533,7 @@ void GUI_EoB::releaseButtons(Button *list) {
 }
 
 void GUI_EoB::setupSaveMenuSlots() {
-	for (int i = 0; i < 6; ++i) {
+	for (int i = 0; i < _numSlotsVisible; ++i) {
 		if (_savegameOffset + i < _savegameListSize) {
 			if (_savegameList[i + _savegameOffset]) {
 				Common::strlcpy(_saveSlotStringsTemp[i], _savegameList[i + _savegameOffset], 25);
@@ -4526,7 +4592,7 @@ void GUI_EoB::restParty_updateRestTime(int hours, bool init) {
 	_screen->setFont(of);
 }
 
-const EoBRect16 GUI_EoB::_highlightFrames[] = {
+const EoBRect16 GUI_EoB::_highlightFramesDefault[] = {
 	{ 0x00B7, 0x0001, 0x00F7, 0x0034 },
 	{ 0x00FF, 0x0001, 0x013F, 0x0034 },
 	{ 0x00B7, 0x0035, 0x00F7, 0x0068 },
@@ -4556,6 +4622,8 @@ const uint8 GUI_EoB::_highlightColorTableEGA[] = { 0x0C, 0x0D, 0x0E, 0x0F, 0x0E,
 const uint8 GUI_EoB::_highlightColorTableAmiga[] = { 0x13, 0x0B, 0x12, 0x0A, 0x11, 0x09, 0x11, 0x0A, 0x12, 0x0B, 0x00 };
 
 const uint8 GUI_EoB::_highlightColorTablePC98[] = { 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x00 };
+
+const uint8 GUI_EoB::_highlightColorTableSegaCD[] = { 0x3D, 0x3D, 0x3D, 0x3E, 0x3E, 0x3E, 0x3F, 0x3F, 0x3F, 0x3E, 0x3E, 0x3E, 0x00 };
 
 } // End of namespace Kyra
 

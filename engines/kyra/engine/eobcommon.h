@@ -340,6 +340,7 @@ protected:
 	// Main loop
 	virtual void startupNew();
 	virtual void startupLoad() = 0;
+	virtual void startupLoad2() {}
 	void runLoop();
 	void update() override { screen()->updateScreen(); }
 	bool checkPartyStatus(bool handleDeath);

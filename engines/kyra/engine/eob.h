@@ -82,6 +82,7 @@ private:
 	// Main loop
 	void startupNew() override;
 	void startupLoad() override;
+	void startupLoad2() override;
 
 	// Intro/Outro/Sequence Playback
 	enum IntroPart {
@@ -94,7 +95,7 @@ private:
 	void seq_playFinale() override;
 	void seq_xdeath() override;
 
-	void seq_segaOpeningCredits();
+	void seq_segaOpeningCredits(bool jumpToTitle);
 	void seq_segaFinalCredits();
 	void seq_segaShowStats();
 
@@ -170,6 +171,7 @@ private:
 	void turnUndeadAutoHit() override;
 
 	const char *const *_turnUndeadString;
+	const uint8 *_scrYellow;
 
 	// Sound
 	void snd_loadAmigaSounds(int level, int) override;

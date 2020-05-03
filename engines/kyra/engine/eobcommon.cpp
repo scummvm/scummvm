@@ -638,8 +638,9 @@ Common::Error EoBCoreEngine::go() {
 		if (action == -1) {
 			// load game
 			startupLoad();
-			repeatLoop = _gui->runLoadMenu(72, 14, true);
-				
+			repeatLoop = _gui->runLoadMenu(_flags.platform == Common::kPlatformSegaCD ? 80 : 72, _flags.platform == Common::kPlatformSegaCD ? 16 : 14, true);
+			if (!repeatLoop)
+				startupLoad2();
 		} else if (action == -2 || action == -4) {
 			// new game
 			repeatLoop = startCharacterGeneration(action == -4);
@@ -772,11 +773,21 @@ bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 	if (checkPartyStatusExtra()) {
 		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 		gui_updateControls();
-		if (_gui->runLoadMenu(0, 0)) {
+		int x = 0;
+		int y = 0;
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			startupLoad();
+			x = 80;
+			y = 16;
+		}
+		if (_gui->runLoadMenu(x, y)) {
 			_screen->setFont(of);
 			return true;
 		}
 	}
+
+	if (_flags.platform == Common::kPlatformSegaCD)
+		_screen->sega_fadeToBlack(1);
 
 	quitGame();
 	return false;

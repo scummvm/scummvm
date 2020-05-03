@@ -67,7 +67,7 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_shakeBackBuffer1 = _shakeBackBuffer2 = 0;
 	_compassDirection2 = _compassAnimDest = _compassAnimPhase = _compassAnimStep = _compassAnimDelayCounter = 0;
 	_compassAnimSwitch = _compassAnimDone = _compassTilesRestore = false;
-	_redGrid = _charTilesTable = 0;
+	_redGrid = _charTilesTable = _scrYellow = 0;
 	_compassData = 0;
 	_mapStrings1 = _mapStrings2 = _mapStrings3 = 0;
 
@@ -85,6 +85,7 @@ EoBEngine::~EoBEngine() {
 	releaseShpArr(_weaponSlotShapes, 6);
 	releaseShpArr(_invSmallDigits, 32);
 
+	delete[] _scrYellow;
 	delete[] _redGrid;
 	delete[] _doorShapesSrc;
 	delete[] _doorSwitchShapesSrc;
@@ -160,7 +161,7 @@ Common::Error EoBEngine::init() {
 		_gui = new GUI_EoB_SegaCD(this);
 		assert(_gui);
 		_playFldPattern2 = new uint16[1040];
-		_tempPattern = new uint16[792];
+		_tempPattern = new uint16[924];
 		_shakeBackBuffer1 = new uint8[120 * 6];
 		_shakeBackBuffer2 = new uint8[179 * 6];
 		_compassData = new uint8[0x5000];
@@ -247,6 +248,15 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 	for (int i = 0; i < 6; ++i)
 		_teleporterShapes[i] = _sparkShapes[(i + 1) >> 1];
 
+	uint8 *cmdec = new uint8[47925];
+	uint8 *scrYellow = new uint8[4992];
+	in = _sres->resData(8, 0);
+	_screen->decodeBIN(in + 4, cmdec, READ_LE_UINT16(in + 2));
+	memcpy(scrYellow, &cmdec[0x87C0], 4992);
+	delete[] in;
+	delete[] cmdec;
+	_scrYellow = scrYellow;
+
 	int cp = _screen->setCurPage(Screen_EoB::kSegaInitShapesPage);
 	for (int i = 0; i < 4; ++i)
 		_screen->sega_getRenderer()->loadToVRAM(_redGridTile, 8, 0x52A0 + i * 8);
@@ -256,7 +266,7 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 	_screen->drawShape(Screen_EoB::kSegaInitShapesPage, _weaponSlotShapes[1], 0, 16, 0);
 	_weaponSlotGrid = _screen->encodeShape(0, 0, 4, 16);
 	_disabledCharGrid = _screen->encodeShape(0, 0, 4, 32);
-	_blackBoxSmallGrid = _screen->encodeShape(0, 0, 2, 8);
+	_blackBoxSmallGrid = _screen->encodeShape(0, 0, 2, guiSettings()->charBoxCoords.facePosY_1[0] - guiSettings()->charBoxCoords.boxY[0] - 1);
 	_blackBoxWideGrid = _screen->encodeShape(0, 0, 4, 8);
 	_redGrid = _screen->encodeShape(0, 32, 4, 32);
 	_screen->clearPage(Screen_EoB::kSegaInitShapesPage);
@@ -303,13 +313,29 @@ void EoBEngine::startupLoad() {
 	_sound->loadSoundFile(0);
 	_screen->selectPC98Palette(0, _screen->getPalette(0));
 
-	if (_flags.platform == Common::kPlatformSegaCD) {
-		_screen->sega_selectPalette(4, 0);
-		_screen->sega_selectPalette(8, 2);
-		_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
-		_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
-		_txt->clearDim(0);
-	}
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return;
+
+	_screen->sega_fadeToBlack(1);
+	_screen->sega_selectPalette(4, 0);
+	_screen->sega_selectPalette(40, 2);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
+	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
+	_txt->clearDim(0);
+	_screen->clearPage(0);
+	_screen->sega_drawClippedLine(20, 18, 0, 0, 160, 144, 0xEE);
+	_screen->sega_drawClippedLine(20, 18, 0, 1, 159, 143, 0xAA);
+	_screen->sega_drawClippedLine(20, 18, 1, 1, 158, 142, 0xBB);
+	_screen->sega_loadTextBufferToVRAM(0, 0x20, 11520);
+	_screen->sega_getRenderer()->fillRectWithTiles(1, 10, 4, 20, 18, 0x4001, true);
+	_screen->sega_fadeToNeutral(1);
+}
+
+void EoBEngine::startupLoad2() {
+	if (_flags.platform != Common::kPlatformSegaCD)
+		return;
+	_screen->sega_fadeToBlack(1);
+	seq_segaOpeningCredits(true);
 }
 
 void EoBEngine::drawNpcScene(int npcIndex) {
@@ -1174,9 +1200,9 @@ bool EoBEngine::checkPartyStatusExtra() {
 			if (checkInput(0, false, 0) & 0xFF)
 				break;
 		}
+		_screen->copyPage(Screen_EoB::kDefeatMsgBackupPage, 0);
 	}
-
-	_screen->copyPage(Screen_EoB::kDefeatMsgBackupPage, 0);
+	
 	_eventList.clear();
 	_screen->setScreenDim(cd);
 	_txt->removePageBreakFlag();

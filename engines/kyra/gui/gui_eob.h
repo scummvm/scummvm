@@ -83,6 +83,11 @@ protected:
 	Button *initMenu(int id);
 	void releaseButtons(Button *list);
 
+	int8 *_numAssignedSpellsOfType;
+	char** _saveSlotStringsTemp;
+	int16 _saveSlotX;
+	int16 _saveSlotY;
+
 	Screen_EoB *_screen;
 
 private:
@@ -91,37 +96,37 @@ private:
 	void simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk);
 
 	bool runSaveMenu(int x, int y);
-	int selectSaveSlotDialogue(int x, int y, int id);
+	int selectSaveSlotDialog(int x, int y, int id);
+	virtual void drawSaveSlotDialog(int x, int y, int id);
 	void runMemorizePrayMenu(int charIndex, int spellType);
 	void scribeScrollDialogue();
 	bool restParty();
 
 	virtual void drawCampMenu() {}
+	virtual void initMemorizePrayMenu() {}
 	virtual bool confirmDialogue(int id);
 	int selectCharacterDialogue(int id);
-	virtual void displayTextBox(int id);
+	virtual void displayTextBox(int id, int textColor = 0xFF, bool wait = true);
 
 	virtual void drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill);
 	void drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill);
 	void drawTextBox(int dim, int id);
-	void drawSaveSlotButton(int slot, int redrawBox, int textCol);
-	void memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight);
+	virtual void drawSaveSlotButton(int slot, int redrawBox, bool highlight);
+	virtual void memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight);
 	virtual void updateOptionsStrings();
 
 	Button *linkButton(Button *list, Button *newbt);
 
 	void setupSaveMenuSlots();
-	int getHighlightSlot();
+	virtual int getHighlightSlot();
 	void sortSaveSlots() override;
 
 	virtual void restParty_updateRestTime(int hours, bool init);
 
 	char **_menuStringsPrefsTemp;
-	char **_saveSlotStringsTemp;
 	int16 *_saveSlotIdTemp;
 	int _savegameOffset;
-	int16 _saveSlotX;
-	int16 _saveSlotY;
+	const int _numSlotsVisible;
 
 	EoBCoreEngine *_vm;
 
@@ -141,7 +146,6 @@ private:
 
 	uint8 _numPages;
 	uint8 _numVisPages;
-	int8 *_numAssignedSpellsOfType;
 	uint32 _clericSpellAvltyFlags;
 	uint32 _paladinSpellAvltyFlags;
 	bool _needRest;
@@ -155,11 +159,13 @@ private:
 	const uint8 *_highLightColorTable;
 	uint32 _highLightBoxTimer;
 
-	static const EoBRect16 _highlightFrames[];
+	const EoBRect16 *_highlightFrames;
+	static const EoBRect16 _highlightFramesDefault[];
 	static const uint8 _highlightColorTableVGA[];
 	static const uint8 _highlightColorTableEGA[];
 	static const uint8 _highlightColorTableAmiga[];
 	static const uint8 _highlightColorTablePC98[];
+	static const uint8 _highlightColorTableSegaCD[];
 
 	// FM-Towns specific
 	int checkKatakanaSelection();

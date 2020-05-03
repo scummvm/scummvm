@@ -141,6 +141,7 @@ void EoBEngine::gui_setupPlayFieldHelperPages(bool keepText) {
 		_txt->clearDim(0);
 
 	SegaRenderer *r = _screen->sega_getRenderer();
+	r->loadToVRAM(_scrYellow, 4992, 0x3CE0);
 	r->fillRectWithTiles(0, 0, 0, 22, 21, 0);
 	r->fillRectWithTiles(0, 22, 0, 18, 21, 0);
 	r->fillRectWithTiles(1, 0, 0, 40, 26, 0x2000, true, false, _playFldPattern2);
@@ -347,7 +348,7 @@ void EoBEngine::gui_drawSpellbook() {
 		int d = _openBookAvailableSpells[_openBookSpellLevel * 10 + i];
 		if (d < 0)
 			continue;
-		printSpellbookString(&_tempPattern[(i + 1) * 12], _openBookSpellList[d], 0x63C9);
+		printSpellbookString(&_tempPattern[(i + 1) * 12], _openBookSpellList[d], (i == _openBookSpellSelectedItem) ? 0x6223 : 0x63C9);
 	}
 
 	r->fillRectWithTiles(0, 10, 15, 12, 6, 0, true, false, _tempPattern);
@@ -561,6 +562,7 @@ void EoBEngine::printStatsString(const char *str, int x, int y) {
 }
 
 void EoBEngine::printSpellbookString(uint16 *dst, const char *str, uint16 ntbl) {
+	assert(str);
 	for (char c = *str++; c; c = *str++) {
 		if (c > 31 && c < 128)
 			*dst = ntbl + c - 32;
@@ -646,10 +648,19 @@ GUI_EoB_SegaCD::GUI_EoB_SegaCD(EoBEngine *vm) : GUI_EoB(vm), _vm(vm) {
 	_screen->decodeBIN(cm + 4, cmdec, decodeSize);
 	_campMenu = cmdec;
 	delete[] cm;
+
+	const EoBMenuButtonDef* df = &_vm->_menuButtonDefs[6];
+	_saveLoadCancelButton = new Button();
+	_saveLoadCancelButton->index = 7;
+	_saveLoadCancelButton->width = df->width;
+	_saveLoadCancelButton->height = df->height;
+	_saveLoadCancelButton->flags = df->flags;
+	_saveLoadCancelButton->extButtonDef = df;
 }
 
 GUI_EoB_SegaCD::~GUI_EoB_SegaCD() {
 	delete[] _campMenu;
+	delete _saveLoadCancelButton;
 }
 
 void GUI_EoB_SegaCD::drawCampMenu() {
@@ -657,6 +668,38 @@ void GUI_EoB_SegaCD::drawCampMenu() {
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 21, 0);
 	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 0, 22, 21, 0x4001, true);
 	_screen->sega_selectPalette(40, 2, true);
+}
+
+void GUI_EoB_SegaCD::initMemorizePrayMenu() {
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 21, 0);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 8, 20, 2, 0x62AB, true);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 4, 20, 4, 0x6283, true);
+	_screen->sega_getRenderer()->memsetVRAM(0x5060, 0, 2560);
+	_screen->sega_getRenderer()->memsetVRAM(0x5560, 0, 1280);
+	_screen->sega_getRenderer()->loadToVRAM(&_campMenu[0x87C0], 4992, 0x3CE0);
+	_screen->sega_clearTextBuffer(0);
+	_vm->_txt->printShadowedText(getMenuString(37), 0, 2, 0xFF, 0xCC, 160, 16, 0, false);
+	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 2560);
+	_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+	_screen->copyRegion(8, 32, 8, 32, 160, 16, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+}
+
+void GUI_EoB_SegaCD::drawSaveSlotDialog(int x, int y, int id) {
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 21, 0);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, (x >> 3) + 1, (y >> 3) + (y ? 3 : 4), 20, 2, 0x6283, true);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, (x >> 3) + (x ? 5 : 6), (y >> 3) + (y ? 6 : 7), 15, 10, 0x62AB, true);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, (x >> 3) + 1, (y >> 3) + 19, 7, 1, 0x6002, true);
+	_screen->sega_getRenderer()->loadToVRAM(&_campMenu[0x87C0], 4992, 0x3CE0);
+	_screen->sega_getRenderer()->memsetVRAM(0x5560, 0, 4480);
+	_screen->sega_clearTextBuffer(0);
+	_saveLoadCancelButton->x = ((const EoBMenuButtonDef*)_saveLoadCancelButton->extButtonDef)->x + x - (x ? 8 : 0);
+	_saveLoadCancelButton->y = ((const EoBMenuButtonDef*)_saveLoadCancelButton->extButtonDef)->y + y;
+	int cs = _screen->setFontStyles(_screen->_currentFont, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
+	_vm->_txt->printShadowedText(_vm->_saveLoadStrings[2 + id], 0, 3, 0xFF, 0xCC, 160, 16, 0, false);
+	_screen->setFontStyles(_screen->_currentFont, cs);
+	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 1280);
+	_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+	_screen->copyRegion(x, y + 8, x, y + 8, 176, 168, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
 }
 
 bool GUI_EoB_SegaCD::confirmDialogue(int id) {
@@ -732,17 +775,22 @@ bool GUI_EoB_SegaCD::confirmDialogue(int id) {
 	return result;
 }
 
-void GUI_EoB_SegaCD::displayTextBox(int id) {
+void GUI_EoB_SegaCD::displayTextBox(int id, int textColor, bool wait) {
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 20, 0);
 	_screen->sega_clearTextBuffer(0);
-	int cs = _screen->setFontStyles(_screen->_currentFont, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
-	_vm->_txt->printShadowedText(getMenuString(id), 0, 0, 0xFF, 0xCC, 160, 40, 0, false);
+	int cs = _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat;
+	if (id == 23 || id == 26 || id == 49)
+		cs |= Font::kStyleNarrow2;
+	cs = _screen->setFontStyles(_screen->_currentFont, cs);
+	_vm->_txt->printShadowedText(getMenuString(id), 0, 0, textColor, 0xCC, 160, 40, 0, false);
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 3200);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 6, 20, 5, 0x6283, true);
 	_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
 	_screen->copyRegion(0, 0, 0, 0, 176, 168, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
+	if (!wait)
+		return;
 
 	_vm->resetSkipFlag();
 	while (!(_vm->shouldQuit() || _vm->skipFlag()))
@@ -753,26 +801,66 @@ void GUI_EoB_SegaCD::displayTextBox(int id) {
 void GUI_EoB_SegaCD::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill) {
 	if (!b)
 		return;
-	drawButtonIntern(b->index - 1, clicked ? 1 : 0);
-	drawButtonIntern(b->index - 1, 2);
-}
 
-void GUI_EoB_SegaCD::drawButtonIntern(int id, int op) {
-	assert(id < 22);
-	const SegaMenuButton &b = _menuButtons[id];
-	if (b.w == 0)
+	const MenuButtonTiles &t = _menuButtonTiles[b->index - 1];
+	if (!t.nameTbl)
 		return;
 
-	if (op == 2) {
-		_screen->sega_getRenderer()->fillRectWithTiles(0, b.x, b.y, b.w, b.h, 0x4000 + b.nameTbl, true);
-	} else {
-		_screen->sega_getRenderer()->loadToVRAM(&_campMenu[(0x1CE + b.nameTbl2 + op * b.w * b.h) << 5], (b.w * b.h) << 5, b.nameTbl << 5);
+	_screen->sega_getRenderer()->loadToVRAM(&_campMenu[(0x1CE + t.srcOffs + (clicked ? 1 : 0) * ((b->width * b->height) >> 6)) << 5], (b->width * b->height) >> 1, t.nameTbl << 5);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, b->x >> 3, b->y >> 3, b->width >> 3, b->height >> 3, 0x4000 + t.nameTbl, true);
+	_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+	_screen->copyRegion(b->x, b->y, b->x, b->y, b->width, b->height, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+}
+
+void GUI_EoB_SegaCD::drawSaveSlotButton(int slot, int redrawBox, bool highlight) {
+	if (slot < 0)
+		return;
+
+	if (slot == 5) {
+		drawMenuButton(_saveLoadCancelButton, redrawBox == 2, false, false);
+		return;
 	}
 
-	if (op != 2) {
-		_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
-		_screen->copyRegion(b.x << 3, b.y << 3, b.x << 3, b.y << 3, b.w << 3, b.h << 3, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, (_saveSlotX >> 3) + (_saveSlotX ? 1 : 2), (_saveSlotY >> 3) + (_saveSlotY ? 6 : 7) + (slot << 1), 3, 2, 0x41E7 + slot * 12 + (redrawBox == 2 ? 6 : 0), true);
+	_screen->sega_clearTextBuffer(0);
+	_vm->_txt->printShadowedText(slot < 5 ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], 0, (slot << 4) + (slot < 5 ? 0 : 2), highlight ? 0x55 : 0xFF, 0xCC, 121, 80, 0, false);
+	_screen->sega_loadTextBufferToVRAM(0, 0x5560, 4800);
+	_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+	_screen->copyRegion(_saveSlotX + (_saveSlotX ? 8 : 16), _saveSlotY + (_saveSlotY ? 48 : 56) + (slot << 4), _saveSlotX + (_saveSlotX ? 8 : 16), _saveSlotY + (_saveSlotY ? 48 : 56) + (slot << 4), 168, 16, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+}
+
+int GUI_EoB_SegaCD::getHighlightSlot() {
+	int res = -1;
+	Common::Point p = _vm->getMousePos();
+
+	for (int i = 0; i < 5; i++) {
+		int y = _saveSlotY + i * 16 + (_saveSlotY ? 48 : 56);
+		if (_vm->posWithinRect(p.x, p.y, _saveSlotX + (_saveSlotX ? 8 : 16), y, _saveSlotX + 167, y + 15)) {
+			res = i;
+			break;
+		}
 	}
+
+	if (_vm->posWithinRect(p.x, p.y, _saveLoadCancelButton->x, _saveLoadCancelButton->y, _saveLoadCancelButton->x + _saveLoadCancelButton->width - 1, _saveLoadCancelButton->y + _saveLoadCancelButton->height - 1))
+		res = 5;
+
+	return res;
+}
+
+void GUI_EoB_SegaCD::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight) {
+	if (bookPageIndex < 0)
+		return;
+
+	if (spellId) {
+		memset(_vm->_tempPattern, 0, 924);
+		Common::String s = Common::String::format(_vm->_menuStringsMgc[0], spellType ? _vm->_clericSpellList[spellId] : _vm->_mageSpellList[spellId], _numAssignedSpellsOfType[spellId * 2 - 2]);
+		_vm->printSpellbookString(_vm->_tempPattern, s.c_str(), highLight ? 0x6223 : 0x63C9);
+		_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 10 + bookPageIndex, 20, 1, 0, true, true, _vm->_tempPattern);
+	} else {
+		_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 10 + bookPageIndex, 20, 1, 0);
+	}
+	_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
+	_screen->copyRegion(8, 80 + bookPageIndex * 8, 8, 80 + bookPageIndex * 8, 160, 8, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
 }
 
 void GUI_EoB_SegaCD::updateOptionsStrings() {
@@ -814,35 +902,18 @@ void GUI_EoB_SegaCD::restParty_updateRestTime(int hours, bool init) {
 	_vm->delay(160);
 }
 
-const GUI_EoB_SegaCD::SegaMenuButton GUI_EoB_SegaCD::_menuButtons[22] = {
-	{ 0x01e7, 0x0000, 0x0001, 0x0005, 0x000a, 0x0002 },
-	{ 0x01fb, 0x0028, 0x000b, 0x0005, 0x000a, 0x0002 },
-	{ 0x020f, 0x0050, 0x000b, 0x0008, 0x000a, 0x0002 },
-	{ 0x0223, 0x0078, 0x000b, 0x000b, 0x000a, 0x0002 },
-	{ 0x0237, 0x00a0, 0x0001, 0x000e, 0x000a, 0x0002 }, // opt
-	{ 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 }, // dummy
-	{ 0x01cf, 0x01c8, 0x000f, 0x0012, 0x0006, 0x0002 },
-
-	{ 0x025f, 0x0118, 0x0001, 0x000b, 0x000a, 0x0002 }, // load
-	{ 0x024b, 0x00c8, 0x0001, 0x0008, 0x000a, 0x0002 }, // save
-	{ 0x0273, 0x0140, 0x000b, 0x000e, 0x000a, 0x0002 }, // drop
-
-	{ 0x020b, 0x0198, 0x0001, 0x000e, 0x0006, 0x0002 },
-	{ 0x01cf, 0x01c8, 0x000f, 0x0012, 0x0006, 0x0002 },
-	{ 0x01f3, 0x01e0, 0x0001, 0x0008, 0x0006, 0x0002 },
-	{ 0x01ff, 0x01f8, 0x0001, 0x000b, 0x0006, 0x0002 },
-	{ 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 }, // dummy
-	{ 0x01e7, 0x0210, 0x0001, 0x0005, 0x0006, 0x0002 },
-	{ 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 }, // dummy
-
-	{ 0x01CF, 0x0168, 0x0003, 0x000A, 0x0006, 0x0002 }, // yes
-	{ 0x01db, 0x0180, 0x000d, 0x000a, 0x0006, 0x0002 }, // no
-
-	{ 0x01db, 0x01b0, 0x0001, 0x0012, 0x0006, 0x0002 },
-	{ 0x01cf, 0x01c8, 0x000f, 0x0012, 0x0006, 0x0002 },
-
-
-	{ 0x024d, 0x030c, 0x0001, 0x0011, 0x000a, 0x0002 }
+const GUI_EoB_SegaCD::MenuButtonTiles GUI_EoB_SegaCD::_menuButtonTiles[35] = {
+	{ 0x01e7, 0x0000 },	{ 0x01fb, 0x0028 },	{ 0x020f, 0x0050 }, { 0x0223, 0x0078 },
+	{ 0x0237, 0x00a0 }, { 0x0000, 0x0000 },	{ 0x01cf, 0x01c8 },	{ 0x025f, 0x0118 },
+	{ 0x024b, 0x00c8 }, { 0x0273, 0x0140 },	{ 0x020b, 0x0198 },	{ 0x01cf, 0x01c8 },
+	{ 0x01f3, 0x01e0 }, { 0x01ff, 0x01f8 },	{ 0x0000, 0x0000 },	{ 0x01e7, 0x0210 },
+	{ 0x0000, 0x0000 },	{ 0x01CF, 0x0168 }, { 0x01db, 0x0180 }, { 0x01cf, 0x01c8 },
+	{ 0x0000, 0x0000 }, { 0x0000, 0x0000 }, { 0x0000, 0x0000 }, { 0x0000, 0x0000 },
+	{ 0x0000, 0x0000 },	{ 0x0000, 0x0000 },	{ 0x01db, 0x01b0 }, { 0x01cf, 0x01c8 },
+	{ 0x0000, 0x0000 }, { 0x01e7, 0x0270 },	{ 0x01f3, 0x027C }, { 0x01ff, 0x0288 },
+	{ 0x020b, 0x0294 },	{ 0x0217, 0x02A0 },
+	
+	{ 0x024d, 0x030c }
 };
 
 } // End of namespace Kyra

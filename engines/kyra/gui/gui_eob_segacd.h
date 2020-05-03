@@ -38,26 +38,27 @@ public:
 
 private:
 	void drawCampMenu() override;
+	void initMemorizePrayMenu() override;
+	void drawSaveSlotDialog(int x, int y, int id) override;
 	bool confirmDialogue(int id) override;
-	void displayTextBox(int id) override;
+	void displayTextBox(int id, int textColor, bool wait) override;
 	void drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill) override;
-	void drawButtonIntern(int id, int op);
+	void drawSaveSlotButton(int slot, int redrawBox, bool highlight) override;
+	int getHighlightSlot() override;
+	void memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight) override;
 	void updateOptionsStrings() override;
 	void restParty_updateRestTime(int hours, bool init) override;
 
 	const uint8 *_campMenu;
+	Button* _saveLoadCancelButton;
 	EoBEngine *_vm;
 
-	struct SegaMenuButton {
+	struct MenuButtonTiles {
 		uint16 nameTbl;
-		uint16 nameTbl2;
-		int16 x;
-		int16 y;
-		uint16 w;
-		uint16 h;
+		uint16 srcOffs;
 	};
 
-	static const SegaMenuButton _menuButtons[22];
+	static const MenuButtonTiles _menuButtonTiles[35];
 };
 
 } // End of namespace Kyra

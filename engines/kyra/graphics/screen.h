@@ -105,9 +105,8 @@ public:
 	virtual int getCharWidth(uint16 c) const = 0;
 
 	/**
-	 * Gets the height of a specific character. The only font that requires an
-	 * implemenation for this is the SegaCD one. For all other font this is a
-	 * fixed value.
+	 * Gets the height of a specific character. The only font that needs this
+	 * is the SegaCD one. For all other fonts this is a fixed value.
 	 */
 	virtual int getCharHeight(uint16 c) const { return getHeight(); }
 

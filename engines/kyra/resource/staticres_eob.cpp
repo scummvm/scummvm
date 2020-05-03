@@ -524,14 +524,16 @@ void EoBCoreEngine::initStaticResource() {
 	// Hard code the following strings, since EOB I doesn't have them in the original.
 	// EOB I doesn't have load and save menus, because there is only one single
 	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
+	// EOB I actually has save/load menus. I supply the strings here, too... 
 
-	static const char *const saveLoadStrings[6][4] = {
+	static const char *const saveLoadStrings[7][4] = {
 		{   "Cancel",   "Empty Slot",		"Save Game",    "Load Game"     },
 		{   "Abbr.",    "Leerer Slot",		"Speichern",    "  Laden"       },
 		{	" < < ",	"Posizione Vuota",	"Salva",		"Carica"	    },
 		{	"Anular",	"Sin Uso",			"Grabar",		"Cargar"	    },
 		{   0,          0,					0,					0			},
-		{	0,          0,					0,					0			}
+		{	0,          0,					0,					0			},
+		{   "Cancel",   "\x82""d""\x82\x8d\x82\x90\x82\x94\x82\x99\x81""@""\x82\x92\x82\x85\x82\x87\x82\x89\x82\x8f\x82\x8e",		"Select save area",    "Select load data"     }
 	};
 
 	static const char *const errorSlotEmptyString[6] = {
@@ -544,31 +546,38 @@ void EoBCoreEngine::initStaticResource() {
 	};
 	
 	switch (_flags.lang) {
-		case Common::EN_ANY:
+	case Common::EN_ANY: {
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			_saveLoadStrings = saveLoadStrings[6];
+			_errorSlotEmptyString = errorSlotEmptyString[5];
+		} else {
 			_saveLoadStrings = saveLoadStrings[0];
 			_errorSlotEmptyString = errorSlotEmptyString[0];
-			break;
-		case Common::DE_DEU:
-			_saveLoadStrings = saveLoadStrings[1];
-			_errorSlotEmptyString = errorSlotEmptyString[1];
-			break;
-		case Common::IT_ITA:
-			_saveLoadStrings = saveLoadStrings[2];
-			_errorSlotEmptyString = errorSlotEmptyString[2];
-			break;
-		case Common::ES_ESP:
-			_saveLoadStrings = saveLoadStrings[3];
-			_errorSlotEmptyString = errorSlotEmptyString[3];
-			break;
-		case Common::JA_JPN:
-			// EOB II FM-Towns uses English here.
-			// Only the empty slot warning is in Japanese.
-			_saveLoadStrings = saveLoadStrings[0];
-			_errorSlotEmptyString = errorSlotEmptyString[4];
-			break;
-		default:
-			_saveLoadStrings = saveLoadStrings[5];
-			_errorSlotEmptyString = errorSlotEmptyString[5];
+		}
+		break;
+	}
+	case Common::DE_DEU:
+		_saveLoadStrings = saveLoadStrings[1];
+		_errorSlotEmptyString = errorSlotEmptyString[1];
+		break;
+	case Common::IT_ITA:
+		_saveLoadStrings = saveLoadStrings[2];
+		_errorSlotEmptyString = errorSlotEmptyString[2];
+		break;
+	case Common::ES_ESP:
+		_saveLoadStrings = saveLoadStrings[3];
+		_errorSlotEmptyString = errorSlotEmptyString[3];
+		break;
+	case Common::JA_JPN:
+		// EOB II FM-Towns uses English here.
+		// Only the empty slot warning is in Japanese.
+		_saveLoadStrings = saveLoadStrings[0];
+		_errorSlotEmptyString = errorSlotEmptyString[4];
+		break;
+	default:
+		_saveLoadStrings = saveLoadStrings[5];
+		_errorSlotEmptyString = errorSlotEmptyString[5];
+		break;
 	}
 
 	_menuOkString = "OK";
@@ -886,39 +895,42 @@ void EoBCoreEngine::initMenus() {
 
 	static const EoBMenuButtonDef buttonDefsSegaCD[] = {
 		{   0,   8,  40,  80,  16,  20,  3  },
-		{   0,   88, 40,  80,  16,  52,  3  },
-		{   0,   88, 64,  80,  16,  26,  3  },
-		{   0,   88, 88,  80,  16,  32,  3  },
+		{   0,  88,  40,  80,  16,  52,  3  },
+		{   0,  88,  64,  80,  16,  26,  3  },
+		{   0,  88,  88,  80,  16,  32,  3  },
 		{   0,   8, 112,  80,  16,   0,  3  },
-
 		{   0,   0,   0,   0,   0,   0,  0  },
-
-		{   0,  120,144,  48,  16,  19,  7  },
-
-		
-		{   0,   8,  88,  80,  16,   0,  3  }, //load
-		{   0,   8,  64,  80,  16,   0,  3  }, //save
-		{   0,   88,112,  80,  16,   0,  3  }, //drop
-
-		
-
-
-
+		{   0, 120, 144,  48,  16,  19,  7  },
+		{   0,   8,  88,  80,  16,   0,  3  },
+		{   0,   8,  64,  80,  16,   0,  3  },
+		{   0,  88, 112,  80,  16,   0,  3  },
 		{   0,   8, 112,  48,  16,   0,  3  },
-		{   0,  120,144,  48,  16,  19,  7  },
+		{   0, 120, 144,  48,  16,  19,  7  },
 		{   0,   8,  64,  48,  16,   0,  3  },
 		{   0,   8,  88,  48,  16,   0,  3  },
 		{   0,   0,   0,   0,   0,   0,  0  },
 		{   0,   8,  40,  48,  16,   0,  3  },
-		{   0, 120,  40,  24,  16,   0,  3  },
-		
+		{   0, 120,  40,  24,  16,   0,  3  },		
 		{   0,  24,  80,  48,  16,  48,  3  },
 		{   0, 104,  80,  48,  16,  19,  3  },
-		
-		 
+		{   0, 120, 144,  48,  16,  19,  5  },
+		{   0, 184,   2,  63,  50, 112,  0  },
+		{   0, 256,   2,  63,  50, 113,  0  },
+		{   0, 184,  58,  63,  50, 114,  0  },
+		{   0, 256,  58,  63,  50, 115,  0  },
+		{   0, 184, 114,  63,  50, 116,  0  },
+		{   0, 256, 114,  63,  50, 117,  0  },
+		{  36,   8, 144,  48,  16,  48,  5  },
+		{  8,  120, 144,  48,  16,  19,  5  },
+		{  0,    0,  50, 168,  72,  61,  0  },
+		{  31,   8,  48,  24,  16,   2,  5  },
+		{  32,  40,  48,  24,  16,   3,  5  },
+		{  33,  72,  48,  24,  16,   4,  5  },
+		{  34, 104,  48,  24,  16,   5,  5  },
+		{  35, 136,  48,  24,  16,   6,  5  },
 
-		{   0,   88,112,  48,  16,   0,  3  },
-		{   0,  120, 40,  24,  16,   0,  3  },
+		{   0,  88, 112,  48,  16,   0,  3  },
+		{   0, 120,  40,  24,  16,   0,  3  },
 		{   0,   8,  40,  48,  16,   0,  3  },
 		{   0,   8, 136,  80,  16,   0,  3  }
 	};
@@ -936,12 +948,12 @@ void EoBCoreEngine::initMenus() {
 	};
 
 	static const EoBMenuDef menuDefsSegaCD[6] = {
-		{  -1, 0,  0, 10, -1 },
-		{  -1, 0,  0,  0, -1 },
-		{  -1, 0, 10,  7, -1 },
-		{  -1, 0,  0,  0, -1 },
-		{  -1, 0,  0,  0, -1 },
-		{  -1, 0, 17,  2, -1 }
+		{  -1, 0,  0, 10,   -1 },
+		{  -1, 0,  0,  0,   -1 },
+		{  -1, 0, 10,  7,   -1 },
+		{   0, 0, 19,  7, 0x55 },
+		{  -1, 0, 26,  8,   -1 },
+		{  -1, 0, 17,  2,   -1 }
 	};
 
 	delete[] _menuDefs;

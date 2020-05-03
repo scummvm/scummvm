@@ -2270,7 +2270,7 @@ int EoBEngine::mainMenuLoop() {
 void EoBEngine::seq_playIntro(int part) {
 	if (_flags.platform == Common::kPlatformSegaCD) {
 		if (part == kOnlyCredits)
-			seq_segaOpeningCredits();
+			seq_segaOpeningCredits(false);
 		else
 			seq_segaPlaySequence(53, true);
 	} else {
@@ -2430,7 +2430,7 @@ void EoBEngine::seq_xdeath() {
 	for (int iii = 0; iii < 228; ++iii) \
 		((int16*)scrollTable)[iii << 1] = ((int16*)scrollTable)[(iii << 1) + 1] = (iii & 1) ? -step : step;
 
-void EoBEngine::seq_segaOpeningCredits() {
+void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	uint16 *scrollTable = new uint16[0x200];
 	memset(scrollTable, 0, 0x200 * sizeof(uint16));
 	SegaRenderer *r = _screen->sega_getRenderer();
@@ -2459,9 +2459,10 @@ void EoBEngine::seq_segaOpeningCredits() {
 	_allowSkip = true;
 	resetSkipFlag();
 
-	_screen->sega_fadeToNeutral(3);
+	if (!jumpToTitle)
+		_screen->sega_fadeToNeutral(3);
 
-	for (int i = 0; i < 8 && !(shouldQuit() || skipFlag()); ++i) {
+	for (int i = jumpToTitle ? 8 : 0; i < 8 && !(shouldQuit() || skipFlag()); ++i) {
 		updateScrollState(scrollTable, 320);
 		r->loadToVRAM(scrollTable, 0x400, 0xD800);
 		_screen->sega_selectPalette(i == 3 ? 59 : 50, 0, true);
@@ -2526,10 +2527,10 @@ void EoBEngine::seq_segaOpeningCredits() {
 	r->fillRectWithTiles(1, 0, 0, 40, 28, 1, true);
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 	r->render(0);
-	if (!(shouldQuit() || skipFlag()))
+	if (!(jumpToTitle || shouldQuit() || skipFlag()))
 		_screen->sega_fadeToNeutral(3);
 
-	while (!(shouldQuit() || skipFlag()))
+	while (!(jumpToTitle || shouldQuit() || skipFlag()))
 		delay(20);
 
 	_allowSkip = false;
@@ -2771,6 +2772,7 @@ bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool setupScreen) {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return true;
 
+	uint32 startTime = _system->getMillis();
 	_allowSkip = true;
 	resetSkipFlag();
 
@@ -2785,6 +2787,8 @@ bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool setupScreen) {
 
 	if (setupScreen)
 		seq_segaRestoreAfterSequence();
+
+	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
 
 	return true;
 }
