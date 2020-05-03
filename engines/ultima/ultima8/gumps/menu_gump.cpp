@@ -275,7 +275,7 @@ void MenuGump::inputName() {
 	if (GAME_IS_U8)
 		gump = new MenuGump(true);
 	else
-		gump = new RemorseMenuGump(true);
+		gump = new RemorseMenuGump();
 	gump->InitGump(0);
 	gump->setRelativePosition(CENTER);
 }

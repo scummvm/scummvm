@@ -35,7 +35,7 @@ class RemorseMenuGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	RemorseMenuGump(bool nameEntryMode = false);
+	RemorseMenuGump();
 	~RemorseMenuGump() override;
 
 	// Init the gump, call after construction
@@ -50,7 +50,6 @@ public:
 	void ChildNotify(Gump *child, uint32 message) override;
 
 protected:
-	bool _nameEntryMode;
 
 	virtual void selectEntry(int entry);
 };

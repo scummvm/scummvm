@@ -51,16 +51,12 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMenuGump, ModalGump)
 
-RemorseMenuGump::RemorseMenuGump(bool nameEntryMode_)
+RemorseMenuGump::RemorseMenuGump()
 	: ModalGump(0, 0, 640, 480, 0, FLAG_DONT_SAVE) {
-	_nameEntryMode = nameEntryMode_;
 
 	Mouse *mouse = Mouse::get_instance();
 	mouse->pushMouseCursor();
-	if (!_nameEntryMode)
-		mouse->setMouseCursor(Mouse::MOUSE_HAND);
-	else
-		mouse->setMouseCursor(Mouse::MOUSE_NONE);
+	mouse->setMouseCursor(Mouse::MOUSE_HAND);
 
 	// Save old music state
 	MusicProcess *musicprocess = MusicProcess::get_instance();
@@ -179,34 +175,19 @@ void RemorseMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sca
 bool RemorseMenuGump::OnKeyDown(int key, int mod) {
 	if (Gump::OnKeyDown(key, mod)) return true;
 
-	if (!_nameEntryMode) {
-
-		if (key == Common::KEYCODE_ESCAPE) {
-			// FIXME: this check should probably be in Game or GUIApp
-			MainActor *av = getMainActor();
-			if (av && !av->hasActorFlags(Actor::ACT_DEAD))
-				Close(); // don't allow closing if dead/game over
-		} else if (key >= Common::KEYCODE_1 && key <= Common::KEYCODE_9) {
-			selectEntry(key - Common::KEYCODE_1 + 1);
-		}
-
+	if (key == Common::KEYCODE_ESCAPE) {
+		// FIXME: this check should probably be in Game or GUIApp
+		MainActor *av = getMainActor();
+		if (av && !av->hasActorFlags(Actor::ACT_DEAD))
+			Close(); // don't allow closing if dead/game over
+	} else if (key >= Common::KEYCODE_1 && key <= Common::KEYCODE_6) {
+		selectEntry(key - Common::KEYCODE_1 + 1);
 	}
 
 	return true;
 }
 
 void RemorseMenuGump::ChildNotify(Gump *child, uint32 message) {
-	if (child->IsOfType<EditWidget>() && message == EditWidget::EDIT_ENTER) {
-		EditWidget *editwidget = p_dynamic_cast<EditWidget *>(child);
-		assert(editwidget);
-		Std::string name = editwidget->getText();
-		if (!name.empty()) {
-			MainActor *av = getMainActor();
-			av->setName(name);
-			Close();
-		}
-	}
-
 	if (child->IsOfType<ButtonWidget>() && message == ButtonWidget::BUTTON_CLICK) {
 		selectEntry(child->GetIndex());
 	}
@@ -219,11 +200,12 @@ void RemorseMenuGump::selectEntry(int entry) {
 	settingman->get("quotes", quotes);
 
 	switch (entry) {
-	case 1: // Intro
+	case 1: // New Game
 		Game::get_instance()->playIntroMovie(true);
 		break;
 	case 2:
-	case 3: // Read/Write Diary
+	case 3: // Load/Save Game
+		// FIXME: Need a different save/load gump for crusader
 		U8SaveGump::showLoadSaveGump(this, entry == 3);
 		break;
 	case 4: {
@@ -237,12 +219,6 @@ void RemorseMenuGump::selectEntry(int entry) {
 		break;
 	case 6: // Quit
 		QuitGump::verifyQuit();
-		break;
-	case 7: // Quotes
-		if (quotes) Game::get_instance()->playQuotes();
-		break;
-	case 8: // End Game
-		if (endgame) Game::get_instance()->playEndgameMovie(true);
 		break;
 	default:
 		break;
