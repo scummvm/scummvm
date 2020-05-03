@@ -69,7 +69,7 @@ uint MacTextLine::getChunkNum(int *col) {
 
 	if (i == chunks.size()) {
 		i--;	// touch the last chunk
-		pos = chunks[i].text.size() - 1;
+		pos = chunks[i].text.size();
 	}
 
 	*col = pos;
@@ -876,7 +876,11 @@ void MacText::insertChar(byte c, int *row, int *col) {
 	uint ch = line->getChunkNum(&pos);
 
 	Common::U32String newchunk(line->chunks[ch].text);
-	newchunk.insertChar(c, pos);
+
+	if (pos >= newchunk.size())
+		newchunk += c;
+	else
+		newchunk.insertChar(c, pos);
 	int chunkw = line->chunks[ch].getFont()->getStringWidth(newchunk);
 	int oldw = line->chunks[ch].getFont()->getStringWidth(line->chunks[ch].text);
 
