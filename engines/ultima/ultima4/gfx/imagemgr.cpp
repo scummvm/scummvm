@@ -178,12 +178,13 @@ SubImage *ImageMgr::loadSubImageFromConf(const ImageInfo *info, const ConfigElem
 
 	subimage = new SubImage();
 	subimage->_name = conf.getString("name");
-	subimage->width = conf.getInt("width");
-	subimage->height = conf.getInt("height");
+	subimage->setWidth(conf.getInt("width"));
+	subimage->setHeight(conf.getInt("height"));
 	subimage->_srcImageName = info->_name;
 	if (conf.exists("x") && conf.exists("y")) {
-		x = subimage->x = conf.getInt("x");
-		y = subimage->y = conf.getInt("y");
+		x = conf.getInt("x");
+		y = conf.getInt("y");
+		subimage->moveTo(x, y);
 	} else {
 		// Automatically increment our position through the base image
 		x += last_width;
@@ -192,13 +193,12 @@ SubImage *ImageMgr::loadSubImageFromConf(const ImageInfo *info, const ConfigElem
 			y += last_height;
 		}
 
-		subimage->x = x;
-		subimage->y = y;
+		subimage->moveTo(x, y);
 	}
 
 	// "remember" the width and height of this subimage
-	last_width = subimage->width;
-	last_height = subimage->height;
+	last_width = subimage->width();
+	last_height = subimage->height();
 
 	return subimage;
 }

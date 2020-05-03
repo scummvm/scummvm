@@ -90,8 +90,8 @@ void TileView::drawTile(MapTile &mapTile, bool focus, int x, int y) {
 	_animated->fillRect(0, 0, SCALED(_tileWidth), SCALED(_tileHeight), 0, 0, 0, 255);
 
 	// Draw blackness on the tile.
-	_animated->drawSubRect(SCALED(x * _tileWidth + this->_x),
-	    SCALED(y * _tileHeight + this->_y), 0, 0,
+	_animated->drawSubRect(SCALED(x * _tileWidth + _bounds.left),
+	    SCALED(y * _tileHeight + _bounds.top), 0, 0,
 	    SCALED(_tileWidth), SCALED(_tileHeight));
 
 	// Draw the tile to the screen
@@ -103,12 +103,12 @@ void TileView::drawTile(MapTile &mapTile, bool focus, int x, int y) {
 		tile->getAnim()->draw(_animated, tile, mapTile, DIR_NONE);
 
 		// Then draw it to the screen
-		_animated->drawSubRect(SCALED(x * _tileWidth + this->_x),
-			SCALED(y * _tileHeight + this->_y), 0, 0,
+		_animated->drawSubRect(SCALED(x * _tileWidth + _bounds.left),
+			SCALED(y * _tileHeight + _bounds.top), 0, 0,
 			SCALED(_tileWidth), SCALED(_tileHeight));
 	} else {
-		image->drawSubRect(SCALED(x * _tileWidth + this->_x),
-			SCALED(y * _tileHeight + this->_y),
+		image->drawSubRect(SCALED(x * _tileWidth + _bounds.left),
+			SCALED(y * _tileHeight + _bounds.top),
 			0, SCALED(_tileHeight * mapTile._frame),
 			SCALED(_tileWidth), SCALED(_tileHeight));
 	}
@@ -125,7 +125,7 @@ void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 	// Clear tile contents
 	_animated->fillRect(0, 0, SCALED(_tileWidth), SCALED(_tileHeight), 0, 0, 0, 255);
 	_animated->drawSubRect(
-		SCALED(x * _tileWidth + this->_x), SCALED(y * _tileHeight + this->_y),
+		SCALED(x * _tileWidth + _bounds.left), SCALED(y * _tileHeight + _bounds.top),
 		0, 0,
 		SCALED(_tileWidth), SCALED(_tileHeight)
 	);
@@ -158,8 +158,8 @@ void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 		}
 
 		// Then draw it to the screen
-		_animated->drawSubRect(SCALED(x * _tileWidth + this->_x),
-			SCALED(y * _tileHeight + this->_y), 0, 0,
+		_animated->drawSubRect(SCALED(x * _tileWidth + _bounds.left),
+			SCALED(y * _tileHeight + _bounds.top), 0, 0,
 				SCALED(_tileWidth), SCALED(_tileHeight)
 		);
 	}
@@ -176,25 +176,25 @@ void TileView::drawFocus(int x, int y) {
 	// Draw the focus rectangle around the tile
 	if ((g_screen->_currentCycle * 4 / SCR_CYCLE_PER_SECOND) % 2) {
 		// left edge
-		_screen->fillRect(SCALED(x * _tileWidth + this->_x),
-			SCALED(y * _tileHeight + this->_y),
+		_screen->fillRect(SCALED(x * _tileWidth + _bounds.left),
+			SCALED(y * _tileHeight + _bounds.top),
 			SCALED(2), SCALED(_tileHeight), 0xff, 0xff, 0xff);
 
 		// top edge
-		_screen->fillRect(SCALED(x * _tileWidth + this->_x),
-			SCALED(y * _tileHeight + this->_y),
+		_screen->fillRect(SCALED(x * _tileWidth + _bounds.left),
+			SCALED(y * _tileHeight + _bounds.top),
 			SCALED(_tileWidth), SCALED(2),
 			0xff, 0xff, 0xff);
 
 		// Right edge
-		_screen->fillRect(SCALED((x + 1) * _tileWidth + this->_x - 2),
-		    SCALED(y * _tileHeight + this->_y),
+		_screen->fillRect(SCALED((x + 1) * _tileWidth + _bounds.left - 2),
+		    SCALED(y * _tileHeight + _bounds.top),
 			SCALED(2), SCALED(_tileHeight),
 		    0xff, 0xff, 0xff);
 
 		// Bottom edge
-		_screen->fillRect(SCALED(x * _tileWidth + this->_x),
-			SCALED((y + 1) * _tileHeight + this->_y - 2),
+		_screen->fillRect(SCALED(x * _tileWidth + _bounds.left),
+			SCALED((y + 1) * _tileHeight + _bounds.top - 2),
 			SCALED(_tileWidth), SCALED(2),
 			0xff, 0xff, 0xff);
 	}

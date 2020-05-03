@@ -517,10 +517,10 @@ void Screen::screenDrawImage(const Common::String &name, int x, int y) {
 
 		if (info) {
 			info->_image->drawSubRect(x, y,
-			                          subimage->x * (settings._scale / info->_prescale),
-			                          subimage->y * (settings._scale / info->_prescale),
-			                          subimage->width * (settings._scale / info->_prescale),
-			                          subimage->height * (settings._scale / info->_prescale));
+			                          subimage->left * (settings._scale / info->_prescale),
+			                          subimage->top * (settings._scale / info->_prescale),
+			                          subimage->width() * (settings._scale / info->_prescale),
+			                          subimage->height() * (settings._scale / info->_prescale));
 			return;
 		}
 	}

@@ -164,8 +164,8 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
 	}
 
 	if (tiledWall) {
-		int i_x = SCALED((VIEWPORT_W * _tileWidth  / 2) + this->_x) - (scaled->width() / 2);
-		int i_y = SCALED((VIEWPORT_H * _tileHeight / 2) + this->_y) - (scaled->height() / 2);
+		int i_x = SCALED((VIEWPORT_W * _tileWidth  / 2) + _bounds.left) - (scaled->width() / 2);
+		int i_y = SCALED((VIEWPORT_H * _tileHeight / 2) + _bounds.top) - (scaled->height() / 2);
 		int f_x = i_x + scaled->width();
 		int f_y = i_y + scaled->height();
 		int d_x = _animated->width();
@@ -177,12 +177,12 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
 					x, y, 0, 0, f_x - x, f_y - y);
 	} else {
 		int y_offset = MAX(0, (dscale[distance] - offset_adj) * offset_multiplier);
-		int x = SCALED((VIEWPORT_W * _tileWidth / 2) + this->_x) - (scaled->width() / 2);
-		int y = SCALED((VIEWPORT_H * _tileHeight / 2) + this->_y + y_offset) - (scaled->height() / 8);
+		int x = SCALED((VIEWPORT_W * _tileWidth / 2) + _bounds.left) - (scaled->width() / 2);
+		int y = SCALED((VIEWPORT_H * _tileHeight / 2) + _bounds.top + y_offset) - (scaled->height() / 8);
 
 		scaled->drawSubRectOn(this->_screen, x, y, 0, 0,
-			SCALED(_tileWidth * VIEWPORT_W + this->_x) - x ,
-			SCALED(_tileHeight * VIEWPORT_H + this->_y) - y);
+			SCALED(_tileWidth * VIEWPORT_W + _bounds.left) - x ,
+			SCALED(_tileHeight * VIEWPORT_H + _bounds.top) - y);
 	}
 
 	delete scaled;
@@ -422,8 +422,8 @@ void DungeonView::drawWall(int xoffset, int distance, Direction orientation, Dun
 	int x = 0, y = 0;
 	SubImage *subimage = imageMgr->getSubImage(DNG_GRAPHIC_INFO[index].subimage);
 	if (subimage) {
-		x = subimage->x;
-		y = subimage->y;
+		x = subimage->left;
+		y = subimage->top;
 	}
 
 	g_screen->screenDrawImage(DNG_GRAPHIC_INFO[index].subimage, (BORDER_WIDTH + x) * settings._scale,

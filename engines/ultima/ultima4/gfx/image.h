@@ -48,10 +48,9 @@ bool operator==(const RGBA &lhs, const RGBA &rhs);
 
 class Image;
 
-struct SubImage {
+struct SubImage : public Common::Rect {
 	Common::String _name;
 	Common::String _srcImageName;
-	int x, y, width, height;
 };
 
 #define IM_OPAQUE (uint) 255

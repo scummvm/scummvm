@@ -30,8 +30,9 @@ namespace Ultima4 {
 
 Image *View::_screen = nullptr;
 
-View::View(int x, int y, int width, int height) : _x(x), _y(y), _width(width), _height(height),
-	_highlighted(false), _highlightX(0), _highlightY(0), _highlightW(0), _highlightH(0) {
+View::View(int x, int y, int width, int height) :
+		_bounds(Common::Rect(x, y, x + width, y + height)),
+		_highlighted(false) {
 	if (_screen == nullptr)
 		_screen = imageMgr->get("screen")->_image;
 }
@@ -42,7 +43,9 @@ void View::reinit() {
 
 void View::clear() {
 	unhighlight();
-	_screen->fillRect(SCALED(_x), SCALED(_y), SCALED(_width), SCALED(_height), 0, 0, 0);
+	_screen->fillRect(
+		SCALED(_bounds.left), SCALED(_bounds.top),
+		SCALED(_bounds.width()), SCALED(_bounds.height()), 0, 0, 0);
 }
 
 void View::update() {
@@ -63,30 +66,33 @@ void View::update(int x, int y, int width, int height) {
 
 void View::highlight(int x, int y, int width, int height) {
 	_highlighted = true;
-	_highlightX = x;
-	_highlightY = y;
-	_highlightW = width;
-	_highlightH = height;
+	_highlightBounds = Common::Rect(x, y, x + width, y + height);
 
 	update(x, y, width, height);
 }
 
 void View::unhighlight() {
 	_highlighted = false;
-	update(_highlightX, _highlightY, _highlightW, _highlightH);
-	_highlightX = _highlightY = _highlightW = _highlightH = 0;
+	update(_highlightBounds.left, _highlightBounds.top,
+		_highlightBounds.width(), _highlightBounds.height());
+	_highlightBounds = Common::Rect();
 }
 
 void View::drawHighlighted() {
 	Image *screen = imageMgr->get("screen")->_image;
 
-	Image *tmp = Image::create(SCALED(_highlightW), SCALED(_highlightH), false, Image::SOFTWARE);
+	Image *tmp = Image::create(SCALED(_highlightBounds.width()),
+		SCALED(_highlightBounds.height()), false, Image::SOFTWARE);
 	if (!tmp)
 		return;
 
-	screen->drawSubRectOn(tmp, 0, 0, SCALED(this->_x + _highlightX), SCALED(this->_y + _highlightY), SCALED(_highlightW), SCALED(_highlightH));
+	screen->drawSubRectOn(tmp, 0, 0,
+		SCALED(_bounds.left + _highlightBounds.left),
+		SCALED(_bounds.top + _highlightBounds.top),
+		SCALED(_highlightBounds.width()),
+		SCALED(_highlightBounds.height()));
 	tmp->drawHighlighted();
-	tmp->draw(SCALED(this->_x + _highlightX), SCALED(this->_y + _highlightY));
+	tmp->draw(SCALED(_bounds.left + _highlightBounds.left), SCALED(_bounds.top + _highlightBounds.top));
 	delete tmp;
 }
 

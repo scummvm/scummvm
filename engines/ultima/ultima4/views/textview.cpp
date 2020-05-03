@@ -58,8 +58,8 @@ void TextView::drawChar(int chr, int x, int y) {
 	ASSERT(x < _columns, "x value of %d out of range", x);
 	ASSERT(y < _rows, "y value of %d out of range", y);
 
-	_charset->drawSubRect(SCALED(this->_x + (x * CHAR_WIDTH)),
-	                      SCALED(this->_y + (y * CHAR_HEIGHT)),
+	_charset->drawSubRect(SCALED(_bounds.left + (x * CHAR_WIDTH)),
+	                      SCALED(_bounds.top + (y * CHAR_HEIGHT)),
 	                      0, SCALED(chr * CHAR_HEIGHT),
 	                      SCALED(CHAR_WIDTH),
 	                      SCALED(CHAR_HEIGHT));
@@ -69,8 +69,8 @@ void TextView::drawCharMasked(int chr, int x, int y, byte mask) {
 	drawChar(chr, x, y);
 	for (int i = 0; i < 8; i++) {
 		if (mask & (1 << i)) {
-			_screen->fillRect(SCALED(this->_x + (x * CHAR_WIDTH)),
-			                  SCALED(this->_y + (y * CHAR_HEIGHT) + i),
+			_screen->fillRect(SCALED(_bounds.left + (x * CHAR_WIDTH)),
+			                  SCALED(_bounds.top + (y * CHAR_HEIGHT) + i),
 			                  SCALED(CHAR_WIDTH),
 			                  SCALED(1),
 			                  0, 0, 0);
@@ -214,10 +214,10 @@ void TextView::optionAt(int x, int y, char key, const char *fmt, ...) {
 
 	if (key) {
 		Common::Rect r(
-			SCALED(_x + (x * CHAR_WIDTH)),
-			SCALED(_y + (y * CHAR_HEIGHT)),
-			SCALED(_x + (x + strlen(buffer) - offset) * CHAR_WIDTH),
-			SCALED(_y + (y + 1) * CHAR_HEIGHT)
+			SCALED(_bounds.left + (x * CHAR_WIDTH)),
+			SCALED(_bounds.top + (y * CHAR_HEIGHT)),
+			SCALED(_bounds.left + (x + strlen(buffer) - offset) * CHAR_WIDTH),
+			SCALED(_bounds.top + (y + 1) * CHAR_HEIGHT)
 		);
 
 		_options.push_back(Option(r, key));
@@ -226,16 +226,16 @@ void TextView::optionAt(int x, int y, char key, const char *fmt, ...) {
 
 void TextView::scroll() {
 	_screen->drawSubRectOn(_screen,
-	                       SCALED(_x),
-	                       SCALED(_y),
-	                       SCALED(_x),
-	                       SCALED(_y) + SCALED(CHAR_HEIGHT),
-	                       SCALED(_width),
-	                       SCALED(_height) - SCALED(CHAR_HEIGHT));
+	                       SCALED(_bounds.left),
+	                       SCALED(_bounds.top),
+	                       SCALED(_bounds.left),
+	                       SCALED(_bounds.top) + SCALED(CHAR_HEIGHT),
+	                       SCALED(_bounds.width()),
+	                       SCALED(_bounds.height()) - SCALED(CHAR_HEIGHT));
 
-	_screen->fillRect(SCALED(_x),
-	                  SCALED(_y + (CHAR_HEIGHT * (_rows - 1))),
-	                  SCALED(_width),
+	_screen->fillRect(SCALED(_bounds.left),
+	                  SCALED(_bounds.top + (CHAR_HEIGHT * (_rows - 1))),
+	                  SCALED(_bounds.width()),
 	                  SCALED(CHAR_HEIGHT),
 	                  0, 0, 0);
 
@@ -302,10 +302,10 @@ void TextView::clearOptions() {
 
 Common::Rect TextView::getTextBounds(int x, int y, int textWidth) const {
 	return Common::Rect(
-		SCALED(_x + (x * CHAR_WIDTH)),
-		SCALED(_y + (y * CHAR_HEIGHT)),
-		SCALED(_x + (x + textWidth * CHAR_WIDTH)),
-		SCALED(_y + (y + 1) * CHAR_HEIGHT)
+		SCALED(_bounds.left + (x * CHAR_WIDTH)),
+		SCALED(_bounds.top + (y * CHAR_HEIGHT)),
+		SCALED(_bounds.left + (x + textWidth * CHAR_WIDTH)),
+		SCALED(_bounds.top + (y + 1) * CHAR_HEIGHT)
 	);
 }
 

@@ -153,8 +153,8 @@ void Tile::loadImage() {
 			info->_image->alphaOff();
 
 		if (info) {
-			_w = (subimage ? subimage->width *_scale : info->_width * _scale / info->_prescale);
-			_h = (subimage ? (subimage->height * _scale) / _frames : (info->_height * _scale / info->_prescale) / _frames);
+			_w = (subimage ? subimage->width() *_scale : info->_width * _scale / info->_prescale);
+			_h = (subimage ? (subimage->height() * _scale) / _frames : (info->_height * _scale / info->_prescale) / _frames);
 			_image = Image::create(_w, _h * _frames, false, Image::HARDWARE);
 
 
@@ -165,7 +165,9 @@ void Tile::loadImage() {
 			assert(tiles);
 
 			if (subimage) {
-				tiles->drawSubRectOn(_image, 0, 0, subimage->x * _scale, subimage->y * _scale, subimage->width * _scale, subimage->height * _scale);
+				tiles->drawSubRectOn(_image, 0, 0,
+					subimage->left * _scale, subimage->top * _scale,
+					subimage->width() * _scale, subimage->height() * _scale);
 			} else {
 				tiles->drawOn(_image, 0, 0);
 			}

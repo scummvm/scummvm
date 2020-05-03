@@ -66,9 +66,9 @@ public:
 	virtual void unhighlight();
 
 protected:
-	const int _x, _y, _width, _height;
+	Common::Rect _bounds;
+	Common::Rect _highlightBounds;
 	bool _highlighted;
-	int _highlightX, _highlightY, _highlightW, _highlightH;
 	void drawHighlighted();
 #ifdef IOS_ULTIMA4
 	friend void U4IOS::updateScreenView();

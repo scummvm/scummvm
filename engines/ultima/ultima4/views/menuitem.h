@@ -50,7 +50,7 @@ public:
 	/**
 	 * MenuItem class
 	 */
-	MenuItem(Common::String text, short xp, short yp, int shortcutKey = -1);
+	MenuItem(Common::String text, short x, short y, int shortcutKey = -1);
 	virtual ~MenuItem() {}
 
 	virtual void activate(MenuEvent &event) {}
@@ -69,8 +69,8 @@ public:
 	bool getClosesMenu() const;
 
 	void setId(int id);
-	void setX(int xpos);
-	void setY(int ypos);
+	void setX(int x);
+	void setY(int y);
 	void setText(Common::String text);
 	void setHighlighted(bool h = true);
 	void setSelected(bool s = true);
@@ -80,7 +80,7 @@ public:
 
 protected:
 	int _id;
-	short x, y;
+	short _x, _y;
 	Common::String _text;
 	bool _highlighted;
 	bool _selected;

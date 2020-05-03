@@ -28,8 +28,8 @@
 namespace Ultima {
 namespace Ultima4 {
 
-MenuItem::MenuItem(Common::String t, short xp, short yp, int sc) :
-	_id(-1), x(xp), y(yp), _text(t), _highlighted(false),
+MenuItem::MenuItem(Common::String t, short x, short y, int sc) :
+	_id(-1), _x(x), _y(y), _text(t), _highlighted(false),
 	_selected(false), _visible(true), _scOffset(sc), _closesMenu(false) {
 	// if the sc/scOffset is outside the range of the text string, assert
 	ASSERT(sc == -1 || (sc >= 0 && sc <= (int)_text.size()), "sc value of %d out of range!", sc);
@@ -40,10 +40,10 @@ int MenuItem::getId() const {
 	return _id;
 }
 short MenuItem::getX() const {
-	return x;
+	return _x;
 }
 short MenuItem::getY() const {
-	return y;
+	return _y;
 }
 int MenuItem::getScOffset() const {
 	return _scOffset;
@@ -71,12 +71,12 @@ void MenuItem::setId(int i) {
 	_id = i;
 }
 
-void MenuItem::setX(int xpos) {
-	x = xpos;
+void MenuItem::setX(int x) {
+	_x = x;
 }
 
-void MenuItem::setY(int ypos) {
-	y = ypos;
+void MenuItem::setY(int y) {
+	_y = y;
 }
 
 void MenuItem::setText(Common::String t) {
