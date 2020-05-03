@@ -49,7 +49,8 @@ AnimationTracker::AnimationTracker() : _firstFrame(true), _done(false),
 	_actor(0), _dir(0), _animAction(nullptr), _x(0), _y(0), _z(0),
 	_prevX(0), _prevY(0), _prevZ(0), _startX(0), _startY(0), _startZ(0),
 	_targetDx(0), _targetDy(0), _targetDz(0), _targetOffGroundLeft(0),
-	_firstStep(false), _shapeFrame(0), _currentFrame(0) {
+	_firstStep(false), _shapeFrame(0), _currentFrame(0), _startFrame(0),
+	_endFrame(0), _flipped(false) {
 }
 
 AnimationTracker::~AnimationTracker() {

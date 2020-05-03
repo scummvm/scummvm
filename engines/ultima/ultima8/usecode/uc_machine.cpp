@@ -1548,12 +1548,25 @@ void UCMachine::execProcess(UCProcess *p) {
 				break;
 			case 2: { // slist
 				UCList *l = new UCList(2);
-				l->copyStringList(*getList(ui16a));
+				const UCList *srclist = getList(ui16a);
+				if (!srclist) {
+					perr << "Warning: invalid src list passed to slist copy"
+						 << Std::endl;
+					ui16b = 0;
+					break;
+				}
+				l->copyStringList(*srclist);
 				ui16b = assignList(l);
 			}
 			break;
 			case 3: { // list
-				UCList *l = getList(ui16a);
+				const UCList *l = getList(ui16a);
+				if (!l) {
+					perr << "Warning: invalid src list passed to list copy"
+						 << Std::endl;
+					ui16b = 0;
+					break;
+				}
 				int elementsize = l->getElementSize();
 				UCList *l2 = new UCList(elementsize);
 				l2->copyList(*l);
@@ -2242,7 +2255,7 @@ void UCMachine::saveStrings(Common::WriteStream *ws) {
 	_stringIDs->save(ws);
 	ws->writeUint32LE(static_cast<uint32>(_stringHeap.size()));
 
-	Std::map<uint16, Std::string>::iterator iter;
+	Std::map<uint16, Std::string>::const_iterator iter;
 	for (iter = _stringHeap.begin(); iter != _stringHeap.end(); ++iter) {
 		ws->writeUint16LE((*iter)._key);
 		ws->writeUint32LE((*iter)._value.size());
@@ -2254,7 +2267,7 @@ void UCMachine::saveLists(Common::WriteStream *ws) {
 	_listIDs->save(ws);
 	ws->writeUint32LE(_listHeap.size());
 
-	Std::map<uint16, UCList *>::iterator iter;
+	Std::map<uint16, UCList *>::const_iterator iter;
 	for (iter = _listHeap.begin(); iter != _listHeap.end(); ++iter) {
 		ws->writeUint16LE((*iter)._key);
 		(*iter)._value->save(ws);

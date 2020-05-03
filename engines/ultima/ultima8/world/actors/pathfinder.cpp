@@ -90,6 +90,7 @@ bool PathfindingState::checkItem(const Item *item, int xyRange, int zRange) cons
 }
 
 bool PathfindingState::checkHit(Actor *_actor, const Actor *target) {
+	assert(target);
 #if 0
 	pout << "Trying hit in _direction " << _actor->getDirToItemCentre(*target) << Std::endl;
 #endif
