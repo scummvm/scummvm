@@ -691,7 +691,12 @@ void Lingo::runTests() {
 void Lingo::executeImmediateScripts(Frame *frame) {
 	for (uint16 i = 0; i <= _vm->getCurrentScore()->_numChannelsDisplayed; i++) {
 		if (_vm->getCurrentScore()->_immediateActions.contains(frame->_sprites[i]->_scriptId)) {
-			g_lingo->processEvent(kEventMouseUp, kFrameScript, frame->_sprites[i]->_scriptId);
+			// From D5 only explicit event handlers are processed
+			// Before that you could specify commands which will be executed on mouse up
+			if (_vm->getVersion() < 5)
+				g_lingo->processEvent(kEventNone, kFrameScript, frame->_sprites[i]->_scriptId);
+			else
+				g_lingo->processEvent(kEventMouseUp, kFrameScript, frame->_sprites[i]->_scriptId);
 		}
 	}
 }
