@@ -122,10 +122,9 @@ public:
 	void keybinder(KeybindingAction action) override;
 
 	/**
-	 * The main key handler for the game.  Interpretes each key as a
-	 * command - 'a' for attack, 't' for talk, etc.
+	 * Mouse button was pressed
 	 */
-	bool keyPressed(int key) override;
+	bool mousePressed(const Common::Point &mousePos) override;
 
 	/**
 	 * This function is called every quarter second.

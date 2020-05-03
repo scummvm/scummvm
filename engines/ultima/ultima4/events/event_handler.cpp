@@ -271,10 +271,15 @@ void EventHandler::handleMouseButtonDownEvent(const Common::Event &event, Contro
 		return;
 
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
-		const MouseArea *area = eventHandler->mouseAreaForPoint(event.mouse.x, event.mouse.y);
-		if (!area)
-			return;
-		controller->keybinder(KEYBIND_INTERACT);
+		// handle the keypress
+		bool processed = controller->notifyMousePress(event.mouse);
+
+		if (processed) {
+			if (updateScreen)
+				(*updateScreen)();
+			g_screen->update();
+		}
+
 	} else if (event.type == Common::EVENT_RBUTTONDOWN) {
 		_isRightButtonDown = true;
 		handleMouseMotionEvent(event);

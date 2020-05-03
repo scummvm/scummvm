@@ -42,6 +42,11 @@ bool Controller::notifyKeyPressed(int key) {
 	return processed;
 }
 
+bool Controller::notifyMousePress(const Common::Point &mousePos) {
+	return mousePressed(mousePos);
+}
+
+
 int Controller::getTimerInterval() {
 	return _timerInterval;
 }

@@ -343,11 +343,15 @@ void GameController::keybinder(KeybindingAction action) {
 	MetaEngine::executeAction(action);
 }
 
-bool GameController::keyPressed(int key) {
-	// Manually redraw the text prompt
-	g_screen->screenPrompt();
+bool GameController::mousePressed(const Common::Point &mousePos) {
+	const MouseArea *area = eventHandler->mouseAreaForPoint(mousePos.x, mousePos.y);
 
-	return KeyHandler::defaultHandler(key, nullptr);
+	if (area) {
+		keybinder(KEYBIND_INTERACT);
+		return true;
+	}
+
+	return false;
 }
 
 void GameController::initMoons() {

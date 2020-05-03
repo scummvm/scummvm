@@ -50,6 +50,12 @@ public:
 	 */
 	bool notifyKeyPressed(int key);
 
+	/**
+	 * The event manager will call this method to notify that
+	 * the left button was clicked
+	 */
+	bool notifyMousePress(const Common::Point &mousePos);
+
 	int getTimerInterval();
 
 	/**
@@ -69,6 +75,13 @@ public:
 	 * Key was pressed
 	 */
 	virtual bool keyPressed(int key) {
+		return false;
+	}
+
+	/**
+	 * Mouse button was pressed
+	 */
+	virtual bool mousePressed(const Common::Point &mousePos) {
 		return false;
 	}
 
