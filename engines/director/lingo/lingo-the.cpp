@@ -814,6 +814,19 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.makeString();
 		d.u.s = &castInfo->script;
 		break;
+	case kTheText:
+		d.makeString();
+		*d.u.s = "";
+		if (castType == kCastText) {
+			if (score->_loadedCast->contains(id) && score->_loadedCast->getVal(id)->_type == kCastText) {
+				*d.u.s = ((TextCast *)score->_loadedCast->getVal(id))->getText();
+			} else {
+				warning("Lingo::getTheCast(): Unknown STXT cast id %d", id);
+			}
+		} else {
+			warning("Lingo::getTheCast(): Unprocessed getting text of cast %d type %d", id, castType);
+		}
+		break;
 	case kTheWidth:
 		d.u.i = score->getCastMemberInitialRect(id).width();
 		break;
