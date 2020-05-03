@@ -1090,6 +1090,11 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 	for (uint i = 0; i < _frames.size(); i++) {
 		if (_frames[i]->_actionId <= _actions.size())
 			scriptRefs[_frames[i]->_actionId] = true;
+
+		for (uint16 j = 0; j <= _frames[i]->_numChannels; j++) {
+			if (_frames[i]->_sprites[j]->_scriptId <= _actions.size())
+				scriptRefs[_frames[i]->_sprites[j]->_scriptId] = true;
+		}
 	}
 
 	Common::HashMap<uint16, Common::String>::iterator j;
@@ -1102,7 +1107,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 
 	for (j = _actions.begin(); j != _actions.end(); ++j) {
 		if (!scriptRefs[j->_key]) {
-			warning("Action id %d is not referenced, skipping, the code was:\n-----\n%s\n------", j->_key, j->_value.c_str());
+			warning("Action id %d is not referenced, the code is:\n-----\n%s\n------", j->_key, j->_value.c_str());
 			// continue;
 		}
 		if (!j->_value.empty()) {
