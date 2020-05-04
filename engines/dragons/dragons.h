@@ -138,6 +138,9 @@ struct LoadingScreenState {
 		flameOffsetIdx = 0;
 		loadingFlamesUpdateCounter = 0;
 		loadingFlamesRiseCounter = 0;
+
+		memset(flames, 0, ARRAYSIZE(flames));
+		memset(quads, 0, ARRAYSIZE(quads));
 	}
 };
 
