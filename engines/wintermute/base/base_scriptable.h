@@ -79,8 +79,6 @@ BaseScriptable *makeSXMemBuffer(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXObject(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXStore(BaseGame *inGame);
 BaseScriptable *makeSXString(BaseGame *inGame, ScStack *stack);
-BaseScriptable *makeSXSteamAPI(BaseGame *inGame, ScStack *stack);
-BaseScriptable *makeSXWMEGalaxyAPI(BaseGame *inGame, ScStack *stack);
 
 } // End of namespace Wintermute
 
