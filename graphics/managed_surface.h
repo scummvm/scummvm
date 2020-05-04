@@ -92,7 +92,7 @@ protected:
 	 */
 	void transBlitFromInner(const Surface &src, const Common::Rect &srcRect,
 		const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor,
-		uint srcAlpha, const uint32 *palette, const Surface *mask, bool maskOnly);
+		uint srcAlpha, const uint32 *srcPalette, const uint32 *dstPalette, const Surface *mask, bool maskOnly);
 public:
 	/**
 	 * Clips the given source bounds so the passed destBounds will be entirely on-screen
