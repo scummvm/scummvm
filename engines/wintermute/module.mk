@@ -41,8 +41,6 @@ MODULE_OBJS := \
 	base/scriptables/script_ext_object.o \
 	base/scriptables/script_ext_mem_buffer.o \
 	base/scriptables/script_ext_string.o \
-	base/scriptables/script_ext_steam_api.o \
-	base/scriptables/script_ext_wme_galaxy_api.o \
 	base/file/base_disk_file.o \
 	base/file/base_file.o \
 	base/file/base_file_entry.o \
@@ -102,6 +100,8 @@ MODULE_OBJS := \
 	ext/dll_kernel32.o \
 	ext/dll_shell32.o \
 	ext/dll_tools.o \
+	ext/wme_galaxy.o \
+	ext/wme_steam.o \
 	debugger/breakpoint.o \
 	debugger/debugger_controller.o \
 	debugger/error.o \

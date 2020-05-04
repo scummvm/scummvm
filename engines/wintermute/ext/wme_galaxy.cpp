@@ -32,7 +32,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script_ext_wme_galaxy_api.h"
+#include "engines/wintermute/ext/wme_galaxy.h"
 
 namespace Wintermute {
 
