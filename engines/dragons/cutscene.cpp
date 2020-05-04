@@ -438,7 +438,16 @@ void CutScene::cursorInventoryClearFlag400() {
 }
 
 void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2) {
-	if (newPosition == 1) {
+	switch (newPosition) {
+	case 0:
+		_vm->_screen->loadPalette(0, _palettes + 0 * 512);
+		_vm->_scene->setMgLayerPriority(0);
+		_vm->_scene->setFgLayerPriority(0);
+		_vm->_scene->_camera.x = 0;
+		_vm->_scene->setBgLayerPriority(1);
+		break;
+
+	case 1:
 		_vm->_scene->setBgLayerPriority(0); //TODO investigate why this is 0 not 1
 		_vm->_scene->setMgLayerPriority(1); //TODO investigate why this is 1 not 2
 		_vm->_scene->_camera.x = sParm2 + 0x3c0;
@@ -448,32 +457,26 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2) {
 			Actor *actor = _vm->_actorManager->getActor(i);
 			actor->_x_pos += 0x3c0;
 		}
-	} else {
-		if (newPosition < 2) {
-			if (newPosition != 0) {
-				return;
-			}
-			_vm->_screen->loadPalette(0, _palettes + 0 * 512);
-			_vm->_scene->setMgLayerPriority(0);
-			_vm->_scene->setFgLayerPriority(0);
-			_vm->_scene->_camera.x = 0;
-		} else {
-			if (newPosition == 2) {
-				_vm->_screen->loadPalette(0, _palettes + 3 * 512);
-				_vm->_scene->setMgLayerPriority(2);
-				_vm->_scene->setFgLayerPriority(3);
-				_vm->_scene->_camera.x = 0;
-			} else {
-				if (newPosition != 3) {
-					return;
-				}
-				_vm->_screen->loadPalette(0, _palettes + 1 * 512);
-				_vm->_scene->setMgLayerPriority(2);
-				_vm->_scene->setFgLayerPriority(0);
-				_vm->_scene->_camera.x = sParm2;
-			}
-		}
+		break;
+
+	case 2:
+		_vm->_screen->loadPalette(0, _palettes + 3 * 512);
+		_vm->_scene->setMgLayerPriority(2);
+		_vm->_scene->setFgLayerPriority(3);
+		_vm->_scene->_camera.x = 0;
 		_vm->_scene->setBgLayerPriority(1);
+		break;
+
+	case 3:
+		_vm->_screen->loadPalette(0, _palettes + 1 * 512);
+		_vm->_scene->setMgLayerPriority(2);
+		_vm->_scene->setFgLayerPriority(0);
+		_vm->_scene->_camera.x = sParm2;
+		_vm->_scene->setBgLayerPriority(1);
+		break;
+
+	default:
+		break;
 	}
 }
 
