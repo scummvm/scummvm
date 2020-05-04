@@ -157,6 +157,7 @@ SoundManager::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, A
 }
 
 SoundManager::PSXAudioTrack::~PSXAudioTrack() {
+	delete _audStream;
 }
 
 // Ha! It's palindromic!
