@@ -21,8 +21,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added English translation.
 
  SCUMM:
-   - Fixed text color and black color in MM NES intro.
-   - Added GUI option to switch between classic and Mesen's NTSC palette in MM NES.
+   - Fixed palette issues leading to incorrect colors in MM NES intro and dark rooms.
+   - Fixed the rendering of the flashlight in MM NES to match the original version.
+   - Replaced the existing NES palette to a more accurate NTSC palette based on Mesen.
+   - Added a new GUI option to switch to an alternative NES palette based on the NES Classic.
 
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
