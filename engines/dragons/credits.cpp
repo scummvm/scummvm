@@ -39,6 +39,10 @@ Credits::Credits(DragonsEngine *vm, FontManager *fontManager, BigfileArchive *bi
 	_updateCounter = 0;
 	_yOffset = 0;
 	_linesRemaining = 0x1a;
+
+	_creditsData = nullptr;
+	_dataLength = 0;
+	_curPosition = 0;
 }
 
 void Credits::start() {
