@@ -40,7 +40,6 @@ public:
 	{
 		uint32 _maxOffset;
 	};
-	uint32 readUint32LE(Common::SeekableReadStream *) { return 0; }
 	uint32 _curOffset;
 
 	virtual const char* const *intrinsics()=0;
@@ -67,7 +66,7 @@ class ConvertUsecodeU8 : public ConvertUsecode {
 public:
 	const char* const *intrinsics() override  { return _intrinsics;  };
 	const char* const *event_names() override { return _event_names; };
-	void readheader(Common::SeekableReadStream *ucfile, UsecodeHeader &uch, uint32 &curOffset_) override;
+	void readheader(Common::SeekableReadStream *ucfile, UsecodeHeader &uch, uint32 &curOffset) override;
 	void readevents(Common::SeekableReadStream *ucfile, const UsecodeHeader &/*uch*/) override
 	{
 #ifndef INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD
@@ -412,15 +411,15 @@ const char * const ConvertUsecodeU8::_event_names[] = {
 void ConvertUsecodeU8::readheader(Common::SeekableReadStream *ucfile, UsecodeHeader &uch, uint32 &curOffset_) {
 	#ifdef DISASM_DEBUG
 	perr << Std::setfill('0') << Std::hex;
-	perr << "unknown1: " << Std::setw(4) << readUint32LE(ucfile) << endl; // unknown
-	uch.maxOffset = readUint32LE(ucfile) - 0x0C; // file size
+	perr << "unknown1: " << Std::setw(4) << ucfile->readUint32LE() << endl; // unknown
+	uch.maxOffset = ucfile->readUint32LE() - 0x0C; // file size
 	perr << "maxoffset: " << Std::setw(4) << maxOffset << endl;
-	perr << "unknown2: " << Std::setw(4) << readUint32LE(ucfile) << endl; // unknown
+	perr << "unknown2: " << Std::setw(4) << ucfile->readUint32LE() << endl; // unknown
 	curOffset_ = 0;
 	#else
-	readUint32LE(ucfile); // unknown
-	uch._maxOffset = readUint32LE(ucfile) - 0x0C; // file size
-	readUint32LE(ucfile); // unknown
+	ucfile->readUint32LE(); // unknown
+	uch._maxOffset = ucfile->readUint32LE() - 0x0C; // file size
+	ucfile->readUint32LE(); // unknown
 	curOffset_ = 0;
 	#endif
 }

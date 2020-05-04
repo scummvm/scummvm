@@ -1049,19 +1049,20 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 	uint32 offset = u->get_class_event(class_id, event);
 	if (!offset) return 0; // event not found
 
-#ifdef DEBUG
-	if (UCMachine::get_instance()->trace_event()) {
-		pout.Print("Item: %d calling usecode event %d @ %04X:%04X\n",
-			_objId, event, class_id, offset);
-	}
-#endif
-
 	// FIXME: Disabled usecode except for Use events in crusader for now
 	if (GAME_IS_CRUSADER && event != 1) {
-		warning("Cusader: not running event %d for item %d shape %d",
-				event, _objId, _shape);
-		return 0;
+		if (event != 15 ||
+			(_shape != 1098 && _shape != 1227 && _shape != 1297 && _shape != 1298 && _shape != 1274
+			 && _shape != 1275 && _shape != 1301 && _shape != 1302
+			 && _shape != 1290 && _shape != 809 && _shape != 73 && _shape != 447 && _shape != 470 && _shape != 336 && _shape != 33  && _shape != 1143  && _shape != 94  && _shape != 189 && _shape != 440 && _shape != 139 && _shape != 140 && _shape != 475  && _shape != 392  && _shape != 147  && _shape != 136)) { // run sounds for a few objects..
+			debug(6, "Cusader: not running event %d for item %d shape %d",
+					event, _objId, _shape);
+			return 0;
+		}
 	}
+
+	debug(6, "Item: %d (shape %d) calling usecode event %d @ %04X:%04X\n",
+			_objId, _shape, event, class_id, offset);
 
 	return callUsecode(static_cast<uint16>(class_id),
 	                   static_cast<uint16>(offset),
@@ -2124,7 +2125,7 @@ uint32 Item::I_getStatus(const uint8 *args, unsigned int /*argsize*/) {
 	return item->getFlags();
 }
 
-uint32 Item::I_orStatus(const uint8 *args, unsigned int /*argsize*/) {
+uint32 Item::I_orStatus(const uint8 *args, unsigned int argsize) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(mask);
 	if (!item) return 0;
@@ -2133,7 +2134,7 @@ uint32 Item::I_orStatus(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
-uint32 Item::I_andStatus(const uint8 *args, unsigned int /*argsize*/) {
+uint32 Item::I_andStatus(const uint8 *args, unsigned int argsize) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(mask);
 	if (!item) return 0;

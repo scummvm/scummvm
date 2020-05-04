@@ -38,6 +38,7 @@
 
 #define INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD
 #include "ultima/ultima8/convert/u8/convert_usecode_u8.h"
+#include "ultima/ultima8/convert/crusader/convert_usecode_crusader.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 
 namespace Ultima {
@@ -88,7 +89,15 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 	// zero _globals
 	_globals = new BitSet(0x1000);
 
-	_convUse = new ConvertUsecodeU8; //!...
+	if (GAME_IS_U8) {
+		_convUse = new ConvertUsecodeU8();
+	} else if (GAME_IS_REMORSE) {
+		_convUse = new ConvertUsecodeCrusader();
+	} else {
+		// TODO: Need a separate convertor for Regret
+		_convUse = new ConvertUsecodeCrusader();
+	}
+
 	loadIntrinsics(iset, icount); //!...
 
 	_listIDs = new idMan(1, 65534, 128);
@@ -348,12 +357,34 @@ void UCMachine::execProcess(UCProcess *p) {
 			//! TODO
 			uint16 arg_bytes = cs.readByte();
 			uint16 func = cs.readUint16LE();
-			debug(MM_INFO, "calli\t\t%04Xh (%02Xh arg bytes) %s ", func, arg_bytes, _convUse->intrinsics()[func]);
+			debug(10, "calli\t\t%04Xh (%02Xh arg bytes) %s ", func, arg_bytes, _convUse->intrinsics()[func]);
 
 			// !constants
 			if (func >= _intrinsicCount || _intrinsics[func] == 0) {
+				Item *testItem = nullptr;
 				p->_temp32 = 0;
-				perr << "Unhandled intrinsic \'" << _convUse->intrinsics()[func] << "\' (" << Std::hex << func << Std::dec << ") called" << Std::endl;
+
+				if (arg_bytes >= 4) {
+					// HACKHACKHACK to check what the argument is.
+					uint8 *args = new uint8[arg_bytes];
+					p->_stack.pop(args, arg_bytes);
+					p->_stack.addSP(-arg_bytes); // don't really pop the args
+					ARG_UC_PTR(iptr);
+					uint16 testItemId = ptrToObject(iptr);
+					testItem = getItem(testItemId);
+				}
+				perr << "Unhandled intrinsic << " << func << " \'" << _convUse->intrinsics()[func] << "\'? (";
+				if (testItem) {
+					perr << "item " << testItem->getObjId();
+					if (arg_bytes > 4)
+						perr << " + " << arg_bytes - 4 << " bytes";
+				} else {
+					perr << arg_bytes << " bytes";
+				}
+				perr << ") called" << Std::endl;
+				if (testItem) {
+					testItem->dumpInfo();
+				}
 			} else {
 				//!! hackish
 				if (_intrinsics[func] == UCMachine::I_dummyProcess ||
@@ -615,7 +646,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si16a != 0) {
 				p->_stack.push2(static_cast<uint16>(si16b / si16a));
 			} else {
-				perr.Print("division by zero.\n");
+				perr.Print("0x20 division by zero.\n");
 				p->_stack.push2(0);
 			}
 			LOGPF(("div\n"));
@@ -629,7 +660,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si32a != 0) {
 				p->_stack.push4(static_cast<uint32>(si32b / si32a));
 			} else {
-				perr.Print("division by zero.\n");
+				perr.Print("0x21 division by zero.\n");
 				p->_stack.push4(0);
 			}
 			LOGPF(("div\n"));
@@ -645,7 +676,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si16a != 0) {
 				p->_stack.push2(static_cast<uint16>(si16b % si16a));
 			} else {
-				perr.Print("division by zero.\n");
+				perr.Print("0x22 division by zero.\n");
 				p->_stack.push2(0);
 			}
 			LOGPF(("mod\n"));
@@ -660,7 +691,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si32a != 0) {
 				p->_stack.push4(static_cast<uint32>(si32b % si32a));
 			} else {
-				perr.Print("division by zero.\n");
+				perr.Print("0x23 division by zero.\n");
 				p->_stack.push4(0);
 			}
 			LOGPF(("mod long\n"));
@@ -1979,11 +2010,21 @@ void UCMachine::execProcess(UCProcess *p) {
 			error = true;
 			break;
 
-		case 0x5B:
-		case 0x5C: // debugging
-			perr.Print("unhandled opcode %02X\n", opcode);
+		case 0x5B: {
+			ui16a = cs.readUint16LE(); // source line number
+			debug(10, "ignore debug opcode %02X: line offset %d", opcode, ui16a);
 			break;
-
+		}
+		case 0x5C: {
+			ui16a = cs.readUint16LE(); // source line number
+			char name[10] = {0};
+			for (int x = 0; x < 9; x++) {
+				// skip over class name and null terminator
+				name[x] = cs.readByte();
+			}
+			debug(10, "ignore debug opcode %02X: %s line offset %d", opcode, name, ui16a);
+			break;
+		}
 		default:
 			perr.Print("unhandled opcode %02X\n", opcode);
 
@@ -2144,7 +2185,7 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 		if (!proc) {
 			// segfault :-)
 			perr << "Trying to access stack of non-existent "
-			     << "process (_pid: " << segment << ")" << Std::endl;
+			     << "process (pid: " << segment << ")" << Std::endl;
 			return false;
 		} else {
 			proc->_stack.assign(offset, data, size);
@@ -2181,7 +2222,7 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 		if (!proc) {
 			// segfault :-)
 			perr << "Trying to access stack of non-existent "
-			     << "process (_pid: " << segment << ")" << Std::endl;
+			     << "process (pid: " << segment << ")" << Std::endl;
 			return false;
 		} else {
 			Std::memcpy(data, proc->_stack.access(offset), size);
@@ -2220,7 +2261,7 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 		if (!proc) {
 			// segfault :-)
 			perr << "Trying to access stack of non-existent "
-			     << "process (_pid: " << segment << ")" << Std::endl;
+			     << "process (pid: " << segment << ")" << Std::endl;
 			return 0;
 		} else {
 			return proc->_stack.access2(offset);

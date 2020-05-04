@@ -124,6 +124,7 @@ private:
 	uint32 _lastDown[HID_LAST+1];
 	bool _down[HID_LAST+1];
 	unsigned int _inversion;
+	bool _alertActive; //!< is intruder alert active (Crusader)
 private:
 	/**
 	 * Does engine deinitialization
@@ -225,6 +226,7 @@ public:
 	INTRINSIC(I_avatarCanCheat);
 	INTRINSIC(I_makeAvatarACheater);
 	INTRINSIC(I_closeItemGumps);
+	INTRINSIC(I_getAlertActive); // for Crusader
 
 	void setAvatarInStasis(bool stat) {
 		_avatarInStasis = stat;
@@ -246,6 +248,13 @@ public:
 	}
 	void toggleShowTouchingItems() {
 		_showTouching = !_showTouching;
+	}
+
+	bool isAlertActive() const {
+		return _alertActive;
+	}
+	void setAlertActive(bool active) {
+		_alertActive = active;
 	}
 
 	uint32 getGameTimeInSeconds();
