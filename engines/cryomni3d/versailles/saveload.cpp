@@ -104,7 +104,10 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 			Common::InSaveFile *in = _saveFileMan->openForLoading(*file);
 			if (in) {
 				if (in->read(saveName, kSaveDescriptionLen) != kSaveDescriptionLen) {
+					warning("getSavesList(): Corrupted save %s", saveName);
 					delete in;
+
+					continue;
 				}
 
 				Common::String saveNameStr = saveName;
