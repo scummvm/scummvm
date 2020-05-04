@@ -40,6 +40,12 @@ namespace Dragons {
 Talk::Talk(DragonsEngine *vm, BigfileArchive *bigfileArchive): _vm(vm), _bigfileArchive(bigfileArchive) {
 	_dat_800726ec_tfont_field0 = 1; //TODO source from font file
 	_dat_800726f0_tfont_field2 = 1; // TODO source from font file
+
+	_dat_8008e7e8_dialogBox_x1 = 0;
+	_dat_8008e844_dialogBox_y1 = 0;
+	_dat_8008e848_dialogBox_x2 = 0;
+	_dat_8008e874_dialogBox_y2 = 0;
+	_dat_800633f8_talkDialogFlag = 0;
 }
 
 void Talk::init() {
