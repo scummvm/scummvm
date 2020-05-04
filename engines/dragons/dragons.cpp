@@ -77,6 +77,19 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 	_sceneUpdateFunction = nullptr;
 	_vsyncUpdateFunction = nullptr;
 
+	_dragonOBD = nullptr;
+	_dragonImg = nullptr;
+	_actorManager = nullptr;
+	_dragonINIResource = nullptr;
+	_scene = nullptr;
+	_sound = nullptr;
+	_isLoadingDialogAudio = false;
+	_sceneId1 = 0;
+	_dragonFLG = nullptr;
+	_dragonVAR = nullptr;
+	_flickerIdleCounter = 0;
+	_loadingScreenState = nullptr;
+
 	_leftMouseButtonUp = false;
 	_leftMouseButtonDown = false;
 	_rightMouseButtonUp = false;
