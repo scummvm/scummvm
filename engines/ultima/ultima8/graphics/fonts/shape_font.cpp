@@ -38,7 +38,7 @@ ShapeFont::ShapeFont(const uint8 *data_, uint32 size_,
                      const uint16 flexId_, const uint32 shapeNum_)
 	: Font(), Shape(data_, size_, format, flexId_, shapeNum_),
 	  _height(0), _baseLine(0), _vLead(-1), _hLead(0) {
-	_crusaderCharMap = GAME_IS_CRUSADER;
+	_crusaderCharMap = GAME_IS_CRUSADER && shapeNum_ == 1;
 }
 
 ShapeFont::~ShapeFont() {

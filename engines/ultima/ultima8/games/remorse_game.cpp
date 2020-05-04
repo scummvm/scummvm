@@ -113,12 +113,16 @@ bool RemorseGame::startGame() {
 
 	ObjectManager::get_instance()->assignActorObjId(actor, 1);
 
-	actor->setLocation(60700, 59420, 16);
-
+	if (GAME_IS_REMORSE) {
+		actor->setLocation(60700, 59420, 16);
+	} else {
+		actor->setLocation(58174, 56606, 16);
+	}
 
 	World::get_instance()->switchMap(1);
 
-	Ultima8Engine::get_instance()->setAvatarInStasis(true);
+	//Ultima8Engine::get_instance()->setAvatarInStasis(true);
+	Ultima8Engine::get_instance()->setCheatMode(true);
 
 	return true;
 }

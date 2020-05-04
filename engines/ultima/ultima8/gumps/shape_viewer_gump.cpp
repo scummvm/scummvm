@@ -67,6 +67,11 @@ ShapeViewerGump::ShapeViewerGump(int x, int y, int width, int height,
 		_flex = _flexes[0].second;
 	else
 		_flex = nullptr;
+
+	if (GAME_IS_CRUSADER) {
+		// Default to a decent font on Crusader
+		_fontNo = 6;
+	}
 }
 
 ShapeViewerGump::~ShapeViewerGump() {
@@ -210,8 +215,8 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 	break;
 	case Common::KEYCODE_f: {
 		_fontNo++;
-		if (_fontNo >= GameData::get_instance()->getFonts()->getCount())
-		{
+		if (_fontNo >= GameData::get_instance()->getFonts()->getCount() ||
+			_fontNo > 17) {
 			_fontNo = 0;
 		}
 	}
