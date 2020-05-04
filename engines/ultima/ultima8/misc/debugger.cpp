@@ -301,7 +301,7 @@ bool Debugger::cmdTogglePaintEditorItems(int argc, const char **argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	g->togglePaintEditorItems();
 	debugPrintf("paintEditorItems = %s\n", strBool(g->isPaintEditorItems()));
-	return true;
+	return false;
 }
 
 bool Debugger::cmdToggleShowTouchingItems(int argc, const char **argv) {
