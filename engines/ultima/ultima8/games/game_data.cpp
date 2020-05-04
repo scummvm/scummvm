@@ -589,14 +589,82 @@ void GameData::loadRemorseData() {
 	_gumps = new GumpShapeArchive(gumpds, GUMPS,
 		PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 
-#if 0
-	Common::SeekableReadStream *gumpageds = filesystem->ReadFile("@game/static/gumpage.dat");
-	if (!gumpageds)
-		error("Unable to load static/gumpage.dat");
+	Common::SeekableReadStream *dtableds = filesystem->ReadFile("@game/static/dtable.flx");
+	if (!dtableds)
+		error("Unable to load static/dtable.flx");
 
-	_gumps->loadGumpage(gumpageds);
-	delete gumpageds;
-#endif
+	RawArchive *dtableflex = new RawArchive(dtableds);
+
+	// TODO: What's in this flex file?
+	// Object 1: 35 * 142 byte blocks of .. something
+	// Object 2: 35 * 32-byte long names of NPCs?
+	//_dtable = new DtableDat();
+	//_dtable->load(dtableflex);
+
+	delete dtableflex;
+
+	Common::SeekableReadStream *damageds = filesystem->ReadFile("@game/static/damage.flx");
+	if (!damageds)
+		error("Unable to load static/damage.flx");
+
+	RawArchive *damageflex = new RawArchive(damageds);
+
+	// TODO: What's in this flex file?
+	// 1 object of 12288 bytes, mostly 0s
+	//_damage = new DamageDat();
+	//_damage->load(damageflex);
+
+	delete damageflex;
+
+	Common::SeekableReadStream *combatds = filesystem->ReadFile("@game/static/combat.dat");
+	if (!combatds)
+		error("Unable to load static/combat.dat");
+
+	RawArchive *combatflex = new RawArchive(combatds);
+
+	// TODO: What's in this flex file?  Descriptions of combat tactics?
+	// 14 objects with contents:
+	// [ 16 Byte Name ]
+	// [ 4 * 16 bit numbers, alway 44, xx, 77, 78 ]
+	// [ 20 bytes of 0s ]
+	// [ variable number of bytes of data ]
+	//_combat = new CombatDat();
+	//_combat->load(combatflex);
+
+	delete combatflex;
+
+	Common::SeekableReadStream *stuffds = filesystem->ReadFile("@game/static/stuff.dat");
+	if (!stuffds)
+		error("Unable to load static/stuff.dat");
+
+	// TODO: What's in this dat file?
+	// 14 blocks of 323 bytes, references like W01 and I07
+	// (presumably weapon and inventory)
+	// shop data?
+
+	delete stuffds;
+
+	Common::SeekableReadStream *trigds = filesystem->ReadFile("@game/static/trig.dat");
+	if (!trigds)
+		error("Unable to load static/trig.dat");
+
+	// TODO: What's in this dat file?
+	// 12 x 256 bytes. Each block has consistently either 0000 or FFFF in the
+	//vsecond word of each DWORD
+
+	delete trigds;
+
+	Common::SeekableReadStream *xformpalds = filesystem->ReadFile("@game/static/xformpal.dat");
+	if (!xformpalds)
+		error("Unable to load static/xformpal.dat");
+	RawArchive *xformpalflex = new RawArchive(xformpalds);
+
+	// TODO: What's in this flex?
+	// Object 1: 32 bytes
+	// Object 2: 2304 bytes - presumably data for 3 palettes == 768 * 3
+	//           almost no low numbers (so not raw palette data, would be missing black..)
+
+	delete xformpalflex;
 
 	// Note: No MusicFlex for Remorse, as the music is all in different AMF files.
 	// The remorse_music_process will load them.

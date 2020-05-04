@@ -82,7 +82,7 @@ Item::~Item() {
 
 void Item::dumpInfo() const {
 	pout << "Item " << getObjId() << " (class "
-	     << GetClassType()._className << ", _shape "
+	     << GetClassType()._className << ", shape "
 	     << getShape() << ", " << getFrame() << ", (";
 
 	if (_parent) {
@@ -95,8 +95,16 @@ void Item::dumpInfo() const {
 
 	pout << ") q:" << getQuality()
 	     << ", m:" << getMapNum() << ", n:" << getNpcNum()
-	     << ", f:" << Std::hex << getFlags() << ", ef:"
-	     << getExtFlags() << ")" << Std::dec << Std::endl;
+	     << ", f: 0x" << Std::hex << getFlags() << ", ef:0x"
+		 << getExtFlags();
+
+	ShapeInfo *info = getShapeInfo();
+	if (info) {
+		pout << " shapeinfo f:" << info->_flags << ", fam:"
+			 << info->_family << ", et:" << info->_equipType;
+	}
+
+	pout << ")" << Std::dec << Std::endl;
 }
 
 Container *Item::getParentAsContainer() const {
@@ -2101,7 +2109,7 @@ uint32 Item::I_getTypeFlag(const uint8 *args, unsigned int /*argsize*/) {
 	if (GAME_IS_U8 && typeflag >= 64)
 		perr << "Invalid TypeFlag greater than 63 requested (" << typeflag << ") by Usecode" << Std::endl;
 	if (GAME_IS_CRUSADER && typeflag >= 72)
-		perr << "Invalid TypeFlag greater than 63 requested (" << typeflag << ") by Usecode" << Std::endl;
+		perr << "Invalid TypeFlag greater than 72 requested (" << typeflag << ") by Usecode" << Std::endl;
 
 	if (info->getTypeFlag(typeflag))
 		return 1;

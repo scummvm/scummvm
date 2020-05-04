@@ -34,6 +34,7 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/camera_process.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "common/util.h"
 
 namespace Ultima {
@@ -75,8 +76,15 @@ bool AudioProcess::calculateSoundVolume(ObjId objId, int16 &lVol, int16 &rVol) c
 	int x = (ix - iy) / 4;
 	int y = (ix + iy) / 8 - iz;
 
-	// Fall off over 350 pixels
-	int limit = 350 * 350;
+	// Fall off over 350 pixels, or 700 for crusader
+	// (double resolution)..
+
+	int limit;
+	if (GAME_IS_U8) {
+		limit = 350 * 350;
+	} else {
+		limit = 700 * 700;
+	}
 	int dist = limit - (x * x + y * y);
 	if (dist < 0) dist = 0;
 	dist = (dist * 256) / limit;
@@ -280,8 +288,8 @@ void AudioProcess::playSFX(int sfxNum, int priority, ObjId objId, int loops,
 	if (!sample) return;
 
 	if (lVol == -1 || rVol == -1) {
-		lVol = 256;
-		rVol = 256;
+		lVol = 255;
+		rVol = 255;
 		if (objId) calculateSoundVolume(objId, lVol, rVol);
 	}
 

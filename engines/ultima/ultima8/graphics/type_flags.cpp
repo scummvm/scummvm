@@ -136,6 +136,8 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			si._y = (data[3] >> 2) & 0x1F;
 			si._z = ((data[4] << 1) | (data[3] >> 7)) & 0x1F;
 
+			si._unknown = ((data[4] & 0xF0) << 24) & (data[5] << 16) & (data[7] << 8) & data[8];
+
 			if (data[6] & 0x01) si._flags |= ShapeInfo::SI_EDITOR;
 			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_CRUSUNK61;
 			if (data[6] & 0x04) si._flags |= ShapeInfo::SI_CRUSUNK62;
@@ -145,7 +147,15 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			if (data[6] & 0x40) si._flags |= ShapeInfo::SI_CRUSUNK66;
 			if (data[6] & 0x80) si._flags |= ShapeInfo::SI_CRUSUNK67;
 
-			si._animType = 0;
+			// FIXME: this is not exactly right, but it is close and at
+			// least it animates the main items that need
+			// continuously animating
+			si._animType = (data[4] & 0xF0) >> 4;
+			if (si._animType == 4) {
+				// FIXME: Only one object (Shape 360, a small glowing
+				// reactor) has this type what should it do?
+				si._animType = 1;
+			}
 
 		}
 
