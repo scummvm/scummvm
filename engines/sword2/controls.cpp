@@ -224,7 +224,6 @@ void FontRendererGui::drawText(byte *text, int x, int y, int alignment) {
 		case kAlignCenter:
 			x -= (textWidth / 2);
 			break;
-		case kAlignLeft:
 		default:
 			break;
 		}
