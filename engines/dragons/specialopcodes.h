@@ -41,7 +41,7 @@ public:
 	~SpecialOpcodes();
 	void run(int16 opcode);
 
-	struct {
+	struct SceneUpdater {
 		void *tbl;
 		uint16 counter;
 		int16 iniID;
@@ -54,6 +54,21 @@ public:
 		uint16 iniIDTbl[8][5];
 		uint16 sequenceIDTbl[8][5];
 		uint32 textTbl[8][5];
+
+		SceneUpdater() {
+			tbl = nullptr;
+			iniID = sequenceID = 0;
+			curSequence = curSequenceIndex = numTotalSequences = sequenceDuration = 0;
+
+			for (uint i = 0; i < 8; i++) {
+				numSteps[i] = 0;
+				for (int j = 0; j < 5; j++) {
+					iniIDTbl[i][j] = 0;
+					sequenceIDTbl[i][j] = 0;
+					textTbl[i][j] = 0;
+				}
+			}
+		}
 	} sceneUpdater;
 
 protected:
