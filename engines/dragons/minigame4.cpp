@@ -32,7 +32,14 @@ namespace Dragons {
 
 static void videoUpdaterFunction();
 
-Minigame4::Minigame4(DragonsEngine *vm) : _vm(vm) {}
+Minigame4::Minigame4(DragonsEngine *vm) : _vm(vm) {
+	_flickerActor = nullptr;
+	_bruteActor = nullptr;
+	_ps1ControllerActor = nullptr;
+	_dat_80090438 = nullptr;
+	_dat_8009043c = nullptr;
+	_layer2XOffset = 0;
+}
 
 void Minigame4::run() {
 	uint16 uVar1;
