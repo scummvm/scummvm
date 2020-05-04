@@ -348,7 +348,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			//! TODO
 			uint16 arg_bytes = cs.readByte();
 			uint16 func = cs.readUint16LE();
-			debug(MM_INFO, "calli\t\t%04Xh (%02Xh arg bytes) %s \n", func, arg_bytes, _convUse->intrinsics()[func]);
+			debug(MM_INFO, "calli\t\t%04Xh (%02Xh arg bytes) %s ", func, arg_bytes, _convUse->intrinsics()[func]);
 
 			// !constants
 			if (func >= _intrinsicCount || _intrinsics[func] == 0) {
