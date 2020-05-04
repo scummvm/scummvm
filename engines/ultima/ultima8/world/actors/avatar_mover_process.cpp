@@ -565,12 +565,14 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 
 	if (res == Animation::FAILURE ||
 	        (action == Animation::step && res == Animation::END_OFF_LAND)) {
+		debug(6, "Step: end off land dir %d, try other dir", stepdir);
 		int altdir1 = (stepdir + 1) % 8;
 		int altdir2 = (stepdir + 7) % 8;
 
 		res = avatar->tryAnim(action, altdir1);
 		if (res == Animation::FAILURE ||
 		        (action == Animation::step && res == Animation::END_OFF_LAND)) {
+			debug(6, "Step: end off land dir %d, altdir1 %d failed, try altdir2 %d", stepdir, altdir1, altdir2);
 			res = avatar->tryAnim(action, altdir2);
 			if (res == Animation::FAILURE ||
 			        (action == Animation::step && res == Animation::END_OFF_LAND)) {
@@ -578,9 +580,11 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 				// Try to take a smaller step
 
 				if (action == Animation::walk) {
+					debug(6, "Step: end off land both altdirs failed, smaller step (step)");
 					step(Animation::step, direction, true);
 					return;
 				} else if (action == Animation::run) {
+					debug(6, "Step: end off land both altdirs failed, smaller step (walk)");
 					step(Animation::walk, direction, true);
 					return;
 				}
@@ -599,6 +603,7 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 	        lastanim != Animation::keepBalance && !adjusted) {
 		if (checkTurn(stepdir, false))
 			return;
+		debug(6, "Step: end off land both altdirs failed, keep balance.");
 		waitFor(avatar->doAnim(Animation::keepBalance, stepdir));
 		return;
 	}
@@ -613,6 +618,7 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 	if (checkTurn(stepdir, moving))
 		return;
 
+	debug(6, "Step: step ok: action %d dir %d", action, stepdir);
 	action = Animation::checkWeapon(action, lastanim);
 	waitFor(avatar->doAnim(action, stepdir));
 }
@@ -730,6 +736,8 @@ void AvatarMoverProcess::turnToDirection(int direction) {
 
 	ProcId prevpid = 0;
 
+	// Create a sequence of turn animations from
+	// our current direction to the new one
 	for (int dir = curdir; dir != direction;) {
 		ProcId animpid = avatar->doAnim(turnanim, dir);
 

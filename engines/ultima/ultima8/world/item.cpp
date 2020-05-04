@@ -1049,7 +1049,11 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 #endif
 
 	// FIXME: Disabled usecode except for Use events in crusader for now
-	if (GAME_IS_CRUSADER && event != 1) return 0;
+	if (GAME_IS_CRUSADER && event != 1) {
+		warning("Cusader: not running event %d for item %d shape %d",
+				event, _objId, _shape);
+		return 0;
+	}
 
 	return callUsecode(static_cast<uint16>(class_id),
 	                   static_cast<uint16>(offset),
