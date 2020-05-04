@@ -1051,7 +1051,7 @@ void ScriptOpcodes::setVariable(ScriptOpCall &scriptOpCall) {
 					s2 -= s1;
 				} else {
 					if (fieldB == 3) {
-						s2 = _vm->getRand(s1);
+						s2 = _vm->getRand(MAX<int16>(1, s1));
 					}
 				}
 			}
