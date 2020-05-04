@@ -34,7 +34,22 @@
 
 namespace Dragons {
 
-Minigame2::Minigame2(DragonsEngine *vm) : _vm(vm), _dat_80093c70(false), _dat_80093c72(false), _dat_80093c74(0), _dat_80093ca8(false) {}
+Minigame2::Minigame2(DragonsEngine *vm) : _vm(vm), _dat_80093c70(false), _dat_80093c72(false), _dat_80093c74(0), _dat_80093ca8(false) {
+	_dat_80093cb4 = 0;
+	_dat_80093cbc = 0;
+	_dat_80093cb8 = 0;
+	_dat_80093cc0 = 0;
+	_dat_80093ca4 = 0;
+	_dat_80093c90 = 0;
+	_dat_80093c94 = 0;
+	_dat_80093cac = 0;
+	_dat_80093cb0 = false;
+	_dat_80093c9c = 0;
+	_dat_80093c98 = 0;
+	_dat_80093ca0 = 0;
+	_dat_80093cc4 = 0;
+	_dat_80093cc8 = 0;
+}
 
 static const uint16 unkArray[5] = {
 	0xC, 0xA, 0x8, 0x6, 0x4
