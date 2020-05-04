@@ -40,6 +40,8 @@ Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, Ac
 		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource), _backgroundLoader(backgroundResourceLoader) {
 	_mapTransitionEffectSceneID = 2;
 	_data_800633ee = 0;
+
+	_currentSceneId = -1;
 }
 void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 	if (!_vm->isFlagSet(ENGINE_FLAG_40)) {

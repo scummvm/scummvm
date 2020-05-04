@@ -94,6 +94,8 @@ Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
 	_layerAlphaMode[0] = NORMAL;
 	_layerAlphaMode[1] = NORMAL;
 	_layerAlphaMode[2] = NORMAL;
+
+	_tileDataOffset = nullptr;
 }
 
 Background::~Background() {
