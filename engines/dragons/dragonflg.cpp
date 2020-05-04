@@ -105,6 +105,7 @@ DragonFLG::DragonFLG(BigfileArchive *bigfileArchive) {
 
 DragonFLG::~DragonFLG() {
 	delete _data;
+	delete _properties;
 }
 
 bool DragonFLG::get(uint32 propertyId) {

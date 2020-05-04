@@ -50,6 +50,10 @@ DragonRMS::DragonRMS(BigfileArchive *bigfileArchive, DragonOBD *dragonOBD) : _dr
 	delete readStream;
 }
 
+DragonRMS::~DragonRMS() {
+	delete[] _rmsObjects;
+}
+
 char *DragonRMS::getSceneName(uint32 sceneId) {
 	return getRMS(sceneId)->_sceneName;
 }

@@ -57,6 +57,7 @@ DragonImg::DragonImg(BigfileArchive *bigfileArchive) {
 
 DragonImg::~DragonImg() {
 	delete _imgData;
+	delete[] _imgObjects;
 }
 
 Img *DragonImg::getImg(uint32 iptId) {
