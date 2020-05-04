@@ -731,6 +731,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	Common::U32String str = _textLines[nrow].chunks[chunk].text;
 
 	ncol = mcol;
+	nsx = pwidth;
 
 	for (int i = str.size(); i >= 0; i--) {
 		int strw = _textLines[nrow].chunks[chunk].getFont()->getStringWidth(str);
