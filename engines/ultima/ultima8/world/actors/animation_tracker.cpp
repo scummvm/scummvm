@@ -56,38 +56,38 @@ AnimationTracker::AnimationTracker() : _firstFrame(true), _done(false),
 AnimationTracker::~AnimationTracker() {
 }
 
-bool AnimationTracker::init(const Actor *actor_, Animation::Sequence action_,
-                            uint32 dir_, const PathfindingState *state_) {
-	assert(actor_);
-	_actor = actor_->getObjId();
-	uint32 shape = actor_->getShape();
+bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
+                            uint32 dir, const PathfindingState *state) {
+	assert(actor);
+	_actor = actor->getObjId();
+	uint32 shape = actor->getShape();
 	_animAction = GameData::get_instance()->getMainShapes()->
-	             getAnim(shape, action_);
+	             getAnim(shape, action);
 	if (!_animAction)
 		return false;
 
-	_dir = dir_;
+	_dir = dir;
 
-	if (state_ == 0) {
-		_animAction->getAnimRange(actor_, _dir, _startFrame, _endFrame);
-		actor_->getLocation(_x, _y, _z);
-		_flipped = actor_->hasFlags(Item::FLG_FLIPPED);
-		_firstStep = actor_->hasActorFlags(Actor::ACT_FIRSTSTEP);
+	if (state == 0) {
+		_animAction->getAnimRange(actor, _dir, _startFrame, _endFrame);
+		actor->getLocation(_x, _y, _z);
+		_flipped = actor->hasFlags(Item::FLG_FLIPPED);
+		_firstStep = actor->hasActorFlags(Actor::ACT_FIRSTSTEP);
 	} else {
-		_animAction->getAnimRange(state_->_lastAnim, state_->_direction,
-		                         state_->_firstStep, _dir, _startFrame, _endFrame);
-		_flipped = state_->_flipped;
-		_firstStep = state_->_firstStep;
-		_x = state_->_x;
-		_y = state_->_y;
-		_z = state_->_z;
+		_animAction->getAnimRange(state->_lastAnim, state->_direction,
+		                         state->_firstStep, _dir, _startFrame, _endFrame);
+		_flipped = state->_flipped;
+		_firstStep = state->_firstStep;
+		_x = state->_x;
+		_y = state->_y;
+		_z = state->_z;
 	}
 	_startX = _x;
 	_startY = _y;
 	_startZ = _z;
 
 #ifdef WATCHACTOR
-	if (actor_ && actor_->getObjId() == watchactor) {
+	if (actor && actor->getObjId() == watchactor) {
 		pout << "AnimationTracker: playing " << _startFrame << "-" << _endFrame
 		     << " (_animAction flags: " << Std::hex << _animAction->flags
 		     << Std::dec << ")" << Std::endl;

@@ -65,13 +65,13 @@ ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(nullptr),
 	_attackedSomething(false) {
 }
 
-ActorAnimProcess::ActorAnimProcess(Actor *actor_, Animation::Sequence action_,
-                                   uint32 dir_, uint32 steps_) :
-		_dir(dir_), _action(action_), _steps(steps_), _tracker(nullptr),
+ActorAnimProcess::ActorAnimProcess(Actor *actor, Animation::Sequence action,
+                                   uint32 dir, uint32 steps) :
+		_dir(dir), _action(action), _steps(steps), _tracker(nullptr),
 		_firstFrame(true), _currentStep(0), _repeatCounter(0),
 		_animAborted(false), _attackedSomething(false)  {
-	assert(actor_);
-	_itemNum = actor_->getObjId();
+	assert(actor);
+	_itemNum = actor->getObjId();
 
 	_type = ACTOR_ANIM_PROC_TYPE;
 }
