@@ -1487,9 +1487,8 @@ void ScummEngine_v5::drawFlashlight() {
 
 	blit(_flashlight.buffer, vs->pitch, bgbak, vs->pitch, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
 
-	// C64 does not round the flashlight
-	if (_game.platform != Common::kPlatformC64) {
-
+	// C64 & NES does not round the flashlight
+	if (_game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformNES) {
 		// Round the corners. To do so, we simply hard-code a set of nicely
 		// rounded corners.
 		static const int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
@@ -2741,9 +2740,17 @@ void GdiNES::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int
 }
 
 void GdiNES::drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int top, int height) {
+	const byte darkPalette[16] = { 0x2d,0x1d,0x3d,0x20, 0x2d,0x1d,0x3d,0x20, 0x2d,0x1d,0x3d,0x20, 0x2d,0x1d,0x3d,0x20 };
+	const byte* stripPalette;
 	top /= 8;
 	height /= 8;
 	int x = stripnr + 2;	// NES version has a 2 tile gap on each edge
+
+	// MM NES does not paint the background when lit with a flashlight
+	if (_vm->isLightOn())
+		stripPalette = _vm->_NESPalette[0];
+	else
+		stripPalette = darkPalette;
 
 	if (_objectMode)
 		x += _NES.objX; // for objects, need to start at the left edge of the object, not the screen
@@ -2759,7 +2766,7 @@ void GdiNES::drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int 
 			byte c0 = _vm->_NESPatTable[1][tile * 16 + i];
 			byte c1 = _vm->_NESPatTable[1][tile * 16 + i + 8];
 			for (int j = 0; j < 8; j++)
-				dst[j] = _vm->_NESPalette[0][((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | (palette << 2)];
+				dst[j] = stripPalette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | (palette << 2)];
 			dst += dstPitch;
 			*mask = c0 | c1;
 			mask += _numStrips;
