@@ -164,6 +164,17 @@ void ScummEngine::resetPalette() {
 	static const byte tableHercGPalette[] = {
 		0x00, 0x00, 0x00, 	0x00, 0xFF, 0x00
 	};
+	
+	// Palette based on Apple IIgs Technical Notes: IIgs 2523063 Master Color Values
+	// Rearranged to match C64 color positions
+	static const byte tableApple2gsPalette[] = {
+		0x00, 0x00, 0x00,	0xFF, 0xFF, 0xFF,	0xDD, 0x00, 0x33,	0x44, 0xFF, 0x99,
+		0xDD, 0x22, 0xDD,	0x00, 0x77, 0x22,	0x00, 0x00, 0x99,	0xFF, 0xFF, 0x00,
+		0xFF, 0x66, 0x00,	0x88, 0x55, 0x00,	0xFF, 0x99, 0x88,	0x55, 0x55, 0x55,
+		0xAA, 0xAA, 0xAA,	0x11, 0xDD, 0x00,   0x22, 0x22, 0xFF,	0xAA, 0xAA, 0xAA,
+
+		0x7F, 0x3B, 0xA6
+	};
 
 #ifdef USE_RGB_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -185,8 +196,7 @@ void ScummEngine::resetPalette() {
 
 	if (_game.version <= 1) {
 		if (_game.platform == Common::kPlatformApple2GS) {
-			// TODO: unique palette?
-			setPaletteFromTable(tableC64Palette, sizeof(tableC64Palette) / 3);
+			setPaletteFromTable(tableApple2gsPalette, sizeof(tableApple2gsPalette) / 3);
 		} else if (_game.platform == Common::kPlatformC64) {
 			setPaletteFromTable(tableC64Palette, sizeof(tableC64Palette) / 3);
 		} else if (_game.platform == Common::kPlatformNES) {
