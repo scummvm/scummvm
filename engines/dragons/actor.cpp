@@ -146,6 +146,21 @@ Actor::Actor(uint16 id) : _actorID(id) {
 	_frame_flags = 0;
 	_frame = nullptr;
 	_surface = nullptr;
+
+	_actorFileDictionaryIndex = 0;
+	_sequenceTimerMaxValue = 0;
+	_scale = 0x100;
+	_sequenceTimer = 0;
+	_sequenceID = 0;
+	_direction = 0;
+	_xShl16 = 0;
+	_yShl16 = 0;
+	_walkSlopeX = 0;
+	_walkSlopeY = 0;
+	_walkPointsIndex = 0;
+	_finalWalkDestX = 0;
+	_finalWalkDestY = 0;
+	_field_7a = 0;
 }
 
 void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
