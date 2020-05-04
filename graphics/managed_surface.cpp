@@ -321,7 +321,7 @@ void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRe
 		const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor, uint srcAlpha,
 		const Surface *mask, bool maskOnly) {
 	transBlitFromInner(src, srcRect, destRect, transColor, flipped, overrideColor, srcAlpha,
-		nullptr, mask, maskOnly);
+		nullptr, nullptr, mask, maskOnly);
 }
 
 void ManagedSurface::transBlitFrom(const ManagedSurface &src, uint transColor, bool flipped,
@@ -355,15 +355,53 @@ void ManagedSurface::transBlitFrom(const ManagedSurface &src, const Common::Rect
 		const Surface *mask, bool maskOnly) {
 	if (transColor == (uint)-1 && src._transparentColorSet)
 		transColor = src._transparentColor;
-	const uint32 *palette = src._paletteSet ? src._palette : nullptr;
+	const uint32 *srcPalette = src._paletteSet ? src._palette : nullptr;
+	const uint32 *dstPalette = _paletteSet ? _palette : nullptr;
 
 	transBlitFromInner(src._innerSurface, srcRect, destRect, transColor, flipped, overrideColor,
-		srcAlpha, palette, mask, maskOnly);
+		srcAlpha, srcPalette, dstPalette, mask, maskOnly);
+}
+
+static uint findBestColor(const uint32 *palette, byte cr, byte cg, byte cb) {
+	uint bestColor = 0;
+	double min = 0xFFFFFFFF;
+
+	for (uint i = 0; i < 256; ++i) {
+		uint col = palette[i];
+
+		int rmean = ((col & 0xff) + cr) / 2;
+		int r = (col & 0xff) - cr;
+		int g = ((col >> 8) & 0xff) - cg;
+		int b = ((col >> 16) & 0xff) - cb;
+
+		double dist = sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
+		if (min > dist) {
+			bestColor = i;
+			min = dist;
+		}
+	}
+
+	return bestColor;
+}
+
+static byte *createPaletteLookup(const uint32 *srcPalette, const uint32 *dstPalette) {
+	byte *lookup = new byte[256];
+
+	for (int i = 0; i < 256; i++) {
+		uint col = srcPalette[i];
+		if (col == dstPalette[i]) {
+			lookup[i] = i;
+		} else {
+			lookup[i] = findBestColor(dstPalette, col & 0xff, (col >> 8) & 0xff, (col >> 16) & 0xff);
+		}
+	}
+
+	return lookup;
 }
 
 template<typename TSRC, typename TDEST>
 void transBlitPixel(TSRC srcVal, TDEST &destVal, const Graphics::PixelFormat &srcFormat, const Graphics::PixelFormat &destFormat,
-		uint overrideColor, uint srcAlpha, const uint32 *palette) {
+		uint overrideColor, uint srcAlpha, const uint32 *srcPalette, const byte *lookup) {
 	if (srcFormat == destFormat && srcAlpha == 0xff) {
 		// Matching formats, so we can do a straight copy
 		destVal = overrideColor ? overrideColor : srcVal;
@@ -373,10 +411,10 @@ void transBlitPixel(TSRC srcVal, TDEST &destVal, const Graphics::PixelFormat &sr
 	// Otherwise we have to manually decode and re-encode each pixel
 	byte aSrc, rSrc, gSrc, bSrc;
 	if (srcFormat.bytesPerPixel == 1) {
-		assert(palette != nullptr);	// Catch the cases when palette is missing
+		assert(srcPalette != nullptr);	// Catch the cases when palette is missing
 
 		// Get the palette color
-		const uint32 col = palette[srcVal];
+		const uint32 col = srcPalette[srcVal];
 		rSrc = col & 0xff;
 		gSrc = (col >> 8) & 0xff;
 		bSrc = (col >> 16) & 0xff;
@@ -411,12 +449,30 @@ void transBlitPixel(TSRC srcVal, TDEST &destVal, const Graphics::PixelFormat &sr
 	destVal = destFormat.ARGBToColor(0xff, rDest, gDest, bDest);
 }
 
+template<>
+void transBlitPixel<byte, byte>(byte srcVal, byte &destVal, const Graphics::PixelFormat &srcFormat, const Graphics::PixelFormat &destFormat,
+		uint overrideColor, uint srcAlpha, const uint32 *srcPalette, const byte *lookup) {
+	if (srcAlpha == 0) {
+		// Completely transparent, so skip
+		return;
+	}
+
+	destVal = overrideColor ? overrideColor : srcVal;
+
+	if (lookup)
+		destVal = lookup[destVal];
+}
+
 template<typename TSRC, typename TDEST>
 void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, const Common::Rect &destRect,
-		TSRC transColor, bool flipped, uint overrideColor, uint srcAlpha, const uint32 *palette,
-		const Surface *mask, bool maskOnly) {
+		TSRC transColor, bool flipped, uint overrideColor, uint srcAlpha, const uint32 *srcPalette,
+		const uint32 *dstPalette, const Surface *mask, bool maskOnly) {
 	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
+
+	byte *lookup = nullptr;
+	if (srcPalette && dstPalette)
+		lookup = createPaletteLookup(srcPalette, dstPalette);
 
 	// Loop through drawing output lines
 	for (int destY = destRect.top, scaleYCtr = 0; destY < destRect.bottom; ++destY, scaleYCtr += scaleY) {
@@ -444,22 +500,24 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 				if (!mskVal)
 					continue;
 
-				transBlitPixel<TSRC, TDEST>(srcVal, destLine[xCtr], src.format, dest.format, overrideColor, mskVal, palette);
+				transBlitPixel<TSRC, TDEST>(srcVal, destLine[xCtr], src.format, dest.format, overrideColor, mskVal, srcPalette, lookup);
 			} else {
-				transBlitPixel<TSRC, TDEST>(srcVal, destLine[xCtr], src.format, dest.format, overrideColor, srcAlpha, palette);
+				transBlitPixel<TSRC, TDEST>(srcVal, destLine[xCtr], src.format, dest.format, overrideColor, srcAlpha, srcPalette, lookup);
 			}
 		}
 	}
+
+	delete lookup;
 }
 
 #define HANDLE_BLIT(SRC_BYTES, DEST_BYTES, SRC_TYPE, DEST_TYPE) \
 	if (src.format.bytesPerPixel == SRC_BYTES && format.bytesPerPixel == DEST_BYTES) \
-		transBlit<SRC_TYPE, DEST_TYPE>(src, srcRect, _innerSurface, destRect, transColor, flipped, overrideColor, srcAlpha, palette, mask, maskOnly); \
+		transBlit<SRC_TYPE, DEST_TYPE>(src, srcRect, _innerSurface, destRect, transColor, flipped, overrideColor, srcAlpha, srcPalette, dstPalette, mask, maskOnly); \
 	else
 
 void ManagedSurface::transBlitFromInner(const Surface &src, const Common::Rect &srcRect,
 		const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor,
-		uint srcAlpha, const uint32 *palette, const Surface *mask, bool maskOnly) {
+		uint srcAlpha, const uint32 *srcPalette, const uint32 *dstPalette, const Surface *mask, bool maskOnly) {
 	if (src.w == 0 || src.h == 0 || destRect.width() == 0 || destRect.height() == 0)
 		return;
 
