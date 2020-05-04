@@ -396,7 +396,7 @@ uint16 ScaleLayer::getScale(uint16 y) {
 			if (local_v0_368 != 0) {
 				iVar3 = ((uVar5 & 0xffffu) - (uVar7 & 0xffffu)) * (uint)(uint16)(y - pSVar6->_y);
 
-				assert(((uint)(uint16)local_v0_368 != 0xffffffff) || (iVar3 != -0x80000000));
+				assert(((uint16)local_v0_368 != 0xffffu) || (iVar3 != -0x80000000));
 
 				return uVar7 + iVar3 / (int)(uint)(uint16)local_v0_368 & 0xffff;
 			}
