@@ -11,6 +11,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Dreamweb:
    - Added support for Russian fan-translation.
+   - Fixed animation speed.
 
  Kyra:
    - Added support for the PC-98 version of Eye of the Beholder I.
