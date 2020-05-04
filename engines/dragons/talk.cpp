@@ -716,6 +716,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 			uVar3 = (uint)x;
 		} while (x < numEntries);
 	}
+	assert(talkDialogEntry); // It could be zero if hasDialogEntries == 0. What to do then?
 	_vm->_cursor->updateActorPosition(0xf, (((uint16)talkDialogEntry->xPosMaybe + 0x18) - local_58) * 8 + 5);
 
 	if (!_vm->isFlagSet(ENGINE_FLAG_8)) {
