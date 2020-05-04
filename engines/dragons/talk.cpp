@@ -80,7 +80,7 @@ void Talk::printWideText(byte *text) {
 		}
 		text += 2;
 	}
-	buf[i] = 0;
+	buf[MAX(i, 1999)] = 0;
 	debug("TEXT: %s", buf);
 }
 
