@@ -295,6 +295,11 @@ bool BaseFileManager::registerPackages() {
 					if (_language != Common::RU_RUS) {
 						continue;
 					}
+				// Serbian
+				} else if (fileName == "xlanguage_sr.dcp") {
+					if (_language != Common::SR_SER) {
+						continue;
+					}
 				// Spanish
 				} else if (fileName == "spanish.dcp" || fileName == "xlanguage_es.dcp" || fileName == "spanish_language_pack.dcp") {
 					if (_language != Common::ES_ESP) {
