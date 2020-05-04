@@ -257,6 +257,12 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 
 			pout << "Couldn't create item" << Std::endl;
 			continue;
+		} else {
+			ShapeInfo *info = item->getShapeInfo();
+			assert(info);
+			if (info->_family > 10) {
+				warning("Created fixed item unknown family %d, shape (%d, %d) at (%d, %d, %d)", info->_family, shape, frame, x, y, z);
+			}
 		}
 		item->setLocation(x, y, z);
 

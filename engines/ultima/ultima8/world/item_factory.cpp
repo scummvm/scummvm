@@ -47,6 +47,10 @@ static Item *getItemForFamily(uint32 family) {
 	case ShapeInfo::SF_QUANTITY:
 	case ShapeInfo::SF_BREAKABLE:
 	case ShapeInfo::SF_REAGENT: // reagents need special handling too
+	case ShapeInfo::SF_10: // TODO: What's this? used in crusader levels
+	case ShapeInfo::SF_11: // TODO: What's this? used in crusader levels
+	case ShapeInfo::SF_12: // TODO: What's this? used in crusader levels
+	case ShapeInfo::SF_13: // TODO: What's this? used in crusader levels
 	case ShapeInfo::SF_15: // what's this?
 		// 'simple' item
 		return new Item();
