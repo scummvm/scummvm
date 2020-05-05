@@ -1756,6 +1756,13 @@ static const uint16 freddypharkasPatchMacInventory[] = {
 // We work around this by setting macSound:loop correctly on the heap so that it
 //  only plays once and macThing proceeds.
 //
+// This buggy script didn't break in the original because the Mac interpreter
+//  didn't support looping sounds. It always played sounds just once and then 
+//  signaled when they were complete and ignored the value of the loop property.
+//  This was most apparent in the KQ6 Mac port. All the room music, which was
+//  designed to loop, stopped abruptly after a minute in a room and then
+//  jarringly returned when changing rooms.
+//
 // Applies to: Mac Floppy
 // Responsible method: Heap in script 270
 // Fixes bug #7065
