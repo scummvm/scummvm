@@ -26,6 +26,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Replaced the existing NES palette to a more accurate NTSC palette based on Mesen.
    - Added a new GUI option to switch to an alternative NES palette based on the NES Classic.
    - Improved colors in Apple //gs Maniac Mansion.
+   - Fixed crash when entering garage in Apple //gs Maniac Mansion.
 
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
