@@ -61,6 +61,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x1c, LC::c_tell,			"" },
 	{ 0x1d, LC::c_telldone,		"" },
 	{ 0x1e, LC::cb_list,		"" },
+	{ 0x1f, LC::cb_proplist,	"" },
 	{ 0x41, LC::c_intpush,		"b" },
 	{ 0x42, LC::c_argcnoretpush,"b" },
 	{ 0x43, LC::c_argcpush,		"b" },
@@ -321,11 +322,36 @@ void LC::cb_v4assign() {
 
 void LC::cb_list() {
 	Datum nargs = g_lingo->pop();
-	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
-		LB::b_list(nargs.u.i);
-	} else {
-		warning("cb_list: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
+	if ((nargs.type != ARGC) && (nargs.type != ARGCNORET)) {
+		error("cb_list: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 	}
+	LB::b_list(nargs.u.i);
+}
+
+
+void LC::cb_proplist() {
+	Datum list = g_lingo->pop();
+	if (list.type != ARRAY) {
+		error("cb_proplist: first arg should be of type ARRAY, not %s", list.type2str());
+	}
+	Datum result;
+	result.type = PARRAY;
+	result.u.parr = new PropertyArray;
+	uint arraySize = list.u.farr->size();
+	if (arraySize % 2) {
+		warning("cb_proplist: list should have an even number of entries, ignoring the last one");
+	}
+	arraySize /= 2;
+
+	for (uint i = 0; i < arraySize; i += 1) {
+		Datum p = list.u.farr->operator[](i);
+		Datum v = list.u.farr->operator[](i + 1);
+
+		PCell cell = PCell(p, v);
+		result.u.parr->insert_at(0, cell);
+	};
+
+	g_lingo->push(result);
 }
 
 
