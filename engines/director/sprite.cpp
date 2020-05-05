@@ -27,25 +27,37 @@
 namespace Director {
 
 Sprite::Sprite() {
+	_scriptId = 0;
+	_scriptCastIndex = 0;
+	_colorcode = 0;
+	_blendAmount = 0;
+	_unk3 = 0;
+
 	_enabled = false;
-	_trails = 0;
-	_width = 0;
-	_ink = kInkTypeCopy;
-	_inkData = 0;
-	_height = 0;
-	_castId = 0;
-	_constraint = 0;
-	_moveable = false;
-	_puppet = false;
-	_editable = false;
 	_castId = 0;
 	_castIndex = 0;
+	_spriteType = kInactiveSprite;
+	_inkData = 0;
+	_ink = kInkTypeCopy;
+	_trails = 0;
+
+	_cast = nullptr;
+
+	_thickness = 0;
+	_width = 0;
+	_height = 0;
+	_constraint = 0;
+	_moveable = false;
+	_editable = false;
+	_puppet = false;
 	_backColor = 255;
 	_foreColor = 0;
+
 	_left = 0;
 	_right = 0;
 	_top = 0;
 	_bottom = 0;
+	_blend = 0;
 	_visible = false;
 	_movieRate = 0;
 	_movieTime = 0;
@@ -53,19 +65,6 @@ Sprite::Sprite() {
 	_stopTime = 0;
 	_volume = 0;
 	_stretch = 0;
-	_type = kInactiveSprite;
-
-	_cast = nullptr;
-
-	_blend = 0;
-	_thickness = 0;
-
-	_scriptId = 0;
-	_scriptCastIndex = 0;
-	_colorcode = 0;
-	_blendAmount = 0;
-	_unk3 = 0;
-	_spriteType = 0;
 }
 
 Sprite::~Sprite() {

@@ -74,7 +74,7 @@ public:
 	bool _enabled;
 	uint16 _castId;
 	uint16 _castIndex;
-	byte _spriteType;
+	SpriteType _spriteType;
 	byte _inkData;
 	InkType _ink;
 	uint16 _trails;
@@ -101,7 +101,6 @@ public:
 	uint16 _bottom;
 	byte _blend;
 	bool _visible;
-	SpriteType _type;
 	// Using in digital movie sprites
 	byte _movieRate;
 	uint16 _movieTime;

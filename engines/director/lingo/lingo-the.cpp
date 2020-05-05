@@ -596,7 +596,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_trails;
 		break;
 	case kTheType:
-		d.u.i = sprite->_type;
+		d.u.i = sprite->_spriteType;
 		break;
 	case kTheVisibility:
 	case kTheVisible:
@@ -718,7 +718,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_trails = d.u.i;
 		break;
 	case kTheType:
-		sprite->_type = static_cast<SpriteType>(d.u.i);
+		sprite->_spriteType = static_cast<SpriteType>(d.u.i);
 		break;
 	case kTheVisibility:
 	case kTheVisible:

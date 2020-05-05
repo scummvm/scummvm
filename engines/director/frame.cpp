@@ -274,7 +274,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 
 		if (_vm->getVersion() <= 4) {
 			sprite._scriptId = stream->readByte();
-			sprite._spriteType = stream->readByte();
+			sprite._spriteType = (SpriteType)stream->readByte();
 			sprite._enabled = sprite._spriteType != kInactiveSprite;
 			if (_vm->getVersion() == 4) {
 				sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
@@ -309,7 +309,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 				sprite._blendAmount = stream->readByte();
 			}
 		} else if (_vm->getVersion() == 5) {
-			sprite._spriteType = stream->readByte();
+			sprite._spriteType = (SpriteType)stream->readByte();
 			sprite._inkData = stream->readByte();
 
 			sprite._castIndex = stream->readUint16();
@@ -332,7 +332,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._thickness = stream->readByte();
 			stream->readByte();	// unused
 		} else if (_vm->getVersion() == 6) {
-			sprite._spriteType = stream->readByte();
+			sprite._spriteType = (SpriteType)stream->readByte();
 			sprite._inkData = stream->readByte();
 
 			sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
