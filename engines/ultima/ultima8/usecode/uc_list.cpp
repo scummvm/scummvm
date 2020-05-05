@@ -72,7 +72,7 @@ void UCList::unionStringList(UCList &l) {
 	l.free(); // NB: do _not_ free the strings in l, since they're in this one
 }
 
-void UCList::substractStringList(const UCList &l) {
+void UCList::subtractStringList(const UCList &l) {
 	for (unsigned int i = 0; i < l._size; i++)
 		removeString(l.getStringIndex(i));
 }

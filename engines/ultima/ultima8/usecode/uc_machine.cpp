@@ -504,7 +504,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		}
 		break;
 
-		case 0x19:
+		case 0x19: {
 			// 19 02
 			// add two stringlists, removing duplicates
 			ui32a = cs.readByte();
@@ -515,28 +515,42 @@ void UCMachine::execProcess(UCProcess *p) {
 			}
 			ui16a = p->_stack.pop2();
 			ui16b = p->_stack.pop2();
-			getList(ui16b)->unionStringList(*getList(ui16a));
-			freeStringList(ui16a); // contents are actually freed in unionSL
+			UCList *srclist = getList(ui16a);
+			UCList *dstlist = getList(ui16b);
+			if (!srclist || !dstlist) {
+				perr << "Invalid list param to union slist" << Std::endl;
+				error = true;
+			} else {
+				dstlist->unionStringList(*srclist);
+				freeStringList(ui16a); // contents are actually freed in unionSL
+			}
 			p->_stack.push2(ui16b);
 			LOGPF(("union slist\t(%02X)\n", ui32a));
 			break;
-
-		case 0x1A:
+		}
+		case 0x1A: {
 			// 1A
-			// substract string list
+			// subtract string list
 			// NB: this one takes a length parameter in crusader. (not in U8)!!
 			// (or rather, it seems it takes one after all? -wjp,20030511)
 			ui32a = cs.readByte(); // elementsize
 			ui32a = 2;
 			ui16a = p->_stack.pop2();
 			ui16b = p->_stack.pop2();
-			getList(ui16b)->substractStringList(*getList(ui16a));
-			freeStringList(ui16a);
+			UCList *srclist = getList(ui16a);
+			UCList *dstlist = getList(ui16b);
+			if (!srclist || !dstlist) {
+				perr << "Invalid list param to subtract slist" << Std::endl;
+				error = true;
+			} else {
+				dstlist->subtractStringList(*srclist);
+				freeStringList(ui16a);
+			}
 			p->_stack.push2(ui16b);
 			LOGPF(("remove slist\t(%02X)\n", ui32a));
 			break;
-
-		case 0x1B:
+		}
+		case 0x1B: {
 			// 1B xx
 			// pop two lists from the stack and remove the 2nd from the 1st
 			// (free the originals? order?)
@@ -544,12 +558,19 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui32a = cs.readByte(); // elementsize
 			ui16a = p->_stack.pop2();
 			ui16b = p->_stack.pop2();
-			getList(ui16b)->substractList(*getList(ui16a));
-			freeList(ui16a);
+			UCList *srclist = getList(ui16a);
+			UCList *dstlist = getList(ui16b);
+			if (!srclist || !dstlist) {
+				perr << "Invalid list param to remove from slist" << Std::endl;
+				error = true;
+			} else {
+				dstlist->subtractList(*srclist);
+				freeList(ui16a);
+			}
 			p->_stack.push2(ui16b);
 			LOGPF(("remove list\t(%02X)\n", ui32a));
 			break;
-
+		}
 		case 0x1C:
 			// 1C
 			// subtract two 16 bit integers
@@ -1553,6 +1574,7 @@ void UCMachine::execProcess(UCProcess *p) {
 					perr << "Warning: invalid src list passed to slist copy"
 						 << Std::endl;
 					ui16b = 0;
+					delete l;
 					break;
 				}
 				l->copyStringList(*srclist);
@@ -1594,7 +1616,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x6E:
 			// 6E xx
-			// substract xx from stack pointer
+			// subtract xx from stack pointer
 			// (effect on SP is the same as popping xx bytes)
 			si8a = static_cast<int8>(cs.readByte());
 			p->_stack.addSP(-si8a);

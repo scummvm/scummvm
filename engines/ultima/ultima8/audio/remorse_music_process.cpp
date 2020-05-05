@@ -61,7 +61,7 @@ static const char *TRACK_FILE_NAMES[] = {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMusicProcess, MusicProcess)
 
-RemorseMusicProcess::RemorseMusicProcess() : MusicProcess(), _currentTrack(0), _savedTrack(0), _playingStream(nullptr) {
+RemorseMusicProcess::RemorseMusicProcess() : MusicProcess(), _currentTrack(0), _savedTrack(0), _playingStream(nullptr), _combatMusicActive(false) {
 }
 
 RemorseMusicProcess::~RemorseMusicProcess() {
