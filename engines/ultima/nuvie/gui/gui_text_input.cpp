@@ -114,8 +114,10 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &keyState) {
 			break;
 		case HOME_KEY:
 			key.keycode = Common::KEYCODE_HOME;
+			break;
 		case END_KEY:
 			key.keycode = Common::KEYCODE_END;
+			break;
 		default :
 			if (keybinder->handle_always_available_keys(a)) return GUI_YUM;
 			break;

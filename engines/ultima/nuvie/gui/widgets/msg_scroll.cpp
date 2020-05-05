@@ -1042,7 +1042,7 @@ bool MsgScroll::input_buf_add_char(char c) {
 	input_char = 0;
 	if (permit_input != NULL)
 		input_buf_remove_char();
-	input_buf.append(1, c);
+	input_buf.push_back(c);
 	scroll_updated = true;
 
 // Add char to scroll buffer

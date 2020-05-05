@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-NuvieFileList::NuvieFileList() {
+NuvieFileList::NuvieFileList() : sort_mode(NUVIE_SORT_NAME_ASC) {
 }
 
 NuvieFileList::~NuvieFileList() {
@@ -48,7 +48,10 @@ bool NuvieFileList::open(const char *directory, const char *search, uint8 s_mode
 		return false;
 	}
 
-	dir.getChildren(list, Common::FSNode::kListFilesOnly);
+	if (!dir.getChildren(list, Common::FSNode::kListFilesOnly)) {
+		ConsoleAddWarning(Std::string("Failed to get children of ") + directory);
+		return false;
+	};
 	for (Common::FSList::iterator it = list.begin(); it != list.end(); ++it)
 		add_filename(*it);
 
