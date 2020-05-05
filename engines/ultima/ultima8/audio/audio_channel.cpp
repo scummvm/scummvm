@@ -81,12 +81,18 @@ void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool 
 		DisposeAfterUse::YES
 	);
 
-	Audio::AudioStream *stream = _loop <= 1 ? (Audio::AudioStream *)audioStream :
-		new Audio::LoopingAudioStream(audioStream, _loop);
+	int loops = _loop;
+	if (loops == -1) {
+		// loop forever
+		loops = 0;
+	}
+	Audio::AudioStream *stream = (_loop <= 1 && _loop != -1) ?
+		(Audio::AudioStream *)audioStream :
+		new Audio::LoopingAudioStream(audioStream, loops);
 
 	// Play it
-	int vol = (_lVol + _rVol) / 2;
-	int balance = (_rVol - _lVol);
+	int vol = (_lVol + _rVol) / 2;		 // range is 0 ~ 255
+	int balance = (_rVol - _lVol) / 2; // range is -127 ~ +127
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream, -1, vol, balance);
 	if (paused)
 		_mixer->pauseHandle(_soundHandle, true);

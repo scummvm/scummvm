@@ -86,6 +86,8 @@ public:
 	void setVolume(int lvol, int rvol) {
 		_lVol = lvol;
 		_rVol = rvol;
+		_mixer->setChannelVolume(_soundHandle, (rvol + lvol) / 2);
+		_mixer->setChannelBalance(_soundHandle, (rvol - lvol) / 2);
 	}
 	void getVolume(int &lvol, int &rvol) const {
 		lvol = _lVol;
