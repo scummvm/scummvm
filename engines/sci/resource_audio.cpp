@@ -1148,4 +1148,47 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 	scanNewSources();
 }
 
+void ResourceManager::changeMacAudioDirectory(Common::String path) {
+	// delete all Audio36 resources so that they can be replaced with
+	//  different patch files from the new directory.
+	for (ResourceMap::iterator it = _resMap.begin(); it != _resMap.end(); ++it) {
+		const ResourceType type = it->_key.getType();
+
+		if (type == kResourceTypeAudio36) {
+			Resource *resource = it->_value;
+			if (resource) {
+				// If one of these resources ends up being locked here, it
+				// probably means Audio32 is using it and we need to stop
+				// playback of audio before switching directories
+				assert(!resource->isLocked());
+
+				if (resource->_status == kResStatusEnqueued) {
+					removeFromLRU(resource);
+				}
+
+				delete resource;
+			}
+
+			_resMap.erase(it);
+		}
+	}
+
+	if (path.empty()) {
+		path = "english";
+	}
+	path = "voices/" + path + "/";
+
+	// add all Audio36 wave patch files from language directory
+	Common::ArchiveMemberList audio36Files;
+	SearchMan.listMatchingMembers(audio36Files, path + "A???????.???");
+	for (Common::ArchiveMemberList::const_iterator it = audio36Files.begin(); it != audio36Files.end(); ++it) {
+		const Common::ArchiveMemberPtr &file = *it;
+		assert(file);
+
+		const Common::String fileName = file->getName();
+		ResourceId resource36 = convertPatchNameBase36(kResourceTypeAudio36, fileName);
+		processWavePatch(resource36, path + fileName);
+	}
+}
+
 } // End of namespace Sci

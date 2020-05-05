@@ -1654,7 +1654,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->getLocationName().c_str());
 }
 
-static ResourceId convertPatchNameBase36(ResourceType type, const Common::String &filename) {
+ResourceId convertPatchNameBase36(ResourceType type, const Common::String &filename) {
 	// The base36 encoded resource contains the following:
 	// uint16 resourceId, byte noun, byte verb, byte cond, byte seq
 
