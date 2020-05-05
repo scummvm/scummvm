@@ -31,7 +31,66 @@
 #include "graphics/pixelformat.h"
 #include "graphics/yuv_to_rgb.h"
 
+#include "video/mkv/mkvparser.h"
+
 namespace Video {
+
+class MkvReader : public mkvparser::IMkvReader {
+public:
+	MkvReader() { _stream = nullptr; }
+	virtual ~MkvReader();
+
+	int Open(Common::SeekableReadStream *stream);
+	void Close();
+
+	virtual int Read(long long position, long length, unsigned char *buffer);
+	virtual int Length(long long *total, long long *available);
+
+private:
+	Common::SeekableReadStream *_stream;
+};
+
+int MkvReader::Open(Common::SeekableReadStream *stream) {
+	_stream = stream;
+
+	return 0;
+}
+
+void MkvReader::Close() {
+	delete _stream;
+
+	_stream = nullptr;
+}
+
+int MkvReader::Read(long long position, long length, unsigned char *buffer) {
+	if (!_stream)
+		return -1;
+
+	if (position > _stream->size() || position < 0)
+		return -1;
+
+	if (length <= 0)
+		return -1;
+
+	_stream->seek(position);
+	if (_stream->read(buffer, length) < length)
+		return -1;
+
+	return 0;
+}
+
+int MkvReader::Length(long long *total, long long *available) {
+	if (!_stream)
+		return -1;
+
+	if (*total)
+		*total = _stream->size();
+
+	if (*available)
+		*available = _stream->size();
+
+	return 0;
+}
 
 MKVDecoder::MKVDecoder() {
 	_fileStream = 0;
