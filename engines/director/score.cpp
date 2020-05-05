@@ -761,10 +761,10 @@ void Score::setSpriteCasts() {
 			if (castId == 0)
 				continue;
 
-			if (_vm->getSharedScore() && _vm->getSharedScore()->_loadedCast && _vm->getSharedScore()->_loadedCast->contains(castId)) {
-				_frames[i]->_sprites[j]->_cast = _vm->getSharedScore()->_loadedCast->getVal(castId);
-			} else if (_loadedCast->contains(castId)) {
+			if (_loadedCast->contains(castId)) {
 				_frames[i]->_sprites[j]->_cast = _loadedCast->getVal(castId);
+			} else if (_vm->getSharedScore() && _vm->getSharedScore()->_loadedCast && _vm->getSharedScore()->_loadedCast->contains(castId)) {
+				_frames[i]->_sprites[j]->_cast = _vm->getSharedScore()->_loadedCast->getVal(castId);
 			}
 		}
 	}
