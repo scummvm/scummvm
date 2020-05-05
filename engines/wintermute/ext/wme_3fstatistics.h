@@ -49,7 +49,7 @@ private:
 	Common::String _chapter;
 	Common::String _language;
 	Common::String _buildNum;
-	int _repeat;
+	int32 _repeat;
 };
 
 } // End of namespace Wintermute
