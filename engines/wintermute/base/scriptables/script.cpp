@@ -1420,13 +1420,12 @@ ScScript::TExternalFunction *ScScript::getExternal(char *name) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function) {
-#if 1
+	//////////////////////////////////////////////////////////////////////////
+	// Externals: emulate external functions used in known games 
+	//////////////////////////////////////////////////////////////////////////
 	if (!DID_FAIL(EmulateExternalCall(_gameRef, stack, thisStack, function))) {
 		return STATUS_OK;
 	}
-#else
-	_gameRef->LOG(0, "External functions are not supported on this platform.");
-#endif
 
 	stack->correctParams(0);
 	stack->pushNULL();
