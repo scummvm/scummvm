@@ -203,7 +203,11 @@ void Ultima4Engine::setToJourneyOnwards() {
 }
 
 bool Ultima4Engine::canSaveGameStateCurrently(bool isAutosave) {
-	return g_game != nullptr && g_context != nullptr && eventHandler->getController() == g_game;
+	return g_game != nullptr && g_context != nullptr && eventHandler->getController() == g_game
+		&& (
+			!g_context->_location->_prev ||
+			(g_context->_location->_context & (CTX_DUNGEON | CTX_COMBAT)) == CTX_DUNGEON
+		);
 }
 
 Common::Error Ultima4Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {

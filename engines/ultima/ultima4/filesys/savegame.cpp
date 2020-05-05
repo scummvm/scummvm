@@ -37,23 +37,21 @@ namespace Ultima4 {
 
 void SaveGame::save(Common::WriteStream *stream) {
 	Common::Serializer ser(nullptr, stream);
-	assert(g_context);
+	assert(g_context && g_context->_location);
 
-	if (g_context->_location) {
-		if (g_context->_location->_prev) {
-			_x = g_context->_location->_coords.x;
-			_y = g_context->_location->_coords.y;
-			_dngLevel = g_context->_location->_coords.z;
-			_dngX = g_context->_location->_prev->_coords.x;
-			_dngY = g_context->_location->_prev->_coords.y;
-		} else {
-			_x = g_context->_location->_coords.x;
-			_y = g_context->_location->_coords.y;
-			_dngLevel = g_context->_location->_coords.z;
-		}
-
-		_location = g_context->_location->_map->_id;
+	if (g_context->_location->_prev) {
+		_x = g_context->_location->_coords.x;
+		_y = g_context->_location->_coords.y;
+		_dngLevel = g_context->_location->_coords.z;
+		_dngX = g_context->_location->_prev->_coords.x;
+		_dngY = g_context->_location->_prev->_coords.y;
+	} else {
+		_x = g_context->_location->_coords.x;
+		_y = g_context->_location->_coords.y;
+		_dngLevel = g_context->_location->_coords.z;
 	}
+
+	_location = g_context->_location->_map->_id;
 
 	synchronize(ser);
 
@@ -61,70 +59,17 @@ void SaveGame::save(Common::WriteStream *stream) {
 	 * Save monsters
 	 */
 
-	if (g_context->_location) {
-		// fix creature animations. This was done for compatibility with u4dos,
-		// so may be redundant now
-		g_context->_location->_map->resetObjectAnimations();
-		g_context->_location->_map->fillMonsterTable();
+	// fix creature animations. This was done for compatibility with u4dos,
+	// so may be redundant now
+	g_context->_location->_map->resetObjectAnimations();
+	g_context->_location->_map->fillMonsterTable();
 
-		SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
-	} else {
-		SaveGameMonsterRecord::synchronize(nullptr, ser);
-	}
+	SaveGameMonsterRecord::synchronize(g_context->_location->_map->_monsterTable, ser);
 
 	/**
 	 * Write dungeon info
 	 */
-	if (g_context->_location && g_context->_location->_context & CTX_DUNGEON) {
-		uint x, y, z;
-
-		typedef Std::map<const Creature *, int, Std::PointerHash> DngCreatureIdMap;
-		static DngCreatureIdMap id_map;
-
-		/**
-		 * Map creatures to u4dos dungeon creature Ids
-		 */
-		if (id_map.size() == 0) {
-			id_map[creatureMgr->getById(RAT_ID)] = 1;
-			id_map[creatureMgr->getById(BAT_ID)] = 2;
-			id_map[creatureMgr->getById(GIANT_SPIDER_ID)] = 3;
-			id_map[creatureMgr->getById(GHOST_ID)] = 4;
-			id_map[creatureMgr->getById(SLIME_ID)] = 5;
-			id_map[creatureMgr->getById(TROLL_ID)] = 6;
-			id_map[creatureMgr->getById(GREMLIN_ID)] = 7;
-			id_map[creatureMgr->getById(MIMIC_ID)] = 8;
-			id_map[creatureMgr->getById(REAPER_ID)] = 9;
-			id_map[creatureMgr->getById(INSECT_SWARM_ID)] = 10;
-			id_map[creatureMgr->getById(GAZER_ID)] = 11;
-			id_map[creatureMgr->getById(PHANTOM_ID)] = 12;
-			id_map[creatureMgr->getById(ORC_ID)] = 13;
-			id_map[creatureMgr->getById(SKELETON_ID)] = 14;
-			id_map[creatureMgr->getById(ROGUE_ID)] = 15;
-		}
-
-		for (z = 0; z < g_context->_location->_map->_levels; z++) {
-			for (y = 0; y < g_context->_location->_map->_height; y++) {
-				for (x = 0; x < g_context->_location->_map->_width; x++) {
-					byte tile = g_context->_location->_map->translateToRawTileIndex(*g_context->_location->_map->getTileFromData(MapCoords(x, y, z)));
-					Object *obj = g_context->_location->_map->objectAt(MapCoords(x, y, z));
-
-					/**
-					 * Add the creature to the tile
-					 */
-					if (obj && obj->getType() == Object::CREATURE) {
-						const Creature *m = dynamic_cast<Creature *>(obj);
-						DngCreatureIdMap::iterator m_id = id_map.find(m);
-						if (m_id != id_map.end())
-							tile |= m_id->_value;
-					}
-
-					// Write the tile
-					stream->writeByte(tile);
-				}
-			}
-		}
-
-
+	if (g_context->_location && g_context->_location->_prev) {
 		/**
 		 * Write out monsters
 		 */
@@ -150,37 +95,31 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 	// initialize our party
 	if (g_context->_party) {
 		g_context->_party->deleteObserver(g_game);
+		delete g_context->_party;
 	}
 	g_context->_party = new Party(this);
 	g_context->_party->addObserver(g_game);
 
 	// Delete any prior map
-	if (g_context->_location && g_context->_location->_prev) {
-		g_context->_location->_prev->deleteObserver(g_game);
-		delete g_context->_location->_prev;
-		g_context->_location->_prev = nullptr;
-	}
-	if (g_context->_location) {
-		g_context->_location->deleteObserver(g_game);
-		delete g_context->_location;
-		g_context->_location = nullptr;
-	}
+	while (g_context->_location)
+		locationFree(&g_context->_location);
 
 	// set the map to the world map
-	g_game->setMap(mapMgr->get(MAP_WORLD), 0, nullptr);
+	Map *map = mapMgr->get(MAP_WORLD);
+	g_game->setMap(map, 0, nullptr);
 	assert(g_context->_location && g_context->_location->_map);
 	g_context->_location->_map->clearObjects();
 
+	// initialize the moons (must be done from the world map)
+	g_game->initMoons();
+
 	// initialize our start location
-	Map *map = mapMgr->get(MapId(_location));
+	map = mapMgr->get(MapId(_location));
 
 	// if our map is not the world map, then load our map
 	if (map->_type != Map::WORLD)
 		g_game->setMap(map, 1, nullptr);
 	else
-		// initialize the moons (must be done from the world map)
-		g_game->initMoons();
-
 
 	/**
 	 * Translate info from the savegame to something we can use
