@@ -818,12 +818,12 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.i = 1; //Not loaded handled above
 		break;
 	case kTheName:
-		d.makeString();
-		d.u.s = &castInfo->name;
+		d.type = STRING;
+		d.u.s = new Common::String(castInfo->name.c_str());
 		break;
 	case kTheScriptText:
-		d.makeString();
-		d.u.s = &castInfo->script;
+		d.type = STRING;
+		d.u.s = new Common::String(castInfo->script.c_str());
 		break;
 	case kTheText:
 		d.makeString();
