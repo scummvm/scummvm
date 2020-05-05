@@ -25,6 +25,7 @@
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/frame.h"
 #include "director/sprite.h"
 #include "director/score.h"
 #include "director/lingo/lingo.h"
@@ -407,6 +408,16 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = g_system->getEventManager()->getMousePos().y;
 		break;
+	case kTheMouseCast:
+		{
+			Common::Point pos = g_system->getEventManager()->getMousePos();
+			Score *sc = _vm->getCurrentScore();
+			Frame *currentFrame = sc->_frames[sc->getCurrentFrame()];
+			uint16 spriteId = currentFrame->getSpriteIDFromPos(pos);
+			d.type = INT;
+			d.u.i = currentFrame->_sprites[spriteId]->_castId;
+		}
+		break;
 	case kThePerFrameHook:
 		warning("STUB: Lingo::getTheEntity(): getting the perframehook");
 		break;
@@ -425,7 +436,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheStillDown:
 		d.type = INT;
 		d.u.i = _vm->getCurrentScore()->_mouseIsDown;
-    break;
+		break;
 	case kTheLastFrame:
 		d.type = INT;
 		d.u.i = _vm->getCurrentScore()->_frames.size() - 1;
@@ -684,8 +695,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheMoveableSprite:
 		sprite->_moveable = d.u.i;
-    if (!d.u.i)
-      sprite->_currentPoint = sprite->_startPoint;
+		if (!d.u.i)
+			sprite->_currentPoint = sprite->_startPoint;
 		break;
 	case kTheMovieRate:
 		sprite->_movieRate = d.u.i;
