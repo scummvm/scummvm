@@ -624,13 +624,13 @@ reg_t kMacKq7RestoreGame(EngineState *s) {
 	return success ? TRUE_REG : NULL_REG;
 }
 
-// kMacShiversInitializeSave is a subop of kMacPlatform32.
-reg_t kMacShiversInitializeSave(EngineState *s, int argc, reg_t *argv) {
+// kMacInitializeSave is a subop of kMacPlatform32.
+reg_t kMacInitializeSave(EngineState *s, int argc, reg_t *argv) {
 	return TRUE_REG; // NULL_REG if i/o errors
 }
 
-// kMacShiversSaveGame is a subop of kMacPlatform32.
-reg_t kMacShiversSaveGame(EngineState *s, int argc, reg_t *argv) {
+// kMacSaveGame is a subop of kMacPlatform32.
+reg_t kMacSaveGame(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxFrameout->kernelFrameOut(true); // see kSaveGame32
 
 	const int saveId = shiftSciToScummVMSaveId(argv[1].toUint16());
@@ -643,8 +643,8 @@ reg_t kMacShiversSaveGame(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-// kMacShiversRestoreGame is a subop of kMacPlatform32.
-reg_t kMacShiversRestoreGame(EngineState *s, int argc, reg_t *argv) {
+// kMacRestoreGame is a subop of kMacPlatform32.
+reg_t kMacRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	const int saveId = shiftSciToScummVMSaveId(argv[1].toUint16());
 	if (gamestate_restore(s, saveId)) {
 		return TRUE_REG;
@@ -672,32 +672,37 @@ reg_t kMacPlatform32(EngineState *s, int argc, reg_t *argv) {
 		if (argc == 1) {
 			return kMacKq7InitializeSave(s);
 		} else if (argc == 3) {
-			return kMacShiversInitializeSave(s, argc - 1, argv + 1);
+			return kMacInitializeSave(s, argc - 1, argv + 1);
 		} 
 		break;
 	case 4:
 		if (argc == 1) {
 			return kMacKq7SaveGame(s);
 		} else if (argc == 4) {
-			return kMacShiversSaveGame(s, argc - 1, argv + 1);
+			return kMacSaveGame(s, argc - 1, argv + 1);
 		}
 		break;
 	case 5:
 		if (argc == 1) {
 			return kMacKq7RestoreGame(s);
 		} else if (argc == 3) {
-			return kMacShiversRestoreGame(s, argc - 1, argv + 1);
+			return kMacRestoreGame(s, argc - 1, argv + 1);
 		}
 		break;
 
-	// TODO: Mother Goose save game handling
+	// Subops 6-11 are used for saving and restoring by Mother Goose only.
 	case 6:
+		return kMacInitializeSave(s, argc - 1, argv + 1);
 	case 7:
+		return kMacSaveGame(s, argc - 1, argv + 1);
 	case 8:
+		return kMacRestoreGame(s, argc - 1, argv + 1);
 	case 9:
+		return kGetSaveFiles32(s, argc - 1, argv + 1);
 	case 10:
+		return kMakeSaveCatName(s, argc - 1, argv + 1);
 	case 11:
-		break;
+		return kMakeSaveFileName(s, argc - 1, argv + 1);
 
 	// TODO: Phantasmagoria music volume adjustment [ 0-15 ]
 	case 12:
