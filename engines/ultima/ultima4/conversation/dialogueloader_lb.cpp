@@ -41,12 +41,7 @@ Response *lordBritishGetIntro(const DynamicResponse *resp);
  */
 Dialogue *U4LBDialogueLoader::load(void *source) {
 	Std::vector<Common::String> lbKeywords = u4read_stringtable("lb_keywords");
-
-	// There's a \0 in the 19th Common::String so we get a spurious 20th entry
 	Std::vector<Common::String> lbText = u4read_stringtable("lb_text");
-	for (int i = 20; i < 24; i++)
-		lbText[i] = lbText[i + 1];
-	lbText.pop_back();
 
 	Dialogue *dlg = new Dialogue();
 	dlg->setTurnAwayProb(0);
@@ -62,14 +57,6 @@ Dialogue *U4LBDialogueLoader::load(void *source) {
 	for (unsigned i = 0; i < lbKeywords.size(); i++) {
 		dlg->addKeyword(lbKeywords[i], new Response(lbText[i]));
 	}
-
-	/* since the original game files are a bit sketchy on the 'abyss' keyword,
-	   let's handle it here just to be safe :) */
-	dlg->addKeyword("abyss",
-	                new Response("\n\n\n\n\nHe says:\nThe Great Stygian Abyss is the darkest pocket of evil "
-	                             "remaining in Britannia!\n\n\n\n\nIt is said that in the deepest recesses of "
-	                             "the Abyss is the Chamber of the Codex!\n\n\n\nIt is also said that only one "
-	                             "of highest Virtue may enter this Chamber, one such as an Avatar!!!\n"));
 
 	Response *heal = new Response("\n\n\n\n\n\nHe says: I am\nwell, thank ye.");
 	heal->add(g_responseParts->HEALCONFIRM);

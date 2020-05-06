@@ -31,6 +31,21 @@ void extractStringTable(File &src, const char *filename, int offset, int count) 
 	char c;
 
 	for (int idx = 0; idx < count; ++idx) {
+		if (offset == 87754 && idx == 19) {
+			// String entry #19 for Lord British is dodgy in the original data
+			const char *STR = "\n\n\n\n\nHe says:\nThe Great Stygian Abyss is the darkest pocket of evil "
+				"remaining in Britannia!\n\n\n\n\nIt is said that in the deepest recesses of "
+				"the Abyss is the Chamber of the Codex!\n\n\n\nIt is also said that only one "
+				"of highest Virtue may enter this Chamber, one such as an Avatar!!!\n";
+			dest.write(STR, (int)strlen(STR));
+			dest.writeByte(0);
+
+			// Skip to next line
+			while (src.readByte()) {}
+			while (src.readByte()) {}
+			continue;
+		}
+
 		do {
 			c = src.readByte();
 			dest.writeByte(c);
@@ -55,7 +70,7 @@ void extractUltima4Resources() {
 	// Extract string tables
 	extractStringTable(f2, "hawkwind.dat", 74729, 53);
 	extractStringTable(f2, "lb_keywords.dat", 87581, 24);
-	extractStringTable(f2, "lb_text.dat", 87754, 25);
+	extractStringTable(f2, "lb_text.dat", 87754, 24);
 	extractStringTable(f2, "virtue.dat", 0x0fc7b, 11);
 	extractStringTable(f2, "endgame1.dat", 0x0fee4, 7);
 	extractStringTable(f2, "endgame2.dat", 0x10187, 5);

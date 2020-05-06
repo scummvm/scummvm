@@ -76,6 +76,10 @@ public:
 		return feof(_file);
 	}
 
+	int pos() const {
+		return ftell(_file);
+	}
+
 	uint32 computeMD5();
 };
 
@@ -106,7 +110,7 @@ public:
 		writeWord((val >> 16) & 0xffff);
 	}
 
-	int write(void *buf, int size) {
+	int write(const void *buf, int size) {
 		return (int)fwrite(buf, 1, size, _file);
 	}
 
