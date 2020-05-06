@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/audio/sound_flex.h"
