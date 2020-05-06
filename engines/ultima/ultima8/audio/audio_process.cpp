@@ -115,13 +115,22 @@ void AudioProcess::run() {
 				finished = true;
 		}
 
+		if (it->_loops == -1) {
+			// check if an ever-looping sfx for an item has left the
+			// fast area.. if so we are "finished".
+			Item *item = getItem(it->_objId);
+			if (item && !item->hasFlags(Item::FLG_FASTAREA) && mixer->isPlaying(it->_channel)) {
+				finished = true;
+				mixer->stopSample(it->_channel);
+			}
+		}
+
 		if (finished)
 			it = _sampleInfo.erase(it);
 		else {
-
 			if (it->_sfxNum != -1 && it->_objId) {
-				it->_lVol = 256;
-				it->_rVol = 256;
+				it->_lVol = 255;
+				it->_rVol = 255;
 				calculateSoundVolume(it->_objId, it->_lVol, it->_rVol);
 			}
 			mixer->setVolume(it->_channel, (it->_lVol * it->_volume) / 256, (it->_rVol * it->_volume) / 256);
@@ -502,6 +511,24 @@ uint32 AudioProcess::I_playAmbientSFX(const uint8 *args, unsigned int argsize) {
 	else perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
+}
+
+uint32 AudioProcess::I_playAmbientSFXCru(const uint8 *args, unsigned int argsize) {
+	// Similar to I_playAmbientSFX, but the params are different.
+	ARG_ITEM_FROM_PTR(item)
+	ARG_SINT16(sfxNum);
+
+	if (!item) {
+		warning("I_playAmbientSFXCru: Couldn't get item");
+	} else {
+		AudioProcess *ap = AudioProcess::get_instance();
+		if (ap)
+			ap->playSFX(sfxNum, 0x10, item->getObjId(), -1, true);
+		else
+			warning("I_playAmbientSFXCru Error: No AudioProcess");
+	}
+	return 0;
+
 }
 
 uint32 AudioProcess::I_isSFXPlaying(const uint8 *args, unsigned int argsize) {
