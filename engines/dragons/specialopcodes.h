@@ -58,6 +58,7 @@ public:
 		SceneUpdater() {
 			tbl = nullptr;
 			iniID = sequenceID = 0;
+			counter = 0;
 			curSequence = curSequenceIndex = numTotalSequences = sequenceDuration = 0;
 
 			for (uint i = 0; i < 8; i++) {
