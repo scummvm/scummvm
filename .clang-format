@@ -3,7 +3,7 @@
     UseTab: Never,
     IndentWidth: 4,
     TabWidth: 4,
-    BreakBeforeBraces: Never,
+    BreakBeforeBraces: Attach,
     IndentCaseLabels: false,
     ColumnLimit: 0,
     AccessModifierOffset: -4,
