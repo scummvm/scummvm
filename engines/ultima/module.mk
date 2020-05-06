@@ -213,7 +213,6 @@ MODULE_OBJS := \
 	ultima4/map/tileset.o \
 	ultima4/sound/music.o \
 	ultima4/sound/sound.o \
-	ultima4/sound/sound_scummvm.o \
 	ultima4/views/imageview.o \
 	ultima4/views/menu.o \
 	ultima4/views/menuitem.o \
