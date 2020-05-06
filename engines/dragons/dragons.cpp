@@ -120,6 +120,7 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 DragonsEngine::~DragonsEngine() {
 	delete _sequenceOpcodes;
 	delete _scriptOpcodes;
+	delete _cursor;
 }
 
 void DragonsEngine::updateEvents() {
