@@ -1383,6 +1383,8 @@ bool Debugger::cmdGate(int argc, const char **argv) {
 
 bool Debugger::cmdGoto(int argc, const char **argv) {
 	Common::String dest;
+	PortalList &portals = g_context->_location->_map->_portals;
+	uint p;
 
 	if (argc == 2) {
 		dest = argv[1];
@@ -1398,14 +1400,21 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 	dest.toLowercase();
 
 	bool found = false;
-	for (unsigned p = 0; p < g_context->_location->_map->_portals.size(); p++) {
-		MapId destid = g_context->_location->_map->_portals[p]->_destid;
+	p = strToInt(dest.c_str());
+
+	if (p > 0 && p <= portals.size()) {
+		g_context->_location->_coords = portals[p - 1]->_coords;
+		found = true;
+	}
+
+	for (p = 0; p < portals.size() && !found; p++) {
+		MapId destid = portals[p]->_destid;
 		Common::String destNameLower = mapMgr->get(destid)->getName();
 		destNameLower.toLowercase();
 
 		if (destNameLower.find(dest) != Common::String::npos) {
 			print("\n%s", mapMgr->get(destid)->getName().c_str());
-			g_context->_location->_coords = g_context->_location->_map->_portals[p]->_coords;
+			g_context->_location->_coords = portals[p]->_coords;
 			found = true;
 			break;
 		}
