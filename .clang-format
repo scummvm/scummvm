@@ -20,5 +20,5 @@
     SpacesInAngles: false,
     SpacesInConditionalStatement: false,
     SpacesInParentheses: false,
-    SpacesInSquareBrackets: false
+    SpacesInSquareBrackets: false,
 }
