@@ -1298,7 +1298,7 @@ bool Debugger::cmdDungeon(int argc, const char **argv) {
 			int dungNum = strToInt(argv[1]);
 
 			if (dungNum >= 1 && dungNum <= 8) {
-				g_context->_location->_coords = g_context->_location->_map->_portals[dungNum - 1]->_coords;
+				g_context->_location->_coords = g_context->_location->_map->_portals[dungNum + 15]->_coords;
 				return false;
 			} else if (dungNum == 9) {
 				g_game->setMap(mapMgr->get(MAP_DECEIT), 1, nullptr);
