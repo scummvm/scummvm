@@ -531,6 +531,9 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			uint32 index = casStream.readUint32BE();
 			debugCN(2, kDebugLoading, "%d ", index);
 
+			if (index == 0) {
+				continue;
+			}
 			Resource &res = resources[index];
 			res.index = index;
 			res.castId = i;
