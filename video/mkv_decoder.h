@@ -40,6 +40,10 @@
 #include <vorbis/codec.h>
 #endif
 
+#include <vpx/vpx_decoder.h>
+#include <vpx/vp8dx.h>
+
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -49,7 +53,13 @@ class AudioStream;
 class QueuingAudioStream;
 }
 
+namespace mkvparser {
+class MkvReader;
+}
+
 namespace Video {
+
+class MkvReader;
 
 /**
  *
@@ -148,6 +158,9 @@ private:
 
 	VPXVideoTrack *_videoTrack;
 	VorbisAudioTrack *_audioTrack;
+
+	vpx_codec_ctx_t *_codec;
+	mkvparser::MkvReader *_reader;
 };
 
 } // End of namespace Video
