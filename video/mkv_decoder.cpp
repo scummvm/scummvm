@@ -33,12 +33,13 @@
 
 #include "video/mkv/mkvparser.h"
 
-namespace Video {
+namespace mkvparser  {
 
 class MkvReader : public mkvparser::IMkvReader {
 public:
 	MkvReader() { _stream = nullptr; }
-	virtual ~MkvReader();
+	MkvReader(Common::SeekableReadStream *stream, uint size = 0);
+	virtual ~MkvReader() { Close(); }
 
 	int Open(Common::SeekableReadStream *stream);
 	void Close();
@@ -48,7 +49,17 @@ public:
 
 private:
 	Common::SeekableReadStream *_stream;
+	uint _size;
 };
+
+MkvReader::MkvReader(Common::SeekableReadStream *stream, uint size) {
+	_stream = stream;
+
+	if (size == 0)
+		size = _stream->size();
+
+	_size = size;
+}
 
 int MkvReader::Open(Common::SeekableReadStream *stream) {
 	_stream = stream;
@@ -84,13 +95,17 @@ int MkvReader::Length(long long *total, long long *available) {
 		return -1;
 
 	if (*total)
-		*total = _stream->size();
+		*total = _size;
 
 	if (*available)
-		*available = _stream->size();
+		*available = _size;
 
 	return 0;
 }
+
+} // end of namespace mkvparser
+
+namespace Video {
 
 MKVDecoder::MKVDecoder() {
 	_fileStream = 0;
@@ -98,6 +113,9 @@ MKVDecoder::MKVDecoder() {
 	_videoTrack = 0;
 	_audioTrack = 0;
 	_hasVideo = _hasAudio = false;
+
+	_codec = nullptr;
+	_reader = nullptr;
 }
 
 MKVDecoder::~MKVDecoder() {
@@ -109,135 +127,196 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_fileStream = stream;
 
-	// start up Ogg stream synchronization layer
-	ogg_sync_init(&_oggSync);
+	_codec = new vpx_codec_ctx_t;
+	_reader = new mkvparser::MkvReader(stream);
 
-	// init supporting Vorbis structures needed in header parsing
-	vorbis_info_init(&_vorbisInfo);
+	long long pos = 0;
+
+	mkvparser::EBMLHeader ebmlHeader;
+
+	ebmlHeader.Parse(_reader, pos);
+
+	mkvparser::Segment *pSegment;
+
+	long long ret = mkvparser::Segment::CreateInstance(_reader, pos, pSegment);
+	if (ret) {
+		error("MKVDecoder::loadStream(): Segment::CreateInstance() failed.");
+	}
+
+	ret = pSegment->Load();
+	if (ret < 0) {
+		error("MKVDecoder::loadStream(): Segment::Load() failed.\n");
+	}
+
+	const mkvparser::Tracks *pTracks = pSegment->GetTracks();
+
+	unsigned long i = 0;
+	const unsigned long j = pTracks->GetTracksCount();
+
+	warning("Number of tracks: %ld", j);
+
+	enum {VIDEO_TRACK = 1, AUDIO_TRACK = 2};
+	int videoTrack = -1;
+	int audioTrack = -1;
+	long long audioBitDepth;
+	double audioSampleRate;
+	ogg_packet oggPacket;
+	vorbis_info vorbisInfo;
 	vorbis_comment vorbisComment;
-	vorbis_comment_init(&vorbisComment);
+	vorbis_block vorbisBlock;
 
-	// init supporting Theora structures needed in header parsing
-	th_info theoraInfo;
-	th_info_init(&theoraInfo);
-	th_comment theoraComment;
-	th_comment_init(&theoraComment);
-	th_setup_info *theoraSetup = 0;
+#if 0
+	while (i != j) {
+		const Track *const pTrack = pTracks->GetTrackByIndex(i++);
 
-	uint theoraPackets = 0, vorbisPackets = 0;
+		if (pTrack == NULL)
+		continue;
 
-	// Ogg file open; parse the headers
-	// Only interested in Vorbis/Theora streams
-	bool foundHeader = false;
-	while (!foundHeader) {
-		int ret = bufferData();
+		const long long trackType = pTrack->GetType();
+		//const unsigned long long trackUid = pTrack->GetUid();
+		//const char* pTrackName = pTrack->GetNameAsUTF8();
 
-		if (ret == 0)
-			break; // FIXME: Shouldn't this error out?
+		if (trackType == VIDEO_TRACK && videoTrack < 0) {
+			videoTrack = pTrack->GetNumber();
+			const VideoTrack *const pVideoTrack =
+			static_cast<const VideoTrack *>(pTrack);
 
-		while (ogg_sync_pageout(&_oggSync, &_oggPage) > 0) {
-			ogg_stream_state test;
+			const long long width = pVideoTrack->GetWidth();
+			const long long height = pVideoTrack->GetHeight();
 
-			// is this a mandated initial header? If not, stop parsing
-			if (!ogg_page_bos(&_oggPage)) {
-				// don't leak the page; get it into the appropriate stream
-				queuePage(&_oggPage);
-				foundHeader = true;
-				break;
+			const double rate = pVideoTrack->GetFrameRate();
+
+			if (rate > 0)
+				Init_Special_Timer(rate);
+
+			movieAspect = (float)width / height;
+		}
+
+		if (trackType == AUDIO_TRACK && audioTrack < 0) {
+			audioTrack = pTrack->GetNumber();
+			const AudioTrack *const pAudioTrack =
+			static_cast<const AudioTrack *>(pTrack);
+
+			audioChannels = pAudioTrack->GetChannels();
+			audioBitDepth = pAudioTrack->GetBitDepth();
+			audioSampleRate = pAudioTrack->GetSamplingRate();
+
+			uint audioHeaderSize;
+			const byte *audioHeader = pAudioTrack->GetCodecPrivate(audioHeaderSize);
+
+			if (audioHeaderSize < 1) {
+				warning("Strange audio track in movie.");
+				audioTrack = -1;
+				continue;
 			}
 
-			ogg_stream_init(&test, ogg_page_serialno(&_oggPage));
-			ogg_stream_pagein(&test, &_oggPage);
-			ogg_stream_packetout(&test, &_oggPacket);
+			byte *p = (byte *)audioHeader;
 
-			// identify the codec: try theora
-			if (theoraPackets == 0 && th_decode_headerin(&theoraInfo, &theoraComment, &theoraSetup, &_oggPacket) >= 0) {
-				// it is theora
-				memcpy(&_theoraOut, &test, sizeof(test));
-				theoraPackets = 1;
-				_hasVideo = true;
-			} else if (vorbisPackets == 0 && vorbis_synthesis_headerin(&_vorbisInfo, &vorbisComment, &_oggPacket) >= 0) {
-				// it is vorbis
-				memcpy(&_vorbisOut, &test, sizeof(test));
-				vorbisPackets = 1;
-				_hasAudio = true;
-			} else {
-				// whatever it is, we don't care about it
-				ogg_stream_clear(&test);
+			uint count = *p++ + 1;
+			if (count != 3) {
+				warning("Strange audio track in movie.");
+				audioTrack = -1;
+				continue;
 			}
+
+			uint64_t sizes[3], total;
+
+			int i = 0;
+			total = 0;
+			while (--count) {
+				sizes[i] = xiph_lace_value(&p);
+				total += sizes[i];
+				i += 1;
+			}
+			sizes[i] = audioHeaderSize - total - (p - audioHeader);
+
+			// initialize vorbis
+			vorbis_info_init(&vorbisInfo);
+			vorbis_comment_init(&vorbisComment);
+			memset(&vorbisDspState, 0, sizeof(vorbisDspState));
+			memset(&vorbisBlock, 0, sizeof(vorbisBlock));
+
+			oggPacket.e_o_s = false;
+			oggPacket.granulepos = 0;
+			oggPacket.packetno = 0;
+			int r;
+			for (int i = 0; i < 3; i++) {
+				oggPacket.packet = p;
+				oggPacket.bytes = sizes[i];
+				oggPacket.b_o_s = oggPacket.packetno == 0;
+				r = vorbis_synthesis_headerin(&vorbisInfo, &vorbisComment, &oggPacket);
+				if (r)
+				fprintf(stderr, "vorbis_synthesis_headerin failed, error: %d", r);
+				oggPacket.packetno++;
+				p += sizes[i];
+			}
+
+			r = vorbis_synthesis_init(&vorbisDspState, &vorbisInfo);
+			if (r)
+			fprintf(stderr, "vorbis_synthesis_init failed, error: %d", r);
+			r = vorbis_block_init(&vorbisDspState, &vorbisBlock);
+			if (r)
+			fprintf(stderr, "vorbis_block_init failed, error: %d", r);
+
+			ALenum audioFormat = alureGetSampleFormat(audioChannels, 16, 0);
+			movieAudioIndex = initMovieSound(fileNumber, audioFormat, audioChannels, (ALuint) audioSampleRate, feedAudio);
+
+			fprintf(stderr, "Movie sound inited.\n");
+			audio_queue_init(&audioQ);
+			audioNsPerByte = (1000000000 / audioSampleRate) / (audioChannels * 2);
+			audioNsBuffered = 0;
+			audioBufferLen = audioChannels * audioSampleRate;
 		}
-		// fall through to non-bos page parsing
 	}
 
-	// we're expecting more header packets.
-	while ((theoraPackets && theoraPackets < 3) || (vorbisPackets && vorbisPackets < 3)) {
-		int ret;
+	if (videoTrack < 0)
+	fatal("Movie error: No video in movie file.");
 
-		// look for further theora headers
-		while (theoraPackets && (theoraPackets < 3) && (ret = ogg_stream_packetout(&_theoraOut, &_oggPacket))) {
-			if (ret < 0)
-				error("Error parsing Theora stream headers; corrupt stream?");
+	if (audioTrack < 0)
+	fatal("Movie error: No sound found.");
 
-			if (!th_decode_headerin(&theoraInfo, &theoraComment, &theoraSetup, &_oggPacket))
-				error("Error parsing Theora stream headers; corrupt stream?");
+	video_queue_init(&videoQ);
 
-			theoraPackets++;
-		}
+	const unsigned long clusterCount = pSegment->GetCount();
 
-		// look for more vorbis header packets
-		while (vorbisPackets && (vorbisPackets < 3) && (ret = ogg_stream_packetout(&_vorbisOut, &_oggPacket))) {
-			if (ret < 0)
-				error("Error parsing Vorbis stream headers; corrupt stream?");
-
-			if (vorbis_synthesis_headerin(&_vorbisInfo, &vorbisComment, &_oggPacket))
-				error("Error parsing Vorbis stream headers; corrupt stream?");
-
-			vorbisPackets++;
-
-			if (vorbisPackets == 3)
-				break;
-		}
-
-		// The header pages/packets will arrive before anything else we
-		// care about, or the stream is not obeying spec
-
-		if (ogg_sync_pageout(&_oggSync, &_oggPage) > 0) {
-			queuePage(&_oggPage); // demux into the appropriate stream
-		} else {
-			ret = bufferData(); // someone needs more data
-
-			if (ret == 0)
-				error("End of file while searching for codec headers.");
-		}
+	if (clusterCount == 0) {
+		fatal("Movie error: Segment has no clusters.\n");
 	}
 
-	// And now we have it all. Initialize decoders next
-	if (_hasVideo) {
-		_videoTrack = new VPXVideoTrack(getDefaultHighColorFormat(), theoraInfo, theoraSetup);
-		addTrack(_videoTrack);
-	}
+	/* Initialize video codec */
+	if (vpx_codec_dec_init(&codec, interface, NULL, 0))
+	die_codec(&codec, "Failed to initialize decoder for movie.");
 
-	th_info_clear(&theoraInfo);
-	th_comment_clear(&theoraComment);
-	th_setup_free(theoraSetup);
+	byte *frame = new byte[256 * 1024];
+	if (! checkNew(frame)) return false;
 
-	if (_hasAudio) {
-		_audioTrack = new VorbisAudioTrack(getSoundType(), _vorbisInfo);
+	const mkvparser::Cluster *pCluster = pSegment->GetFirst();
 
-		// Get enough audio data to start us off
-		while (!_audioTrack->hasAudio()) {
-			// Queue more data
-			bufferData();
-			while (ogg_sync_pageout(&_oggSync, &_oggPage) > 0)
-				queuePage(&_oggPage);
+	setMovieViewport();
 
-			queueAudio();
+	movieIsPlaying = playing;
+	movieIsEnding = 0;
+
+	//const long long timeCode = pCluster->GetTimeCode();
+	long long time_ns = pCluster->GetTime();
+
+	const BlockEntry *pBlockEntry = pCluster->GetFirst();
+
+	if ((pBlockEntry == NULL) || pBlockEntry->EOS()) {
+		pCluster = pSegment->GetNext(pCluster);
+		if ((pCluster == NULL) || pCluster->EOS()) {
+			fatal("Error: No movie found in the movie file.");
 		}
-
-		addTrack(_audioTrack);
+		pBlockEntry = pCluster->GetFirst();
 	}
-
-	vorbis_comment_clear(&vorbisComment);
+	const Block *pBlock = pBlockEntry->GetBlock();
+	long long trackNum = pBlock->GetTrackNumber();
+	unsigned long tn = static_cast<unsigned long>(trackNum);
+	const Track *pTrack = pTracks->GetTrackByNumber(tn);
+	long long trackType = pTrack->GetType();
+	int frameCount = pBlock->GetFrameCount();
+	time_ns = pBlock->GetTime(pCluster);
+#endif
 
 	return true;
 }
@@ -245,26 +324,8 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 void MKVDecoder::close() {
 	VideoDecoder::close();
 
-	if (!_fileStream)
-		return;
-
-	if (_videoTrack) {
-		ogg_stream_clear(&_theoraOut);
-		_videoTrack = 0;
-	}
-
-	if (_audioTrack) {
-		ogg_stream_clear(&_vorbisOut);
-		_audioTrack = 0;
-	}
-
-	ogg_sync_clear(&_oggSync);
-	vorbis_info_clear(&_vorbisInfo);
-
-	delete _fileStream;
-	_fileStream = 0;
-
-	_hasVideo = _hasAudio = false;
+	delete _codec;
+	delete _reader;
 }
 
 void MKVDecoder::readNextPacket() {
