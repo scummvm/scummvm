@@ -90,6 +90,12 @@ ManagedSurface &ManagedSurface::operator=(const ManagedSurface &surf) {
 		_innerSurface.h = surf.h;
 		_innerSurface.pitch = surf.pitch;
 		this->format = surf.format;
+
+		// Copy miscellaneous properties
+		_transparentColorSet = surf._transparentColorSet;
+		_transparentColor = surf._transparentColor;
+		_paletteSet = surf._paletteSet;
+		Common::copy(&surf._palette[0], &surf._palette[256], _palette);
 	}
 
 	return *this;
@@ -123,6 +129,12 @@ void ManagedSurface::create(ManagedSurface &surf, const Common::Rect &bounds) {
 	_innerSurface.h = bounds.height();
 	_owner = &surf;
 	_disposeAfterUse = DisposeAfterUse::NO;
+
+	// Copy miscellaneous properties
+	_transparentColorSet = surf._transparentColorSet;
+	_transparentColor = surf._transparentColor;
+	_paletteSet = surf._paletteSet;
+	Common::copy(&surf._palette[0], &surf._palette[256], _palette);
 }
 
 void ManagedSurface::free() {
@@ -568,12 +580,18 @@ void ManagedSurface::setPalette(const byte *colors, uint start, uint num) {
 	}
 
 	_paletteSet = true;
+
+	if (_owner)
+		_owner->setPalette(colors, start, num);
 }
 
 void ManagedSurface::setPalette(const uint32 *colors, uint start, uint num) {
 	assert(start < 256 && (start + num) <= 256);
 	Common::copy(colors, colors + num, &_palette[start]);
 	_paletteSet = true;
+
+	if (_owner)
+		_owner->setPalette(colors, start, num);
 }
 
 } // End of namespace Graphics
