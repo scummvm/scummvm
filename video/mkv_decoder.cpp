@@ -38,7 +38,7 @@ namespace mkvparser  {
 class MkvReader : public mkvparser::IMkvReader {
 public:
 	MkvReader() { _stream = nullptr; }
-	MkvReader(Common::SeekableReadStream *stream, uint size = 0);
+	MkvReader(Common::SeekableReadStream *stream);
 	virtual ~MkvReader() { Close(); }
 
 	int Open(Common::SeekableReadStream *stream);
@@ -49,16 +49,10 @@ public:
 
 private:
 	Common::SeekableReadStream *_stream;
-	uint _size;
 };
 
-MkvReader::MkvReader(Common::SeekableReadStream *stream, uint size) {
+MkvReader::MkvReader(Common::SeekableReadStream *stream) {
 	_stream = stream;
-
-	if (size == 0)
-		size = _stream->size();
-
-	_size = size;
 }
 
 int MkvReader::Open(Common::SeekableReadStream *stream) {
@@ -68,8 +62,6 @@ int MkvReader::Open(Common::SeekableReadStream *stream) {
 }
 
 void MkvReader::Close() {
-	delete _stream;
-
 	_stream = nullptr;
 }
 
@@ -94,11 +86,11 @@ int MkvReader::Length(long long *total, long long *available) {
 	if (!_stream)
 		return -1;
 
-	if (*total)
-		*total = _size;
+	if (total)
+		*total = _stream->size();
 
-	if (*available)
-		*available = _size;
+	if (available)
+		*available = _stream->size();
 
 	return 0;
 }
@@ -140,12 +132,12 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	long long ret = mkvparser::Segment::CreateInstance(_reader, pos, pSegment);
 	if (ret) {
-		error("MKVDecoder::loadStream(): Segment::CreateInstance() failed.");
+		error("MKVDecoder::loadStream(): Segment::CreateInstance() failed (%ld).", ret);
 	}
 
 	ret = pSegment->Load();
 	if (ret < 0) {
-		error("MKVDecoder::loadStream(): Segment::Load() failed.\n");
+		error("MKVDecoder::loadStream(): Segment::Load() failed (%ld).", ret);
 	}
 
 	const mkvparser::Tracks *pTracks = pSegment->GetTracks();
