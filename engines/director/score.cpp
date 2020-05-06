@@ -771,6 +771,9 @@ void Score::setSpriteCasts() {
 }
 
 void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res) {
+	// IDs are stored as relative to the start of the cast array.
+	id += _castArrayStart;
+
 	// D4+ variant
 	if (stream.size() == 0)
 		return;

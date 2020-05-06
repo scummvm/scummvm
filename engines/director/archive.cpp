@@ -533,7 +533,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 			Resource &res = resources[index];
 			res.index = index;
-			res.castId = i + 1;
+			res.castId = i;
 			_types[castTag][res.castId] = res;
 		}
 		debugC(2, kDebugLoading, "]");

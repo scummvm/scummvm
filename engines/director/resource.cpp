@@ -355,7 +355,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		}
 	}
 
-	Common::Array<uint16> cast = sharedCast->getResourceIDList(MKTAG('C','A','S','t'));
+	Common::Array<uint16> cast = sharedCast->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
 	if (!_sharedScore->_loadedCast)
 		_sharedScore->_loadedCast = new Common::HashMap<int, Cast *>();
 
@@ -363,8 +363,10 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		debug(0, "****** Loading %d CASt resources", cast.size());
 
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
+			Common::SeekableSubReadStreamEndian *stream = sharedCast->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
 			Resource res = sharedCast->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
-			_sharedScore->loadCastData(*sharedCast->getResource(MKTAG('C', 'A', 'S', 't'), *iterator), *iterator, &res);
+			_sharedScore->loadCastData(*stream, *iterator, &res);
+			delete stream;
 		}
 	}
 
