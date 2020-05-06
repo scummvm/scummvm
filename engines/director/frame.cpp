@@ -298,7 +298,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._height = stream->readUint16();
 			sprite._width = stream->readUint16();
 
-			if (_vm->getPlatform() == Common::kPlatformMacintosh && _vm->getVersion() == 4) {
+			if (_vm->getVersion() == 4) {
 				sprite._scriptId = stream->readUint16();
 				// & 0x0f scorecolor
 				// 0x10 forecolor is rgb
