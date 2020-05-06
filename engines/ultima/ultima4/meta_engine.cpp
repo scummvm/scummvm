@@ -54,7 +54,7 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_EXIT, "EXIT", "Exit", "exit", "x", nullptr },
 	{ KEYBIND_FIRE, "FIRE", "Fire", "fire", "f", nullptr },
 	{ KEYBIND_GET, "GET", "Get Chest", "get", "g", nullptr },
-	{ KEYBIND_HOLE_UP, "HOLE-UP", "Hole Up", "hole", "h", nullptr },
+	{ KEYBIND_HOLE_UP, "HOLE-UP", "Hole Up & Camp", "camp", "h", nullptr },
 	{ KEYBIND_JIMMY, "JIMMY", "Jimmy", "jimmy", "j", nullptr },
 	{ KEYBIND_IGNITE, "IGNITE", "Ignite", "ignite", "i", nullptr },
 	{ KEYBIND_LOCATE, "LOCATE", "Locate Position", "locate", "l", nullptr },

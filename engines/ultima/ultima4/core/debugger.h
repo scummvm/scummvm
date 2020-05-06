@@ -134,9 +134,9 @@ private:
 	bool cmdGetChest(int argc, const char **argv);
 
 	/**
-	 * Hole Up
+	 * Hole Up & Camp
 	 */
-	bool cmdHoleUp(int argc, const char **argv);
+	bool cmdCamp(int argc, const char **argv);
 
 	/**
 	 * Ignite Torch

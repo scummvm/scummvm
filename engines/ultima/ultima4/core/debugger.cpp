@@ -57,13 +57,14 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("move", WRAP_METHOD(Debugger, cmdMove));
 	registerCmd("attack", WRAP_METHOD(Debugger, cmdAttack));
 	registerCmd("board", WRAP_METHOD(Debugger, cmdBoard));
+	registerCmd("camp", WRAP_METHOD(Debugger, cmdCamp));
 	registerCmd("cast", WRAP_METHOD(Debugger, cmdCastSpell));
 	registerCmd("climb", WRAP_METHOD(Debugger, cmdClimb));
+	registerCmd("descend", WRAP_METHOD(Debugger, cmdDescend));
 	registerCmd("enter", WRAP_METHOD(Debugger, cmdEnter));
 	registerCmd("exit", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("fire", WRAP_METHOD(Debugger, cmdFire));
 	registerCmd("get", WRAP_METHOD(Debugger, cmdGetChest));
-	registerCmd("hole", WRAP_METHOD(Debugger, cmdHoleUp));
 	registerCmd("ignite", WRAP_METHOD(Debugger, cmdIgnite));
 	registerCmd("interact", WRAP_METHOD(Debugger, cmdInteract));
 	registerCmd("jimmy", WRAP_METHOD(Debugger, cmdJimmy));
@@ -455,6 +456,26 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
+bool Debugger::cmdCamp(int argc, const char **argv) {
+	print("Hole up & Camp!");
+
+	if (!(g_context->_location->_context & (CTX_WORLDMAP | CTX_DUNGEON))) {
+		print("%cNot here!%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	if (g_context->_transportContext != TRANSPORT_FOOT) {
+		print("%cOnly on foot!%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
+	}
+
+	CombatController *cc = new CampController();
+	cc->init(nullptr);
+	cc->begin();
+
+	return isDebuggerActive();
+}
+
 bool Debugger::cmdClimb(int argc, const char **argv) {
 	if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_KLIMB)) {
 		if (g_context->_transportContext == TRANSPORT_BALLOON) {
@@ -499,7 +520,7 @@ bool Debugger::cmdDescend(int argc, const char **argv) {
 bool Debugger::cmdEnter(int argc, const char **argv) {
 	if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_ENTER)) {
 		if (!g_context->_location->_map->portalAt(g_context->_location->_coords, ACTION_ENTER))
-			print("%cEnter what?%c\n", FG_GREY, FG_WHITE);
+			print("%cEnter what?%c", FG_GREY, FG_WHITE);
 	} else {
 		dontEndTurn();
 	}
@@ -612,26 +633,6 @@ bool Debugger::cmdGetChest(int argc, const char **argv) {
 	} else {
 		print("%cNot Here!%c", FG_GREY, FG_WHITE);
 	}
-
-	return isDebuggerActive();
-}
-
-bool Debugger::cmdHoleUp(int argc, const char **argv) {
-	print("Hole up & Camp!");
-
-	if (!(g_context->_location->_context & (CTX_WORLDMAP | CTX_DUNGEON))) {
-		print("%cNot here!%c", FG_GREY, FG_WHITE);
-		return isDebuggerActive();
-	}
-
-	if (g_context->_transportContext != TRANSPORT_FOOT) {
-		print("%cOnly on foot!%c", FG_GREY, FG_WHITE);
-		return isDebuggerActive();
-	}
-
-	CombatController *cc = new CampController();
-	cc->init(nullptr);
-	cc->begin();
 
 	return isDebuggerActive();
 }
@@ -1212,7 +1213,7 @@ bool Debugger::cmdYell(int argc, const char **argv) {
 
 bool Debugger::cmd3d(int argc, const char **argv) {
 	if (g_context->_location->_context == CTX_DUNGEON) {
-		print("3-D view %s\n", DungeonViewer.toggle3DDungeonView() ? "on" : "off");
+		print("3-D view %s", DungeonViewer.toggle3DDungeonView() ? "on" : "off");
 	} else {
 		print("Not here");
 	}
@@ -1281,7 +1282,7 @@ bool Debugger::cmdDestroy(int argc, const char **argv) {
 		}
 	}
 
-	print("%cNothing there!%c\n", FG_GREY, FG_WHITE);
+	print("%cNothing there!%c", FG_GREY, FG_WHITE);
 	return isDebuggerActive();
 }
 
@@ -1333,7 +1334,7 @@ bool Debugger::cmdFlee(int argc, const char **argv) {
 		// End the combat without losing karma
 		g_combat->end(false);
 	} else {
-		g_screen->screenMessage("Bad command\n");
+		print("Bad command");
 	}
 
 	return isDebuggerActive();
@@ -1464,7 +1465,7 @@ bool Debugger::cmdItems(int argc, const char **argv) {
 }
 
 bool Debugger::cmdKarma(int argc, const char **argv) {
-	print("Karma!\n");
+	print("Karma!");
 
 	for (int i = 0; i < 8; ++i) {
 		Common::String line = Common::String::format("%s:",
@@ -1505,10 +1506,10 @@ bool Debugger::cmdLocation(int argc, const char **argv) {
 				g_context->_location->_map->getName().c_str(), pos.x, pos.y, pos.z);
 	} else {
 		if (g_context->_location->_map->isWorldMap())
-			print("\nLocation:\n%s\nx: %d\ny: %d\n", "World Map",
+			print("\nLocation:\n%s\nx: %d\ny: %d", "World Map",
 				pos.x, pos.y);
 		else
-			print("\nLocation:\n%s\nx: %d\ny: %d\nz: %d\n",
+			print("\nLocation:\n%s\nx: %d\ny: %d\nz: %d",
 				g_context->_location->_map->getName().c_str(), pos.x, pos.y, pos.z);
 	}
 
@@ -1593,7 +1594,7 @@ bool Debugger::cmdSummon(int argc, const char **argv) {
 }
 
 bool Debugger::cmdTorch(int argc, const char **argv) {
-	print("Torch: %d\n", g_context->_party->getTorchDuration());
+	print("Torch: %d", g_context->_party->getTorchDuration());
 	if (!isDebuggerActive())
 		g_screen->screenPrompt();
 
