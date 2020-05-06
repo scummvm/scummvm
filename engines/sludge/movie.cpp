@@ -19,8 +19,14 @@
  *
  */
 
+#include "sludge/sludge.h"
+#include "sludge/fileset.h"
 #include "sludge/movie.h"
+#include "sludge/newfatal.h"
 #include "sludge/sound.h"
+
+#include "common/substream.h"
+#include "video/mkv_decoder.h"
 
 namespace Sludge {
 
@@ -317,9 +323,20 @@ ALuint feedAudio(void *userdata, ALubyte *data, ALuint length) {
 #endif
 
 int playMovie(int fileNumber) {
+	uint fsize;
+	if (!(fsize = g_sludge->_resMan->openFileFromNum(fileNumber)))
+		return fatal("playMovie(): Can't open movie");
+
+	Video::MKVDecoder decoder;
+
+	Common::SeekableReadStream *stream = g_sludge->_resMan->getData();
+	Common::SeekableSubReadStream video(stream, stream->pos(), stream->pos() + fsize);
+
+	decoder.loadStream(&video);
+
 #if 0
 	if (specialSettings & SPECIAL_SILENT)
-	return 0;
+		return 0;
 
 	if (movieIsPlaying) return 0;
 
