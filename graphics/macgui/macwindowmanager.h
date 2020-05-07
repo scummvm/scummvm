@@ -69,6 +69,8 @@ enum {
 }
 using namespace MacGUIConstants;
 
+class Cursor;
+
 class ManagedSurface;
 
 class MacMenu;
@@ -226,6 +228,7 @@ public:
 	void pushCrossBarCursor();
 	void pushWatchCursor();
 	void pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor);
+	void pushCustomCursor(const Graphics::Cursor *cursor);
 	void popCursor();
 
 	void pauseEngine(bool pause);
