@@ -857,6 +857,11 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textRect) {
 	TextCast *textCast = (TextCast*)_sprites[spriteId]->_cast;
+	if (textCast == nullptr){
+		warning("Frame::renderText(): TextCast: %d is a nullptr", spriteId);
+		return;
+	}
+
 	Score *score = _vm->getCurrentScore();
 	Sprite *sprite = _sprites[spriteId];
 
