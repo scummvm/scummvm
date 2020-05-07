@@ -25,13 +25,5 @@
 namespace Ultima {
 namespace Ultima8 {
 
-allocFunc palloc = malloc;
-deallocFunc pfree = free;
-
-void setAllocationFunctions(allocFunc a, deallocFunc d) {
-	palloc = a;
-	pfree = d;
-}
-
 } // End of namespace Ultima8
 } // End of namespace Ultima

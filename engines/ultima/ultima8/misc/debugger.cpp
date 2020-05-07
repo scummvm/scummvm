@@ -35,9 +35,7 @@
 #include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
-#include "ultima/ultima8/kernel/allocator.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/misc/util.h"
@@ -118,11 +116,6 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("MainActor::useBedroll", WRAP_METHOD(Debugger, cmdUseBedroll));
 	registerCmd("MainActor::useKeyring", WRAP_METHOD(Debugger, cmdUseKeyring));
 	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
-
-	registerCmd("MemoryManager::MemInfo", WRAP_METHOD(Debugger, cmdMemInfo));
-#ifdef DEBUG
-	registerCmd("MemoryManager::test", WRAP_METHOD(Debugger, cmdTestMemory));
-#endif
 
 	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
 	registerCmd("ObjectManager::objectInfo", WRAP_METHOD(Debugger, cmdObjectInfo));
@@ -1123,29 +1116,6 @@ bool Debugger::cmdToggleCombat(int argc, const char **argv) {
 	av->toggleInCombat();
 	return false;
 }
-
-bool Debugger::cmdMemInfo(int argc, const char **argv) {
-	MemoryManager *mm = MemoryManager::get_instance();
-	int i, count;
-
-	if (mm) {
-		count = mm->getAllocatorCount();
-		debugPrintf("Allocators: %d\n", count);
-		for (i = 0; i < count; ++i) {
-			debugPrintf(" Allocator %d:\n", i);
-			mm->getAllocator(i)->printInfo();
-			debugPrintf("==============\n");
-		}
-	}
-
-	return true;
-}
-
-#ifdef DEBUG
-bool Debugger::cmdTestMemory(int argc, const char **argv) {
-	return true;
-}
-#endif
 
 bool Debugger::cmdObjectTypes(int argc, const char **argv) {
 	ObjectManager::get_instance()->objectTypes();

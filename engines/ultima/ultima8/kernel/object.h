@@ -39,9 +39,6 @@ public:
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE_BASE()
 
-	// memory pooling stuff
-	ENABLE_CUSTOM_MEMORY_ALLOCATION()
-
 	//! get this Object's objID
 	inline ObjId getObjId() const {
 		return _objId;

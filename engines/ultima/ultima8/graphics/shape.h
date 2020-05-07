@@ -71,8 +71,6 @@ public:
 
 	ENABLE_RUNTIME_CLASSTYPE_BASE()
 
-	ENABLE_CUSTOM_MEMORY_ALLOCATION()
-
 private:
 	void loadFrames(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 

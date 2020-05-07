@@ -44,9 +44,6 @@ public:
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE_BASE()
 
-	// memory pooling stuff
-	ENABLE_CUSTOM_MEMORY_ALLOCATION()
-
 	uint32 getProcessFlags() const {
 		return _flags;
 	}

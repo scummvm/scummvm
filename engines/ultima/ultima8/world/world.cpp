@@ -38,7 +38,6 @@
 #include "ultima/ultima8/gumps/gump.h" // For CloseItemDependents notification
 #include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
@@ -178,8 +177,6 @@ bool World::switchMap(uint32 newmap) {
 	// reset camera
 	CameraProcess::SetCameraProcess(new CameraProcess(1));
 	CameraProcess::SetEarthquake(0);
-
-	MemoryManager::get_instance()->freeResources();
 
 	return true;
 }

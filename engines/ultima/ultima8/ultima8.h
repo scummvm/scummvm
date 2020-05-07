@@ -52,7 +52,6 @@ namespace Ultima8 {
 
 class Debugger;
 class Kernel;
-class MemoryManager;
 class UCMachine;
 class Game;
 class Gump;
@@ -87,7 +86,6 @@ private:
 	Std::string _errorTitle;
 
 	Kernel *_kernel;
-	MemoryManager *_memoryManager;
 	ObjectManager *_objectManager;
 	UCMachine *_ucMachine;
 	RenderSurface *_screen;

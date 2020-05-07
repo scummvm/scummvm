@@ -192,12 +192,6 @@ private:
 	bool cmdUseKeyring(int argc, const char **argv);
 	bool cmdToggleCombat(int argc, const char **argv);
 
-	// Memory Manager
-	bool cmdMemInfo(int argc, const char **argv);
-#ifdef DEBUG
-	bool cmdTestMemory(int argc, const char **argv);
-#endif
-
 	// Object Manager
 	bool cmdObjectTypes(int argc, const char **argv);
 	bool cmdObjectInfo(int argc, const char **argv);
