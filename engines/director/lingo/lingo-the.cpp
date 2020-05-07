@@ -416,6 +416,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 			uint16 spriteId = currentFrame->getSpriteIDFromPos(pos);
 			d.type = INT;
 			d.u.i = currentFrame->_sprites[spriteId]->_castId;
+			if (d.u.i == 0)
+				d.u.i = -1;
 		}
 		break;
 	case kThePerFrameHook:
