@@ -309,9 +309,11 @@ void Score::copyCastStxts() {
 		if (c->_value->_type != kCastText && c->_value->_type != kCastButton)
 			continue;
 
-		uint stxtid = (_vm->getVersion() < 4) ?
-			c->_key + _castIDoffset :
-			c->_value->_children[0].index;
+		uint stxtid;
+		if (_vm->getVersion() >= 4 && c->_value->_children.size() > 0)
+			stxtid = c->_value->_children[0].index;
+		else
+			stxtid = c->_key + _castIDoffset;
 
 		if (_loadedStxts->getVal(stxtid)) {
 			const Stxt *stxt = _loadedStxts->getVal(stxtid);
