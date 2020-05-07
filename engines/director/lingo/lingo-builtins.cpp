@@ -1342,7 +1342,7 @@ void LB::b_shutDown(int nargs) {
 }
 
 void LB::b_startTimer(int nargs) {
-	warning("STUB: b_startTimer");
+	g_director->getCurrentScore()->_lastTimerReset = g_director->getMacTicks();
 }
 
 ///////////////////

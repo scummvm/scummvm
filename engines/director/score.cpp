@@ -80,6 +80,7 @@ Score::Score(DirectorEngine *vm) {
 	_lastKeyTime = _lastEventTime;
 	_lastClickTime = _lastEventTime;
 	_lastRollTime = _lastEventTime;
+	_lastTimerReset = _lastEventTime;
 
 	// FIXME: TODO: Check whether the original truely does it
 	if (_vm->getVersion() <= 3) {

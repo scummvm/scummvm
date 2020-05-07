@@ -357,6 +357,26 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->_keyCode;
 		break;
+	case kTheLastClick:
+		d.type = INT;
+		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastClickTime;
+		break;
+	case kTheLastEvent:
+		d.type = INT;
+		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastEventTime;
+		break;
+	case kTheLastFrame:
+		d.type = INT;
+		d.u.i = _vm->getCurrentScore()->_frames.size() - 1;
+		break;
+	case kTheLastKey:
+		d.type = INT;
+		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastKeyTime;
+		break;
+	case kTheLastRoll:
+		d.type = INT;
+		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastRollTime;
+		break;
 	case kTheMachineType:
 		// 1 - Macintosh 512Ke			D2
 		// 2 - Macintosh Plus			D2
@@ -400,14 +420,6 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->_machineType;
 		break;
-	case kTheMouseH:
-		d.type = INT;
-		d.u.i = g_system->getEventManager()->getMousePos().x;
-		break;
-	case kTheMouseV:
-		d.type = INT;
-		d.u.i = g_system->getEventManager()->getMousePos().y;
-		break;
 	case kTheMouseCast:
 		{
 			Common::Point pos = g_system->getEventManager()->getMousePos();
@@ -420,12 +432,25 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 				d.u.i = -1;
 		}
 		break;
+	case kTheMouseH:
+		d.type = INT;
+		d.u.i = g_system->getEventManager()->getMousePos().x;
+		break;
+	case kTheMouseV:
+		d.type = INT;
+		d.u.i = g_system->getEventManager()->getMousePos().y;
+		break;
 	case kThePerFrameHook:
 		warning("STUB: Lingo::getTheEntity(): getting the perframehook");
 		break;
 	case kThePi:
 		d.type = FLOAT;
 		d.u.f = M_PI;
+		break;
+	case kTheQuickTimePresent:
+		// QuickTime is always present for scummvm
+		d.type = INT;
+		d.u.i = 1;
 		break;
 	case kTheSprite:
 		d = getTheSprite(id, field);
@@ -439,30 +464,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->getCurrentScore()->_mouseIsDown;
 		break;
-	case kTheLastFrame:
+	case kTheTimer:
 		d.type = INT;
-		d.u.i = _vm->getCurrentScore()->_frames.size() - 1;
-		break;
-	case kTheLastEvent:
-		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastEventTime;
-		break;
-	case kTheLastClick:
-		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastClickTime;
-		break;
-	case kTheLastKey:
-		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastKeyTime;
-		break;
-	case kTheLastRoll:
-		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastRollTime;
-		break;
-	case kTheQuickTimePresent:
-		// QuickTime is always present for scummvm
-		d.type = INT;
-		d.u.i = 1;
+		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastTimerReset;
 		break;
 	default:
 		warning("Lingo::getTheEntity(): Unprocessed getting field \"%s\" of entity %s", field2str(field), entity2str(entity));

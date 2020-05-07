@@ -146,6 +146,7 @@ public:
 	uint32 _lastRollTime;
 	uint32 _lastClickTime;
 	uint32 _lastKeyTime;
+	uint32 _lastTimerReset;
 
 	bool _stopPlay;
 	uint32 _nextFrameTime;
