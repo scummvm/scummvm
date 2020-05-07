@@ -209,9 +209,28 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 
 
 void Lingo::initBytecode() {
+	// All new bytecodes must have respective entry in funcDescr[]
+	// array in lingo-code.cpp, which is used for decompilation
+	//
+	// Check that all opcodes have entries
+	Common::HashMap<inst, bool> list;
+	bool bailout = false;
+
+	// Build reverse hashmap
+	for (FuncHash::iterator it = _functions.begin(); it != _functions.end(); ++it)
+		list[(inst)it->_key] = true;
+
 	for (LingoV4Bytecode *op = lingoV4; op->opcode; op++) {
 		_lingoV4[op->opcode] = op;
+
+		if (!list.contains(op->func)) {
+			warning("Lingo::initBytecode(): Missing prototype for opcode 0x%02x", op->opcode);
+			bailout = true;
+		}
 	}
+
+	if (bailout)
+		error("Lingo::initBytecode(): Add entries to funcDescr[] in lingo-code.cpp");
 
 	for (LingoV4TheEntity *ent = lingoV4TheEntity; ent->bank != 0xff; ent++) {
 		_lingoV4TheEntity[(ent->bank << 8) + ent->firstArg] = ent;
