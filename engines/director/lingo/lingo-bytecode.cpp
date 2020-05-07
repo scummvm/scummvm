@@ -369,6 +369,9 @@ void LC::cb_proplist() {
 		PCell cell = PCell(p, v);
 		result.u.parr->insert_at(0, cell);
 	};
+	delete list.u.farr;
+	list.u.i = 0;
+	list.type = VOID;
 
 	g_lingo->push(result);
 }
