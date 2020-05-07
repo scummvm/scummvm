@@ -424,7 +424,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	subStream.readUint32(); // unknown
 
 	Common::Array<Resource> resources;
-	resources.reserve(2048);
+	resources.reserve(resCount);
 
 	// Need to look for these two resources
 	const Resource *keyRes = 0;
@@ -453,9 +453,9 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 		// Looking for two types here
 		if (tag == MKTAG('K', 'E', 'Y', '*'))
-			keyRes = &resources[resources.size() - 1];
+			keyRes = &resources.back();
 		else if (tag == MKTAG('C', 'A', 'S', '*'))
-			casRes = &resources[resources.size() - 1];
+			casRes = &resources.back();
 		// or the children of
 		else if (tag == MKTAG('S', 'T', 'X', 'T') ||
 				 tag == MKTAG('B', 'I', 'T', 'D') ||
