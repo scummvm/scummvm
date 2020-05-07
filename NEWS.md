@@ -37,6 +37,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Xeen:
    - Add missing sprite drawer for enemies hit by Energy Blast.
    - Fixed freeze due to bad mob data at the top of Witches Tower
+   - Fix crash loading some savegames directly from the launcher
 
  Linux port:
    - Added option to use the system file browser instead of the ScummVM file browser.
