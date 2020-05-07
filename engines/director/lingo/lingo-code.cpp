@@ -144,6 +144,7 @@ static struct FuncDescr {
 	{ LC::cb_globalassign,	"cb_globalassign",	"i" },
 	{ LC::cb_globalpush,	"cb_globalpush",	"i" },
 	{ LC::cb_list,			"cb_list",			"" },
+	{ LC::cb_proplist,		"cb_proplist",		"" },
 	{ LC::cb_localcall,		"cb_localcall",		"i" },
 	{ LC::cb_methodcall,	"cb_methodcall",	"i" },
 	{ LC::cb_objectpush,	"cb_objectpush",	"i" },
@@ -157,6 +158,8 @@ static struct FuncDescr {
 	{ LC::cb_v4theentitynamepush,"cb_v4theentitynamepush","i" },
 	{ LC::cb_v4theentityassign,"cb_v4theentityassign","i" },
 	{ LC::cb_zeropush,		"cb_zeropush",		"" },
+	{ LC::cb_stackpeek,		"cb_stackpeek",		"i" },
+	{ LC::cb_stackdrop,		"cb_stackdrop",		"i" },
 	{ 0, 0, 0 }
 };
 
