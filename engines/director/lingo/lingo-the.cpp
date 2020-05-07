@@ -432,6 +432,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 				d.u.i = -1;
 		}
 		break;
+	case kTheMouseDown:
+		d.type = INT;
+		d.u.i = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_LEFT | 1 << Common::MOUSE_BUTTON_RIGHT) ? 1 : 0;
+		break;
 	case kTheMouseH:
 		d.type = INT;
 		d.u.i = g_system->getEventManager()->getMousePos().x;
@@ -439,6 +443,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheMouseV:
 		d.type = INT;
 		d.u.i = g_system->getEventManager()->getMousePos().y;
+		break;
+	case kTheMouseUp:
+		d.type = INT;
+		d.u.i = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_LEFT | 1 << Common::MOUSE_BUTTON_RIGHT) ? 0 : 1;
 		break;
 	case kThePerFrameHook:
 		warning("STUB: Lingo::getTheEntity(): getting the perframehook");
