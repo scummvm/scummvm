@@ -1902,7 +1902,13 @@ void LB::b_zoomBox(int nargs) {
 }
 
 void LB::b_updateStage(int nargs) {
-	warning("STUB: b_updateStage");
+	ARGNUMCHECK(0);
+
+	Score *score = g_director->getCurrentScore();
+	uint16 curFrame = score->getCurrentFrame();
+	Frame *frame = score->_frames[curFrame];
+
+	frame->prepareFrame(score);
 }
 
 
