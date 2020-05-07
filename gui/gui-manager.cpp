@@ -69,12 +69,17 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 
 	_launched = false;
 
+	_useRTL = false;
+
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
 
 #ifdef USE_TRANSLATION
 	// Enable translation
 	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
+	if (TransMan.getCurrentLanguage() == "C") {		// TODO: Change after testing.
+		_useRTL = true;
+	}
 #endif // USE_TRANSLATION
 
 #ifdef USE_TTS
@@ -574,7 +579,10 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 		return;
 	int button;
 	uint32 time;
+
 	Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
+	if (_useRTL)
+		mouse.x = _system->getOverlayWidth() - mouse.x;
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
@@ -584,7 +592,12 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 		activeDialog->handleKeyUp(event.kbd);
 		break;
 	case Common::EVENT_MOUSEMOVE:
-		_globalMousePosition.x = event.mouse.x;
+		if (useRTL()) {
+			_globalMousePosition.x = _system->getOverlayWidth() - event.mouse.x;
+		}
+		else {
+			_globalMousePosition.x = event.mouse.x;
+		}
 		_globalMousePosition.y = event.mouse.y;
 		activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
 
