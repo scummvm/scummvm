@@ -529,6 +529,16 @@ void MacWindowManager::pushCustomCursor(const byte *data, int w, int h, int hx, 
 	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 }
 
+void MacWindowManager::pushCustomCursor(const Graphics::Cursor *cursor) {
+	CursorMan.pushCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
+	                     cursor->getHotspotY(), cursor->getKeyColor());
+
+	if (cursor->getPalette())
+		CursorMan.pushCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
+	else
+		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
+}
+
 void MacWindowManager::popCursor() {
 	CursorMan.popCursor();
 	CursorMan.popCursorPalette();
