@@ -229,9 +229,10 @@ bool Image::getTransparentIndex(uint &index) const {
 
 void Image::initializeToBackgroundColor(RGBA backgroundColor) {
 	if (_paletted)
-		error("Not supported"); //TODO, this better
-	this->_backgroundColor = backgroundColor;
-	this->fillRect(0, 0, _surface->w, _surface->h, backgroundColor.r,
+		error("initializeToBackgroundColor: Not supported");
+
+	_backgroundColor = backgroundColor;
+	fillRect(0, 0, _surface->w, _surface->h, backgroundColor.r,
 		backgroundColor.g, backgroundColor.b, backgroundColor.a);
 }
 
@@ -280,7 +281,6 @@ void Image::makeBackgroundColorTransparent(int haloSize, int shadowOpacity) {
 	performTransparencyHack(bgColor, 1, 0, haloSize, shadowOpacity);
 }
 
-//TODO Separate functionalities found in here
 void Image::performTransparencyHack(uint colorValue, uint numFrames,
                                     uint currentFrameIndex, uint haloWidth,
                                     uint haloOpacityIncrementByPixelDistance) {

@@ -110,8 +110,6 @@ public:
 	 * Runs each of the callback functions of the TimedEvents associated with this manager.
 	 */
 	void tick();
-	void stop();
-	void start();
 
 	/**
 	 * Re-initializes the timer manager to a new timer granularity

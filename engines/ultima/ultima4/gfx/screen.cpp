@@ -1208,7 +1208,7 @@ void Screen::screenGemUpdate() {
 	Layout *layout = screenGetGemLayout(g_context->_location->_map);
 
 
-	//TODO, move the code responsible for determining 'peer' visibility to a non SDL specific part of the code.
+	// TODO: Move the code responsible for determining 'peer' visibility to a non SDL specific part of the code.
 	if (g_context->_location->_map->_type == Map::DUNGEON) {
 		//DO THE SPECIAL DUNGEON MAP TRAVERSAL
 		Std::vector<Std::vector<int> > drawnTiles(layout->_viewport.width(), Std::vector<int>(layout->_viewport.height(), 0));

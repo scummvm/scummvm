@@ -43,24 +43,6 @@ void TimedEventMgr::poll() {
 
 void TimedEventMgr::reset(uint interval) {
 	_baseInterval = interval;
-	stop();
-	start();
-}
-
-void TimedEventMgr::stop() {
-#ifdef TODO
-	if (id) {
-		SDL_RemoveTimer(static_cast<SDL_TimerID>(id));
-		id = nullptr;
-	}
-#endif
-}
-
-void TimedEventMgr::start() {
-#ifdef TODO
-	if (!id)
-		id = static_cast<void *>(SDL_AddTimer(baseInterval, &TimedEventMgr::callback, this));
-#endif
 }
 
 /*-------------------------------------------------------------------*/

@@ -48,7 +48,6 @@ bool MapCoords::operator!=(const MapCoords &a) const {
 	return !operator==(a);
 }
 bool MapCoords::operator<(const MapCoords &a)  const {
-	// TODO: cooler boolean logic
 	if (x > a.x)
 		return false;
 	if (y > a.y)
