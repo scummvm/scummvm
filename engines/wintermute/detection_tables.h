@@ -1031,6 +1031,46 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.527.3391",
 		WME_ENTRY1s("data.dcp", "e5d06fa058cd9d6f20d6206356e5854d", 109503303), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_527),
 
+	// FoxTail 1.2.896.4370 (English)
+	WME_WINENTRY("foxtail", "1.2.896.4370",
+		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::EN_ANY, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4370 (German)
+	WME_WINENTRY("foxtail", "1.2.896.4370",
+		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::DE_DEU, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4370 (Polish)
+	WME_WINENTRY("foxtail", "1.2.896.4370",
+		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::PL_POL, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4370 (Russian)
+	WME_WINENTRY("foxtail", "1.2.896.4370",
+		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4370 (Ukranian)
+	WME_WINENTRY("foxtail", "1.2.896.4370",
+		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4371 (English)
+	WME_WINENTRY("foxtail", "1.2.896.4371",
+		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::EN_ANY, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4371 (German)
+	WME_WINENTRY("foxtail", "1.2.896.4371",
+		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::DE_DEU, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4371 (Polish)
+	WME_WINENTRY("foxtail", "1.2.896.4371",
+		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::PL_POL, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4371 (Russian)
+	WME_WINENTRY("foxtail", "1.2.896.4371",
+		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4371 (Ukranian)
+	WME_WINENTRY("foxtail", "1.2.896.4371",
+		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
 	// Framed (Beta)
 	WME_WINENTRY("framed", "Beta",
 		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_11),
