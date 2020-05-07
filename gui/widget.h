@@ -102,6 +102,7 @@ protected:
 	GuiObject	*_boss;
 	Widget		*_next;
 	bool		_hasFocus;
+	bool		_useRTL;
 	ThemeEngine::WidgetStateInfo _state;
 	Common::String _tooltip;
 
@@ -163,6 +164,8 @@ public:
 
 	void setVisible(bool e);
 	bool isVisible() const override;
+
+	bool useRTL() const;
 
 	uint8 parseHotkey(const Common::String &label);
 	Common::String cleanupHotkey(const Common::String &label);

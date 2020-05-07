@@ -684,6 +684,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 		var = node->values["name"];
 		int width = -1;
 		int height = -1;
+		bool useRTL = true;
 
 		if (node->values.contains("width")) {
 			if (_theme->getEvaluator()->hasVar(node->values["width"]) == true)
@@ -706,6 +707,10 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 		if (node->values.contains("textalign")) {
 			if ((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
 				return parserError("Invalid value for text alignment.");
+		}
+
+		if (node->values.contains("rtl")) {
+			useRTL = false;
 		}
 
 		_theme->getEvaluator()->addWidget(var, node->values["type"], width, height, alignH);

@@ -39,13 +39,13 @@ namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
 	: GuiObject(x, y, w, h), _type(0), _boss(boss), _tooltip(tooltip),
-	  _flags(0), _hasFocus(false), _state(ThemeEngine::kStateEnabled) {
+	  _flags(0), _hasFocus(false), _useRTL(false), _state(ThemeEngine::kStateEnabled) {
 	init();
 }
 
 Widget::Widget(GuiObject *boss, const Common::String &name, const char *tooltip)
 	: GuiObject(name), _type(0), _boss(boss), _tooltip(tooltip),
-	  _flags(0), _hasFocus(false), _state(ThemeEngine::kStateDisabled) {
+	  _flags(0), _hasFocus(false), _useRTL(false), _state(ThemeEngine::kStateDisabled) {
 	init();
 }
 
@@ -54,6 +54,10 @@ void Widget::init() {
 	_next = _boss->_firstWidget;
 	_boss->_firstWidget = this;
 	_needsRedraw = true;
+
+	if (TransMan.getCurrentLanguage() == "C") {		// TODO: Switch to native RTL languages after testing.
+		_useRTL = true;
+	}
 }
 
 Widget::~Widget() {
@@ -208,6 +212,10 @@ bool Widget::isVisible() const {
 		return false;
 
 	return !(_flags & WIDGET_INVISIBLE);
+}
+
+bool Widget::useRTL() const{
+	return _useRTL == true;
 }
 
 uint8 Widget::parseHotkey(const Common::String &label) {
