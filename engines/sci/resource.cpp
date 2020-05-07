@@ -1532,6 +1532,15 @@ bool ResourceManager::isBlacklistedPatch(const ResourceId &resId) const {
 		// eliminate user error when copying files from the original CDs, since
 		// each CD had a different 65535.MAP patch file.
 		return resId.getType() == kResourceTypeMap && resId.getNumber() == 65535;
+	case GID_MOTHERGOOSE256:
+		// The multilingual CD of Mothergoose 256 has a patch file SOUND.001
+		//  which only contains a General MIDI track of the main music for
+		//  Windows. Ignore this patch file for DOS so that the resource in
+		//  RESOURCE.001 with all the normal tracks gets used. Bug #11243
+		return g_sci->isCD() &&
+			g_sci->getPlatform() == Common::kPlatformDOS &&
+			resId.getType() == kResourceTypeSound &&
+			resId.getNumber() == 1;
 	default:
 		return false;
 	}
