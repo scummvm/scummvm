@@ -90,8 +90,6 @@ void Screen::init() {
 
 	debug(1, "using %s scaler\n", settings._filter.c_str());
 
-	KeyHandler::setKeyRepeat(settings._keyDelay, settings._keyInterval);
-
 	/* find the tile animations for our tileset */
 	_tileAnims = nullptr;
 	for (Std::vector<TileAnimSet *>::const_iterator i = _tileAnimSets.begin(); i != _tileAnimSets.end(); i++) {

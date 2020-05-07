@@ -55,9 +55,6 @@ public:
 	/* Constructors */
 	KeyHandler(Callback func, void *data = nullptr, bool asyncronous = true);
 
-	/* Static functions */
-	static int setKeyRepeat(int delay, int interval);
-
 	/**
 	 * Handles any and all keystrokes.
 	 * Generally used to exit the application, switch applications,

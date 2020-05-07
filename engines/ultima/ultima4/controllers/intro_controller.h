@@ -126,7 +126,7 @@ public:
 	/**
 	 * Update the screen when an observed menu is reset or has an item
 	 * activated.
-	 * TODO, reduce duped code.
+	 * TODO: Reduce duped code.
 	 */
 	void update(Menu *menu, MenuEvent &event);
 	void updateConfMenu(MenuEvent &event);
@@ -292,8 +292,6 @@ private:
 		MI_GFX_TILE_TRANSPARENCY_SHADOW_OPACITY,
 		MI_GFX_RETURN,
 		MI_SOUND_03,
-		MI_INPUT_01,
-		MI_INPUT_02,
 		MI_INPUT_03,
 		MI_SPEED_01,
 		MI_SPEED_02,

@@ -36,17 +36,6 @@ KeyHandler::KeyHandler(Callback func, void *d, bool asyncronous) :
 	_data(d) {
 }
 
-/**
- * Sets the key-repeat characteristics of the keyboard.
- */
-int KeyHandler::setKeyRepeat(int delay, int interval) {
-#ifdef TODO
-	return SDL_EnableKeyRepeat(delay, interval);
-#else
-	return 0;
-#endif
-}
-
 bool KeyHandler::globalHandler(int key) {
 	if (key == Common::KEYCODE_F5) {
 		(void)g_ultima->saveGameDialog();

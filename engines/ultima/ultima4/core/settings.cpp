@@ -65,8 +65,6 @@ bool SettingsData::operator==(const SettingsData &s) const {
 		&& _screenAnimationFramesPerSecond == s._screenAnimationFramesPerSecond
 		&& _innAlwaysCombat == s._innAlwaysCombat
 		&& _innTime == s._innTime
-		&& _keyDelay == s._keyDelay
-		&& _keyInterval == s._keyInterval
 		&& _mouseOptions == s._mouseOptions
 		&& _screenShakes == s._screenShakes
 		&& _gamma == s._gamma
@@ -145,8 +143,6 @@ void Settings::synchronize(Shared::ConfSerializer &s) {
 	s.syncAsInt("gamma", _gamma, DEFAULT_GAMMA);
 	s.syncAsBool("volumeFades", _volumeFades, DEFAULT_VOLUME_FADES);
 	s.syncAsBool("shortcutCommands", _shortcutCommands, DEFAULT_SHORTCUT_COMMANDS);
-	s.syncAsInt("keydelay", _keyDelay, DEFAULT_KEY_DELAY);
-	s.syncAsInt("keyinterval", _keyInterval, DEFAULT_KEY_INTERVAL);
 	s.syncAsBool("filterMoveMessages", _filterMoveMessages, DEFAULT_FILTER_MOVE_MESSAGES);
 	s.syncAsInt("battlespeed", _battleSpeed, DEFAULT_BATTLE_SPEED);
 	s.syncAsBool("enhancements", _enhancements, DEFAULT_ENHANCEMENTS);

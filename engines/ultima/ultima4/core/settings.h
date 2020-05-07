@@ -118,8 +118,6 @@ public:
 	int _screenAnimationFramesPerSecond;
 	bool _innAlwaysCombat;
 	int _innTime;
-	int _keyDelay;
-	int _keyInterval;
 	MouseOptions _mouseOptions;
 	uint _scale;
 	bool _screenShakes;
