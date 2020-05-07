@@ -33,9 +33,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class Ultima1Engine;
-
-
 class ConsoleStream : public Common::WriteStream {
 private:
 	Std::Precision _precision;
@@ -69,6 +66,11 @@ public:
 
 	ConsoleStream &operator<<(const Common::String &str) {
 		write(str.c_str(), str.size());
+		return *this;
+	}
+
+	ConsoleStream &operator<<(Std::Precision p) {
+		_precision = p;
 		return *this;
 	}
 
