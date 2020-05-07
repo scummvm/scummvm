@@ -45,6 +45,7 @@ class ResponseParts;
 struct SaveGame;
 class Screen;
 class Shrines;
+class SoundManager;
 class Spells;
 class TileMaps;
 class TileRules;
@@ -83,6 +84,7 @@ public:
 	SaveGame *_saveGame;
 	Screen *_screen;
 	Shrines *_shrines;
+	SoundManager *_soundManager;
 	Spells *_spells;
 	TileMaps *_tileMaps;
 	TileRules *_tileRules;

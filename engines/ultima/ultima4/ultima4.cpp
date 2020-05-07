@@ -62,8 +62,8 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_dialogueLoaders(nullptr), _game(nullptr), _items(nullptr), _music(nullptr),
 		_imageLoaders(nullptr), _mapLoaders(nullptr), _moongates(nullptr),
 		_responseParts(nullptr), _saveGame(nullptr), _screen(nullptr), _shrines(nullptr),
-		_spells(nullptr), _tileMaps(nullptr), _tileRules(nullptr), _tileSets(nullptr),
-		_weapons(nullptr) {
+		_soundManager(nullptr), _spells(nullptr), _tileMaps(nullptr), _tileRules(nullptr),
+		_tileSets(nullptr), _weapons(nullptr) {
 	g_ultima = this;
 	g_armors = nullptr;
 	g_codex = nullptr;
@@ -76,6 +76,7 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 	g_responseParts = nullptr;
 	g_screen = nullptr;
 	g_shrines = nullptr;
+	g_sound = nullptr;
 	g_spells = nullptr;
 	g_tileMaps = nullptr;
 	g_tileRules = nullptr;
@@ -100,6 +101,7 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _saveGame;
 	delete _screen;
 	delete _shrines;
+	delete _soundManager;
 	delete _spells;
 	delete _tileMaps;
 	delete _tileRules;
@@ -109,7 +111,6 @@ Ultima4Engine::~Ultima4Engine() {
 	ImageMgr::destroy();
 
 	//delete g_music;
-	soundDelete();
 }
 
 bool Ultima4Engine::initialize() {
@@ -130,6 +131,7 @@ bool Ultima4Engine::initialize() {
 	_screen = new Screen();
 	_screen->init();
 	_shrines = new Shrines();
+	_soundManager = new SoundManager(_mixer);
 	_spells = new Spells();
 	_tileRules = new TileRules();
 	_tileSets = new TileSets();
@@ -141,7 +143,6 @@ bool Ultima4Engine::initialize() {
 	_weapons = new Weapons();
 
 	setDebugger(new Debugger());
-	soundInit();
 	creatureMgr->getInstance();
 
 	_saveSlotToLoad = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
@@ -151,8 +152,6 @@ bool Ultima4Engine::initialize() {
 
 void Ultima4Engine::startup() {
 	bool skipInfo = _saveSlotToLoad != -1;
-
-	soundInit();
 
 	if (!skipInfo) {
 		// do the intro

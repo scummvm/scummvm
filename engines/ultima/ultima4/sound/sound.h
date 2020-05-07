@@ -24,6 +24,8 @@
 #define ULTIMA4_SOUND_H
 
 #include "ultima/shared/std/containers.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "common/str.h"
 
 namespace Ultima {
@@ -64,38 +66,31 @@ enum Sound {
 	SOUND_MAX
 };
 
-int soundInit();
-void soundDelete();
-
 void soundPlay(Sound sound, bool onlyOnce = true, int specificDurationInTicks = -1);
 
 void soundStop(int channel = 1);
 
-struct Mix_Chunk;
-typedef Mix_Chunk OSSoundChunk;
-
 class SoundManager {
-public:
-	~SoundManager();
-	static SoundManager *getInstance();
-	int init();
-	void play(Sound sound, bool onlyOnce = true, int specificDurationInTicks = -1);
-	void stop(int channel = 1);
+private:
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
+	Std::vector<Common::String> _soundFilenames;
+	Std::vector<Audio::SeekableAudioStream *> _sounds;
 private:
 	bool load(Sound sound);
-	int init_sys();
-	void del() {
-		del_sys();
-	}
-	void del_sys();
-	void play_sys(Sound sound, bool onlyOnce, int specificDurationInTicks);
-	bool load_sys(Sound sound, const Common::String &soundPathName);
+
+	void play_sys(Sound sound, bool onlyOnce, int specificDurationMilli);
+	bool load_sys(Sound sound, const Common::String &filename);
 	void stop_sys(int channel);
-	Std::vector<Common::String> _soundFilenames;
-	Std::vector<OSSoundChunk *> _soundChunk;
-	SoundManager();
-	static SoundManager *_instance;
+public:
+	SoundManager(Audio::Mixer *mixer);
+	~SoundManager();
+
+	void play(Sound sound, bool onlyOnce = true, int specificDurationInTicks = -1);
+	void stop(int channel = 1);
 };
+
+extern SoundManager *g_sound;
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

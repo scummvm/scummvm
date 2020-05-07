@@ -86,7 +86,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GAME_ULTIMA4,
 		0
@@ -101,7 +101,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GAME_ULTIMA4,
 		GF_VGA_ENHANCED

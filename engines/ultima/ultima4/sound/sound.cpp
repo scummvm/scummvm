@@ -26,51 +26,36 @@
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/utils.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/flac.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/voc.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/wave.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-int soundInit(void) {
-	return SoundManager::getInstance()->init();
-}
-
-void soundDelete(void) {
-	delete SoundManager::getInstance();
-}
+SoundManager *g_sound;
 
 void soundPlay(Sound sound, bool onlyOnce, int specificDurationInTicks) {
-	SoundManager::getInstance()->play(sound, onlyOnce, specificDurationInTicks);
+	g_sound->play(sound, onlyOnce, specificDurationInTicks);
 }
 
 void soundStop(int channel) {
-	SoundManager::getInstance()->stop(channel);
+	g_sound->stop(channel);
 }
 
 /*-------------------------------------------------------------------*/
 
-SoundManager *SoundManager::_instance = 0;
+SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
+	g_sound = this;
 
-SoundManager::SoundManager() {
-}
-
-SoundManager::~SoundManager() {
-	del();
-	_instance = 0;
-}
-
-SoundManager *SoundManager::getInstance() {
-	if (!_instance)
-		_instance = new SoundManager();
-	return _instance;
-}
-
-int SoundManager::init() {
-	/*
-	 * load sound track filenames from xml config file
-	 */
+	// Load sound track filenames from xml config file
 	const Config *config = Config::getInstance();
 	_soundFilenames.reserve(SOUND_MAX);
-	_soundChunk.resize(SOUND_MAX);
+	_sounds.resize(SOUND_MAX);
 
 	Std::vector<ConfigElement> soundConfs = config->getElement("sound").getChildren();
 	Std::vector<ConfigElement>::const_iterator i = soundConfs.begin();
@@ -81,7 +66,14 @@ int SoundManager::init() {
 
 		_soundFilenames.push_back(i->getString("file"));
 	}
-	return init_sys();
+}
+
+SoundManager::~SoundManager() {
+	g_sound = nullptr;
+	_mixer->stopHandle(_soundHandle);
+
+	for (uint idx = 0; idx < _sounds.size(); ++idx)
+		delete _sounds[idx];
 }
 
 bool SoundManager::load(Sound sound) {
@@ -91,24 +83,24 @@ bool SoundManager::load(Sound sound) {
 	if (!Music::_functional || !settings._soundVol)
 		return false;
 
-	if (_soundChunk[sound] == nullptr) {
+	if (_sounds[sound] == nullptr) {
 		Common::String pathname(u4find_sound(_soundFilenames[sound]));
 		Common::String basename = pathname.substr(pathname.findLastOf("/") + 1);
 		if (!basename.empty())
 			return load_sys(sound, pathname);
 	}
+
 	return true;
 }
 
 void SoundManager::play(Sound sound, bool onlyOnce, int specificDurationInTicks) {
-
 	ASSERT(sound < SOUND_MAX, "Attempted to play an invalid sound in soundPlay()");
 
 	// If music didn't initialize correctly, then we can't play it anyway
 	if (!Music::_functional || !settings._soundVol)
 		return;
 
-	if (_soundChunk[sound] == nullptr) {
+	if (_sounds[sound] == nullptr) {
 		if (!load(sound)) {
 			return;
 		}
@@ -121,45 +113,69 @@ void SoundManager::stop(int channel) {
 	stop_sys(channel);
 }
 
-bool SoundManager::load_sys(Sound sound, const Common::String &pathname) {
-#ifdef TODO
-	soundChunk[sound] = Mix_LoadWAV(pathname.c_str());
-	if (!soundChunk[sound]) {
-		warning("Unable to load sound effect file %s: %s", soundFilenames[sound].c_str(), Mix_GetError());
+bool SoundManager::load_sys(Sound sound, const Common::String &filename) {
+	Common::File f;
+	if (!f.open(filename))
 		return false;
-	}
+
+	Audio::SeekableAudioStream *audioStream = nullptr;
+
+#ifdef USE_FLAC
+	if (filename.hasSuffix(".fla"))
+		audioStream = Audio::makeFLACStream(f.readStream(f.size()), DisposeAfterUse::YES);
 #endif
-	return true;
+#ifdef USE_VORBIS
+	if (filename.hasSuffix(".ogg"))
+		audioStream = Audio::makeVorbisStream(f.readStream(f.size()), DisposeAfterUse::YES);
+#endif
+#ifdef USE_MAD
+	if (filename.hasSuffix(".mp3"))
+		audioStream = Audio::makeMP3Stream(f.readStream(f.size()), DisposeAfterUse::YES);
+#endif
+	if (filename.hasSuffix(".wav"))
+		audioStream = Audio::makeWAVStream(f.readStream(f.size()), DisposeAfterUse::YES);
+	if (filename.hasSuffix(".voc"))
+		audioStream = Audio::makeVOCStream(f.readStream(f.size()), DisposeAfterUse::YES);
+
+	_sounds[sound] = audioStream;
+	return audioStream != nullptr;
 }
 
-void SoundManager::play_sys(Sound sound, bool onlyOnce, int specificDurationInTicks) {
-#ifdef TODO
-	/**
-	 * Use Channel 1 for sound effects
-	 */
-	if (!onlyOnce || !Mix_Playing(1)) {
-		if (Mix_PlayChannelTimed(1, soundChunk[sound], specificDurationInTicks == -1 ? 0 : -1, specificDurationInTicks) == -1)
-			fprintf(stderr, "Error playing sound %d: %s\n", sound, Mix_GetError());
+void SoundManager::play_sys(Sound sound, bool onlyOnce, int specificDurationMilli) {
+	// Don't allow once only sounds if another sound is already playing
+	if (onlyOnce && _mixer->isSoundHandleActive(_soundHandle))
+		return;
+
+	// Ensure sound is stopped, and rewinded
+	_mixer->stopHandle(_soundHandle);
+	_sounds[sound]->rewind();
+
+	if (specificDurationMilli == -1) {
+		// Play a single sound effect
+		_mixer->playStream(Audio::Mixer::kSFXSoundType,
+			&_soundHandle, _sounds[sound], -1, Audio::Mixer::kMaxChannelVolume,
+			0, DisposeAfterUse::NO);
+	} else {
+		// Play a sound effect, looping if necessary, for a given duration
+		// TODO: Better handle cases where a number of loops won't fit
+		// exactly to give a desired duration
+		int duration = _sounds[sound]->getLength().msecs();
+		int loops = (specificDurationMilli + duration - 1) / duration;
+		assert(loops >= 0);
+
+		Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(
+			_sounds[sound], loops, DisposeAfterUse::NO);
+
+		_mixer->playStream(Audio::Mixer::kSFXSoundType,
+			&_soundHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume,
+			0, DisposeAfterUse::NO);
 	}
-#endif
 }
 
 void SoundManager::stop_sys(int channel) {
-#ifdef TODO
-	// If music didn't initialize correctly, then we shouldn't try to stop it
-	if (!g_music->functional || !settings.soundVol)
-		return;
-
-	if (Mix_Playing(channel))
-		Mix_HaltChannel(channel);
-#endif
-}
-
-int SoundManager::init_sys() {
-	return 1;
-}
-
-void SoundManager::del_sys() {
+	// Channel 1 is the dummy channel number used for sound effects
+	if (channel == 1)
+		_mixer->stopHandle(_soundHandle);
 }
 
 } // End of namespace Ultima4
