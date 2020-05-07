@@ -115,6 +115,10 @@ void Widget::draw() {
 		_x = getAbsX();
 		_y = getAbsY();
 
+		if (g_gui.useRTL()) {
+			_x = _boss->_w - _x - _w;
+		}
+
 		Common::Rect oldClip = g_gui.theme()->swapClipRect(_boss->getClipRect());
 
 		// Draw border
@@ -215,7 +219,7 @@ bool Widget::isVisible() const {
 }
 
 bool Widget::useRTL() const{
-	return _useRTL == true;
+	return _useRTL;
 }
 
 uint8 Widget::parseHotkey(const Common::String &label) {
