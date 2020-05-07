@@ -139,14 +139,14 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 	/* portal just exits to parent map */
 	if (portal->_exitPortal) {
 		g_game->exitToParentMap();
-		g_music->play();
+		g_music->playMapMusic();
 		return 1;
 	} else if (portal->_destid == location->_map->_id)
 		location->_coords = portal->_start;
 
 	else {
 		g_game->setMap(destination, portal->_saveLocation, portal);
-		g_music->play();
+		g_music->playMapMusic();
 	}
 
 	/* if the portal changes the map retroactively, do it here */

@@ -169,7 +169,7 @@ void Codex::eject(CodexEjectCode code) {
 	// Return view to normal and exit the Abyss
 	gameSetViewMode(VIEW_NORMAL);
 	g_game->exitToParentMap();
-	g_music->play();
+	g_music->playMapMusic();
 
 	/*
 	 * if being ejected because of a missed virtue question,

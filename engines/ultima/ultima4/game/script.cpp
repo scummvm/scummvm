@@ -1273,12 +1273,12 @@ Script::ReturnCode Script::karma(Shared::XMLNode *script, Shared::XMLNode *curre
 
 Script::ReturnCode Script::music(Shared::XMLNode *script, Shared::XMLNode *current) {
 	if (current->getPropertyBool("reset"))
-		g_music->play();
+		g_music->playMapMusic();
 	else {
 		Common::String type = getPropAsStr(current, "type");
 
 		if (current->getPropertyBool("play"))
-			g_music->play();
+			g_music->playMapMusic();
 		if (current->getPropertyBool("stop"))
 			g_music->stop();
 		else if (type == "shopping")

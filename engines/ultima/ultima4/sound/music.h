@@ -25,6 +25,7 @@
 
 #include "ultima/shared/std/containers.h"
 #include "audio/audiostream.h"
+#include "audio/midiplayer.h"
 #include "audio/mixer.h"
 
 namespace Ultima {
@@ -36,13 +37,9 @@ namespace Ultima4 {
 #define INN_FADE_IN_TIME            5000
 #define NLOOPS -1
 
-struct _Mix_Music;
-typedef _Mix_Music OSMusicMixer;
 
-class Music {
+class Music : public Audio::MidiPlayer {
 public:
-	static bool _functional;
-
 	enum Type {
 		NONE,
 		OUTSIDE,
@@ -57,71 +54,67 @@ public:
 		MAX
 	};
 
-	/*
-	 * Properties
-	 */
-	Std::vector<Common::String> _filenames;
 	Type _introMid;
-	Type _current;
-	Audio::AudioStream *_playing;
+private:
+	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
+	Std::vector<Common::String> _filenames;
+
+	/**
+	 * Play a given music file if is exists
+	 */
+	bool startMusic(const Common::String &filename);
+protected:
+	// Overload Audio::MidiPlayer method
+	void sendToChannel(byte channel, uint32 b) override;
 public:
-	/**
-	 * Initiliaze the music
-	 */
-	Music();
+	Music(Audio::Mixer *mixer);
+	~Music() override;
 
 	/**
-	 * Stop playing the music and cleanup
+	 * Play music
 	 */
-	~Music();
+	void playMusic(const Common::String &filename);
 
 	/**
-	 * Returns true if the mixer is playing any audio
+	 * Play music of a given type
 	 */
-	static bool isPlaying();
+	void playMusic(Type music);
 
 	/**
-	 * Ensures that the music is playing if it is supposed to be, or off
-	 * if it is supposed to be turned off.
+	 * Play the designated music for the current map
 	 */
-	static void callback(void *);
+	void playMapMusic();
 
-	/**
-	 * Main music loop
-	 */
-	void play();
+	void stop() override;
 
-	/**
-	 * Stop playing music
-	 */
-	void stop() {
-		_on = false;
-		stopMid();
-	}
 
 	/**
 	 * Fade out the music
 	 */
-	void fadeOut(int msecs);
+	void fadeOut(int msecs) {
+		// TODO
+	}
 
 	/**
 	 * Fade in the music
 	 */
-	void fadeIn(int msecs, bool loadFromMap);
+	void fadeIn(int msecs, bool loadFromMap) {
+		// TODO
+	}
 
 	/**
 	 * Music when you talk to Lord British
 	 */
 	void lordBritish() {
-		playMid(RULEBRIT);
+		playMusic(RULEBRIT);
 	}
 
 	/**
 	 * Music when you talk to Hawkwind
 	 */
 	void hawkwind() {
-		playMid(SHOPPING);    
+		playMusic(SHOPPING);
 	}
 
 	/**
@@ -135,64 +128,20 @@ public:
 	 * Music when talking to a vendor
 	 */
 	void shopping() {
-		playMid(SHOPPING);
+		playMusic(SHOPPING);
 	}
+
 	void intro() {
 #ifdef IOS_ULTIMA4
 		_on = true; // Force iOS to turn this back on from going in the background.
 #endif
-		playMid(_introMid);
+		playMusic(_introMid);
 	}
 
 	/**
 	 * Cycle through the introduction music
 	 */
 	void introSwitch(int n);
-
-	/**
-	 * Toggle the music on/off (usually by pressing 'v')
-	 */
-	bool toggle();
-
-private:
-	void create_sys();
-	void destroy_sys();
-
-	/**
-	 * Set, increase, and decrease music volume
-	 */
-	void setMusicVolume_sys(int volume);
-
-	/**
-	 * Set, increase, and decrease sound volume
-	 */
-	void setSoundVolume_sys(int volume);
-	void fadeOut_sys(int msecs);
-	void fadeIn_sys(int msecs, bool loadFromMap);
-
-	/**
-	 * System specific version to check if the version is still playing.
-	 */
-	bool isPlaying_sys();
-
-	static Music *_instance;
-	static bool _fading;
-	static bool _on;
-
-
-	bool load_sys(const Common::String &pathName);
-
-	/**
-	 * Play a midi file
-	 */
-	void playMid(Type music);
-
-	/**
-	 * Stop playing a MIDI file.
-	 */
-	void stopMid();
-
-	bool load(Type music);
 };
 
 extern Music *g_music;

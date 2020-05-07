@@ -86,7 +86,6 @@ Debugger::Debugger() : Shared::Debugger() {
 
 	registerCmd("speed", WRAP_METHOD(Debugger, cmdSpeed));
 	registerCmd("combat_speed", WRAP_METHOD(Debugger, cmdCombatSpeed));
-	registerCmd("musicToggle", WRAP_METHOD(Debugger, cmdMusicToggle));
 
 	registerCmd("3d", WRAP_METHOD(Debugger, cmd3d));
 	registerCmd("abyss", WRAP_METHOD(Debugger, cmdAbyss));
@@ -821,16 +820,6 @@ bool Debugger::cmdMixReagents(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
-bool Debugger::cmdMusicToggle(int argc, const char **argv) {
-	if (g_music->toggle())
-		print("Volume On!");
-	else
-		print("Volume Off!");
-
-	dontEndTurn();
-	return isDebuggerActive();
-}
-
 bool Debugger::cmdNewOrder(int argc, const char **argv) {
 	printN("New Order!\nExchange # ");
 
@@ -1496,7 +1485,7 @@ bool Debugger::cmdLeave(int argc, const char **argv) {
 	if (!g_game->exitToParentMap()) {
 		print("Not Here");
 	} else {
-		g_music->play();
+		g_music->playMapMusic();
 		print("Exited");
 	}
 
@@ -1710,7 +1699,7 @@ bool Debugger::cmdUp(int argc, const char **argv) {
 	} else {
 		print("Leaving...");
 		g_game->exitToParentMap();
-		g_music->play();
+		g_music->playMapMusic();
 
 		return isDebuggerActive();
 	}

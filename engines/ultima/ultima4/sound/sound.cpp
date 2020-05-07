@@ -77,11 +77,7 @@ SoundManager::~SoundManager() {
 }
 
 bool SoundManager::load(Sound sound) {
-	ASSERT(sound < SOUND_MAX, "Attempted to load an invalid sound in soundLoad()");
-
-	// If music didn't initialize correctly, then we can't play it anyway
-	if (!Music::_functional)
-		return false;
+	ASSERT(sound < SOUND_MAX, "Attempted to load an invalid sound");
 
 	if (_sounds[sound] == nullptr) {
 		Common::String pathname(u4find_sound(_soundFilenames[sound]));
@@ -94,11 +90,7 @@ bool SoundManager::load(Sound sound) {
 }
 
 void SoundManager::play(Sound sound, bool onlyOnce, int specificDurationInTicks) {
-	ASSERT(sound < SOUND_MAX, "Attempted to play an invalid sound in soundPlay()");
-
-	// If music didn't initialize correctly, then we can't play it anyway
-	if (!Music::_functional)
-		return;
+	ASSERT(sound < SOUND_MAX, "Attempted to play an invalid sound");
 
 	if (_sounds[sound] == nullptr) {
 		if (!load(sound)) {
@@ -121,20 +113,20 @@ bool SoundManager::load_sys(Sound sound, const Common::String &filename) {
 	Audio::SeekableAudioStream *audioStream = nullptr;
 
 #ifdef USE_FLAC
-	if (filename.hasSuffix(".fla"))
+	if (filename.hasSuffixIgnoreCase(".fla"))
 		audioStream = Audio::makeFLACStream(f.readStream(f.size()), DisposeAfterUse::YES);
 #endif
 #ifdef USE_VORBIS
-	if (filename.hasSuffix(".ogg"))
+	if (filename.hasSuffixIgnoreCase(".ogg"))
 		audioStream = Audio::makeVorbisStream(f.readStream(f.size()), DisposeAfterUse::YES);
 #endif
 #ifdef USE_MAD
-	if (filename.hasSuffix(".mp3"))
+	if (filename.hasSuffixIgnoreCase(".mp3"))
 		audioStream = Audio::makeMP3Stream(f.readStream(f.size()), DisposeAfterUse::YES);
 #endif
-	if (filename.hasSuffix(".wav"))
+	if (filename.hasSuffixIgnoreCase(".wav"))
 		audioStream = Audio::makeWAVStream(f.readStream(f.size()), DisposeAfterUse::YES);
-	if (filename.hasSuffix(".voc"))
+	if (filename.hasSuffixIgnoreCase(".voc"))
 		audioStream = Audio::makeVOCStream(f.readStream(f.size()), DisposeAfterUse::YES);
 
 	_sounds[sound] = audioStream;

@@ -73,6 +73,7 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 	g_items = nullptr;
 	g_mapLoaders = nullptr;
 	g_moongates = nullptr;
+	g_music = nullptr;
 	g_responseParts = nullptr;
 	g_screen = nullptr;
 	g_shrines = nullptr;
@@ -127,18 +128,18 @@ bool Ultima4Engine::initialize() {
 	_items = new Items();
 	_mapLoaders = new MapLoaders();
 	_moongates = new Moongates();
+	_music = new Music(_mixer);
+	_soundManager = new SoundManager(_mixer);
 	_responseParts = new ResponseParts();
 	_screen = new Screen();
 	_screen->init();
 	_shrines = new Shrines();
-	_soundManager = new SoundManager(_mixer);
 	_spells = new Spells();
 	_tileRules = new TileRules();
 	_tileSets = new TileSets();
 	_tileMaps = new TileMaps();
 	_game = new GameController();
 	_imageLoaders = new ImageLoaders();
-	_music = new Music();
 	_saveGame = new SaveGame();
 	_weapons = new Weapons();
 

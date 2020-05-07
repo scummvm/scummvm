@@ -33,28 +33,28 @@
 #include "ultima/shared/core/file.h"
 #include "audio/decoders/mp3.h"
 #include "audio/mods/mod_xm_s3m.h"
+#include "audio/midiparser.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-/*
- * Static variables
- */
 Music *g_music;
 
-bool Music::_fading;
-bool Music::_on;
-bool Music::_functional;
-
-/*
- * Constructors/Destructors
- */
-
-Music::Music() : _introMid(TOWNS), _current(NONE), _playing(nullptr) {
+Music::Music(Audio::Mixer *mixer) :
+		Audio::MidiPlayer(), _mixer(mixer), _introMid(TOWNS) {
 	g_music = this;
-	_fading = false;
-	_on = false;
-	_functional = true;
+	Audio::MidiPlayer::createDriver();
+
+	int ret = _driver->open();
+	if (ret == 0) {
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
+
+		_driver->setTimerCallback(this, &timerCallback);
+	}
+
 
 	_filenames.reserve(MAX);
 	_filenames.push_back("");    // filename for MUSIC_NONE;
@@ -73,188 +73,113 @@ Music::Music() : _introMid(TOWNS), _current(NONE), _playing(nullptr) {
 
 		_filenames.push_back(i->getString("file"));
 	}
-
-	create_sys(); // Call the Sound System specific creation file.
-
-	// TODO: Deprecate this
-	_on = 10;
 }
 
 Music::~Music() {
+	stop();
 	g_music = nullptr;
-	eventHandler->getTimer()->remove(&Music::callback);
-	destroy_sys(); // Call the Sound System specific destruction file.
 }
 
-bool Music::isPlaying() {
-	return g_music->isPlaying_sys();
+void Music::sendToChannel(byte channel, uint32 b) {
+	if (!_channelsTable[channel]) {
+		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		// If a new channel is allocated during the playback, make sure
+		// its volume is correctly initialized.
+		if (_channelsTable[channel])
+			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
+	}
+
+	if (_channelsTable[channel])
+		_channelsTable[channel]->send(b);
 }
 
+void Music::playMusic(Type music) {
+	playMusic(_filenames[music]);
+}
 
-bool Music::load(Type music) {
-	ASSERT(music < MAX, "Attempted to load an invalid piece of music in Music::load()");
+void Music::playMapMusic() {
+	playMusic(g_context->_location->_map->_music);
+}
 
-	/* music already loaded */
-	if (music == _current) {
-		/* tell calling function it didn't load correctly (because it's already playing) */
-		if (isPlaying())
-			return false;
-		/* it loaded correctly */
-		else
+void Music::playMusic(const Common::String &filename) {
+	stop();
+	Common::StackLock lock(_mutex);
+
+	// First try opening the file with whatever filename is provided
+	if (startMusic(filename))
+		return;
+
+	// TODO: Since the player doesn't yet support xu4 .it files,
+	// try starting the file with other extensions - which some have
+	const char *const EXTENSIONS[2] = { ".mp3", ".mid" };
+	for (int idx = 0; idx < 2; ++idx) {
+		size_t dotIndex = filename.findLastOf('.');
+		Common::String fname = (dotIndex != Common::String::npos) ?
+			Common::String(filename.c_str(), dotIndex) + EXTENSIONS[idx] :
+			filename + EXTENSIONS[idx];
+		if (startMusic(fname))
+			return;
+	}
+
+	// At this point, we couldn't open the given music file
+	warning("No support for playing music file - %s", filename.c_str());
+}
+
+bool Music::startMusic(const Common::String &filename) {
+	Common::File musicFile;
+	if (!musicFile.open(Common::String::format("data/mid/%s", filename.c_str())))
+		// No such file exists
+		return false;
+
+	if (filename.hasSuffixIgnoreCase(".mp3")) {
+		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(
+			musicFile.readStream(musicFile.size()), DisposeAfterUse::YES);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType,
+			&_soundHandle, audioStream);
+		return true;
+
+	} else if (filename.hasSuffixIgnoreCase(".mid")) {
+		// Load MIDI resource data
+		int midiMusicSize = musicFile.size();
+		free(_midiData);
+		_midiData = (byte *)malloc(midiMusicSize);
+		musicFile.read(_midiData, midiMusicSize);
+		musicFile.close();
+
+		MidiParser *parser = MidiParser::createParser_SMF();
+		if (parser->loadMusic(_midiData, midiMusicSize)) {
+			parser->setTrack(0);
+			parser->setMidiDriver(this);
+			parser->setTimerRate(_driver->getBaseTempo());
+			parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+
+			_parser = parser;
+
+			syncVolume();
+
+			_isLooping = false;
+			_isPlaying = true;
 			return true;
+		} else {
+			delete parser;
+			return false;
+		}
+	} else {
+		return false;
 	}
-
-	Common::String pathName(u4find_music(_filenames[music]));
-	if (!pathName.empty()) {
-		bool status = load_sys(pathName);
-		if (status)
-			_current = music;
-		return status;
-	}
-	return false;
 }
 
-void Music::callback(void *data) {
-	eventHandler->getTimer()->remove(&Music::callback);
-
-	if (g_music->_on && !isPlaying())
-		g_music->play();
-	else if (!g_music->_on && isPlaying())
-		g_music->stop();
-}
-
-void Music::play() {
-	playMid(g_context->_location->_map->_music);
+void Music::stop() {
+	Common::StackLock lock(_mutex);
+	_mixer->stopHandle(_soundHandle);
+	Audio::MidiPlayer::stop();
 }
 
 void Music::introSwitch(int n) {
-	if (n > NONE && n < MAX) {
+	if (n > NONE &&n < MAX) {
 		_introMid = static_cast<Type>(n);
 		intro();
 	}
-}
-
-bool Music::toggle() {
-	eventHandler->getTimer()->remove(&Music::callback);
-
-	_on = !_on;
-	if (!_on)
-		fadeOut(1000);
-	else
-		fadeIn(1000, true);
-
-	eventHandler->getTimer()->add(&Music::callback, settings._gameCyclesPerSecond);
-	return _on;
-}
-
-void Music::fadeOut(int msecs) {
-	// fade the music out even if '_on' is false
-	if (!_functional)
-		return;
-
-	if (isPlaying()) {
-		if (!settings._volumeFades)
-			stop();
-		else {
-			fadeOut_sys(msecs);
-		}
-	}
-}
-
-void Music::fadeIn(int msecs, bool loadFromMap) {
-	if (!_functional || !_on)
-		return;
-
-	if (!isPlaying()) {
-		// make sure we've got something loaded to play
-		if (loadFromMap || !_playing)
-			load(g_context->_location->_map->_music);
-
-		if (!settings._volumeFades)
-			play();
-		else {
-			fadeIn_sys(msecs, loadFromMap);
-		}
-	}
-}
-
-void Music::create_sys() {
-	_functional = true;
-}
-
-void Music::destroy_sys() {
-}
-
-bool Music::load_sys(const Common::String &pathName) {
-	delete _playing;
-	_playing = nullptr;
-
-	if (pathName.hasSuffixIgnoreCase(".it")) {
-		warning("TODO: Play music file - %s", pathName.c_str());
-		return true;
-	}
-
-	Shared::File f;
-	if (!f.open(pathName)) {
-		warning("unable to load music file %s", pathName.c_str());
-		return false;
-	}
-
-	if (pathName.hasSuffixIgnoreCase(".mp3")) {
-#ifdef USE_MAD
-		Common::SeekableReadStream *s = f.readStream(f.size());
-		_playing = Audio::makeMP3Stream(s, DisposeAfterUse::YES);
-#endif
-	} else if (pathName.hasSuffixIgnoreCase(".it"))
-		_playing = nullptr;
-	else
-		error("Unknown sound file");
-
-	return true;
-}
-
-void Music::playMid(Type music) {
-	if (!_functional || !_on)
-		return;
-
-	// loaded a new piece of music
-	if (load(music)) {
-		stopMid();
-		g_ultima->_mixer->playStream(Audio::Mixer::kMusicSoundType,  &_soundHandle, _playing,
-			-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
-	}
-}
-
-void Music::stopMid() {
-	g_ultima->_mixer->stopHandle(_soundHandle);
-}
-
-void Music::setSoundVolume_sys(int volume) {
-	uint vol = 255 * volume / MAX_VOLUME;
-	g_ultima->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
-}
-
-bool Music::isPlaying_sys() {
-	return g_ultima->_mixer->isSoundHandleActive(_soundHandle);
-}
-
-void Music::setMusicVolume_sys(int volume) {
-	uint vol = 255 * volume / MAX_VOLUME;
-	g_ultima->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
-}
-
-void Music::fadeIn_sys(int msecs, bool loadFromMap) {
-#ifdef TODO
-	if (Mix_FadeInMusic(playing, NLOOPS, msecs) == -1)
-		warning("Mix_FadeInMusic: %s\n", Mix_GetError());
-#endif
-}
-
-void Music::fadeOut_sys(int msecs) {
-#ifdef TODO
-	if (Mix_FadeOutMusic(msecs) == -1)
-		warning("Mix_FadeOutMusic: %s\n", Mix_GetError());
-#endif
 }
 
 } // End of namespace Ultima4

@@ -292,7 +292,7 @@ void Shrine::showVision(bool elevated) {
 
 void Shrine::eject() {
 	g_game->exitToParentMap();
-	g_music->play();
+	g_music->playMapMusic();
 	g_context->_location->_turnCompleter->finishTurn();
 }
 

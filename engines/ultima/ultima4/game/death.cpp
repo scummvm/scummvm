@@ -135,7 +135,7 @@ void Death::revive() {
 	g_context->_aura->set();
 	g_context->_horseSpeed = 0;
 	g_context->_lastCommandTime = g_system->getMillis();
-	g_music->play();
+	g_music->playMapMusic();
 
 	g_context->_party->reviveParty();
 

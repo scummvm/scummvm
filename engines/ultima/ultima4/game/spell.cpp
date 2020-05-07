@@ -730,7 +730,7 @@ int Spells::spellXit(int unused) {
 	if (!g_context->_location->_map->isWorldMap()) {
 		g_screen->screenMessage("Leaving...\n");
 		g_game->exitToParentMap();
-		g_music->play();
+		g_music->playMapMusic();
 		return 1;
 	}
 	return 0;
@@ -757,7 +757,7 @@ int Spells::spellYup(int unused) {
 	} else {
 		g_screen->screenMessage("Leaving...\n");
 		g_game->exitToParentMap();
-		g_music->play();
+		g_music->playMapMusic();
 		return 1;
 	}
 

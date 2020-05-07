@@ -388,7 +388,7 @@ void Person::runCommand(Conversation *cnv, const ResponsePart &command) {
 	} else if (command == g_responseParts->STARTMUSIC_HW) {
 		g_music->hawkwind();
 	} else if (command == g_responseParts->STOPMUSIC) {
-		g_music->play();
+		g_music->playMapMusic();
 	} else if (command == g_responseParts->HAWKWIND) {
 		g_context->_party->adjustKarma(KA_HAWKWIND);
 	} else {
