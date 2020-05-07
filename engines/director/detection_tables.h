@@ -110,7 +110,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME("jman", "Turbo!", "JMP Turbo\xE2\x84\xA2", "cc3321069072b90f091f220bba16e4d4", -1, 4), // Trademark symbol (UTF-8)
 
-	WINGAME("majestic", "", "MAJESTIC.EXE", "624267f70253e5327981003a6fc0aeba", -1, 4),
+	WINGAME("majestic", "", "MAJESTIC.EXE", "624267f70253e5327981003a6fc0aeba", 23437631, 4),
+
+	MACGAME("majestic", "", "Majestic", "01be45e7241194dad07938e7059b88e3", 483774, 4),
 
 	// Meet Mediaband
 	WINGAME("mediaband", "", "MEDIABND.EXE", "0cfb9b4762e33ab56d656a0eb146a048", 717921, 4),
