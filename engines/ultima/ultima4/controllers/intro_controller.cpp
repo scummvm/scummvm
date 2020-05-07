@@ -227,8 +227,6 @@ IntroController::IntroController() : Controller(1),
 
 
 	_soundMenu.setTitle("Sound Options:", 0, 0);
-	_soundMenu.add(MI_SOUND_01,  new IntMenuItem("Music Volume         %s", 2,  2,/*'m'*/  0, &_settingsChanged._musicVol, 0, MAX_VOLUME, 1, MENU_OUTPUT_VOLUME));
-	_soundMenu.add(MI_SOUND_02,  new IntMenuItem("Sound Effect Volume  %s", 2,  3,/*'s'*/  0, &_settingsChanged._soundVol, 0, MAX_VOLUME, 1, MENU_OUTPUT_VOLUME));
 	_soundMenu.add(MI_SOUND_03, new BoolMenuItem("Fading               %s", 2,  4,/*'f'*/  0, &_settingsChanged._volumeFades));
 	_soundMenu.add(USE_SETTINGS,                 "\010 Use These Settings", 2, 11,/*'u'*/  2);
 	_soundMenu.add(CANCEL,                       "\010 Cancel",             2, 12,/*'c'*/  2);
@@ -1108,13 +1106,6 @@ void IntroController::updateSoundMenu(MenuEvent &event) {
 	        event.getType() == MenuEvent::DECREMENT) {
 
 		switch (event.getMenuItem()->getId()) {
-		case MI_SOUND_01:
-			g_music->setMusicVolume(_settingsChanged._musicVol);
-			break;
-		case MI_SOUND_02:
-			g_music->setSoundVolume(_settingsChanged._soundVol);
-			soundPlay(SOUND_FLEE);
-			break;
 		case USE_SETTINGS:
 			// save settings
 			settings.setData(_settingsChanged);
@@ -1122,8 +1113,6 @@ void IntroController::updateSoundMenu(MenuEvent &event) {
 			g_music->intro();
 			break;
 		case CANCEL:
-			g_music->setMusicVolume(settings._musicVol);
-			g_music->setSoundVolume(settings._soundVol);
 			// discard settings
 			_settingsChanged = settings;
 			break;

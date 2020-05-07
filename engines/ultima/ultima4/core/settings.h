@@ -48,8 +48,6 @@ namespace Ultima4 {
 #define DEFAULT_LINEOFSIGHT             "DOS"
 #define DEFAULT_SCREEN_SHAKES           1
 #define DEFAULT_GAMMA                   100
-#define DEFAULT_MUSIC_VOLUME            10
-#define DEFAULT_SOUND_VOLUME            10
 #define DEFAULT_VOLUME_FADES            1
 #define DEFAULT_SHORTCUT_COMMANDS       0
 #define DEFAULT_KEY_DELAY               500
@@ -123,14 +121,12 @@ public:
 	int _keyDelay;
 	int _keyInterval;
 	MouseOptions _mouseOptions;
-	int _musicVol;
 	uint _scale;
 	bool _screenShakes;
 	int _gamma;
 	int _shakeInterval;
 	bool _shortcutCommands;
 	int _shrineTime;
-	int _soundVol;
 	int _spellEffectSpeed;
 	bool _validateXml;
 	bool _volumeFades;

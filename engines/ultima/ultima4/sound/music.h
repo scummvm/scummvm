@@ -154,17 +154,6 @@ public:
 	 */
 	bool toggle();
 
-	int decreaseMusicVolume();
-	int increaseMusicVolume();
-	void setMusicVolume(int volume) {
-		setMusicVolume_sys(volume);
-	}
-	int decreaseSoundVolume();
-	int increaseSoundVolume();
-	void setSoundVolume(int volume) {
-		setSoundVolume_sys(volume);
-	}
-
 private:
 	void create_sys();
 	void destroy_sys();

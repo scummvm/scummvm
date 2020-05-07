@@ -136,10 +136,6 @@ bool Settings::write() {
 }
 
 void Settings::synchronize(Shared::ConfSerializer &s) {
-	// TODO: Deprecate these
-	_musicVol = DEFAULT_MUSIC_VOLUME;
-	_soundVol = DEFAULT_SOUND_VOLUME;
-
 	// General settings
 	bool isEnhanced = g_ultima->isEnhanced();
 	s.syncAsString("video", _videoType, isEnhanced ? "new" : "EGA");

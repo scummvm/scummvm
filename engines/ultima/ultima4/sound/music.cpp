@@ -76,8 +76,8 @@ Music::Music() : _introMid(TOWNS), _current(NONE), _playing(nullptr) {
 
 	create_sys(); // Call the Sound System specific creation file.
 
-	// Set up the volume.
-	_on = settings._musicVol;
+	// TODO: Deprecate this
+	_on = 10;
 }
 
 Music::~Music() {
@@ -177,39 +177,6 @@ void Music::fadeIn(int msecs, bool loadFromMap) {
 		}
 	}
 }
-
-int Music::increaseMusicVolume() {
-	if (++settings._musicVol > MAX_VOLUME)
-		settings._musicVol = MAX_VOLUME;
-	else
-		setMusicVolume(settings._musicVol);
-	return (settings._musicVol * 100 / MAX_VOLUME);  // percentage
-}
-
-int Music::decreaseMusicVolume() {
-	if (--settings._musicVol < 0)
-		settings._musicVol = 0;
-	else
-		setMusicVolume(settings._musicVol);
-	return (settings._musicVol * 100 / MAX_VOLUME);  // percentage
-}
-
-int Music::increaseSoundVolume() {
-	if (++settings._soundVol > MAX_VOLUME)
-		settings._soundVol = MAX_VOLUME;
-	else
-		setSoundVolume(settings._soundVol);
-	return (settings._soundVol * 100 / MAX_VOLUME);  // percentage
-}
-
-int Music::decreaseSoundVolume() {
-	if (--settings._soundVol < 0)
-		settings._soundVol = 0;
-	else
-		setSoundVolume(settings._soundVol);
-	return (settings._soundVol * 100 / MAX_VOLUME);  // percentage
-}
-
 
 void Music::create_sys() {
 	_functional = true;

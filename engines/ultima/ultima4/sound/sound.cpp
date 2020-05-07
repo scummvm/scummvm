@@ -80,7 +80,7 @@ bool SoundManager::load(Sound sound) {
 	ASSERT(sound < SOUND_MAX, "Attempted to load an invalid sound in soundLoad()");
 
 	// If music didn't initialize correctly, then we can't play it anyway
-	if (!Music::_functional || !settings._soundVol)
+	if (!Music::_functional)
 		return false;
 
 	if (_sounds[sound] == nullptr) {
@@ -97,7 +97,7 @@ void SoundManager::play(Sound sound, bool onlyOnce, int specificDurationInTicks)
 	ASSERT(sound < SOUND_MAX, "Attempted to play an invalid sound in soundPlay()");
 
 	// If music didn't initialize correctly, then we can't play it anyway
-	if (!Music::_functional || !settings._soundVol)
+	if (!Music::_functional)
 		return;
 
 	if (_sounds[sound] == nullptr) {
