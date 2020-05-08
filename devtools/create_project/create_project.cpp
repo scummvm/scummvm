@@ -1168,14 +1168,22 @@ StringList getFeatureDefines(const FeatureList &features) {
 	return defines;
 }
 
+StringList getFeatureLibraries(const Feature &feature) {
+	StringList libraries;
+
+	if (feature.enable && feature.libraries && feature.libraries[0]) {
+		StringList fLibraries = tokenize(feature.libraries);
+		libraries.splice(libraries.end(), fLibraries);
+	}
+
+	return libraries;
+}
+
 StringList getFeatureLibraries(const FeatureList &features) {
 	StringList libraries;
 
 	for (FeatureList::const_iterator i = features.begin(); i != features.end(); ++i) {
-		if (i->enable && i->libraries && i->libraries[0]) {
-			StringList fLibraries = tokenize(i->libraries);
-			libraries.splice(libraries.end(), fLibraries);
-		}
+		libraries.merge(getFeatureLibraries(*i));
 	}
 
 	return libraries;
@@ -1198,6 +1206,26 @@ bool getFeatureBuildState(const std::string &name, FeatureList &features) {
 	} else {
 		return false;
 	}
+}
+
+BuildSetup removeFeatureFromSetup(BuildSetup setup, const std::string &feature) {
+	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
+		if (i->enable && feature == i->name) {
+			StringList fribidi_libs = getFeatureLibraries(*i);
+			for (auto& lib : fribidi_libs) {
+				if (setup.useCanonicalLibNames) {
+					lib = getCanonicalLibName(lib);
+				}
+				setup.libraries.remove(lib);
+			}
+			if (i->define && i->define[0]) {
+				setup.defines.remove(i->define);
+			}
+			setup.features.erase(i);
+			break;
+		}
+	}
+	return setup;
 }
 
 ToolList getAllTools() {
