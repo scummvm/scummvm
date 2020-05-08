@@ -149,10 +149,24 @@ Common::String getPath(Common::String path, Common::String cwd) {
 	return cwd; // The path is not altered
 }
 
-Common::String pathMakeRelative(Common::String path, bool recursive) {
-	Common::String initialPath = Common::normalizePath(g_director->getCurrentPath() + convertPath(path), '/');
+Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts) {
+	Common::String initialPath(path);
+
+	// First, convert Windows-style separators
+	if (g_director->getPlatform() == Common::kPlatformWindows) {
+		if (initialPath.contains('\\'))
+			for (uint i = 0; i < initialPath.size(); i++)
+				if (initialPath[i] == '\\')
+					initialPath.setChar('/', i);
+	}
+
+	debug(2, "pathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
+
+	initialPath = Common::normalizePath(g_director->getCurrentPath() + convertPath(initialPath), '/');
 	Common::File f;
 	Common::String convPath = initialPath;
+
+	debug(2, "pathMakeRelative(): s2 %s", convPath.c_str());
 
 	if (f.open(initialPath))
 		return initialPath;
@@ -163,10 +177,12 @@ Common::String pathMakeRelative(Common::String path, bool recursive) {
 		int pos = convPath.find('/');
 		convPath = Common::String(&convPath.c_str()[pos + 1]);
 
+		debug(2, "pathMakeRelative(): s3 try %s", convPath.c_str());
+
 		if (!f.open(convPath))
 			continue;
 
-		debug(2, "pathMakeRelative(): Path converted %s -> %s", path.c_str(), convPath.c_str());
+		debug(2, "pathMakeRelative(): s3 converted %s -> %s", path.c_str(), convPath.c_str());
 
 		opened = true;
 
@@ -176,7 +192,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive) {
 	if (!opened && recursive) {
 		// Hmmm. We couldn't find the path as is.
 		// Let's try to translate file path into 8.3 format
-		if (g_director->getPlatform() == Common::kPlatformWindows && g_director->getVersion() < 4) {
+		if (g_director->getPlatform() == Common::kPlatformWindows && g_director->getVersion() < 5) {
 			convPath.clear();
 			const char *ptr = initialPath.c_str();
 			Common::String component;
@@ -198,11 +214,20 @@ Common::String pathMakeRelative(Common::String path, bool recursive) {
 				ptr++;
 			}
 
-			convPath += convertMacFilename(component.c_str()) + ".MMM";
+			Common::String convname = convertMacFilename(component.c_str());
+			debug(2, "pathMakeRelative(): s5 %s -> %s%s", initialPath.c_str(), convPath.c_str(), convname.c_str());
 
-			debug(2, "pathMakeRelative(): Trying %s -> %s", path.c_str(), convPath.c_str());
+			const char *exts[] = { ".MMM", ".DIR", ".DXR", 0 };
+			for (int i = 0; exts[i] && addexts; ++i) {
+				Common::String newpath = convPath + convname + exts[i];
 
-			return pathMakeRelative(convPath, false);
+				debug(2, "pathMakeRelative(): s5 try %s", newpath.c_str());
+
+				Common::String res = pathMakeRelative(newpath, false, false);
+
+				if (!res.equals(newpath))
+					return res;
+			}
 		}
 
 
@@ -211,7 +236,10 @@ Common::String pathMakeRelative(Common::String path, bool recursive) {
 
 	f.close();
 
-	return convPath;
+	if (opened)
+		return convPath;
+	else
+		return initialPath;
 }
 
 //////////////////
