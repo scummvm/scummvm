@@ -27,6 +27,17 @@
 #include <algorithm>
 #include <cstring>
 
+
+std::map<MSVC_Architecture, StringList> s_arch_disabled_features{
+	// NASM not supported for Windows on AMD64 target
+	{ MSVC_Architecture::ARCH_AMD64, { "nasm" } },
+
+	// NASM not supported for WoA target
+	// No OpenGL, OpenGL ES on Windows on ARM
+	// https://github.com/microsoft/vcpkg/issues/11248 [fribidi] Fribidi doesn't cross-compile on x86-64 to target arm/arm64
+	{ MSVC_Architecture::ARCH_ARM64, { "nasm", "opengl", "opengles", "fribidi" } },
+};
+
 namespace CreateProjectTool {
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,6 +97,10 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	            "\t\tAnalysis|x64 = Analysis|x64\n"
 	            "\t\tLLVM|x64 = LLVM|x64\n"
 	            "\t\tRelease|x64 = Release|x64\n"
+	            "\t\tDebug|arm64 = Debug|arm64\n"
+	            "\t\tAnalysis|arm64 = Analysis|arm64\n"
+	            "\t\tLLVM|arm64 = LLVM|arm64\n"
+	            "\t\tRelease|arm64 = Release|arm64\n"
 	            "\tEndGlobalSection\n"
 	            "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n";
 
@@ -105,7 +120,15 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 		            "\t\t{" << i->second << "}.LLVM|x64.ActiveCfg = LLVM|x64\n"
 		            "\t\t{" << i->second << "}.LLVM|x64.Build.0 = LLVM|x64\n"
 		            "\t\t{" << i->second << "}.Release|x64.ActiveCfg = Release|x64\n"
-		            "\t\t{" << i->second << "}.Release|x64.Build.0 = Release|x64\n";
+		            "\t\t{" << i->second << "}.Release|x64.Build.0 = Release|x64\n"
+		            "\t\t{" << i->second << "}.Debug|arm64.ActiveCfg = Debug|arm64\n"
+		            "\t\t{" << i->second << "}.Debug|arm64.Build.0 = Debug|arm64\n"
+		            "\t\t{" << i->second << "}.Analysis|arm64.ActiveCfg = Analysis|arm64\n"
+		            "\t\t{" << i->second << "}.Analysis|arm64.Build.0 = Analysis|arm64\n"
+		            "\t\t{" << i->second << "}.LLVM|arm64.ActiveCfg = LLVM|arm64\n"
+		            "\t\t{" << i->second << "}.LLVM|arm64.Build.0 = LLVM|arm64\n"
+		            "\t\t{" << i->second << "}.Release|arm64.ActiveCfg = Release|arm64\n"
+		            "\t\t{" << i->second << "}.Release|arm64.Build.0 = Release|arm64\n";
 	}
 
 	solution << "\tEndGlobalSection\n"
@@ -121,14 +144,18 @@ void MSVCProvider::createOtherBuildFiles(const BuildSetup &setup) {
 
 	// Create the configuration property files (for Debug and Release with 32 and 64bits versions)
 	// Note: we use the debug properties for the analysis configuration
-	createBuildProp(setup, true, false, "Release");
-	createBuildProp(setup, true, true, "Release");
-	createBuildProp(setup, false, false, "Debug");
-	createBuildProp(setup, false, true, "Debug");
-	createBuildProp(setup, false, false, "Analysis");
-	createBuildProp(setup, false, true, "Analysis");
-	createBuildProp(setup, false, false, "LLVM");
-	createBuildProp(setup, false, true, "LLVM");
+	createBuildProp(setup, true, MSVC_Architecture::ARCH_AMD64, "Release");
+	createBuildProp(setup, true, MSVC_Architecture::ARCH_X86, "Release");
+	createBuildProp(setup, true, MSVC_Architecture::ARCH_ARM64, "Release");
+	createBuildProp(setup, false, MSVC_Architecture::ARCH_AMD64, "Debug");
+	createBuildProp(setup, false, MSVC_Architecture::ARCH_X86, "Debug");
+	createBuildProp(setup, false, MSVC_Architecture::ARCH_ARM64, "Debug");
+	createBuildProp(setup, false, MSVC_Architecture::ARCH_AMD64, "Analysis");
+	createBuildProp(setup, false, MSVC_Architecture::ARCH_X86, "Analysis");
+	createBuildProp(setup, false, MSVC_Architecture::ARCH_ARM64, "Analysis");
+	createBuildProp(setup, false, MSVC_Architecture::ARCH_AMD64, "LLVM");
+	createBuildProp(setup, false, MSVC_Architecture::ARCH_X86, "LLVM");
+	createBuildProp(setup, false, MSVC_Architecture::ARCH_ARM64, "LLVM");
 }
 
 void MSVCProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
@@ -137,27 +164,41 @@ void MSVCProvider::addResourceFiles(const BuildSetup &setup, StringList &include
 }
 
 void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
-	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_Global" + getPropertiesExtension()).c_str());
+	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(MSVC_Architecture::ARCH_X86) + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(MSVC_Architecture::ARCH_X86) + getPropertiesExtension() + "\" for writing");
 
-	outputGlobalPropFile(setup, properties, 32, setup.defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
+	outputGlobalPropFile(setup, properties, MSVC_Architecture::ARCH_X86, setup.defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
 	properties.close();
 
-	properties.open((setup.outputDir + '/' + setup.projectDescription + "_Global64" + getPropertiesExtension()).c_str());
+	properties.open((setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(MSVC_Architecture::ARCH_AMD64) + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global64" + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(MSVC_Architecture::ARCH_AMD64) + getPropertiesExtension() + "\" for writing");
 
-	// HACK: We must disable the "nasm" feature for x64. To achieve that we must recreate the define list.
-	StringList x64Defines = setup.defines;
-	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
-		if (i->enable && i->define && i->define[0] && !strcmp(i->name, "nasm")) {
-			x64Defines.remove(i->define);
-			break;
+	BuildSetup amd64setup = setup;
+	auto amd64_disabled_features_it = s_arch_disabled_features.find(MSVC_Architecture::ARCH_AMD64);
+	if (amd64_disabled_features_it != s_arch_disabled_features.end()) {
+		for (auto feature : amd64_disabled_features_it->second) {
+			amd64setup = removeFeatureFromSetup(amd64setup, feature);
 		}
 	}
 
-	outputGlobalPropFile(setup, properties, 64, x64Defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
+	outputGlobalPropFile(amd64setup, properties, MSVC_Architecture::ARCH_AMD64, amd64setup.defines, convertPathToWin(amd64setup.filePrefix), amd64setup.runBuildEvents);
+	properties.close();
+
+	properties.open((setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(MSVC_Architecture::ARCH_ARM64) + getPropertiesExtension()).c_str());
+	if (!properties)
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(MSVC_Architecture::ARCH_ARM64) + getPropertiesExtension() + "\" for writing");
+
+	BuildSetup arm64setup = setup;
+	auto arm64_disabled_features_it = s_arch_disabled_features.find(MSVC_Architecture::ARCH_ARM64);
+	if (arm64_disabled_features_it != s_arch_disabled_features.end()) {
+		for (auto feature : arm64_disabled_features_it->second) {
+			arm64setup = removeFeatureFromSetup(arm64setup, feature);
+		}
+	}
+	outputGlobalPropFile(arm64setup, properties, MSVC_Architecture::ARCH_ARM64, arm64setup.defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
+	properties.close();
 }
 
 std::string MSVCProvider::getPreBuildEvent() const {
@@ -182,7 +223,7 @@ std::string MSVCProvider::getTestPreBuildEvent(const BuildSetup &setup) const {
 	return "&quot;$(SolutionDir)../../test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test_runner.cpp&quot;" + target;
 }
 
-std::string MSVCProvider::getPostBuildEvent(bool isWin32, const BuildSetup &setup) const {
+std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildSetup &setup) const {
 	std::string cmdLine = "";
 
 	cmdLine = "@echo off\n"
@@ -193,7 +234,7 @@ std::string MSVCProvider::getPostBuildEvent(bool isWin32, const BuildSetup &setu
 	cmdLine += (setup.useSDL2) ? "SDL2" : "SDL";
 
 	cmdLine += " &quot;%" LIBS_DEFINE "%/lib/";
-	cmdLine += (isWin32) ? "x86" : "x64";
+	cmdLine += getMSVCArchName(arch);
 	cmdLine += "/$(Configuration)&quot; ";
 
 	// Specify if installer needs to be built or not
