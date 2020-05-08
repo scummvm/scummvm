@@ -31,19 +31,19 @@ namespace Graphics {
 
 namespace TextRenderer {
 
-void drawString(Surface *dst, const Common::String &str, const Graphics::Font &font, int x, int y, int w, uint32 color, const Common::CodePage page, TextAlign align, int deltax, bool useEllipsis) {
+void drawString(Surface *dst, const Graphics::Font &font, const Common::String &str, const Common::CodePage page, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) {
     font.drawString(dst, convertBiDiString(str, page), x, y, w, color, align, deltax, useEllipsis);
 }
 
-void drawU32String(Surface *dst, const Common::U32String &str, const Graphics::Font &font, int x, int y, int w, uint32 color, TextAlign align, int deltax) {
+void drawU32String(Surface *dst, const Graphics::Font &font,const Common::U32String &str,  int x, int y, int w, uint32 color, TextAlign align, int deltax) {
     font.drawString(dst, convertBiDiU32String(str), x, y, w, color, align, deltax);
 }
 
-void drawString(ManagedSurface *dst, const Common::String &str, const Graphics::Font &font, int x, int y, int w, uint32 color, const Common::CodePage page, TextAlign align, int deltax, bool useEllipsis) {
+void drawString(ManagedSurface *dst, const Graphics::Font &font, const Common::String &str, const Common::CodePage page, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) {
     font.drawString(dst, convertBiDiString(str, page), x, y, w, color, align, deltax, useEllipsis);
 }
 
-void drawU32String(ManagedSurface *dst, const Common::U32String &str, const Graphics::Font &font, int x, int y, int w, uint32 color, TextAlign align, int deltax) {
+void drawU32String(ManagedSurface *dst, const Graphics::Font &font, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) {
     font.drawString(dst, convertBiDiU32String(str), x, y, w, color, align, deltax);
 }
 
