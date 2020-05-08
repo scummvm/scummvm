@@ -457,7 +457,8 @@
 		  defined(_M_X64) || \
 		  defined(__ppc64__) || \
 		  defined(__powerpc64__) || \
-		  defined(__LP64__)
+		  defined(__LP64__) || \
+		  defined(_M_ARM64)
 
 typedef uint64 uintptr;
 
