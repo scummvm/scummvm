@@ -816,6 +816,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK1_FLOPPY },
 
+	// Gabriel Knight - Italian DOS Floppy (translation patch by Enrico Rolfi)
+	// SCI interpreter version 2.000.000
+	{"gk1", "", {
+		{"alt.map", 0, "ecf55868f9327f2abaf237710a657db7", 1557},
+		{"resource.alt", 0, "b2198dc83b1d030b332e78380e2ad00c", 3058970},
+		AD_LISTEND},
+		Common::IT_ITA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK1_FLOPPY },
+
 	// Gabriel Knight - English DOS CD (from jvprat)
 	// Executable scanning reports "2.000.000", VERSION file reports "01.100.000"
 	{"gk1", "CD", {
