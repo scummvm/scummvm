@@ -1137,7 +1137,27 @@ const std::map<std::string, std::string> s_canonical_lib_name_map = {
 	{ "SDL_net", "SDL2_net" }, // Only support SDL2
 	{ "win_utf8_io_static", "FLAC" }, // This is some FLAC-specific library not needed with vcpkg, but as there's '.lib' appended to each library, we can't set it to empty, so set it to FLAC again instead
 };
+
+const std::map<MSVC_Architecture, std::string> s_msvc_arch_names = {
+	{ MSVC_Architecture::ARCH_ARM64, "arm64" },
+	{   MSVC_Architecture::ARCH_X86,   "x86" },
+	{ MSVC_Architecture::ARCH_AMD64,   "x64" },
+};
+
+const std::map<MSVC_Architecture, std::string> s_msvc_config_names = {
+	{ MSVC_Architecture::ARCH_ARM64, "arm64" },
+	{   MSVC_Architecture::ARCH_X86, "Win32" },
+	{ MSVC_Architecture::ARCH_AMD64,   "x64" },
+};
 } // End of anonymous namespace
+
+std::string getMSVCArchName(MSVC_Architecture arch) {
+	return s_msvc_arch_names.at(arch);
+}
+
+std::string getMSVCConfigName(MSVC_Architecture arch) {
+	return s_msvc_config_names.at(arch);
+}
 
 std::string getCanonicalLibName(std::string lib) {
 	auto it = s_canonical_lib_name_map.find(lib);

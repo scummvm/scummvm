@@ -79,19 +79,19 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 			libraries += ' ' + *i + ".lib";
 
 		// Win32
-		outputConfiguration(project, setup, libraries, "Debug", "Win32", "", true);
-		outputConfiguration(project, setup, libraries, "Analysis", "Win32", "", true);
-		outputConfiguration(project, setup, libraries, "LLVM", "Win32", "", true);
-		outputConfiguration(project, setup, libraries, "Release", "Win32", "", true);
+		outputConfiguration(project, setup, libraries, "Debug", MSVC_Architecture::ARCH_X86);
+		outputConfiguration(project, setup, libraries, "Analysis", MSVC_Architecture::ARCH_X86);
+		outputConfiguration(project, setup, libraries, "LLVM", MSVC_Architecture::ARCH_X86);
+		outputConfiguration(project, setup, libraries, "Release", MSVC_Architecture::ARCH_X86);
 
 		// x64
 		// For 'x64' we must disable NASM support. Usually we would need to disable the "nasm" feature for that and
 		// re-create the library list, BUT since NASM doesn't link any additional libraries, we can just use the
 		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
-		outputConfiguration(project, setup, libraries, "Debug", "x64", "64", false);
-		outputConfiguration(project, setup, libraries, "Analysis", "x64", "64", false);
-		outputConfiguration(project, setup, libraries, "LLVM", "Win32", "64", false);
-		outputConfiguration(project, setup, libraries, "Release", "x64", "64", false);
+		outputConfiguration(project, setup, libraries, "Debug", MSVC_Architecture::ARCH_AMD64);
+		outputConfiguration(project, setup, libraries, "Analysis", MSVC_Architecture::ARCH_AMD64);
+		outputConfiguration(project, setup, libraries, "LLVM", MSVC_Architecture::ARCH_AMD64); // NOTE: it was win32-x64 here
+		outputConfiguration(project, setup, libraries, "Release", MSVC_Architecture::ARCH_AMD64);
 
 	} else {
 		bool enableLanguageExtensions = find(_enableLanguageExtensions.begin(), _enableLanguageExtensions.end(), name) != _enableLanguageExtensions.end();
@@ -142,13 +142,13 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	           "</VisualStudioProject>\n";
 }
 
-void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32) {
-	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << props << ".vsprops\">\n"
+void VisualStudioProvider::outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const MSVC_Architecture arch) {
+	project << "\t\t<Configuration Name=\"" << config << "|" << getMSVCConfigName(arch) << "\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << getMSVCArchName(arch) << ".vsprops\">\n"
 	           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" DebugInformationFormat=\"3\" />\n"
 	           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/" << setup.projectName << ".exe\"\n"
 	           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
 	           "\t\t\t/>\n";
-	outputBuildEvents(project, setup, isWin32);
+	outputBuildEvents(project, setup, arch);
 	project << "\t\t</Configuration>\n";
 }
 
@@ -158,13 +158,13 @@ void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ost
 	           "\t\t</Configuration>\n";
 }
 
-void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildSetup &setup, const bool isWin32) {
+void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildSetup &setup, const MSVC_Architecture arch) {
 	if (!setup.devTools && !setup.tests && setup.runBuildEvents) {
 		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n"
 		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n"
 		           "\t\t\t/>\n"
 		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
-		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32, setup) << "\"\n"
+		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(arch, setup) << "\"\n"
 		           "\t\t\t/>\n";
 	}
 
@@ -193,7 +193,7 @@ void VisualStudioProvider::writeReferences(const BuildSetup &setup, std::ofstrea
 	output << "\tEndProjectSection\n";
 }
 
-void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
+void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
 		warnings +=  *i + ';';
@@ -214,8 +214,8 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	              "\tProjectType=\"Visual C++\"\n"
 	              "\tVersion=\"8.00\"\n"
 	              "\tName=\"" << setup.projectDescription << "_Global\"\n"
-	              "\tOutputDirectory=\"$(ConfigurationName)" << bits << "\"\n"
-	              "\tIntermediateDirectory=\"$(ConfigurationName)" << bits << "/$(ProjectName)\"\n"
+	              "\tOutputDirectory=\"$(ConfigurationName)" << getMSVCArchName(arch) << "\"\n"
+	              "\tIntermediateDirectory=\"$(ConfigurationName)" << getMSVCArchName(arch) << "/$(ProjectName)\"\n"
 	              "\t>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCCLCompilerTool\"\n"
@@ -247,7 +247,7 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	if (!setup.devTools && !setup.tests)
 		properties << "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n";
 
-	properties << "\t\tAdditionalLibraryDirectories=\"$(" << LIBS_DEFINE << ")\\lib\\" << ((bits == 32) ? "x86" : "x64") << "\"\n"
+	properties << "\t\tAdditionalLibraryDirectories=\"$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << "\"\n"
 	              "\t/>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCResourceCompilerTool\"\n"
@@ -259,19 +259,18 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	properties.flush();
 }
 
-void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration) {
-	const std::string outputBitness = (isWin32 ? "32" : "64");
+void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) {
 
-	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
+	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCConfigName(arch) + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCConfigName(arch) + getPropertiesExtension() + "\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
 	              "\tProjectType=\"Visual C++\"\n"
 	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"" << setup.projectDescription << "_" << configuration << outputBitness << "\"\n"
-	              "\tInheritedPropertySheets=\".\\" << setup.projectDescription << "_Global" << (isWin32 ? "" : "64") << ".vsprops\"\n"
+	              "\tName=\"" << setup.projectDescription << "_" << configuration << getMSVCConfigName(arch) << "\"\n"
+	              "\tInheritedPropertySheets=\".\\" << setup.projectDescription << "_Global" << getMSVCConfigName(arch) << ".vsprops\"\n"
 	              "\t>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCCLCompilerTool\"\n";
@@ -300,7 +299,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t\tRuntimeLibrary=\"1\"\n"
 		              "\t\tEnableFunctionLevelLinking=\"true\"\n"
 		              "\t\tWarnAsError=\"false\"\n"
-		              "\t\tDebugInformationFormat=\"" << (isWin32 ? "4" : "3") << "\"\n" // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
+		              "\t\tDebugInformationFormat=\"" << (arch == MSVC_Architecture::ARCH_X86 ? "3" : "4") << "\"\n" // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
 		              "\t\tAdditionalOption=\"" << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
 		              "\t/>\n"
 		              "\t<Tool\n"

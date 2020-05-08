@@ -304,6 +304,15 @@ struct MSVCVersion {
 };
 typedef std::list<MSVCVersion> MSVCList;
 
+enum class MSVC_Architecture {
+	ARCH_ARM64,
+	ARCH_X86,
+	ARCH_AMD64
+};
+
+std::string getMSVCArchName(MSVC_Architecture arch);
+std::string getMSVCConfigName(MSVC_Architecture arch);
+
 /**
  * Creates a list of all supported versions of Visual Studio.
  *

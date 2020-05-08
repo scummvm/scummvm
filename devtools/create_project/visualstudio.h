@@ -40,16 +40,16 @@ protected:
 
 	void writeReferences(const BuildSetup &setup, std::ofstream &output);
 
-	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents);
+	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents);
 
-	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration);
+	void createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration);
 
 	const char *getProjectExtension();
 	const char *getPropertiesExtension();
 
-	void outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32);
+	void outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const MSVC_Architecture arch);
 	void outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const std::string &platform, const std::string &props);
-	void outputBuildEvents(std::ostream &project, const BuildSetup &setup, const bool isWin32);
+	void outputBuildEvents(std::ostream &project, const BuildSetup &setup, const MSVC_Architecture arch);
 };
 
 } // End of CreateProjectTool namespace
