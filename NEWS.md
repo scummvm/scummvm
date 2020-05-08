@@ -38,6 +38,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Add missing sprite drawer for enemies hit by Energy Blast.
    - Fixed freeze due to bad mob data at the top of Witches Tower
    - Fix crash loading some savegames directly from the launcher
+   - Fix curing the well in Nightshadow
 
  Linux port:
    - Added option to use the system file browser instead of the ScummVM file browser.
