@@ -201,6 +201,14 @@ StringList getFeatureDefines(const FeatureList &features);
 StringList getFeatureLibraries(const FeatureList &features);
 
 /**
+ * Returns a list of all external library files, according to the
+ * feature passed.
+ *
+ * @param features Feature for the build (this may contain features, which are *not* enabled!)
+ */
+StringList getFeatureLibraries(const Feature& feature);
+
+/**
  * Sets the state of a given feature. This can be used to
  * either include or exclude an feature.
  *
@@ -325,6 +333,15 @@ int getInstalledMSVC();
  * @return Canonical link library.
  */
 std::string getCanonicalLibName(std::string lib);
+
+/**
+ * Removes given feature from setup.
+ *
+ * @param setup The setup to be processed.
+ * @param feature The feature to be removed
+ * @return A copy of setup less feature.
+ */
+BuildSetup removeFeatureFromSetup(BuildSetup setup, const std::string &feature);
 
 namespace CreateProjectTool {
 
